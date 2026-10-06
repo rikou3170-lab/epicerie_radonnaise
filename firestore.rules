@@ -1,0 +1,47 @@
+rules_version = '2';
+
+// ═══════════════════════════════════════════════════════════
+//  Épicerie Raddonnaise — règles de sécurité Firestore
+//  Admin = toute personne connectée. L'inscription étant
+//  désactivée dans Authentication, seul le compte de Marion existe.
+// ═══════════════════════════════════════════════════════════
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function estAdmin() { return request.auth != null; }
+
+    // Contenu public : tout le monde lit, seule Marion écrit
+    match /shop/config   { allow read: if true; allow write: if estAdmin(); }
+    match /offres/{id}   { allow read: if true; allow write: if estAdmin(); }
+    match /actus/{id}    { allow read: if true; allow write: if estAdmin(); }
+    match /jour/{id}     { allow read: if true; allow write: if estAdmin(); }
+
+    // Cartes de fidélité
+    match /clients/{id} {
+      // Un client lit SA fiche : l'identifiant (20 caractères aléatoires)
+      // n'est connu que de son téléphone. Impossible de lister les clients.
+      allow get: if true;
+      allow list: if estAdmin();
+
+      // Inscription depuis l'app : champs imposés, 0 point au départ
+      allow create: if estAdmin() || (
+        request.resource.data.keys().hasOnly(['code', 'nom', 'tel', 'points', 'depuis'])
+        && request.resource.data.points == 0
+        && request.resource.data.code is string
+        && request.resource.data.code.matches('RAD-[A-Z0-9]{5}')
+        && request.resource.data.nom is string
+        && request.resource.data.nom.size() > 0
+        && request.resource.data.nom.size() <= 60
+        && request.resource.data.tel is string
+        && request.resource.data.tel.size() <= 20
+        && request.resource.data.depuis is string
+        && request.resource.data.depuis.size() <= 10
+      );
+
+      // Seule Marion modifie les points ou supprime une carte
+      allow update, delete: if estAdmin();
+
+      match /historique/{h} { allow read, write: if estAdmin(); }
+    }
+  }
+}
