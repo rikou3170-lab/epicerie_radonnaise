@@ -5,12 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#1C433B">
   <meta name="description" content="L'application de l'Épicerie Raddonnaise : le frais du jour, les plateaux et paniers, votre carte de fidélité.">
-  <link rel="icon" href="logo.jpg">
-  <link rel="apple-touch-icon" href="logo.jpg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-180.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Épicerie">
   <title>Épicerie Raddonnaise</title>
   <style>html,body{margin:0;background:#F7F3EA}</style>
+  <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
 </head>
 <body>
   <div id="root"></div>
