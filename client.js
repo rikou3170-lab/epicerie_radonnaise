@@ -98,7 +98,7 @@ This typically indicates that your device does not have a healthy Internet conne
 .btn:active{transform:scale(.985)}
 .btn.gh{background:transparent;border:1.5px solid var(--line);color:var(--ink2)}
 .btn:disabled{background:#DDD8CC;color:#fff}
-.inp{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:var(--r-s);padding:12px 14px;font-family:var(--body);font-size:14px;color:var(--ink);outline:none}
+.inp{display:block;width:100%;max-width:100%;min-width:0;background:var(--card);border:1.5px solid var(--line);border-radius:var(--r-s);padding:12px 14px;font-family:var(--body);font-size:16px;color:var(--ink);outline:none;-webkit-appearance:none;appearance:none}
 .inp:focus{border-color:var(--apple)}
 .lab{font-size:11px;font-weight:800;color:var(--ink3);display:block;margin:0 0 5px 2px}
 .empty{text-align:center;padding:34px 22px;color:var(--ink3);background:var(--card);border:1px dashed var(--line);border-radius:var(--r);margin-bottom:14px}
