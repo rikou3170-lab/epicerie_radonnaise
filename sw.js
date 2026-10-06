@@ -1,10 +1,12 @@
 // Épicerie Raddonnaise — service worker
 // Rend l'app installable et utilisable avec un réseau faible.
 // Les données (Firestore) ne passent jamais par ce cache.
-const VERSION = "1.9";   // recopié automatiquement à chaque mise en ligne
+const VERSION = "1.10";   // recopié automatiquement à chaque mise en ligne
 const CACHE = "epicerie-" + VERSION;
 const COQUILLE = ["./", "index.html", "client.js?v=" + VERSION, "manifest.webmanifest", "logo.jpg",
-  "icon-192.png", "icon-512.png", "icon-180.png", "logo-intro.png"];
+  "icon-192.png", "icon-512.png", "icon-180.png", "logo-intro.png", "fonts.css",
+  "fonts/sacramento-latin-400-normal.woff2", "fonts/nunito-latin-400-normal.woff2", "fonts/nunito-latin-600-normal.woff2",
+  "fonts/nunito-latin-700-normal.woff2", "fonts/nunito-latin-800-normal.woff2"];
 
 self.addEventListener("install", (e) => {
   // « reload » : on va chercher les fichiers sur le serveur, pas dans le cache du navigateur
@@ -31,8 +33,8 @@ self.addEventListener("fetch", (e) => {
   // Le numéro de version en ligne n'est jamais mis en cache.
   if (url.pathname.endsWith("/version.json")) return;
 
-  // Images : cache d'abord (renouvelé à chaque nouvelle version)
-  if (/\.(png|jpg|mp4)$/.test(url.pathname)) {
+  // Images et polices : cache d'abord (renouvelé à chaque nouvelle version)
+  if (/\.(png|jpg|mp4|woff2)$/.test(url.pathname)) {
     e.respondWith(caches.match(req).then(r => r || fetch(req).then(n => garder(req, n))));
     return;
   }
