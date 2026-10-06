@@ -1,13 +1,16 @@
 // Épicerie Raddonnaise — service worker
 // Rend l'app installable et utilisable avec un réseau faible.
 // Les données (Firestore) ne passent jamais par ce cache.
-const VERSION = "1.2";   // = version des applications, à augmenter à chaque mise en ligne
+const VERSION = "1.3";   // recopié automatiquement à chaque mise en ligne
 const CACHE = "epicerie-" + VERSION;
-const COQUILLE = ["./", "index.html", "client.js", "manifest.webmanifest", "logo.jpg",
+const COQUILLE = ["./", "index.html", "client.js?v=" + VERSION, "manifest.webmanifest", "logo.jpg",
   "icon-192.png", "icon-512.png", "icon-180.png", "splash.mp4"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(COQUILLE)).then(() => self.skipWaiting()));
+  // « reload » : on va chercher les fichiers sur le serveur, pas dans le cache du navigateur
+  e.waitUntil(caches.open(CACHE)
+    .then(c => c.addAll(COQUILLE.map(u => new Request(u, { cache: "reload" }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (e) => {
@@ -16,6 +19,8 @@ self.addEventListener("activate", (e) => {
     .then(() => self.clients.claim()));
 });
 
+const garder = (req, r) => { if (r.ok) { const c = r.clone(); caches.open(CACHE).then(x => x.put(req, c)); } return r; };
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   const url = new URL(req.url);
@@ -23,18 +28,16 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET" || url.origin !== self.location.origin) return;
   // La vidéo se lit par morceaux (requêtes « Range ») : on la laisse au navigateur.
   if (req.headers.has("range")) return;
+  // Le numéro de version en ligne n'est jamais mis en cache.
+  if (url.pathname.endsWith("/version.json")) return;
 
-  // Images et vidéo : cache d'abord (elles changent rarement)
+  // Images et vidéo : cache d'abord (renouvelé à chaque nouvelle version)
   if (/\.(png|jpg|mp4)$/.test(url.pathname)) {
-    e.respondWith(caches.match(req).then(r => r || fetch(req).then(n => {
-      if (n.ok) { const c = n.clone(); caches.open(CACHE).then(x => x.put(req, c)); }
-      return n;
-    })));
+    e.respondWith(caches.match(req).then(r => r || fetch(req).then(n => garder(req, n))));
     return;
   }
-  // Pages et code : réseau d'abord (toujours la dernière version), cache si hors ligne
-  e.respondWith(fetch(req).then(r => {
-    if (r.ok) { const c = r.clone(); caches.open(CACHE).then(x => x.put(req, c)); }
-    return r;
-  }).catch(() => caches.match(req).then(r => r || (req.mode === "navigate" ? caches.match("index.html") : Response.error()))));
+  // Pages et code : toujours vérifiés auprès du serveur, cache seulement si hors ligne
+  e.respondWith(fetch(req, { cache: "no-cache" }).then(r => garder(req, r))
+    .catch(() => caches.match(req, { ignoreSearch: true })
+      .then(r => r || (req.mode === "navigate" ? caches.match("index.html") : Response.error()))));
 });
