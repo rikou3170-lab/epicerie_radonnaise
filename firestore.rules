@@ -15,6 +15,7 @@ service cloud.firestore {
     match /offres/{id}   { allow read: if true; allow write: if estAdmin(); }
     match /actus/{id}    { allow read: if true; allow write: if estAdmin(); }
     match /jour/{id}     { allow read: if true; allow write: if estAdmin(); }
+    match /pubs/{id}     { allow read: if true; allow write: if estAdmin(); }
 
     // Cartes de fidélité
     match /clients/{id} {
