@@ -1,7 +1,7 @@
 // Épicerie Raddonnaise — service worker
 // Rend l'app installable et utilisable avec un réseau faible.
 // Les données (Firestore) ne passent jamais par ce cache.
-const VERSION = "1.12";   // recopié automatiquement à chaque mise en ligne
+const VERSION = "1.13";   // recopié automatiquement à chaque mise en ligne
 const CACHE = "epicerie-" + VERSION;
 const COQUILLE = ["./", "index.html", "client.js?v=" + VERSION, "manifest.webmanifest", "logo.jpg",
   "icon-192.png", "icon-512.png", "icon-180.png", "logo-intro.png", "fonts.css",

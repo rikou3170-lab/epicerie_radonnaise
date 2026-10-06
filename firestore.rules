@@ -20,9 +20,10 @@ service cloud.firestore {
         && request.resource.data.depuis is string && request.resource.data.depuis.size() <= 10
         && request.resource.data.accord is string && request.resource.data.accord.size() <= 10);
       allow update: if estAdmin();
-      allow delete: if true;   // le client supprime sa carte (identifiant secret)
+      allow delete: if estAdmin();   // seule l'épicerie supprime une carte
       match /historique/{h} {
-        allow read, delete: if true;      // accès / effacement par le titulaire
+        allow read: if true;              // consultation par le titulaire
+        allow delete: if estAdmin();
         allow create, update: if estAdmin();
       }
     }
