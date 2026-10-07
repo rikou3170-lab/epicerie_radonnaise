@@ -1,0 +1,17 @@
+{
+  "name": "Caisse — Épicerie Raddonnaise",
+  "short_name": "Caisse",
+  "description": "Créditer les points de fidélité en boutique.",
+  "lang": "fr",
+  "id": "caisse",
+  "start_url": "caisse.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1C433B",
+  "theme_color": "#1C433B",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
