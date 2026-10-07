@@ -9,10 +9,12 @@ service cloud.firestore {
     match /pubs/{id}     { allow read: if true; allow write: if estAdmin(); }
     match /plateaux/{id} { allow read: if true; allow write: if estAdmin(); }
 
-    // Commandes de plateaux : un client peut seulement EN DÉPOSER une (contrôlée champ par champ).
-    // Personne d'autre que l'épicerie ne peut les lire, les modifier ou les supprimer.
+    // Commandes de plateaux : un client peut seulement EN DÉPOSER une (contrôlée champ par champ)
+    // et suivre la sienne grâce à son identifiant secret (gardé sur son téléphone).
+    // Personne ne peut parcourir la liste ; seule l'épicerie modifie ou supprime.
     match /commandes/{id} {
-      allow read, update, delete: if estAdmin();
+      allow get: if true;
+      allow list, update, delete: if estAdmin();
       allow create: if estAdmin() || (
         request.resource.data.keys().hasOnly(['numero','cree','statut','nom','tel','mode','adresse','date','remarque','carte','lignes','total'])
         && request.resource.data.keys().hasAll(['numero','cree','statut','nom','tel','mode','adresse','date','remarque','carte','lignes','total'])
