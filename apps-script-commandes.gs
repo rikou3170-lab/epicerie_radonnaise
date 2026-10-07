@@ -1,16 +1,17 @@
 // ═══════════════════════════════════════════════════════════
 //  Épicerie Raddonnaise — e-mail « Nouvelle commande »
-//  À installer sur le compte Google de Marion (script.google.com).
+//  Installé sur le compte Google d'Eric ; les e-mails partent vers Marion (DEST).
 //  Déployer : Application Web · Exécuter en tant que : Moi · Accès : Tout le monde
 //
 //  Sécurité : l'application n'envoie que l'identifiant de la commande.
 //  Le script relit la commande dans Firebase, vérifie qu'elle est récente
 //  et toute neuve, et n'envoie qu'UN seul e-mail par commande.
-//  Il n'écrit qu'à Marion (le compte qui a installé le script).
+//  Il n'écrit qu'à Marion (adresse fixée ci-dessous, jamais transmise par l'appli).
 // ═══════════════════════════════════════════════════════════
 const PROJET = "application-famille-897df";
 const CLE_API = "AIzaSyCRvvyP7yCOSj2u4WDFCDvBWnGix0Ck-os";   // clé publique Firebase (pas un secret)
 const ADMIN = "https://rikou3170-lab.github.io/epicerie_radonnaise/admin.html";
+const DEST = "marion.parnaso@hotmail.fr";   // qui reçoit les commandes
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
@@ -100,7 +101,7 @@ function envoyer_(c, test) {
     (c.remarque ? '<p style="font-style:italic;color:#5C6A62">« ' + html_(c.remarque) + ' »</p>' : '') +
     '<p style="margin:16px 0 0"><a href="' + ADMIN + '" style="background:#6E9B3A;color:#fff;text-decoration:none;padding:11px 18px;border-radius:10px;display:inline-block;font-weight:bold">Accepter ou refuser la commande</a></p>' +
     '</div></div>';
-  MailApp.sendEmail({ to: Session.getEffectiveUser().getEmail(), subject: sujet, body: texte, htmlBody: htmlBody, name: "Appli Épicerie Raddonnaise" });
+  MailApp.sendEmail({ to: DEST, replyTo: DEST, subject: sujet, body: texte, htmlBody: htmlBody, name: "Appli Épicerie Raddonnaise" });
 }
 
 function reponse_(r) {
@@ -110,5 +111,5 @@ function reponse_(r) {
 // À lancer UNE fois à la main (bouton ▶ Exécuter) pour donner les autorisations au script.
 function autoriser() {
   UrlFetchApp.fetch("https://www.google.com", { muteHttpExceptions: true });
-  Logger.log("Autorisations OK. E-mails envoyés à : " + Session.getEffectiveUser().getEmail() + " — il reste " + MailApp.getRemainingDailyQuota() + " e-mails aujourd'hui.");
+  Logger.log("Autorisations OK. E-mails envoyés à : " + DEST + " — il reste " + MailApp.getRemainingDailyQuota() + " e-mails aujourd'hui.");
 }
