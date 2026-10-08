@@ -19,6 +19,7 @@ function doGet(e) {
   try {
     if (p.test) return reponse_(test_());
     if (p.msg) return reponse_(nouveauMessage_(p.msg));
+    if (p.resa) return reponse_(nouvelleResa_(p.resa));
     if (!/^[A-Za-z0-9]{15,40}$/.test(p.id || "")) return reponse_("id-invalide");
     const verrou = LockService.getScriptLock();
     verrou.waitLock(10000);
@@ -136,6 +137,34 @@ function nouveauMessage_(id) {
       '</div></div>';
     MailApp.sendEmail({ to: DEST, replyTo: DEST, subject: "💬 Nouveau message de " + conv.nom, body: "Message de " + conv.nom + " :\n\n" + texte + "\n\nRépondre : " + ADMIN, htmlBody: htmlBody, name: "Appli Épicerie Raddonnaise" });
     props.setProperty("msg_" + id, String(Date.now()));
+    return "ok";
+  } finally { verrou.releaseLock(); }
+}
+
+// ── Nouvelle réservation anti-gaspi (promo, date courte, panier) ──
+function nouvelleResa_(id) {
+  if (!/^[A-Za-z0-9]{15,40}$/.test(id || "")) return "id-invalide";
+  const verrou = LockService.getScriptLock();
+  verrou.waitLock(10000);
+  try {
+    const props = PropertiesService.getScriptProperties();
+    if (props.getProperty("resa_" + id)) return "deja-envoye";
+    const r1 = UrlFetchApp.fetch("https://firestore.googleapis.com/v1/projects/" + PROJET + "/databases/(default)/documents/resas/" + id + "?key=" + CLE_API, { muteHttpExceptions: true });
+    if (r1.getResponseCode() !== 200) return "introuvable";
+    const r = valeur_({ mapValue: { fields: JSON.parse(r1.getContentText()).fields || {} } });
+    if (r.statut !== "reservee" || Date.now() - Number(r.cree || 0) > 30 * 60 * 1000) return "trop-ancienne";
+    const htmlBody =
+      '<div style="font-family:Arial,sans-serif;max-width:520px;color:#22302A">' +
+      '<div style="background:#2E7D32;color:#fff;padding:14px 18px;border-radius:12px 12px 0 0;font-size:18px"><b>🧺 Réservation ' + html_(r.numero) + '</b></div>' +
+      '<div style="border:1px solid #E6E0D2;border-top:none;padding:16px 18px;border-radius:0 0 12px 12px">' +
+      '<p style="font-size:17px;margin:0 0 8px"><b>' + html_(r.qte) + ' × ' + html_(r.titre) + '</b>' + (r.total ? ' — ' + euros_(r.total) : '') + '</p>' +
+      '<p style="margin:0 0 6px">' + html_(r.nom) + (r.tel ? ' — <a href="tel:' + html_(String(r.tel).replace(/\s/g, "")) + '">' + html_(r.tel) + '</a>' : '') + '</p>' +
+      '<p style="color:#5C6A62;margin:0">À retirer ' + html_(r.retrait || "à l'épicerie") + '</p>' +
+      '<p style="margin:14px 0 0"><a href="' + ADMIN + '" style="background:#6E9B3A;color:#fff;text-decoration:none;padding:11px 18px;border-radius:10px;display:inline-block;font-weight:bold">Voir les réservations</a></p>' +
+      '</div></div>';
+    MailApp.sendEmail({ to: DEST, replyTo: DEST, subject: "🧺 Réservation : " + r.qte + " × " + r.titre + " (" + r.nom + ")",
+      body: r.qte + " × " + r.titre + "\n" + r.nom + (r.tel ? " — " + r.tel : "") + "\nÀ retirer " + (r.retrait || "à l'épicerie") + "\n\n" + ADMIN, htmlBody: htmlBody, name: "Appli Épicerie Raddonnaise" });
+    props.setProperty("resa_" + id, String(Date.now()));
     return "ok";
   } finally { verrou.releaseLock(); }
 }

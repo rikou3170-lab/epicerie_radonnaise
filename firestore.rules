@@ -5,7 +5,39 @@ service cloud.firestore {
     match /shop/config   { allow read: if true; allow write: if estAdmin(); }
     match /offres/{id}   { allow read: if true; allow write: if estAdmin(); }
     match /actus/{id}    { allow read: if true; allow write: if estAdmin(); }
-    match /jour/{id}     { allow read: if true; allow write: if estAdmin(); }
+    // Articles du jour : seule l'épicerie publie. Un client peut seulement augmenter le compteur
+    // de réservations, sans dépasser la quantité disponible (pas de surréservation possible).
+    match /jour/{id} {
+      allow read: if true;
+      allow write: if estAdmin();
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reserves'])
+        && resource.data.get('stock', 0) is int && resource.data.get('stock', 0) > 0
+        && request.resource.data.reserves is int
+        && request.resource.data.reserves > resource.data.get('reserves', 0)
+        && request.resource.data.reserves - resource.data.get('reserves', 0) <= 10
+        && request.resource.data.reserves <= resource.data.get('stock', 0);
+    }
+    // Réservations anti-gaspi : créées avec la hausse du compteur de l'article (même opération),
+    // lisibles par leur identifiant secret ; seule l'épicerie les liste, modifie ou supprime.
+    match /resas/{id} {
+      allow get: if true;
+      allow list, update, delete: if estAdmin();
+      allow create: if estAdmin() || (
+        request.resource.data.keys().hasOnly(['numero','cree','statut','item','titre','qte','prix','total','nom','tel','retrait'])
+        && request.resource.data.keys().hasAll(['numero','cree','statut','item','titre','qte','prix','total','nom','tel','retrait'])
+        && request.resource.data.statut == 'reservee'
+        && request.resource.data.numero is string && request.resource.data.numero.matches('R-[A-Z0-9]{5}')
+        && request.resource.data.cree is int
+        && request.resource.data.qte is int && request.resource.data.qte >= 1 && request.resource.data.qte <= 10
+        && request.resource.data.item is string && request.resource.data.item.size() <= 40
+        && request.resource.data.titre is string && request.resource.data.titre.size() <= 80
+        && request.resource.data.prix is number && request.resource.data.total is number && request.resource.data.total <= 1000
+        && request.resource.data.nom is string && request.resource.data.nom.size() > 0 && request.resource.data.nom.size() <= 40
+        && request.resource.data.tel is string && request.resource.data.tel.size() <= 20
+        && request.resource.data.retrait is string && request.resource.data.retrait.size() <= 60
+        && getAfter(/databases/$(database)/documents/jour/$(request.resource.data.item)).data.get('reserves', 0)
+           == get(/databases/$(database)/documents/jour/$(request.resource.data.item)).data.get('reserves', 0) + request.resource.data.qte);
+    }
     match /pubs/{id}     { allow read: if true; allow write: if estAdmin(); }
     match /plateaux/{id} { allow read: if true; allow write: if estAdmin(); }
 
