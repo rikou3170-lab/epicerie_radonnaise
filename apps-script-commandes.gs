@@ -7,6 +7,7 @@
 //  Le script relit la commande dans Firebase, vérifie qu'elle est récente
 //  et toute neuve, et n'envoie qu'UN seul e-mail par commande.
 //  Il n'écrit qu'à Marion (adresse fixée ci-dessous, jamais transmise par l'appli).
+//  Prévient aussi Marion des nouveaux messages de clients (?msg=…), 1 e-mail max / 10 min par conversation.
 // ═══════════════════════════════════════════════════════════
 const PROJET = "application-famille-897df";
 const CLE_API = "AIzaSyCRvvyP7yCOSj2u4WDFCDvBWnGix0Ck-os";   // clé publique Firebase (pas un secret)
@@ -17,6 +18,7 @@ function doGet(e) {
   const p = (e && e.parameter) || {};
   try {
     if (p.test) return reponse_(test_());
+    if (p.msg) return reponse_(nouveauMessage_(p.msg));
     if (!/^[A-Za-z0-9]{15,40}$/.test(p.id || "")) return reponse_("id-invalide");
     const verrou = LockService.getScriptLock();
     verrou.waitLock(10000);
@@ -102,6 +104,40 @@ function envoyer_(c, test) {
     '<p style="margin:16px 0 0"><a href="' + ADMIN + '" style="background:#6E9B3A;color:#fff;text-decoration:none;padding:11px 18px;border-radius:10px;display:inline-block;font-weight:bold">Accepter ou refuser la commande</a></p>' +
     '</div></div>';
   MailApp.sendEmail({ to: DEST, replyTo: DEST, subject: sujet, body: texte, htmlBody: htmlBody, name: "Appli Épicerie Raddonnaise" });
+}
+
+// ── Nouveau message d'un client (messagerie de l'application) ──
+// Le script relit la conversation dans Firebase ; au plus 1 e-mail par conversation toutes les 10 minutes.
+function nouveauMessage_(id) {
+  if (!/^[A-Za-z0-9]{15,40}$/.test(id || "")) return "id-invalide";
+  const verrou = LockService.getScriptLock();
+  verrou.waitLock(10000);
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const deja = Number(props.getProperty("msg_" + id) || 0);
+    if (Date.now() - deja < 10 * 60 * 1000) return "deja-prevenu";
+    const base = "https://firestore.googleapis.com/v1/projects/" + PROJET + "/databases/(default)/documents/conversations/" + id;
+    const r1 = UrlFetchApp.fetch(base + "?key=" + CLE_API, { muteHttpExceptions: true });
+    if (r1.getResponseCode() !== 200) return "introuvable";
+    const conv = valeur_({ mapValue: { fields: JSON.parse(r1.getContentText()).fields || {} } });
+    const r2 = UrlFetchApp.fetch(base + "/messages?pageSize=300&key=" + CLE_API, { muteHttpExceptions: true });
+    const docs = r2.getResponseCode() === 200 ? (JSON.parse(r2.getContentText()).documents || []) : [];
+    const msgs = docs.map(d => valeur_({ mapValue: { fields: d.fields || {} } })).filter(m => m && m.date).sort((a, b) => a.date - b.date);
+    const recents = msgs.filter(m => m.de === "client" && Date.now() - m.date < 15 * 60 * 1000 && m.date > deja);
+    if (!recents.length) return "rien-de-nouveau";
+    const texte = recents.map(m => "« " + m.texte + " »").join("\n");
+    const htmlBody =
+      '<div style="font-family:Arial,sans-serif;max-width:520px;color:#22302A">' +
+      '<div style="background:#C27B42;color:#fff;padding:14px 18px;border-radius:12px 12px 0 0;font-size:18px"><b>💬 Message de ' + html_(conv.nom) + '</b></div>' +
+      '<div style="border:1px solid #E6E0D2;border-top:none;padding:16px 18px;border-radius:0 0 12px 12px">' +
+      recents.map(m => '<p style="background:#F2EDE2;border-radius:12px;padding:10px 12px;margin:0 0 8px;white-space:pre-wrap">' + html_(m.texte) + '</p>').join("") +
+      (conv.tel ? '<p style="color:#5C6A62;margin:6px 0">Téléphone : <a href="tel:' + html_(String(conv.tel).replace(/\s/g, "")) + '">' + html_(conv.tel) + '</a></p>' : '') +
+      '<p style="margin:14px 0 0"><a href="' + ADMIN + '" style="background:#6E9B3A;color:#fff;text-decoration:none;padding:11px 18px;border-radius:10px;display:inline-block;font-weight:bold">Répondre dans l\'application</a></p>' +
+      '</div></div>';
+    MailApp.sendEmail({ to: DEST, replyTo: DEST, subject: "💬 Nouveau message de " + conv.nom, body: "Message de " + conv.nom + " :\n\n" + texte + "\n\nRépondre : " + ADMIN, htmlBody: htmlBody, name: "Appli Épicerie Raddonnaise" });
+    props.setProperty("msg_" + id, String(Date.now()));
+    return "ok";
+  } finally { verrou.releaseLock(); }
 }
 
 function reponse_(r) {
