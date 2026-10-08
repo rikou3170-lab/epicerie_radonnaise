@@ -92,6 +92,22 @@ service cloud.firestore {
         allow delete: if estAdmin();
       }
     }
+    // Notifications : chaque téléphone abonné a sa fiche (identifiant secret gardé sur le téléphone).
+    // Elle ne contient que le jeton technique, les identifiants suivis et le choix « bons plans ».
+    // Personne ne peut parcourir la liste (seule l'épicerie et le script d'envoi la voient).
+    match /appareils/{id} {
+      allow get, delete: if true;
+      allow list: if estAdmin();
+      allow create, update: if id.size() >= 20 && id.size() <= 40
+        && request.resource.data.keys().hasOnly(['token','refs','promo','maj'])
+        && request.resource.data.keys().hasAll(['token','refs','promo','maj'])
+        && request.resource.data.token is string && request.resource.data.token.size() > 20 && request.resource.data.token.size() <= 400
+        && request.resource.data.refs is list && request.resource.data.refs.size() <= 40
+        && request.resource.data.promo is bool
+        && request.resource.data.maj is int;
+    }
+    // Messages envoyés par Marion à tous les clients : réservé à l'épicerie
+    match /diffusions/{id} { allow read, write: if estAdmin(); }
     match /clients/{id} {
       allow get: if true;
       allow list: if estAdmin();

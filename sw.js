@@ -1,7 +1,7 @@
 // Épicerie Raddonnaise — service worker
 // Rend l'app installable et utilisable avec un réseau faible.
 // Les données (Firestore) ne passent jamais par ce cache.
-const VERSION = "1.43";   // recopié automatiquement à chaque mise en ligne
+const VERSION = "1.44";   // recopié automatiquement à chaque mise en ligne
 const CACHE = "epicerie-" + VERSION;
 const COQUILLE = ["./", "index.html", "client.js?v=" + VERSION, "manifest.webmanifest", "logo.jpg",
   "icon-192.png", "icon-512.png", "icon-180.png", "logo-intro.png", "fonts.css",
@@ -42,4 +42,25 @@ self.addEventListener("fetch", (e) => {
   e.respondWith(fetch(req, { cache: "no-cache" }).then(r => garder(req, r))
     .catch(() => caches.match(req, { ignoreSearch: true })
       .then(r => r || (req.mode === "navigate" ? caches.match("index.html") : Response.error()))));
+});
+
+// ── Notifications (envoyées par l'épicerie via Firebase Cloud Messaging) ──
+self.addEventListener("push", (e) => {
+  let p = {};
+  try { p = e.data ? e.data.json() : {}; } catch { p = { notification: { title: "Épicerie Raddonnaise", body: e.data ? e.data.text() : "" } }; }
+  const n = p.notification || {}, data = p.data || {};
+  const titre = n.title || data.titre || "Épicerie Raddonnaise";
+  e.waitUntil(self.registration.showNotification(titre, {
+    body: n.body || data.texte || "", icon: "icon-192.png", badge: "icon-192.png",
+    tag: data.tag || undefined, renotify: !!data.tag, data: { url: data.url || "./" },
+  }));
+});
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const cible = new URL((e.notification.data && e.notification.data.url) || "./", self.registration.scope).href;
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(l => {
+    const ouverte = l.find(c => c.url.startsWith(self.registration.scope));
+    if (ouverte) { ouverte.focus(); return ouverte.navigate ? ouverte.navigate(cible) : null; }
+    return self.clients.openWindow(cible);
+  }));
 });

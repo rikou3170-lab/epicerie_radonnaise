@@ -8,6 +8,10 @@
 //  et toute neuve, et n'envoie qu'UN seul e-mail par commande.
 //  Il n'écrit qu'à Marion (adresse fixée ci-dessous, jamais transmise par l'appli).
 //  Prévient aussi Marion des nouveaux messages de clients (?msg=…), 1 e-mail max / 10 min par conversation.
+//
+//  Notifications sur les téléphones des clients (?push=cmd|msg|diff&id=…) et sauvegarde
+//  hebdomadaire dans Google Drive : passent par un « compte de service » Firebase dont la clé
+//  est rangée dans Paramètres du projet → Propriétés du script → SA_JSON (jamais dans le code).
 // ═══════════════════════════════════════════════════════════
 const PROJET = "application-famille-897df";
 const CLE_API = "AIzaSyCRvvyP7yCOSj2u4WDFCDvBWnGix0Ck-os";   // clé publique Firebase (pas un secret)
@@ -20,6 +24,7 @@ function doGet(e) {
     if (p.test) return reponse_(test_());
     if (p.msg) return reponse_(nouveauMessage_(p.msg));
     if (p.resa) return reponse_(nouvelleResa_(p.resa));
+    if (p.push) return reponse_(push_(p.push, p.id));
     if (!/^[A-Za-z0-9]{15,40}$/.test(p.id || "")) return reponse_("id-invalide");
     const verrou = LockService.getScriptLock();
     verrou.waitLock(10000);
@@ -53,12 +58,62 @@ function test_() {
 }
 
 // Lecture de la commande dans Firestore (lecture publique par identifiant, autorisée par les règles)
-function lireCommande_(id) {
-  const url = "https://firestore.googleapis.com/v1/projects/" + PROJET + "/databases/(default)/documents/commandes/" + id + "?key=" + CLE_API;
-  const r = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
-  if (r.getResponseCode() !== 200) return null;
-  const doc = JSON.parse(r.getContentText());
-  return valeur_({ mapValue: { fields: doc.fields || {} } });
+function lireCommande_(id) { return lireDoc_("/commandes/" + id); }
+
+// ── Accès à Firebase ──
+// Avec le compte de service (SA_JSON) : accès complet, la clé publique peut alors être restreinte.
+// Sans : lecture publique par identifiant, avec la clé publique (comme avant).
+const BASE = "https://firestore.googleapis.com/v1/projects/" + PROJET + "/databases/(default)/documents";
+function aCompteService_() { return !!PropertiesService.getScriptProperties().getProperty("SA_JSON"); }
+function fs_(chemin, methode, corps) {
+  const o = { method: methode || "get", muteHttpExceptions: true };
+  let url = BASE + chemin;
+  if (aCompteService_()) o.headers = { Authorization: "Bearer " + jetonService_() };
+  else url += (url.indexOf("?") < 0 ? "?" : "&") + "key=" + CLE_API;
+  if (corps) { o.contentType = "application/json"; o.payload = JSON.stringify(corps); }
+  const r = UrlFetchApp.fetch(url, o);
+  const t = r.getContentText();
+  return { code: r.getResponseCode(), json: t ? JSON.parse(t) : {} };
+}
+function lireDoc_(chemin) {
+  const r = fs_(chemin);
+  return r.code === 200 ? valeur_({ mapValue: { fields: r.json.fields || {} } }) : null;
+}
+function listerDocs_(chemin) {
+  let tous = [], page = "";
+  do {
+    const r = fs_(chemin + "?pageSize=300" + (page ? "&pageToken=" + encodeURIComponent(page) : ""));
+    if (r.code !== 200) break;
+    tous = tous.concat(r.json.documents || []);
+    page = r.json.nextPageToken || "";
+  } while (page);
+  return tous;
+}
+function requete_(structuredQuery) {
+  const r = fs_(":runQuery", "post", { structuredQuery: structuredQuery });
+  return r.code === 200 ? (r.json || []).filter(x => x.document).map(x => x.document) : [];
+}
+const idDe_ = (d) => String(d.name).split("/").pop();
+
+// Jeton d'accès du compte de service (valable 1 h, gardé 50 min en cache)
+function jetonService_() {
+  const cache = CacheService.getScriptCache();
+  const deja = cache.get("jeton_sa"); if (deja) return deja;
+  const sa = JSON.parse(PropertiesService.getScriptProperties().getProperty("SA_JSON"));
+  const b64 = (x) => Utilities.base64EncodeWebSafe(x).replace(/=+$/, "");
+  const now = Math.floor(Date.now() / 1000);
+  const tete = b64(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const corps = b64(JSON.stringify({
+    iss: sa.client_email, aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3600,
+    scope: "https://www.googleapis.com/auth/datastore https://www.googleapis.com/auth/firebase.messaging",
+  }));
+  const signature = b64(Utilities.computeRsaSha256Signature(tete + "." + corps, sa.private_key));
+  const r = UrlFetchApp.fetch("https://oauth2.googleapis.com/token", { method: "post", muteHttpExceptions: true,
+    payload: { grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion: tete + "." + corps + "." + signature } });
+  if (r.getResponseCode() !== 200) throw new Error("compte de service refusé : " + r.getContentText().slice(0, 200));
+  const jeton = JSON.parse(r.getContentText()).access_token;
+  cache.put("jeton_sa", jeton, 3000);
+  return jeton;
 }
 function valeur_(v) {
   if (!v) return null;
@@ -117,13 +172,9 @@ function nouveauMessage_(id) {
     const props = PropertiesService.getScriptProperties();
     const deja = Number(props.getProperty("msg_" + id) || 0);
     if (Date.now() - deja < 10 * 60 * 1000) return "deja-prevenu";
-    const base = "https://firestore.googleapis.com/v1/projects/" + PROJET + "/databases/(default)/documents/conversations/" + id;
-    const r1 = UrlFetchApp.fetch(base + "?key=" + CLE_API, { muteHttpExceptions: true });
-    if (r1.getResponseCode() !== 200) return "introuvable";
-    const conv = valeur_({ mapValue: { fields: JSON.parse(r1.getContentText()).fields || {} } });
-    const r2 = UrlFetchApp.fetch(base + "/messages?pageSize=300&key=" + CLE_API, { muteHttpExceptions: true });
-    const docs = r2.getResponseCode() === 200 ? (JSON.parse(r2.getContentText()).documents || []) : [];
-    const msgs = docs.map(d => valeur_({ mapValue: { fields: d.fields || {} } })).filter(m => m && m.date).sort((a, b) => a.date - b.date);
+    const conv = lireDoc_("/conversations/" + id);
+    if (!conv) return "introuvable";
+    const msgs = listerDocs_("/conversations/" + id + "/messages").map(d => valeur_({ mapValue: { fields: d.fields || {} } })).filter(m => m && m.date).sort((a, b) => a.date - b.date);
     const recents = msgs.filter(m => m.de === "client" && Date.now() - m.date < 15 * 60 * 1000 && m.date > deja);
     if (!recents.length) return "rien-de-nouveau";
     const texte = recents.map(m => "« " + m.texte + " »").join("\n");
@@ -149,9 +200,8 @@ function nouvelleResa_(id) {
   try {
     const props = PropertiesService.getScriptProperties();
     if (props.getProperty("resa_" + id)) return "deja-envoye";
-    const r1 = UrlFetchApp.fetch("https://firestore.googleapis.com/v1/projects/" + PROJET + "/databases/(default)/documents/resas/" + id + "?key=" + CLE_API, { muteHttpExceptions: true });
-    if (r1.getResponseCode() !== 200) return "introuvable";
-    const r = valeur_({ mapValue: { fields: JSON.parse(r1.getContentText()).fields || {} } });
+    const r = lireDoc_("/resas/" + id);
+    if (!r) return "introuvable";
     if (r.statut !== "reservee" || Date.now() - Number(r.cree || 0) > 30 * 60 * 1000) return "trop-ancienne";
     const htmlBody =
       '<div style="font-family:Arial,sans-serif;max-width:520px;color:#22302A">' +
@@ -173,8 +223,131 @@ function reponse_(r) {
   return ContentService.createTextOutput(JSON.stringify({ r: r })).setMimeType(ContentService.MimeType.JSON);
 }
 
+// ═══════════ NOTIFICATIONS SUR LES TÉLÉPHONES DES CLIENTS ═══════════
+// L'administration n'envoie qu'un identifiant. Le script relit tout dans Firebase, décide s'il y a
+// vraiment quelque chose à dire, et ne l'envoie qu'une fois (impossible de spammer les clients).
+const APPLI = "https://rikou3170-lab.github.io/epicerie_radonnaise/";
+function push_(type, id) {
+  if (!aCompteService_()) return "pas-de-compte-de-service";
+  if (!/^[A-Za-z0-9]{15,40}$/.test(id || "")) return "id-invalide";
+  const verrou = LockService.getScriptLock();
+  verrou.waitLock(15000);
+  try {
+    if (type === "cmd") return pushCommande_(id);
+    if (type === "msg") return pushMessage_(id);
+    if (type === "diff") return pushDiffusion_(id);
+    return "type-invalide";
+  } finally { verrou.releaseLock(); }
+}
+function heure_(h) { return h ? String(h).replace(":", "h") : ""; }
+
+function pushCommande_(id) {
+  const c = lireDoc_("/commandes/" + id);
+  if (!c) return "introuvable";
+  const props = PropertiesService.getScriptProperties();
+  const cle = "pc_" + id + "_" + c.statut;
+  if (props.getProperty(cle)) return "deja-envoye";
+  const jour = c.dateRetrait || c.date;
+  const hier = Utilities.formatDate(new Date(Date.now() - 2 * 864e5), "Europe/Paris", "yyyy-MM-dd");
+  if (!jour || jour < hier) return "trop-ancienne";
+  const quand = dateFr_(jour) + (c.heure ? " à " + heure_(c.heure) : "");
+  let titre, texte;
+  if (c.statut === "acceptee") { titre = "✅ Commande " + c.numero + " validée"; texte = "À retirer le " + quand + (c.message ? " — " + c.message : ""); }
+  else if (c.statut === "refusee") { titre = "Commande " + c.numero + " non acceptée"; texte = c.message || "Contactez l'épicerie pour en savoir plus."; }
+  else if (c.statut === "prete") { titre = "🧺 Votre commande est prête !"; texte = "Commande " + c.numero + " — vous pouvez venir la chercher" + (c.heure ? " (prévu à " + heure_(c.heure) + ")" : "") + "."; }
+  else return "rien-a-dire";
+  props.setProperty(cle, String(Date.now()));
+  const app = requete_({ from: [{ collectionId: "appareils" }], where: { fieldFilter: { field: { fieldPath: "refs" }, op: "ARRAY_CONTAINS", value: { stringValue: id } } } });
+  return "ok:" + envoyerPush_(app, { titre: titre, texte: texte, tag: "cmd-" + id });
+}
+
+function pushMessage_(id) {
+  const msgs = listerDocs_("/conversations/" + id + "/messages").map(d => valeur_({ mapValue: { fields: d.fields || {} } }))
+    .filter(m => m && m.date).sort((a, b) => a.date - b.date);
+  const m = msgs[msgs.length - 1];
+  if (!m || m.de !== "epicerie" || Date.now() - m.date > 30 * 60 * 1000) return "rien-de-nouveau";
+  const props = PropertiesService.getScriptProperties();
+  if (Number(props.getProperty("pm_" + id) || 0) >= m.date) return "deja-envoye";
+  props.setProperty("pm_" + id, String(m.date));
+  const t = String(m.texte || "").replace(/\s+/g, " ").trim();
+  const app = requete_({ from: [{ collectionId: "appareils" }], where: { fieldFilter: { field: { fieldPath: "refs" }, op: "ARRAY_CONTAINS", value: { stringValue: id } } } });
+  return "ok:" + envoyerPush_(app, { titre: "💬 L'épicerie vous a répondu", texte: t.length > 120 ? t.slice(0, 118) + "…" : t, tag: "msg" });
+}
+
+function pushDiffusion_(id) {
+  const x = lireDoc_("/diffusions/" + id);
+  if (!x) return "introuvable";
+  if (Date.now() - Number(x.cree || 0) > 30 * 60 * 1000) return "trop-ancienne";
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty("pd_" + id)) return "deja-envoye";
+  props.setProperty("pd_" + id, String(Date.now()));
+  const app = requete_({ from: [{ collectionId: "appareils" }], where: { fieldFilter: { field: { fieldPath: "promo" }, op: "EQUAL", value: { booleanValue: true } } } });
+  const n = envoyerPush_(app, { titre: String(x.titre || "").slice(0, 50), texte: String(x.texte || "").slice(0, 160), tag: "bonplan" });
+  fs_("/diffusions/" + id + "?updateMask.fieldPaths=envoye", "patch", { fields: { envoye: { integerValue: String(n) } } });
+  return "ok:" + n;
+}
+
+// Envoi via Firebase Cloud Messaging ; les téléphones qui ont désinstallé l'appli sont retirés.
+function envoyerPush_(appareils, m) {
+  const jeton = jetonService_();
+  let ok = 0;
+  for (let i = 0; i < appareils.length; i += 100) {
+    const lot = appareils.slice(i, i + 100);
+    const reqs = lot.map(d => ({
+      url: "https://fcm.googleapis.com/v1/projects/" + PROJET + "/messages:send", method: "post", muteHttpExceptions: true,
+      contentType: "application/json", headers: { Authorization: "Bearer " + jeton },
+      payload: JSON.stringify({ message: {
+        token: valeur_(d.fields.token),
+        webpush: { headers: { Urgency: "high", TTL: "86400" }, data: { titre: m.titre, texte: m.texte, tag: m.tag, url: APPLI } },
+      } }),
+    }));
+    UrlFetchApp.fetchAll(reqs).forEach((r, j) => {
+      if (r.getResponseCode() === 200) ok++;
+      else if (r.getResponseCode() === 404) fs_("/appareils/" + idDe_(lot[j]), "delete");
+    });
+  }
+  return ok;
+}
+
+// ═══════════ SAUVEGARDE AUTOMATIQUE (chaque lundi vers 3 h, dans le Drive d'Eric) ═══════════
+// Dossier « Sauvegardes Épicerie Raddonnaise » : un fichier par semaine, les 8 derniers sont gardés.
+// Contient les données des clients (noms, téléphones) : ne pas partager ce dossier.
+const COLLECTIONS = ["shop", "offres", "actus", "jour", "pubs", "plateaux", "commandes", "clients", "conversations", "resas", "diffusions"];
+const SOUS_COLLECTIONS = ["historique", "messages"];
+function sauvegarde() {
+  if (!aCompteService_()) throw new Error("Compte de service manquant (SA_JSON).");
+  const data = { date: new Date().toISOString(), projet: PROJET, documents: {} };
+  const ranger = (d) => { data.documents[String(d.name).split("/documents/")[1]] = d.fields || {}; };
+  COLLECTIONS.forEach(c => listerDocs_("/" + c).forEach(ranger));
+  SOUS_COLLECTIONS.forEach(c => requete_({ from: [{ collectionId: c, allDescendants: true }] }).forEach(ranger));
+  const noms = DriveApp.getFoldersByName("Sauvegardes Épicerie Raddonnaise");
+  const dossier = noms.hasNext() ? noms.next() : DriveApp.createFolder("Sauvegardes Épicerie Raddonnaise");
+  const nom = "sauvegarde-" + Utilities.formatDate(new Date(), "Europe/Paris", "yyyy-MM-dd") + ".json";
+  dossier.createFile(nom, JSON.stringify(data), "application/json");
+  // on garde les 8 dernières
+  const fichiers = []; const it = dossier.getFiles();
+  while (it.hasNext()) fichiers.push(it.next());
+  fichiers.sort((a, b) => b.getDateCreated() - a.getDateCreated()).slice(8).forEach(f => f.setTrashed(true));
+  nettoyer_();
+  Logger.log("Sauvegarde OK : " + Object.keys(data.documents).length + " documents → " + nom);
+}
+// Les mémos « déjà envoyé » de plus de 90 jours sont effacés (la mémoire du script est limitée)
+function nettoyer_() {
+  const props = PropertiesService.getScriptProperties(), tout = props.getProperties(), limite = Date.now() - 90 * 864e5;
+  Object.keys(tout).forEach(k => { if (/^(envoye_|msg_|resa_|pc_|pm_|pd_)/.test(k) && Number(tout[k]) < limite) props.deleteProperty(k); });
+}
+// À lancer UNE fois à la main : programme la sauvegarde chaque lundi vers 3 h.
+function installerSauvegarde() {
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === "sauvegarde").forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger("sauvegarde").timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(3).create();
+  sauvegarde();
+  Logger.log("Sauvegarde programmée chaque lundi vers 3 h. Une première sauvegarde vient d'être faite.");
+}
+
 // À lancer UNE fois à la main (bouton ▶ Exécuter) pour donner les autorisations au script.
 function autoriser() {
   UrlFetchApp.fetch("https://www.google.com", { muteHttpExceptions: true });
+  DriveApp.getRootFolder();
+  if (aCompteService_()) { jetonService_(); Logger.log("Compte de service OK."); }
   Logger.log("Autorisations OK. E-mails envoyés à : " + DEST + " — il reste " + MailApp.getRemainingDailyQuota() + " e-mails aujourd'hui.");
 }
