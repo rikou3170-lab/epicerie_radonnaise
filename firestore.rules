@@ -31,6 +31,35 @@ service cloud.firestore {
         && request.resource.data.lignes is list && request.resource.data.lignes.size() >= 1 && request.resource.data.lignes.size() <= 10
         && request.resource.data.total is number && request.resource.data.total > 0 && request.resource.data.total <= 5000);
     }
+    // Messagerie clients ↔ épicerie : chaque client ne voit que SA conversation (identifiant secret
+    // gardé sur son téléphone). Personne ne peut parcourir la liste ; seule l'épicerie supprime.
+    match /conversations/{id} {
+      allow get: if true;
+      allow list, delete: if estAdmin();
+      allow create: if estAdmin() || (
+        request.resource.data.keys().hasOnly(['nom','tel','cree','maj','dernier','attente'])
+        && request.resource.data.keys().hasAll(['nom','tel','cree','maj','dernier','attente'])
+        && request.resource.data.nom is string && request.resource.data.nom.size() > 0 && request.resource.data.nom.size() <= 40
+        && request.resource.data.tel is string && request.resource.data.tel.size() <= 20
+        && request.resource.data.cree is int && request.resource.data.maj is int
+        && request.resource.data.dernier is string && request.resource.data.dernier.size() <= 120
+        && request.resource.data.attente == true);
+      allow update: if estAdmin() || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['maj','dernier','attente'])
+        && request.resource.data.maj is int
+        && request.resource.data.dernier is string && request.resource.data.dernier.size() <= 120
+        && request.resource.data.attente == true);
+      match /messages/{m} {
+        allow read: if true;
+        allow create: if estAdmin() || (
+          request.resource.data.keys().hasOnly(['de','texte','date'])
+          && request.resource.data.de == 'client'
+          && request.resource.data.texte is string && request.resource.data.texte.size() > 0 && request.resource.data.texte.size() <= 1000
+          && request.resource.data.date is int);
+        allow update: if false;
+        allow delete: if estAdmin();
+      }
+    }
     match /clients/{id} {
       allow get: if true;
       allow list: if estAdmin();
