@@ -131,6 +131,23 @@ service cloud.firestore {
         && request.resource.data.promo is bool
         && request.resource.data.maj is int;
     }
+    // Mesure d'audience ANONYME : un compteur par jour et par rubrique (stats/{AAAA-MM-JJ}_{cle} = { jour, cle, n }).
+    // Les clients peuvent seulement l'augmenter de 1 ; seule l'épicerie lit et fait le ménage.
+    match /stats/{id} {
+      allow read, delete: if estAdmin();
+      allow create: if id.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}_[a-z0-9_-]{1,50}')
+        && request.resource.data.keys().hasOnly(['jour','cle','n'])
+        && request.resource.data.jour is string && request.resource.data.cle is string
+        && id == request.resource.data.jour + '_' + request.resource.data.cle
+        && request.resource.data.n == 1;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['n'])
+        && request.resource.data.n == resource.data.n + 1;
+    }
+    // Connexions à l'admin et à la caisse (date, type d'appareil) : réservé à l'épicerie
+    match /connexions/{id} {
+      allow read, create, delete: if estAdmin();
+      allow update: if false;
+    }
     // Messages envoyés par Marion à tous les clients : réservé à l'épicerie
     match /diffusions/{id} { allow read, write: if estAdmin(); }
     match /clients/{id} {
