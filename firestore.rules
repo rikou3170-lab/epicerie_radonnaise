@@ -1,7 +1,24 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function estAdmin() { return request.auth != null; }
+    // Seul le compte de Marion est administrateur (UID copié depuis Firebase → Authentication → Utilisateurs)
+    function estAdmin() { return request.auth != null && request.auth.uid == '5FnXueJRCyed0lFy8psaIVK2hj93'; }
+    // Une ligne de commande déposée par un client : rien d'autre que ces champs, de la bonne taille
+    function ligneOk(l) {
+      return l is map && l.keys().hasOnly(['id','nom','choix','personnes','prixPersonne','montant'])
+        && l.id is string && l.id.size() <= 40
+        && l.nom is string && l.nom.size() > 0 && l.nom.size() <= 300
+        && l.personnes is int && l.personnes >= 1 && l.personnes <= 200
+        && l.prixPersonne is number && l.prixPersonne >= 0 && l.prixPersonne <= 500
+        && l.montant is number && l.montant >= 0 && l.montant <= 5000
+        && (!('choix' in l) || (l.choix is list && l.choix.size() <= 12));
+    }
+    function lignesOk(ls) {
+      return (ls.size() < 1 || ligneOk(ls[0])) && (ls.size() < 2 || ligneOk(ls[1])) && (ls.size() < 3 || ligneOk(ls[2]))
+        && (ls.size() < 4 || ligneOk(ls[3])) && (ls.size() < 5 || ligneOk(ls[4])) && (ls.size() < 6 || ligneOk(ls[5]))
+        && (ls.size() < 7 || ligneOk(ls[6])) && (ls.size() < 8 || ligneOk(ls[7])) && (ls.size() < 9 || ligneOk(ls[8]))
+        && (ls.size() < 10 || ligneOk(ls[9]));
+    }
     match /shop/config   { allow read: if true; allow write: if estAdmin(); }
     match /offres/{id}   { allow read: if true; allow write: if estAdmin(); }
     match /actus/{id}    { allow read: if true; allow write: if estAdmin(); }
@@ -10,12 +27,17 @@ service cloud.firestore {
     match /jour/{id} {
       allow read: if true;
       allow write: if estAdmin();
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reserves'])
+      // … et seulement en créant la réservation correspondante dans la même opération (derniereResa)
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reserves', 'derniereResa'])
         && resource.data.get('stock', 0) is int && resource.data.get('stock', 0) > 0
         && request.resource.data.reserves is int
         && request.resource.data.reserves > resource.data.get('reserves', 0)
         && request.resource.data.reserves - resource.data.get('reserves', 0) <= 10
-        && request.resource.data.reserves <= resource.data.get('stock', 0);
+        && request.resource.data.reserves <= resource.data.get('stock', 0)
+        && request.resource.data.derniereResa is string && request.resource.data.derniereResa.size() >= 15 && request.resource.data.derniereResa.size() <= 40
+        && !exists(/databases/$(database)/documents/resas/$(request.resource.data.derniereResa))
+        && getAfter(/databases/$(database)/documents/resas/$(request.resource.data.derniereResa)).data.item == id
+        && getAfter(/databases/$(database)/documents/resas/$(request.resource.data.derniereResa)).data.qte == request.resource.data.reserves - resource.data.get('reserves', 0);
     }
     // Réservations anti-gaspi : créées avec la hausse du compteur de l'article (même opération),
     // lisibles par leur identifiant secret ; seule l'épicerie les liste, modifie ou supprime.
@@ -61,6 +83,7 @@ service cloud.firestore {
         && request.resource.data.remarque is string && request.resource.data.remarque.size() <= 500
         && request.resource.data.carte is string && request.resource.data.carte.size() <= 10
         && request.resource.data.lignes is list && request.resource.data.lignes.size() >= 1 && request.resource.data.lignes.size() <= 10
+        && lignesOk(request.resource.data.lignes)
         && request.resource.data.total is number && request.resource.data.total > 0 && request.resource.data.total <= 5000);
     }
     // Messagerie clients ↔ épicerie : chaque client ne voit que SA conversation (identifiant secret
@@ -85,6 +108,8 @@ service cloud.firestore {
         allow read: if true;
         allow create: if estAdmin() || (
           request.resource.data.keys().hasOnly(['de','texte','date'])
+          && request.resource.data.keys().hasAll(['de','texte','date'])
+          && existsAfter(/databases/$(database)/documents/conversations/$(id))
           && request.resource.data.de == 'client'
           && request.resource.data.texte is string && request.resource.data.texte.size() > 0 && request.resource.data.texte.size() <= 1000
           && request.resource.data.date is int);

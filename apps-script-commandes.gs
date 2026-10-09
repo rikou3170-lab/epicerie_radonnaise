@@ -26,28 +26,59 @@ function doGet(e) {
     if (p.resa) return reponse_(nouvelleResa_(p.resa));
     if (p.push) return reponse_(push_(p.push, p.id));
     if (!/^[A-Za-z0-9]{15,40}$/.test(p.id || "")) return reponse_("id-invalide");
-    const verrou = LockService.getScriptLock();
-    verrou.waitLock(10000);
-    try {
-      const props = PropertiesService.getScriptProperties();
-      if (props.getProperty("envoye_" + p.id)) return reponse_("deja-envoye");
-      const c = lireCommande_(p.id);
-      if (!c) return reponse_("introuvable");
-      if (c.statut !== "nouvelle" || Date.now() - Number(c.cree || 0) > 30 * 60 * 1000) return reponse_("trop-ancienne");
-      envoyer_(c, false);
-      props.setProperty("envoye_" + p.id, String(Date.now()));
-      return reponse_("ok");
-    } finally { verrou.releaseLock(); }
+    const c = lireCommande_(p.id);
+    if (!c) return reponse_("introuvable");
+    // jusqu'à 24 h : une commande partie sans réseau prévient Marion quand elle arrive
+    if (c.statut !== "nouvelle" || Date.now() - Number(c.cree || 0) > 24 * 3600 * 1000) return reponse_("trop-ancienne");
+    const cle = "envoye_" + p.id;
+    if (!reserver_(cle)) return reponse_("deja-envoye");
+    if (!quotaMail_()) { liberer_(cle); return reponse_("quota"); }
+    try { envoyer_(c, false); } catch (err) { liberer_(cle); throw err; }
+    return reponse_("ok");
   } catch (err) {
     return reponse_("erreur: " + err.message);
   }
 }
 
-// Bouton « Envoyer un e-mail de test » de l'admin (1 par minute maximum)
+// ── Mémo « déjà envoyé » posé sous un verrou court (jamais pendant un envoi) ──
+// true = c'est à nous d'envoyer ; false = déjà fait (ou en cours ailleurs). En cas d'échec : liberer_().
+function reserver_(cle, valeur) {
+  const verrou = LockService.getScriptLock();
+  verrou.waitLock(20000);
+  try {
+    const props = PropertiesService.getScriptProperties();
+    if (props.getProperty(cle)) return false;
+    props.setProperty(cle, String(valeur || Date.now()));
+    return true;
+  } finally { verrou.releaseLock(); }
+}
+function liberer_(cle) { try { PropertiesService.getScriptProperties().deleteProperty(cle); } catch (e) { } }
+
+// ── Plafonds globaux : quelqu'un qui appellerait le script en boucle ne peut pas épuiser le quota
+//    d'e-mails de la journée (≈ 100) ni noyer la boîte de Marion. Au-delà : rien n'est envoyé (les
+//    commandes restent bien visibles dans l'admin).
+const MAX_MAILS_HEURE = 25, MAX_MAILS_JOUR = 70, MAX_PUSH_HEURE = 60;
+function compter_(nom, max, duree) {
+  const verrou = LockService.getScriptLock();
+  verrou.waitLock(20000);
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const cle = "q_" + nom + "_" + Utilities.formatDate(new Date(), "Europe/Paris", duree === "jour" ? "yyyyMMdd" : "yyyyMMddHH");
+    const n = Number(props.getProperty(cle) || 0);
+    if (n >= max) return false;
+    props.setProperty(cle, String(n + 1));
+    return true;
+  } finally { verrou.releaseLock(); }
+}
+function quotaMail_() { return compter_("mh", MAX_MAILS_HEURE, "heure") && compter_("mj", MAX_MAILS_JOUR, "jour"); }
+function quotaPush_() { return compter_("ph", MAX_PUSH_HEURE, "heure"); }
+
+// Bouton « Envoyer un e-mail de test » de l'admin (1 par minute, 5 par jour maximum)
 function test_() {
   const cache = CacheService.getScriptCache();
   if (cache.get("test")) return "attendre";
   cache.put("test", "1", 60);
+  if (!compter_("test", 5, "jour") || !quotaMail_()) return "quota";
   const demain = new Date(Date.now() + 2 * 864e5);
   envoyer_({
     numero: "C-TEST", nom: "Client test", tel: "06 00 00 00 00", mode: "retrait", adresse: "",
@@ -79,18 +110,19 @@ function lireDoc_(chemin) {
   const r = fs_(chemin);
   return r.code === 200 ? valeur_({ mapValue: { fields: r.json.fields || {} } }) : null;
 }
-function listerDocs_(chemin) {
+function listerDocs_(chemin, strict) {
   let tous = [], page = "";
   do {
     const r = fs_(chemin + "?pageSize=300" + (page ? "&pageToken=" + encodeURIComponent(page) : ""));
-    if (r.code !== 200) break;
+    if (r.code !== 200) { if (strict) throw new Error("lecture impossible de " + chemin + " (" + r.code + ")"); break; }
     tous = tous.concat(r.json.documents || []);
     page = r.json.nextPageToken || "";
   } while (page);
   return tous;
 }
-function requete_(structuredQuery) {
+function requete_(structuredQuery, strict) {
   const r = fs_(":runQuery", "post", { structuredQuery: structuredQuery });
+  if (r.code !== 200 && strict) throw new Error("requête refusée (" + r.code + ")");
   return r.code === 200 ? (r.json || []).filter(x => x.document).map(x => x.document) : [];
 }
 const idDe_ = (d) => String(d.name).split("/").pop();
@@ -154,7 +186,7 @@ function envoyer_(c, test) {
     '<p style="margin:0 0 4px;font-size:16px"><b>' + html_(c.nom) + '</b> — <a href="tel:' + html_(String(c.tel).replace(/\s/g, "")) + '">' + html_(c.tel) + '</a></p>' +
     '<p style="margin:0 0 12px;color:#5C6A62">' + mode + ' souhaité le <b>' + dateFr_(c.date) + '</b>' + (c.adresse ? '<br>📍 ' + html_(c.adresse) : '') + '</p>' +
     '<table style="width:100%;border-collapse:collapse;font-size:14px">' +
-    (c.lignes || []).map(l => '<tr><td style="padding:6px 0;border-bottom:1px solid #eee">' + html_(l.nom) + ' — <b>' + l.personnes + ' pers.</b> × ' + euros_(l.prixPersonne) + '</td><td style="text-align:right;border-bottom:1px solid #eee"><b>' + euros_(l.montant) + '</b></td></tr>').join("") +
+    (c.lignes || []).map(l => '<tr><td style="padding:6px 0;border-bottom:1px solid #eee">' + html_(l.nom) + ' — <b>' + html_(l.personnes) + ' pers.</b> × ' + euros_(l.prixPersonne) + '</td><td style="text-align:right;border-bottom:1px solid #eee"><b>' + euros_(l.montant) + '</b></td></tr>').join("") +
     '<tr><td style="padding:8px 0;font-size:16px"><b>Total</b></td><td style="text-align:right;font-size:16px;color:#1C433B"><b>' + euros_(c.total) + '</b></td></tr></table>' +
     (c.remarque ? '<p style="font-style:italic;color:#5C6A62">« ' + html_(c.remarque) + ' »</p>' : '') +
     '<p style="margin:16px 0 0"><a href="' + ADMIN + '" style="background:#6E9B3A;color:#fff;text-decoration:none;padding:11px 18px;border-radius:10px;display:inline-block;font-weight:bold">Accepter ou refuser la commande</a></p>' +
@@ -166,17 +198,24 @@ function envoyer_(c, test) {
 // Le script relit la conversation dans Firebase ; au plus 1 e-mail par conversation toutes les 10 minutes.
 function nouveauMessage_(id) {
   if (!/^[A-Za-z0-9]{15,40}$/.test(id || "")) return "id-invalide";
+  const props = PropertiesService.getScriptProperties();
+  const deja = Number(props.getProperty("msg_" + id) || 0);
+  if (Date.now() - deja < 10 * 60 * 1000) return "deja-prevenu";
+  const conv = lireDoc_("/conversations/" + id);
+  if (!conv) return "introuvable";
+  const msgs = listerDocs_("/conversations/" + id + "/messages").map(d => valeur_({ mapValue: { fields: d.fields || {} } })).filter(m => m && m.date).sort((a, b) => a.date - b.date);
+  // jusqu'à 24 h : un message parti sans réseau prévient Marion quand il arrive
+  const recents = msgs.filter(m => m.de === "client" && Date.now() - m.date < 24 * 3600 * 1000 && m.date > deja).slice(-10);
+  if (!recents.length) return "rien-de-nouveau";
+  // mémo posé sous verrou court : un seul e-mail même si deux appels arrivent ensemble
   const verrou = LockService.getScriptLock();
-  verrou.waitLock(10000);
+  verrou.waitLock(20000);
   try {
-    const props = PropertiesService.getScriptProperties();
-    const deja = Number(props.getProperty("msg_" + id) || 0);
-    if (Date.now() - deja < 10 * 60 * 1000) return "deja-prevenu";
-    const conv = lireDoc_("/conversations/" + id);
-    if (!conv) return "introuvable";
-    const msgs = listerDocs_("/conversations/" + id + "/messages").map(d => valeur_({ mapValue: { fields: d.fields || {} } })).filter(m => m && m.date).sort((a, b) => a.date - b.date);
-    const recents = msgs.filter(m => m.de === "client" && Date.now() - m.date < 15 * 60 * 1000 && m.date > deja);
-    if (!recents.length) return "rien-de-nouveau";
+    if (Date.now() - Number(props.getProperty("msg_" + id) || 0) < 10 * 60 * 1000) return "deja-prevenu";
+    props.setProperty("msg_" + id, String(Date.now()));
+  } finally { verrou.releaseLock(); }
+  if (!quotaMail_()) { props.setProperty("msg_" + id, String(deja)); return "quota"; }
+  try {
     const texte = recents.map(m => "« " + m.texte + " »").join("\n");
     const htmlBody =
       '<div style="font-family:Arial,sans-serif;max-width:520px;color:#22302A">' +
@@ -187,22 +226,20 @@ function nouveauMessage_(id) {
       '<p style="margin:14px 0 0"><a href="' + ADMIN + '" style="background:#6E9B3A;color:#fff;text-decoration:none;padding:11px 18px;border-radius:10px;display:inline-block;font-weight:bold">Répondre dans l\'application</a></p>' +
       '</div></div>';
     MailApp.sendEmail({ to: DEST, replyTo: DEST, subject: "💬 Nouveau message de " + conv.nom, body: "Message de " + conv.nom + " :\n\n" + texte + "\n\nRépondre : " + ADMIN, htmlBody: htmlBody, name: "Appli Épicerie Raddonnaise" });
-    props.setProperty("msg_" + id, String(Date.now()));
     return "ok";
-  } finally { verrou.releaseLock(); }
+  } catch (err) { props.setProperty("msg_" + id, String(deja)); throw err; }
 }
 
 // ── Nouvelle réservation anti-gaspi (promo, date courte, panier) ──
 function nouvelleResa_(id) {
   if (!/^[A-Za-z0-9]{15,40}$/.test(id || "")) return "id-invalide";
-  const verrou = LockService.getScriptLock();
-  verrou.waitLock(10000);
+  const r = lireDoc_("/resas/" + id);
+  if (!r) return "introuvable";
+  if (r.statut !== "reservee" || Date.now() - Number(r.cree || 0) > 24 * 3600 * 1000) return "trop-ancienne";
+  const cle = "resa_" + id;
+  if (!reserver_(cle)) return "deja-envoye";
+  if (!quotaMail_()) { liberer_(cle); return "quota"; }
   try {
-    const props = PropertiesService.getScriptProperties();
-    if (props.getProperty("resa_" + id)) return "deja-envoye";
-    const r = lireDoc_("/resas/" + id);
-    if (!r) return "introuvable";
-    if (r.statut !== "reservee" || Date.now() - Number(r.cree || 0) > 30 * 60 * 1000) return "trop-ancienne";
     const htmlBody =
       '<div style="font-family:Arial,sans-serif;max-width:520px;color:#22302A">' +
       '<div style="background:#2E7D32;color:#fff;padding:14px 18px;border-radius:12px 12px 0 0;font-size:18px"><b>🧺 Réservation ' + html_(r.numero) + '</b></div>' +
@@ -214,9 +251,8 @@ function nouvelleResa_(id) {
       '</div></div>';
     MailApp.sendEmail({ to: DEST, replyTo: DEST, subject: "🧺 Réservation : " + r.qte + " × " + r.titre + " (" + r.nom + ")",
       body: r.qte + " × " + r.titre + "\n" + r.nom + (r.tel ? " — " + r.tel : "") + "\nÀ retirer " + (r.retrait || "à l'épicerie") + "\n\n" + ADMIN, htmlBody: htmlBody, name: "Appli Épicerie Raddonnaise" });
-    props.setProperty("resa_" + id, String(Date.now()));
     return "ok";
-  } finally { verrou.releaseLock(); }
+  } catch (err) { liberer_(cle); throw err; }
 }
 
 function reponse_(r) {
@@ -230,23 +266,18 @@ const APPLI = "https://rikou3170-lab.github.io/epicerie_radonnaise/";
 function push_(type, id) {
   if (!aCompteService_()) return "pas-de-compte-de-service";
   if (!/^[A-Za-z0-9]{15,40}$/.test(id || "")) return "id-invalide";
-  const verrou = LockService.getScriptLock();
-  verrou.waitLock(15000);
-  try {
-    if (type === "cmd") return pushCommande_(id);
-    if (type === "msg") return pushMessage_(id);
-    if (type === "diff") return pushDiffusion_(id);
-    return "type-invalide";
-  } finally { verrou.releaseLock(); }
+  if (type === "diff") return pushDiffusion_(id);   // créée par Marion seule (règles) : pas de plafond
+  if (!quotaPush_()) return "quota";
+  if (type === "cmd") return pushCommande_(id);
+  if (type === "msg") return pushMessage_(id);
+  return "type-invalide";
 }
 function heure_(h) { return h ? String(h).replace(":", "h") : ""; }
 
 function pushCommande_(id) {
   const c = lireDoc_("/commandes/" + id);
   if (!c) return "introuvable";
-  const props = PropertiesService.getScriptProperties();
   const cle = "pc_" + id + "_" + c.statut;
-  if (props.getProperty(cle)) return "deja-envoye";
   const jour = c.dateRetrait || c.date;
   const hier = Utilities.formatDate(new Date(Date.now() - 2 * 864e5), "Europe/Paris", "yyyy-MM-dd");
   if (!jour || jour < hier) return "trop-ancienne";
@@ -256,9 +287,11 @@ function pushCommande_(id) {
   else if (c.statut === "refusee") { titre = "Commande " + c.numero + " non acceptée"; texte = c.message || "Contactez l'épicerie pour en savoir plus."; }
   else if (c.statut === "prete") { titre = "🧺 Votre commande est prête !"; texte = "Commande " + c.numero + " — vous pouvez venir la chercher" + (c.heure ? " (prévu à " + heure_(c.heure) + ")" : "") + "."; }
   else return "rien-a-dire";
-  props.setProperty(cle, String(Date.now()));
-  const app = requete_({ from: [{ collectionId: "appareils" }], where: { fieldFilter: { field: { fieldPath: "refs" }, op: "ARRAY_CONTAINS", value: { stringValue: id } } } });
-  return "ok:" + envoyerPush_(app, { titre: titre, texte: texte, tag: "cmd-" + id });
+  if (!reserver_(cle)) return "deja-envoye";
+  try {
+    const app = requete_({ from: [{ collectionId: "appareils" }], where: { fieldFilter: { field: { fieldPath: "refs" }, op: "ARRAY_CONTAINS", value: { stringValue: id } } } });
+    return "ok:" + envoyerPush_(app, { titre: titre, texte: texte, tag: "cmd-" + id });
+  } catch (err) { liberer_(cle); throw err; }
 }
 
 function pushMessage_(id) {
@@ -266,23 +299,29 @@ function pushMessage_(id) {
     .filter(m => m && m.date).sort((a, b) => a.date - b.date);
   const m = msgs[msgs.length - 1];
   if (!m || m.de !== "epicerie" || Date.now() - m.date > 30 * 60 * 1000) return "rien-de-nouveau";
-  const props = PropertiesService.getScriptProperties();
-  if (Number(props.getProperty("pm_" + id) || 0) >= m.date) return "deja-envoye";
-  props.setProperty("pm_" + id, String(m.date));
-  const t = String(m.texte || "").replace(/\s+/g, " ").trim();
-  const app = requete_({ from: [{ collectionId: "appareils" }], where: { fieldFilter: { field: { fieldPath: "refs" }, op: "ARRAY_CONTAINS", value: { stringValue: id } } } });
-  return "ok:" + envoyerPush_(app, { titre: "💬 L'épicerie vous a répondu", texte: t.length > 120 ? t.slice(0, 118) + "…" : t, tag: "msg" });
+  const cle = "pm_" + id + "_" + m.date;
+  if (!reserver_(cle)) return "deja-envoye";
+  try {
+    const t = String(m.texte || "").replace(/\s+/g, " ").trim();
+    const parRef = (ref) => requete_({ from: [{ collectionId: "appareils" }], where: { fieldFilter: { field: { fieldPath: "refs" }, op: "ARRAY_CONTAINS", value: { stringValue: ref } } } });
+    let app = parRef(id);
+    // conversation ouverte par Marion depuis une commande ou une réservation (« Écrire au client ») :
+    // le téléphone ne la connaît pas encore, mais il suit la commande / la réservation d'origine
+    if (!app.length) { const conv = lireDoc_("/conversations/" + id); if (conv && /^[A-Za-z0-9]{15,40}$/.test(conv.via || "")) app = parRef(conv.via); }
+    return "ok:" + envoyerPush_(app, { titre: "💬 Message de l'épicerie", texte: t.length > 120 ? t.slice(0, 118) + "…" : t, tag: "msg" });
+  } catch (err) { liberer_(cle); throw err; }
 }
 
 function pushDiffusion_(id) {
   const x = lireDoc_("/diffusions/" + id);
   if (!x) return "introuvable";
   if (Date.now() - Number(x.cree || 0) > 30 * 60 * 1000) return "trop-ancienne";
-  const props = PropertiesService.getScriptProperties();
-  if (props.getProperty("pd_" + id)) return "deja-envoye";
-  props.setProperty("pd_" + id, String(Date.now()));
-  const app = requete_({ from: [{ collectionId: "appareils" }], where: { fieldFilter: { field: { fieldPath: "promo" }, op: "EQUAL", value: { booleanValue: true } } } });
-  const n = envoyerPush_(app, { titre: String(x.titre || "").slice(0, 50), texte: String(x.texte || "").slice(0, 160), tag: "bonplan" });
+  if (!reserver_("pd_" + id)) return "deja-envoye";
+  let n;
+  try {
+    const app = requete_({ from: [{ collectionId: "appareils" }], where: { fieldFilter: { field: { fieldPath: "promo" }, op: "EQUAL", value: { booleanValue: true } } } });
+    n = envoyerPush_(app, { titre: String(x.titre || "").slice(0, 50), texte: String(x.texte || "").slice(0, 160), tag: "bonplan" });
+  } catch (err) { liberer_("pd_" + id); throw err; }
   fs_("/diffusions/" + id + "?updateMask.fieldPaths=envoye", "patch", { fields: { envoye: { integerValue: String(n) } } });
   return "ok:" + n;
 }
@@ -303,7 +342,8 @@ function envoyerPush_(appareils, m) {
     }));
     UrlFetchApp.fetchAll(reqs).forEach((r, j) => {
       if (r.getResponseCode() === 200) ok++;
-      else if (r.getResponseCode() === 404) fs_("/appareils/" + idDe_(lot[j]), "delete");
+      else if (r.getResponseCode() === 404 || ([400, 403].indexOf(r.getResponseCode()) >= 0 &&
+        /UNREGISTERED|SENDER_ID_MISMATCH|registration token|not a valid FCM/i.test(r.getContentText()))) fs_("/appareils/" + idDe_(lot[j]), "delete");
     });
   }
   return ok;
@@ -318,8 +358,11 @@ function sauvegarde() {
   if (!aCompteService_()) throw new Error("Compte de service manquant (SA_JSON).");
   const data = { date: new Date().toISOString(), projet: PROJET, documents: {} };
   const ranger = (d) => { data.documents[String(d.name).split("/documents/")[1]] = d.fields || {}; };
-  COLLECTIONS.forEach(c => listerDocs_("/" + c).forEach(ranger));
-  SOUS_COLLECTIONS.forEach(c => requete_({ from: [{ collectionId: c, allDescendants: true }] }).forEach(ranger));
+  // lecture stricte : au moindre refus la sauvegarde s'arrête en erreur (Google prévient Eric par e-mail)
+  // au lieu d'enregistrer un fichier incomplet qui pousserait les bonnes sauvegardes hors des 8 gardées
+  COLLECTIONS.forEach(c => listerDocs_("/" + c, true).forEach(ranger));
+  SOUS_COLLECTIONS.forEach(c => requete_({ from: [{ collectionId: c, allDescendants: true }] }, true).forEach(ranger));
+  if (!Object.keys(data.documents).some(k => k.indexOf("shop/") === 0)) throw new Error("Sauvegarde vide : configuration introuvable.");
   const noms = DriveApp.getFoldersByName("Sauvegardes Épicerie Raddonnaise");
   const dossier = noms.hasNext() ? noms.next() : DriveApp.createFolder("Sauvegardes Épicerie Raddonnaise");
   const nom = "sauvegarde-" + Utilities.formatDate(new Date(), "Europe/Paris", "yyyy-MM-dd") + ".json";
@@ -334,7 +377,7 @@ function sauvegarde() {
 // Les mémos « déjà envoyé » de plus de 90 jours sont effacés (la mémoire du script est limitée)
 function nettoyer_() {
   const props = PropertiesService.getScriptProperties(), tout = props.getProperties(), limite = Date.now() - 90 * 864e5;
-  Object.keys(tout).forEach(k => { if (/^(envoye_|msg_|resa_|pc_|pm_|pd_)/.test(k) && Number(tout[k]) < limite) props.deleteProperty(k); });
+  Object.keys(tout).forEach(k => { if ((/^(envoye_|msg_|resa_|pc_|pm_|pd_)/.test(k) && Number(tout[k]) < limite) || (/^q_/.test(k) && k.replace(/^q_[a-z]+_/, "").slice(0, 8) < Utilities.formatDate(new Date(Date.now() - 3 * 864e5), "Europe/Paris", "yyyyMMdd"))) props.deleteProperty(k); });
 }
 // À lancer UNE fois à la main : programme la sauvegarde chaque lundi vers 3 h.
 function installerSauvegarde() {
