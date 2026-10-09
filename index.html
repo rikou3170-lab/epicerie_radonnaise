@@ -22,6 +22,20 @@
 <body>
   <div id="root"></div>
   <noscript>Activez JavaScript pour utiliser l'application.</noscript>
-  <script type="module" src="client.js?v=1.53"></script>
+  <script>
+    // Filet de sécurité : si l'appli ne s'affiche pas (mise à jour coupée, réseau…), on propose de recharger
+    (function () {
+      function secours() {
+        var r = document.getElementById("root"); if (!r || r.childElementCount) return;
+        r.innerHTML = '<div style="font-family:system-ui,sans-serif;text-align:center;padding:60px 24px;color:#1C433B">'
+          + '<div style="font-size:19px;font-weight:800;margin-bottom:8px">Chargement…</div>'
+          + '<div style="font-size:14px;color:#5C6A62;margin-bottom:20px">L\'application met un peu de temps à démarrer.</div>'
+          + '<button onclick="location.reload()" style="border:none;background:#1C433B;color:#fff;font-size:16px;font-weight:800;padding:14px 26px;border-radius:12px">Recharger</button></div>';
+      }
+      window.__secours = secours;
+      setTimeout(secours, 7000);
+    })();
+  </script>
+  <script type="module" src="client.js?v=1.54" onerror="window.__secours && window.__secours()"></script>
 </body>
 </html>
