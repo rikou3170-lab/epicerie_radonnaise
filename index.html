@@ -20,6 +20,20 @@
   <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
 </head>
 <body>
+<style>
+/* Téléphone tourné à l'horizontale : l'appli est prévue en portrait (l'iPhone ne permet pas de bloquer la rotation d'une appli web) */
+#portrait{display:none}
+@media (orientation:landscape) and (max-height:500px){
+  #portrait{display:flex;position:fixed;inset:0;z-index:2147483000;background:#1C433B;color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;font-family:'Nunito',system-ui,sans-serif}
+  #portrait .ic{font-size:64px;animation:pt-tourne 2s ease-in-out infinite}
+  #portrait b{font-size:22px}
+  #portrait span{font-size:14px;opacity:.85}
+  body{overflow:hidden}
+}
+@keyframes pt-tourne{0%,30%{transform:rotate(-90deg)}60%,100%{transform:rotate(0)}}
+</style>
+<div id="portrait" role="alert"><div class="ic">📱</div><b>Tournez votre téléphone</b><span>L'appli s'utilise à la verticale.</span></div>
+
   <div id="root"></div>
   <noscript>Activez JavaScript pour utiliser l'application.</noscript>
   <script>
@@ -36,6 +50,6 @@
       setTimeout(secours, 7000);
     })();
   </script>
-  <script type="module" src="client.js?v=1.98" onerror="window.__secours && window.__secours()"></script>
+  <script type="module" src="client.js?v=1.99" onerror="window.__secours && window.__secours()"></script>
 </body>
 </html>
