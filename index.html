@@ -35,65 +35,80 @@
 <div id="portrait" role="alert"><div class="ic">📱</div><b>Tournez votre téléphone</b><span>L'appli s'utilise à la verticale.</span></div>
 
 
-<!-- ═══ Ouverture animée (s'affiche tout de suite, pendant que l'appli se charge) ═══ -->
+<!-- ═══ Ouverture animée en 3D (s'affiche tout de suite, pendant que l'appli se charge) ═══ -->
 <style>
 html.ouv{background:#10302A}
 #ouverture{position:fixed;inset:0;z-index:2147482000;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
-  background:radial-gradient(circle at 50% 42%,#2B6352 0%,#1C433B 38%,#0E2A24 100%);font-family:'Nunito',system-ui,sans-serif;-webkit-tap-highlight-color:transparent;
-  clip-path:circle(150% at 50% 42%);transition:clip-path .7s cubic-bezier(.7,0,.3,1),opacity .7s ease}
-#ouverture.fin{clip-path:circle(0% at 50% 42%);opacity:.6}
-#ouverture .ov-scene{position:relative;width:min(78vw,330px);aspect-ratio:1;display:flex;align-items:center;justify-content:center;margin-top:-6vh}
-#ouverture .ov-glow{position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,rgba(246,212,122,.45) 0%,rgba(246,212,122,.12) 35%,transparent 65%);opacity:0;animation:ovGlow 2.6s ease .25s forwards}
-#ouverture .ov-rayons{position:absolute;inset:-40%;background:repeating-conic-gradient(from 0deg,rgba(255,243,196,.10) 0deg 6deg,transparent 6deg 18deg);border-radius:50%;
-  -webkit-mask:radial-gradient(circle,#000 20%,transparent 62%);mask:radial-gradient(circle,#000 20%,transparent 62%);opacity:0;animation:ovRayons 6s linear .5s forwards}
-#ouverture svg.ov-anneau{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
-#ouverture .ov-anneau circle{fill:none;stroke:url(#ovOr);stroke-width:2.2;stroke-linecap:round;stroke-dasharray:302;stroke-dashoffset:302;animation:ovTrace 1s cubic-bezier(.6,0,.2,1) .1s forwards}
-#ouverture .ov-anneau circle.c2{stroke-width:.8;opacity:.5;stroke-dasharray:4 6;stroke-dashoffset:0;animation:ovTourne 9s linear infinite;transform-origin:50% 50%}
-#ouverture .ov-logo{position:relative;width:74%;opacity:0;transform:scale(.2) rotate(-12deg);animation:ovPop 1s cubic-bezier(.25,1.55,.45,1) .45s forwards,ovFlotte 3s ease-in-out 1.6s infinite}
-#ouverture .ov-logo img{display:block;width:100%;height:auto;filter:drop-shadow(0 14px 22px rgba(0,0,0,.35))}
-#ouverture .ov-brille{position:absolute;inset:0;-webkit-mask:url(logo-intro.png) center/100% auto no-repeat;mask:url(logo-intro.png) center/100% auto no-repeat;
-  background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.85) 48%,rgba(255,250,220,.9) 50%,transparent 62%);background-size:300% 100%;background-position:120% 0;animation:ovBrille 1.1s ease 1.25s forwards}
-#ouverture .ov-p{position:absolute;left:50%;top:50%;width:var(--t);height:var(--t);margin:calc(var(--t)/-2);opacity:0;animation:ovEclat 1.3s cubic-bezier(.15,.7,.3,1) var(--d) forwards}
-#ouverture .ov-p.f{background:#A9C75A;border-radius:0 70% 0 70%}
+  background:radial-gradient(circle at 50% 40%,#2E6A57 0%,#1C433B 40%,#0B231E 100%);font-family:'Nunito',system-ui,sans-serif;-webkit-tap-highlight-color:transparent;
+  clip-path:circle(150% at 50% 40%);transition:clip-path .7s cubic-bezier(.7,0,.3,1),opacity .7s ease}
+#ouverture.fin{clip-path:circle(0% at 50% 40%);opacity:.6}
+#ouverture .ov-scene{position:relative;width:min(70vw,300px);aspect-ratio:1;perspective:900px;perspective-origin:50% 40%;margin-top:-4vh}
+#ouverture .ov-monde{position:absolute;inset:0;transform-style:preserve-3d;animation:ovMonde 6s ease-in-out 1.6s infinite}
+#ouverture .ov-glow{position:absolute;inset:-25%;border-radius:50%;background:radial-gradient(circle,rgba(246,212,122,.5) 0%,rgba(246,212,122,.14) 34%,transparent 64%);opacity:0;animation:ovGlow 2.6s ease .3s forwards;transform:translateZ(-160px)}
+#ouverture .ov-rayons{position:absolute;inset:-55%;border-radius:50%;background:repeating-conic-gradient(rgba(255,243,196,.11) 0deg 5deg,transparent 5deg 16deg);
+  -webkit-mask:radial-gradient(circle,#000 18%,transparent 60%);mask:radial-gradient(circle,#000 18%,transparent 60%);opacity:0;animation:ovRayons 8s linear .5s forwards;transform:translateZ(-220px)}
+/* orbites dorées inclinées en 3D */
+#ouverture .ov-orbite{position:absolute;inset:-6%;border-radius:50%;border:2px solid rgba(246,212,122,.9);box-shadow:0 0 14px rgba(246,212,122,.55),inset 0 0 10px rgba(246,212,122,.35);
+  transform-style:preserve-3d;opacity:0;animation:ovOrbiteIn .9s cubic-bezier(.3,1.3,.5,1) var(--d) forwards,ovOrbite var(--v) linear calc(var(--d) + .9s) infinite}
+#ouverture .ov-orbite i{position:absolute;left:50%;top:-6px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFF8DC,#E9B949 60%,#B8860B);box-shadow:0 0 12px #F6D47A}
+#ouverture .ov-orbite.o1{--rx:74deg;--ry:0deg;--d:.15s;--v:5s}
+#ouverture .ov-orbite.o2{--rx:74deg;--ry:58deg;--d:.3s;--v:7s;border-color:rgba(255,243,196,.55);inset:-14%}
+#ouverture .ov-orbite.o3{--rx:74deg;--ry:-58deg;--d:.45s;--v:9s;border-width:1px;border-style:dashed;inset:-22%}
+/* la pomme : vient du fond en tournant sur elle-même, avec de l'épaisseur */
+#ouverture .ov-logo{position:absolute;inset:8%;transform-style:preserve-3d;opacity:0;animation:ovArrive 1.4s cubic-bezier(.2,.9,.25,1.12) .35s forwards,ovFlotte 3.2s ease-in-out 1.9s infinite}
+#ouverture .ov-logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;backface-visibility:visible}
+#ouverture .ov-logo img.ep{filter:brightness(.42) saturate(.7)}
+#ouverture .ov-logo img.face{filter:drop-shadow(0 0 1px rgba(0,0,0,.2))}
+#ouverture .ov-brille{position:absolute;inset:0;transform:translateZ(1px);-webkit-mask:url(logo-intro.png) center/contain no-repeat;mask:url(logo-intro.png) center/contain no-repeat;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.9) 48%,rgba(255,250,220,.95) 50%,transparent 62%);background-size:300% 100%;background-position:120% 0;animation:ovBrille 1.1s ease 1.6s forwards}
+#ouverture .ov-ombre{position:absolute;left:18%;right:18%;bottom:-16%;height:9%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.45),transparent);opacity:0;animation:ovMonte .8s ease 1.2s forwards,ovOmbre 3.2s ease-in-out 1.9s infinite}
+#ouverture .ov-p{position:absolute;left:50%;top:50%;width:var(--t);height:var(--t);margin:calc(var(--t)/-2);opacity:0;animation:ovEclat 1.5s cubic-bezier(.15,.7,.3,1) var(--d) forwards}
+#ouverture .ov-p.f{background:linear-gradient(135deg,#C9E38A,#6E9B3A);border-radius:0 70% 0 70%}
 #ouverture .ov-p.o{background:#FFE9A8;border-radius:50%;box-shadow:0 0 8px #F6D47A}
-#ouverture .ov-txt{position:relative;text-align:center;margin-top:2.5vh}
-#ouverture .ov-slogan{font-family:'Sacramento',cursive;font-size:clamp(30px,9vw,40px);line-height:1.1;background:linear-gradient(100deg,#E9B949,#FFF3C4 45%,#F6D47A 60%,#C9971C);
-  -webkit-background-clip:text;background-clip:text;color:transparent;clip-path:inset(0 100% 0 0);animation:ovEcrit 1s ease 1.15s forwards;padding:0 10px}
-#ouverture .ov-lieu{margin-top:10px;font-size:11px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:rgba(255,243,196,.75);opacity:0;animation:ovMonte .7s ease 1.7s forwards}
-@keyframes ovTrace{to{stroke-dashoffset:0}}
-@keyframes ovTourne{to{transform:rotate(360deg)}}
-@keyframes ovGlow{0%{opacity:0;transform:scale(.6)}40%{opacity:1;transform:scale(1.05)}100%{opacity:.75;transform:scale(1)}}
-@keyframes ovRayons{0%{opacity:0;transform:rotate(0)}20%{opacity:1}100%{opacity:.8;transform:rotate(60deg)}}
-@keyframes ovPop{0%{opacity:0;transform:scale(.2) rotate(-12deg)}60%{opacity:1}100%{opacity:1;transform:scale(1) rotate(0)}}
-@keyframes ovFlotte{0%,100%{translate:0 0}50%{translate:0 -6px}}
+#ouverture .ov-txt{position:relative;text-align:center;margin-top:7vh;perspective:600px}
+#ouverture .ov-slogan{font-family:'Sacramento',cursive;font-size:clamp(32px,9.5vw,42px);line-height:1.05;background:linear-gradient(100deg,#E9B949,#FFF3C4 45%,#F6D47A 60%,#C9971C);
+  -webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;transform:rotateX(80deg) translateY(20px);transform-origin:50% 100%;animation:ovBascule .9s cubic-bezier(.3,1.4,.5,1) 1.45s forwards;padding:0 12px;
+  filter:drop-shadow(0 3px 0 rgba(120,80,0,.55)) drop-shadow(0 8px 10px rgba(0,0,0,.35))}
+#ouverture .ov-lieu{margin-top:10px;font-size:11px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:rgba(255,243,196,.75);opacity:0;animation:ovMonte .7s ease 1.9s forwards}
+@keyframes ovArrive{0%{opacity:0;transform:translateZ(-900px) rotateY(-540deg) rotateX(20deg) scale(.6)}25%{opacity:1}100%{opacity:1;transform:translateZ(0) rotateY(0) rotateX(0) scale(1)}}
+@keyframes ovFlotte{0%,100%{transform:translateY(0) rotateY(0) rotateX(0)}25%{transform:translateY(-10px) rotateY(16deg) rotateX(-4deg)}75%{transform:translateY(-4px) rotateY(-16deg) rotateX(4deg)}}
+@keyframes ovOmbre{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.82);opacity:.7}}
+@keyframes ovMonde{0%,100%{transform:rotateX(0) rotateY(0)}50%{transform:rotateX(6deg) rotateY(-6deg)}}
+@keyframes ovOrbiteIn{from{opacity:0;transform:rotateY(var(--ry)) rotateX(var(--rx)) rotateZ(0) scale(.3)}to{opacity:1;transform:rotateY(var(--ry)) rotateX(var(--rx)) rotateZ(0) scale(1)}}
+@keyframes ovOrbite{from{opacity:1;transform:rotateY(var(--ry)) rotateX(var(--rx)) rotateZ(0)}to{opacity:1;transform:rotateY(var(--ry)) rotateX(var(--rx)) rotateZ(360deg)}}
+@keyframes ovGlow{0%{opacity:0;transform:translateZ(-160px) scale(.6)}40%{opacity:1;transform:translateZ(-160px) scale(1.05)}100%{opacity:.8;transform:translateZ(-160px) scale(1)}}
+@keyframes ovRayons{0%{opacity:0;transform:translateZ(-220px) rotate(0)}20%{opacity:1}100%{opacity:.85;transform:translateZ(-220px) rotate(70deg)}}
 @keyframes ovBrille{to{background-position:-60% 0}}
-@keyframes ovEclat{0%{opacity:0;transform:translate(0,0) scale(.3) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1) rotate(var(--r))}}
-@keyframes ovEcrit{to{clip-path:inset(0 0 0 0)}}
+@keyframes ovEclat{0%{opacity:0;transform:translate3d(0,0,0) scale(.3) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate3d(var(--x),var(--y),var(--z)) scale(1) rotate(var(--r))}}
+@keyframes ovBascule{to{opacity:1;transform:rotateX(0) translateY(0)}}
 @keyframes ovMonte{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){#ouverture *{animation-duration:.01s!important;animation-delay:0s!important}#ouverture .ov-p,#ouverture .ov-rayons{display:none}}
+@media (prefers-reduced-motion:reduce){#ouverture *{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}#ouverture .ov-p,#ouverture .ov-rayons{display:none}}
 </style>
 <div id="ouverture" aria-label="Épicerie Raddonnaise">
-  <div class="ov-scene">
+  <div class="ov-scene"><div class="ov-monde">
     <div class="ov-rayons"></div><div class="ov-glow"></div>
-    <svg class="ov-anneau" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="ovOr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF3C4"/><stop offset=".5" stop-color="#E9B949"/><stop offset="1" stop-color="#B8860B"/></linearGradient></defs>
-      <circle cx="50" cy="50" r="48"/><circle class="c2" cx="50" cy="50" r="45"/></svg>
-    <div class="ov-logo"><img src="logo-intro.png" alt="Épicerie Raddonnaise"><div class="ov-brille"></div></div>
-  </div>
-  <div class="ov-txt"><div class="ov-slogan">Épicerie locale &amp; familiale</div><div class="ov-lieu">Raddon-et-Chapendu</div></div>
+    <div class="ov-orbite o3"><i></i></div><div class="ov-orbite o2"><i></i></div><div class="ov-orbite o1"><i></i></div>
+    <div class="ov-ombre"></div>
+    <div class="ov-logo"></div>
+  </div></div>
+  <div class="ov-txt"><div class="ov-slogan">Votre épicerie,<br>tout près de chez vous</div><div class="ov-lieu">Raddon-et-Chapendu</div></div>
 </div>
 <script>
   // Ouverture : au moins 2,4 s (ou un toucher), et jamais avant que l'appli soit prête derrière ; ensuite le cercle se referme sur l'écran du thème
   (function () {
     var o = document.getElementById("ouverture"), reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.documentElement.classList.add("ouv");
-    var sc = o.querySelector(".ov-scene");
+    var lg = o.querySelector(".ov-logo"), h = "";
+    for (var k = 9; k >= 1; k--) h += '<img class="ep" src="logo-intro.png" alt="" style="transform:translateZ(-' + k * 1.6 + 'px)">';   // épaisseur
+    lg.innerHTML = h + '<img class="face" src="logo-intro.png" alt="Épicerie Raddonnaise"><div class="ov-brille"></div>';
+    var sc = o.querySelector(".ov-monde");
     for (var i = 0; i < 26; i++) {   // éclats de feuilles et d'étincelles dorées
       var p = document.createElement("i"), a = Math.random() * Math.PI * 2, r = 120 + Math.random() * 120;
       p.className = "ov-p " + (i % 2 ? "f" : "o");
-      p.style.cssText = "--x:" + Math.cos(a) * r + "px;--y:" + Math.sin(a) * r + "px;--r:" + (Math.random() * 360 - 180) + "deg;--t:" + (i % 2 ? 9 + Math.random() * 7 : 4 + Math.random() * 4) + "px;--d:" + (.75 + Math.random() * .35) + "s";
+      p.style.cssText = "--x:" + Math.cos(a) * r + "px;--y:" + Math.sin(a) * r + "px;--z:" + (Math.random() * 500 - 150) + "px;--r:" + (Math.random() * 360 - 180) + "deg;--t:" + (i % 2 ? 9 + Math.random() * 7 : 4 + Math.random() * 4) + "px;--d:" + (1.05 + Math.random() * .35) + "s";
       sc.appendChild(p);
     }
-    var t0 = Date.now(), min = reduit ? 500 : 2400, pret = false, touche = false, fini = false;
+    var t0 = Date.now(), min = reduit ? 500 : 2900, pret = false, touche = false, fini = false;
     function essayer() {
       if (fini || !pret || (!touche && Date.now() - t0 < min)) return;
       fini = true; o.classList.add("fin"); o.style.pointerEvents = "none";
@@ -123,6 +138,6 @@ html.ouv{background:#10302A}
       setTimeout(secours, 7000);
     })();
   </script>
-  <script type="module" src="client.js?v=2.21" onerror="window.__secours && window.__secours()"></script>
+  <script type="module" src="client.js?v=2.22" onerror="window.__secours && window.__secours()"></script>
 </body>
 </html>
