@@ -41,8 +41,8 @@ html.ouv{background:#0D2721}
 #ouverture{position:fixed;inset:0;z-index:2147482000;overflow:hidden;font-family:'Nunito',system-ui,sans-serif;-webkit-tap-highlight-color:transparent;
   background:linear-gradient(#0D2721 0%,#1C433B 45%,#3F7A5C 72%,#E8C77A 100%);transition:opacity .6s ease,transform .6s ease}
 #ouverture.fin{opacity:0;transform:scale(1.04)}
-#ouverture .ov-soleil{position:absolute;left:50%;bottom:-30vw;width:120vw;height:120vw;margin-left:-60vw;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,236,170,.95) 0%,rgba(246,212,122,.55) 25%,rgba(246,212,122,0) 60%);transform:translateY(30%);opacity:0;animation:ovLeve 3s ease .1s forwards}
+#ouverture .ov-soleil{position:absolute;left:50%;bottom:-48vw;width:120vw;height:120vw;margin-left:-60vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,236,170,.85) 0%,rgba(246,212,122,.45) 24%,rgba(246,212,122,0) 58%);transform:translateY(30%);opacity:0;animation:ovLeve 3s ease .1s forwards}
 #ouverture .ov-colline{position:absolute;left:-10%;right:-10%;bottom:0;transform:translateY(100%)}
 #ouverture .ov-colline svg{display:block;width:100%;height:auto}
 #ouverture .ov-c1{animation:ovMonte 1.6s cubic-bezier(.2,.8,.2,1) .2s forwards}
@@ -53,9 +53,9 @@ html.ouv{background:#0D2721}
 #ouverture .ov-onde{position:absolute;left:50%;top:51%;width:60px;height:22px;margin:-11px 0 0 -30px;border:2px solid rgba(255,243,196,.9);border-radius:50%;opacity:0;animation:ovOnde .9s ease-out 1.92s forwards}
 #ouverture .ov-logo{position:absolute;left:50%;top:44%;width:min(66vw,280px);transform:translate(-50%,-50%) scale(.2);opacity:0;animation:ovLogo .9s cubic-bezier(.25,1.5,.45,1) 1.9s forwards}
 #ouverture .ov-logo img{display:block;width:100%;filter:drop-shadow(0 14px 20px rgba(0,0,0,.35))}
-#ouverture .ov-txt{position:absolute;left:0;right:0;top:66%;text-align:center}
-#ouverture .ov-slogan{font-family:'Sacramento',cursive;font-size:clamp(32px,9.4vw,42px);line-height:1.05;color:#FFF6DA;text-shadow:0 2px 12px rgba(0,0,0,.35);opacity:0;filter:blur(8px);animation:ovNet 1s ease 2.4s forwards}
-#ouverture .ov-lieu{margin-top:12px;font-size:10.5px;font-weight:800;letter-spacing:.4em;color:#1C433B;opacity:0;animation:ovFade .7s ease 2.8s forwards}
+#ouverture .ov-txt{position:absolute;left:0;right:0;top:63%;text-align:center}
+#ouverture .ov-slogan{font-family:'Sacramento',cursive;font-size:clamp(32px,9.4vw,42px);line-height:1.05;color:#FFF6DA;text-shadow:0 0 2px rgba(8,30,24,.7),0 2px 14px rgba(8,30,24,.85),0 0 32px rgba(8,30,24,.6);opacity:0;filter:blur(8px);animation:ovNet 1s ease 2.4s forwards}
+#ouverture .ov-lieu{margin-top:12px;font-size:10.5px;font-weight:800;letter-spacing:.4em;color:#FFE9A8;text-shadow:0 1px 8px rgba(8,30,24,.9);opacity:0;animation:ovFade .7s ease 2.8s forwards}
 #ouverture .ov-luc{position:absolute;width:4px;height:4px;border-radius:50%;background:#FFF3C4;box-shadow:0 0 10px 2px rgba(255,236,170,.8);opacity:0;animation:ovLuciole 3.5s ease-in-out infinite}
 @keyframes ovLeve{to{opacity:1;transform:translateY(0)}}
 @keyframes ovMonte{to{transform:translateY(0)}}
@@ -65,14 +65,67 @@ html.ouv{background:#0D2721}
 @keyframes ovNet{to{opacity:1;filter:blur(0)}}
 @keyframes ovFade{to{opacity:1}}
 @keyframes ovLuciole{0%,100%{opacity:0;transform:translate(0,0)}50%{opacity:1;transform:translate(var(--x),-24px)}}
-@media (prefers-reduced-motion:reduce){#ouverture *{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}#ouverture .ov-luc,#ouverture .ov-pomme,#ouverture .ov-onde{display:none}}
+
+/* ── Habillage Halloween (mémorisé par l'appli : il s'applique dès l'ouverture suivante) ── */
+#ouverture .ov-h{display:none}
+#ouverture.th-halloween{background:linear-gradient(#0E0718 0%,#1E1030 40%,#3A2252 70%,#8A3E1A 100%)}
+#ouverture.th-halloween .ov-h{display:block}
+#ouverture.th-halloween .ov-pomme.ov-n{display:none}
+#ouverture.th-halloween .ov-soleil{background:radial-gradient(circle,rgba(255,170,80,.9) 0%,rgba(232,115,28,.45) 25%,rgba(232,115,28,0) 60%)}
+#ouverture.th-halloween .ov-lune{position:absolute;left:50%;bottom:2vh;width:40vw;max-width:180px;aspect-ratio:1;margin-left:-20vw;border-radius:50%;
+  background:radial-gradient(circle at 40% 38%,#FFE3A8,#F7A94A 60%,#D9621A);box-shadow:0 0 60px 20px rgba(255,150,60,.35);transform:translateY(60%);opacity:0;animation:ovLeve 2.6s cubic-bezier(.2,.8,.2,1) .2s forwards}
+@media (min-width:460px){#ouverture.th-halloween .ov-lune{margin-left:-90px}}
+#ouverture.th-halloween .ov-c1 path{fill:#2A1840}
+#ouverture.th-halloween .ov-c2 path{fill:#1E1030}
+#ouverture.th-halloween .ov-c3 path{fill:#120A1E}
+#ouverture.th-halloween .ov-luc{background:#FFB547;box-shadow:0 0 10px 2px rgba(255,140,40,.8)}
+#ouverture.th-halloween .ov-onde{border-color:rgba(255,170,80,.95)}
+#ouverture.th-halloween .ov-slogan{color:#FFE7C2;text-shadow:0 0 2px rgba(20,8,30,.8),0 2px 14px rgba(20,8,30,.9),0 0 30px rgba(232,115,28,.45)}
+#ouverture.th-halloween .ov-lieu{color:#FFB547}
+#ouverture .ov-citrouilles{position:absolute;left:0;right:0;bottom:0;height:16vh;transform:translateY(100%);animation:ovMonte 1.6s cubic-bezier(.2,.8,.2,1) .55s forwards}
+#ouverture .ov-citrouilles svg{position:absolute;bottom:2vh;width:13vw;max-width:58px}
+#ouverture .ov-citrouilles .yeux{animation:ovLueur 1.6s ease-in-out infinite alternate}
+#ouverture .ov-cs{position:absolute;top:18%;left:-80px;animation:ovCS 3.4s ease-in-out .6s forwards}
+#ouverture .ov-cs svg{display:block}
+#ouverture .ov-cs .aile{transform-box:fill-box;animation:ovAile .2s ease-in-out infinite alternate}
+#ouverture .ov-cs .g{transform-origin:100% 60%}#ouverture .ov-cs .d{transform-origin:0% 60%}
+#ouverture .ov-brume{position:absolute;left:-30%;right:-30%;bottom:4vh;height:16vh;background:radial-gradient(ellipse at 30% 60%,rgba(210,190,240,.28),transparent 60%),radial-gradient(ellipse at 72% 50%,rgba(210,190,240,.22),transparent 55%);filter:blur(6px);animation:ovBrume 9s linear infinite alternate}
+@keyframes ovLueur{0%{opacity:1}100%{opacity:.6}}
+@keyframes ovAile{to{transform:scaleY(.25)}}
+@keyframes ovCS{0%{transform:translate(0,40px)}100%{transform:translate(calc(100vw + 160px),-60px)}}
+@keyframes ovBrume{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
+
+/* ── Habillage Octobre rose ── */
+#ouverture .ov-r{display:none}
+#ouverture.th-octobrerose{background:linear-gradient(#5E1238 0%,#8E1E50 38%,#D45A8A 72%,#F8BBD0 100%)}
+#ouverture.th-octobrerose .ov-r{display:block}
+#ouverture.th-octobrerose .ov-pomme.ov-n{display:none}
+#ouverture.th-octobrerose .ov-soleil{background:radial-gradient(circle,rgba(255,228,238,.9) 0%,rgba(248,187,208,.5) 25%,rgba(248,187,208,0) 60%)}
+#ouverture.th-octobrerose .ov-c1 path{fill:#B24A78}
+#ouverture.th-octobrerose .ov-c2 path{fill:#963461}
+#ouverture.th-octobrerose .ov-c3 path{fill:#6E1640}
+#ouverture.th-octobrerose .ov-luc{background:#FFFFFF;box-shadow:0 0 10px 2px rgba(248,187,208,.9)}
+#ouverture.th-octobrerose .ov-onde{border-color:rgba(255,228,238,.95)}
+#ouverture.th-octobrerose .ov-slogan{color:#FFF3F7;text-shadow:0 0 2px rgba(70,10,40,.8),0 2px 14px rgba(70,10,40,.85),0 0 30px rgba(236,64,122,.45)}
+#ouverture.th-octobrerose .ov-lieu{color:#FFE3EE}
+#ouverture.th-octobrerose .ov-logo{width:min(62vw,262px)}
+#ouverture .ov-ballon{position:absolute;bottom:-80px;animation:ovBallon 4.5s ease-out forwards}
+@keyframes ovBallon{0%{transform:translateY(0) rotate(-6deg);opacity:0}12%{opacity:.95}100%{transform:translate(16px,-110vh) rotate(6deg);opacity:.9}}
+@media (prefers-reduced-motion:reduce){#ouverture *{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}#ouverture .ov-luc,#ouverture .ov-pomme,#ouverture .ov-onde,#ouverture .ov-cs{display:none}}
 </style>
 <div id="ouverture" aria-label="Épicerie Raddonnaise">
   <div class="ov-soleil"></div>
+  <div class="ov-h ov-lune"></div>
+  <div class="ov-h ov-cs"><svg viewBox="0 0 60 26" width="46"><g fill="#0A0512"><path class="aile g" d="M30 12C24 2 14 0 2 6c6 1 8 4 8 7 4-2 8-1 10 2 3-2 6-2 10-3z"/><path class="aile d" d="M30 12C36 2 46 0 58 6c-6 1-8 4-8 7-4-2-8-1-10 2-3-2-6-2-10-3z"/><ellipse cx="30" cy="14" rx="4" ry="5.5"/></g></svg></div><div class="ov-h ov-cs" style="top:24%;animation-delay:.85s"><svg viewBox="0 0 60 26" width="30"><g fill="#0A0512"><path class="aile g" d="M30 12C24 2 14 0 2 6c6 1 8 4 8 7 4-2 8-1 10 2 3-2 6-2 10-3z"/><path class="aile d" d="M30 12C36 2 46 0 58 6c-6 1-8 4-8 7-4-2-8-1-10 2-3-2-6-2-10-3z"/><ellipse cx="30" cy="14" rx="4" ry="5.5"/></g></svg></div><div class="ov-h ov-cs" style="top:13%;animation-delay:1.05s"><svg viewBox="0 0 60 26" width="24"><g fill="#0A0512"><path class="aile g" d="M30 12C24 2 14 0 2 6c6 1 8 4 8 7 4-2 8-1 10 2 3-2 6-2 10-3z"/><path class="aile d" d="M30 12C36 2 46 0 58 6c-6 1-8 4-8 7-4-2-8-1-10 2-3-2-6-2-10-3z"/><ellipse cx="30" cy="14" rx="4" ry="5.5"/></g></svg></div>
   <div class="ov-colline ov-c1"><svg viewBox="0 0 400 140" preserveAspectRatio="none"><path d="M0 70 C80 20 160 40 220 60 S340 30 400 50 V140 H0z" fill="#2E6A4A"/></svg></div>
   <div class="ov-colline ov-c2"><svg viewBox="0 0 400 120" preserveAspectRatio="none"><path d="M0 60 C90 90 170 30 260 50 S360 80 400 40 V120 H0z" fill="#245A3E"/></svg></div>
   <div class="ov-colline ov-c3"><svg viewBox="0 0 400 100" preserveAspectRatio="none"><path d="M0 50 C100 20 200 70 300 40 S380 30 400 45 V100 H0z" fill="#1A4530"/></svg></div>
-  <div class="ov-pomme"><svg viewBox="0 0 44 44"><defs><radialGradient id="ovPg" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#F3F7B0"/><stop offset=".45" stop-color="#A9C75A"/><stop offset="1" stop-color="#5E8A2C"/></radialGradient></defs>
+<div class="ov-r ov-ballon" style="left:10%;animation-delay:0.3s"><svg viewBox="0 0 30 50" width="34"><path d="M15 27C6 21 1 16 3.5 10 5.7 5.5 11 5.5 15 9.8 19 5.5 24.3 5.5 26.5 10 29 16 24 21 15 27z" fill="#EC407A"/><path d="M15 27c-1 6 2 10 0 16" stroke="#8E1E50" stroke-width=".9" fill="none" opacity=".6"/></svg></div><div class="ov-r ov-ballon" style="left:78%;animation-delay:0.7s"><svg viewBox="0 0 30 50" width="26"><path d="M15 27C6 21 1 16 3.5 10 5.7 5.5 11 5.5 15 9.8 19 5.5 24.3 5.5 26.5 10 29 16 24 21 15 27z" fill="#FFFFFF"/><path d="M15 27c-1 6 2 10 0 16" stroke="#8E1E50" stroke-width=".9" fill="none" opacity=".6"/></svg></div><div class="ov-r ov-ballon" style="left:60%;animation-delay:1.2s"><svg viewBox="0 0 30 50" width="30"><path d="M15 27C6 21 1 16 3.5 10 5.7 5.5 11 5.5 15 9.8 19 5.5 24.3 5.5 26.5 10 29 16 24 21 15 27z" fill="#F48FB1"/><path d="M15 27c-1 6 2 10 0 16" stroke="#8E1E50" stroke-width=".9" fill="none" opacity=".6"/></svg></div><div class="ov-r ov-ballon" style="left:30%;animation-delay:1.7s"><svg viewBox="0 0 30 50" width="22"><path d="M15 27C6 21 1 16 3.5 10 5.7 5.5 11 5.5 15 9.8 19 5.5 24.3 5.5 26.5 10 29 16 24 21 15 27z" fill="#F06292"/><path d="M15 27c-1 6 2 10 0 16" stroke="#8E1E50" stroke-width=".9" fill="none" opacity=".6"/></svg></div>
+  <div class="ov-r ov-pomme"><svg viewBox="0 0 24 30" style="filter:drop-shadow(0 0 10px rgba(255,220,235,.95))"><path d="M12 2c-3.4 0-5.5 2.4-5.5 5.4 0 3.4 2.2 6.8 5.5 11.6 3.3-4.8 5.5-8.2 5.5-11.6C17.5 4.4 15.4 2 12 2zm0 3c1.5 0 2.5 1 2.5 2.5 0 1.6-1 3.5-2.5 6-1.5-2.5-2.5-4.4-2.5-6C9.5 6 10.5 5 12 5z" fill="#EC407A"/><path d="M10 17 3.5 27.5l3.7-.4 1.7 3.4 5.3-9.4zM14 17l6.5 10.5-3.7-.4-1.7 3.4-5.3-9.4z" fill="#F48FB1"/></svg></div>
+  <div class="ov-h ov-brume"></div>
+  <div class="ov-h ov-citrouilles"><svg viewBox="0 0 40 36" style="left:8%"><path d="M20 7c-2-4-1-6 1-7l2 1c-2 1-2 3-1 6z" fill="#4E6B2A"/><ellipse cx="12" cy="21" rx="10" ry="12" fill="#C9561A"/><ellipse cx="28" cy="21" rx="10" ry="12" fill="#C9561A"/><ellipse cx="20" cy="21" rx="10" ry="13" fill="#E8731C"/><g class="yeux" fill="#FFD36B"><path d="M11 17l5 0-2.5-4.5zM24 17l5 0-2.5-4.5z"/><path d="M10 24c4 4 16 4 20 0l-3 1-2-2-2 2-3-2-3 2-2-2-2 2z"/></g></svg><svg class="p2" viewBox="0 0 40 36" style="left:78%"><path d="M20 7c-2-4-1-6 1-7l2 1c-2 1-2 3-1 6z" fill="#4E6B2A"/><ellipse cx="12" cy="21" rx="10" ry="12" fill="#C9561A"/><ellipse cx="28" cy="21" rx="10" ry="12" fill="#C9561A"/><ellipse cx="20" cy="21" rx="10" ry="13" fill="#E8731C"/><g class="yeux" fill="#FFD36B"><path d="M11 17l5 0-2.5-4.5zM24 17l5 0-2.5-4.5z"/><path d="M10 24c4 4 16 4 20 0l-3 1-2-2-2 2-3-2-3 2-2-2-2 2z"/></g></svg></div>
+  <div class="ov-h ov-pomme"><svg viewBox="0 0 40 36" style="filter:drop-shadow(0 0 12px rgba(255,150,50,.9))"><path d="M20 7c-2-4-1-6 1-7l2 1c-2 1-2 3-1 6z" fill="#4E6B2A"/><ellipse cx="12" cy="21" rx="10" ry="12" fill="#C9561A"/><ellipse cx="28" cy="21" rx="10" ry="12" fill="#C9561A"/><ellipse cx="20" cy="21" rx="10" ry="13" fill="#E8731C"/><g fill="#FFD36B"><path d="M11 17l5 0-2.5-4.5zM24 17l5 0-2.5-4.5z"/><path d="M10 24c4 4 16 4 20 0l-3 1-2-2-2 2-3-2-3 2-2-2-2 2z"/></g></svg></div>
+  <div class="ov-pomme ov-n"><svg viewBox="0 0 44 44"><defs><radialGradient id="ovPg" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#F3F7B0"/><stop offset=".45" stop-color="#A9C75A"/><stop offset="1" stop-color="#5E8A2C"/></radialGradient></defs>
     <path d="M22 12c-6-5-17-2-17 10 0 9 7 18 12 18 2 0 3-1 5-1s3 1 5 1c5 0 12-9 12-18 0-12-11-15-17-10z" fill="url(#ovPg)"/><path d="M22 12c0-4 1-7 3-9" stroke="#3B2A1E" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg></div>
   <div class="ov-onde"></div>
   <div class="ov-logo"><img src="logo-intro.png" alt="Épicerie Raddonnaise"></div>
@@ -83,6 +136,14 @@ html.ouv{background:#0D2721}
   (function () {
     var o = document.getElementById("ouverture"), reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.documentElement.classList.add("ouv");
+    try {   // ambiance du thème en cours, mémorisée par l'appli ; après le dernier jour du thème, l'ouverture redevient normale
+      var am = JSON.parse(localStorage.getItem("epicerie-raddonnaise-ambiance") || "null"), auj = new Date().toLocaleDateString("sv-SE");
+      var LOGOS = { halloween: "logo-halloween.png", noel: "logo-noel.png", octobrerose: "logo-rose.png" };
+      if (am && LOGOS[am.id] && (!am.au || auj <= am.au)) {
+        if (am.id !== "noel") o.classList.add("th-" + am.id);
+        var li = o.querySelector(".ov-logo img"); li.onerror = function () { li.onerror = null; li.src = "logo-intro.png"; }; li.src = LOGOS[am.id];   // la pomme déguisée
+      }
+    } catch (e) { }
     for (var i = 0; i < 14; i++) {   // lucioles
       var e = document.createElement("i"); e.className = "ov-luc";
       e.style.cssText = "left:" + (5 + Math.random() * 90) + "%;top:" + (35 + Math.random() * 45) + "%;--x:" + (Math.random() * 40 - 20) + "px;animation-delay:" + (1 + Math.random() * 2.5) + "s";
@@ -118,6 +179,6 @@ html.ouv{background:#0D2721}
       setTimeout(secours, 7000);
     })();
   </script>
-  <script type="module" src="client.js?v=2.23" onerror="window.__secours && window.__secours()"></script>
+  <script type="module" src="client.js?v=2.24" onerror="window.__secours && window.__secours()"></script>
 </body>
 </html>
