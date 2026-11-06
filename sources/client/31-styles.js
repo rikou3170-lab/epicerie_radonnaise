@@ -217,10 +217,10 @@ var Ic2 = {
 .mini img{width:100%;height:112px;object-fit:cover;display:block}
 .mini .b{padding:11px 12px}
 .mini .nm{font-weight:700;font-size:12.5px;line-height:1.25;margin-bottom:5px}
-.prods{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px;margin:0 -2px 14px}
+.prods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:2px 0 6px;margin:0 0 10px}
 .prods::-webkit-scrollbar{display:none}
-.prod{flex:0 0 132px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 8px 12px;font-family:var(--body);color:var(--ink);cursor:pointer;position:relative}
-.prod-ph{width:72px;height:72px;border-radius:50%;overflow:hidden;background:var(--apple-soft);display:flex;align-items:center;justify-content:center;font-size:34px;border:3px solid #fff;box-shadow:0 2px 8px rgba(28,67,59,.15);margin-bottom:4px}
+.prod{min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 4px 10px;overflow-wrap:anywhere;font-family:var(--body);color:var(--ink);cursor:pointer;position:relative}
+.prod-ph{width:56px;height:56px;border-radius:50%;overflow:hidden;background:var(--apple-soft);display:flex;align-items:center;justify-content:center;font-size:34px;border:3px solid #fff;box-shadow:0 2px 8px rgba(28,67,59,.15);margin-bottom:4px}
 .prod-ph img{width:100%;height:100%;object-fit:cover}
 .prod b{font-size:13.5px;line-height:1.2}
 .prod-m{font-size:11.5px;color:var(--apple);font-weight:800;line-height:1.25}

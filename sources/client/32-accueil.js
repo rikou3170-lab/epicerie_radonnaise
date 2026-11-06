@@ -912,7 +912,10 @@ function PopupMessage({ d }) {
 
 // Section « Nos producteurs ».
 function SectionProducteurs({ liste }) {
-  let [e, n] = (0, React.useState)(null);
+  let [e, n] = (0, React.useState)(null),
+    // v2.40 : grille de 6 producteurs, puis un bouton pour voir tous les autres
+    [tous, setTous] = (0, React.useState)(!1),
+    visibles = tous ? liste : liste.slice(0, 6);
   return liste.length
     ? React.default.createElement(
         React.default.Fragment,
@@ -932,7 +935,7 @@ function SectionProducteurs({ liste }) {
         React.default.createElement(
           "div",
           { className: "prods" },
-          liste.map((r) =>
+          visibles.map((r) =>
             React.default.createElement(
               "button",
               {
@@ -956,6 +959,12 @@ function SectionProducteurs({ liste }) {
             ),
           ),
         ),
+        liste.length > 6 &&
+          React.default.createElement(
+            "button",
+            { className: "btn gh", style: { marginBottom: 14 }, onClick: () => setTous(!tous) },
+            tous ? "Voir moins ↑" : "Voir les " + liste.length + " producteurs ↓",
+          ),
         e &&
           React.default.createElement(
             "div",
