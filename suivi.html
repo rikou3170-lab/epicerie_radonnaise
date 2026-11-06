@@ -76,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 .pied{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 </style></head>
 <body>
-<div class="top"><div class="t">Suivi du lancement</div><div class="s">Épicerie Raddonnaise · Suivi v1.2 <span class="live" id="live" hidden><i></i>en direct</span><span id="maj"></span></div></div>
+<div class="top"><div class="t">Suivi du lancement</div><div class="s">Épicerie Raddonnaise · Suivi v1.3 <span class="live" id="live" hidden><i></i>en direct</span><span id="maj"></span></div></div>
 <div class="wrap" id="app"><div class="vide">Chargement…</div></div>
 
 <script type="module">
@@ -84,7 +84,8 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 // Rien n'est écrit dans la base. Les consultations sont des compteurs anonymes (jamais liés à une personne).
 const DEMO = new URLSearchParams(location.search).has("demo");   // aperçu avec des données fictives (sans connexion)
 const LANCEMENT = "2026-11-06";
-const PC = matchMedia("(min-width:900px) and (hover:hover)").matches;   // la liste nominative n'est téléchargée que sur ordinateur ; sur téléphone, seulement des nombres
+const IPAD = /iPad/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const PC = IPAD || matchMedia("(min-width:900px) and (hover:hover)").matches;   // la liste nominative n'est téléchargée que sur ordinateur ; sur téléphone, seulement des nombres
 const RUB = { accueil: "Accueil", carte: "La carte", fidelite: "Fidélité", actus: "Actus", infos: "Infos" };
 const AUTRES = { commandes: "Commandes passées", reservations: "Bons plans réservés", chat: "Messages envoyés", avis: "Avis / sondages" };
 const $ = (s) => document.querySelector(s);
@@ -177,7 +178,7 @@ function tech(b, st) {
   const ligne = (n, v) => `<tr><td>${n}</td><td class="r">${v}</td></tr>`;
   return `<div class="tech"><h2>Données techniques</h2><div class="grid">
     <div class="card"><h3>État</h3><div class="sub">Application et connexion à la base</div><table class="tab">
-      ${ligne("Version des applis", "v" + esc(T.version))}${ligne("Version du suivi", "v1.2")}
+      ${ligne("Version des applis", "v" + esc(T.version))}${ligne("Version du suivi", "v1.3")}
       ${ligne("Base Firebase", DEMO ? "aperçu" : (T.dernier && maintenant - T.dernier < 5 * 6e4 ? '<span class="ok">en direct</span>' : T.dernier ? "dernière donnée " + hm(T.dernier) : '<span class="ko">pas de données</span>'))}
       ${ligne("Compte connecté", esc(T.compte || "—"))}
       ${ligne("Documents lus (cette page)", T.lectures + ` <span style="font-weight:400;color:var(--ink3)">en ${dureeMin} min</span>`)}
@@ -207,7 +208,7 @@ function lignesClients(b) {
 }
 function comptes(b) {
   const n = PC ? D.clients.filter(c => dans(dateDe(c.depuis), b)).length : (D.nbClientsPeriode ?? "…");
-  return !PC ? `<div class="card" style="margin-top:12px"><h3>Comptes clients</h3><div class="sub">${D.nbClients ?? "…"} cartes de fidélité · ${n} nouvelle${n > 1 ? "s" : ""} sur la période</div><div class="vide">La liste détaillée des clients s'affiche uniquement sur ordinateur.</div></div>` : `<div class="card" style="margin-top:12px"><h3>Comptes clients</h3><div class="sub">${D.clients.length} cartes de fidélité · ${n} nouvelle${n > 1 ? "s" : ""} sur la période · données personnelles : ne pas diffuser</div>
+  return !PC ? `<div class="card" style="margin-top:12px"><h3>Comptes clients</h3><div class="sub">${D.nbClients ?? "…"} cartes de fidélité · ${n} nouvelle${n > 1 ? "s" : ""} sur la période</div><div class="vide">La liste détaillée des clients s'affiche uniquement sur ordinateur et iPad.</div></div>` : `<div class="card" style="margin-top:12px"><h3>Comptes clients</h3><div class="sub">${D.clients.length} cartes de fidélité · ${n} nouvelle${n > 1 ? "s" : ""} sur la période · données personnelles : ne pas diffuser</div>
     <input class="rech" id="rech" type="search" placeholder="Rechercher un nom, une carte, un téléphone…" value="${esc(recherche)}">
     <div class="defil" style="max-height:420px;overflow-x:auto"><table class="tab" id="tclients" style="min-width:860px">${lignesClients(b)}</table></div></div>`;
 }
