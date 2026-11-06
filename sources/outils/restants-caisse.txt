@@ -1,0 +1,137 @@
+WD	fonction	962	Running in emulator mode. Do not use with production credentials. | fixed | 100% | #ffffff
+d_	fonction	247	MouseEvent | click
+gC	variable	11	
+Gx	variable	2	
+ve	variable	41	
+el	variable	11	
+tl	variable	11	
+Wt	variable	13	
+AC	variable	13	
+go	variable	7	
+gE	variable	9	
+D_	variable	114	
+CC	variable	42	
+w_	variable	50	
+__	variable	397	Confirmer | Oui, annuler | Afficher | se déconnecter
+k_	variable	923	.dlg-fond{position:fixed;inset:0;z-index:1000;background:rgba(20,32,26,.55);display:flex;align-items:center;justify-content:center;padding:20px;animation:dlgIn 
+I_	fonction	1426	Escape | Enter | keydown | dlg-fond
+T_	fonction	819	iPhone | MacIntel | iPad | Téléphone Android
+vC	fonction	253	epicerie-raddonnaise-cnx- | connexions
+Xn	variable	13	
+S_	variable	263	activated | statechange | redundant
+P_	fonction	263	serviceWorker
+CE	variable	42	
+js	variable	268	
+qs	variable	118	
+vE	fonction	267	
+FC	variable	194	un cadeau surprise | un chouette cadeau surprise | carburant, gaz et alcool
+DC	variable	13	
+yE	variable	613	carburant, gaz, alcools, tabac, presse, jeux | un cadeau
+wC	variable	354	1 passage dès | € d'achats = 1 tampon | 1 passage = 1 tampon | tampons =
+_C	variable	236	continue
+kC	variable	207	
+BC	variable	135	Membre supporter | Pilier de l'épicerie
+Kx	variable	240	
+IC	variable	37	
+O_	variable	84	
+FE	variable	7	
+S	variable	12	
+Ee	variable	13	
+L_	variable	230	halloween | octobrerose | beaujolais | stnicolas
+gn	variable	83	
+BE	variable	140	#2B1B3D | #140B22 | #E8731C | #FFB547
+TC	variable	1066	amb-chapeau | 0 0 44 40 | aria-hidden | true
+V_	variable	970	amb-citrouille | 0 0 40 36 | aria-hidden | true
+bC	fonction	1224	amb-guirl | apercu | aria-hidden | true
+z_	variable	309	url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%235E3F82' stroke-width='.9' opacity='.75'%3E%3
+SC	variable	650	#EC407A | #F06292 | 0 0 24 30 | aria-hidden
+PC	variable	173	span | amb-ruban-logo
+NC	fonction	1147	amb-guirl | apercu | aria-hidden | true
+E	variable	12	
+_E	variable	102	galette | chandeleur | valentin | paques
+DE	variable	629	#D4AF37 | 0 0 26 20 | aria-hidden | true
+Qx	variable	316	#F4D774 | 0 0 24 24 | aria-hidden | true
+wE	variable	756	0 0 24 16 | aria-hidden | true | ellipse
+R_	variable	617	0 0 16 26 | aria-hidden | true | path
+nl	variable	505	#E05A73 | 0 0 24 22 | aria-hidden | true
+gi	variable	983	#F6C6D9 | #E05A73 | 0 0 20 26 | aria-hidden
+Ai	variable	531	#F48FB1 | #FFD54F | 0 0 24 24 | aria-hidden
+ol	variable	1021	0 0 24 30 | aria-hidden | true | path
+rl	variable	1185	#F2B134 | 0 0 24 24 | aria-hidden | true
+j_	variable	480	#24507E | 0 0 16 28 | aria-hidden | true
+q_	variable	355	#4E342E | 0 0 30 12 | aria-hidden | true
+OC	variable	344	#1F3A93 | 0 0 16 18 | aria-hidden | true
+$_	variable	417	0 0 24 24 | aria-hidden | true | circle
+W_	variable	1616	0 0 70 60 | aria-hidden | true | #F3ECE2
+G_	variable	1436	0 0 100 64 | aria-hidden | true | rect
+Cr	variable	575	amb-village | 0 0 400 150 | xMidYMax slice | aria-hidden
+il	variable	589	#2E5A2E | #4A3222 | rect | circle
+H_	variable	216	#3E7A2E | path | l-3-7M | l0-9M
+K_	variable	29488	amb-lueur | circle | #FFF3C4 | ellipse
+vr	variable	93	
+kE	variable	21541	#E9C46A | #B8860B | #F4D774 | pluie
+LC	variable	1769	.amb2-monte{position:fixed;inset:0;z-index:57;pointer-events:none;overflow:hidden;max-width:440px;margin:0 auto} .amb2-monte.apercu{position:absolute} .amb2-mon
+IE	variable	51	beaujolais | stnicolas | nouvelan
+Q_	variable	1459	#6E1F45 | #6E9B3A | 0 0 24 30 | aria-hidden
+Y_	variable	531	#C9562A | 0 0 24 24 | aria-hidden | true
+VC	variable	881	0 0 24 22 | aria-hidden | true | path
+zC	variable	318	#E9B949 | 0 0 24 24 | aria-hidden | true
+X_	variable	598	#E9B949 | 0 0 24 28 | aria-hidden | true
+Yx	variable	6156	0 0 40 24 | ellipse | #1E1A1C | #2E2A2C
+UC	variable	244	span | amb2-acc | aria-hidden | true
+RC	fonction	1149	amb-guirl | apercu | aria-hidden | true
+Z_	variable	89	
+tk	variable	156	
+Xx	variable	167	
+$C	variable	319	grapheme
+rk	variable	7	
+HC	fonction	791	emoji | monte | haut | rose
+ik	variable	302	degrade | Dégradé | lumiere | Lumière
+ok	variable	7	
+sk	variable	80	
+ak	fonction	161	
+KC	fonction	900	sv-SE
+lk	variable	13752	none | round | path | M12 2v20M3.3 7l17.4 10M3.3 17l17.4-10M12 5.5l-2.2-2M12 5.5l2.2-2M12 18.5l-2.2 2M12 18.5l2.2 2M5.6 8.3l-.4 3M18.4 15.7l.4-3M5.6 15.7l-.4-3M
+uk	variable	1808	flocon | Flocon | #FFFFFF | etoile
+Jx	variable	51	
+ck	variable	345	
+Ci	variable	108	
+xk	variable	241	
+YC	fonction	709	neige | dans | aria-hidden | true
+WC	variable	71	#FF4D4D | #FFD54F | #4FC3F7 | #81C784
+XC	fonction	906	guirlande | apercu | aria-hidden | true
+JC	variable	670	bonnet | 0 0 40 34 | aria-hidden | true
+wt	variable	13	
+ev	variable	287	2026-12-01 | 2026-12-24 | 2026-12-15 | Tirage de mi-décembre
+$s	variable	151	
+fk	variable	54	sv-SE
+tv	variable	148	
+bE	variable	107	
+nv	variable	21	
+pk	variable	79	
+mk	variable	150	Client
+vk	fonction	527	#F6D47A | #C9E38A | #E05A73 | #FFFFFF
+yi	variable	64	Client
+yk	variable	179	
+ov	fonction	1744	tir-fen | tir-cadre | tir-nom | tir-gagnant
+Fk	variable	22	
+Bk	variable	12755	.niv-b{display:inline-block;margin-left:10px;padding:3px 12px;border-radius:20px;background:#FFF4D6;color:#8A5A0B;border:1.5px solid #E9B949;font-size:15px;font
+cv	variable	41	
+_k	variable	149	user | environment
+dv	variable	38	
+sl	variable	2	
+ME	variable	116	
+hv	variable	286	playback | suspended
+Ws	fonction	379	sine
+Co	fonction	621	tampon | refus | triangle | plein
+Ik	fonction	604	span | button | lien | tampon
+sv	variable	363	mini-t
+PE	variable	115	
+Tk	variable	210	
+bk	fonction	4372	Prénom, nom et un e-mail valide sont nécessaires. | Enregistrement… | clients | ✓ Fiche enregistrée
+Sk	variable	145	span | niv-b
+av	variable	790	roue-l g | 🤝 Parrainage : +1 tampon pour | (gardé pour son prochain passage) | et +1 pour son parrain
+NE	variable	309	roue-l | 🎄 Roue de Noël : | GAGNÉ, 1 ticket pour le tirage | perdu cette fois
+Pk	fonction	7964	9999 | liste | sv-SE | Europe/Paris
+Nk	fonction	24090	scan | user | environment | visible
+Ok	fonction	3306	caisse | magie | --top | style

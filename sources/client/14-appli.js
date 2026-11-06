@@ -31,7 +31,7 @@ var UI = {
     delai: 30,
   },
   fc = () => !0,
-  Ho = (t) => {
+  MENTION_EXCLUSIONS = (t) => {
     let e = { ...UI, ...(t?.tampons || {}) };
     (!e.exclus || e.exclus === "carburant, gaz, alcools, tabac, presse, jeux") && (e.exclus = UI.exclus);
     let n = Math.min(30, Math.max(3, parseInt(e.nb) || 20)),
@@ -47,7 +47,7 @@ var UI = {
     };
   },
   $I = (t) => {
-    let e = Ho(t);
+    let e = MENTION_EXCLUSIONS(t);
     return (
       (e.seuil ? "1 passage d\xE8s " + e.seuil + " \u20AC d'achats = 1 tampon" : "1 passage = 1 tampon") +
       " \xB7 " +
@@ -86,7 +86,7 @@ var W = On(Ln()),
   });
 var GI = () => {
   let t = new Uint32Array(1);
-  return (crypto.getRandomValues(t), t[0] / 4294967296);
+  return crypto.getRandomValues(t), t[0] / 4294967296;
 };
 var KI = (t, e) => (t && Number(t.roueP) === l2(e).periode && Number(t.roueG)) || 0;
 var $i = null,
@@ -95,8 +95,8 @@ var $i = null,
       navigator.audioSession && (navigator.audioSession.type = "playback");
     } catch {}
     try {
-      (($i = $i || new (window.AudioContext || window.webkitAudioContext)()),
-        $i.state === "suspended" && $i.resume());
+      ($i = $i || new (window.AudioContext || window.webkitAudioContext)()),
+        $i.state === "suspended" && $i.resume();
     } catch {
       $i = null;
     }
@@ -109,14 +109,14 @@ function OM(t = 1) {
       let n = e.currentTime,
         r = e.createOscillator(),
         i = e.createGain();
-      ((r.type = "square"),
+      (r.type = "square"),
         r.frequency.setValueAtTime(1800, n),
         r.frequency.exponentialRampToValueAtTime(900, n + 0.03),
         i.gain.setValueAtTime(0.12 * t, n),
         i.gain.exponentialRampToValueAtTime(1e-4, n + 0.045),
         r.connect(i).connect(e.destination),
         r.start(n),
-        r.stop(n + 0.05));
+        r.stop(n + 0.05);
     } catch {}
 }
 function LM(t) {
@@ -127,19 +127,19 @@ function LM(t) {
       let o = e.currentTime + i * 0.13,
         s = e.createOscillator(),
         l = e.createGain();
-      ((s.type = "triangle"),
+      (s.type = "triangle"),
         (s.frequency.value = r),
         l.gain.setValueAtTime(1e-4, o),
         l.gain.exponentialRampToValueAtTime(0.25, o + 0.02),
         l.gain.exponentialRampToValueAtTime(1e-4, o + (t ? 0.5 : 0.35)),
         s.connect(l).connect(e.destination),
         s.start(o),
-        s.stop(o + 0.6));
+        s.stop(o + 0.6);
     } catch {}
   });
 }
 var mc = ["#FF4D5E", "#FFD86B", "#5FD068", "#7FC8FF", "#FFFFFF"];
-function BM({ vite: t }) {
+function BM({ vite: vite }) {
   let r = [];
   for (let o = 0; o < 3; o++)
     for (let s of [0.15, 0.38, 0.62, 0.85]) r.push([o * 100 + 100 * s, 6 + 80 * s * (1 - s)]);
@@ -153,7 +153,7 @@ function BM({ vite: t }) {
   return W.default.createElement(
     "svg",
     {
-      className: "guirl" + (t ? " vite" : ""),
+      className: "guirl" + (vite ? " vite" : ""),
       viewBox: "0 0 300 66",
       preserveAspectRatio: "xMidYMin meet",
       "aria-hidden": "true",
@@ -209,14 +209,14 @@ function BM({ vite: t }) {
 var QI = 8,
   gr = 360 / QI,
   a2 = (t, e) => [e * Math.sin((t * Math.PI) / 180), -e * Math.cos((t * Math.PI) / 180)];
-function HI({ angle: t = 0, taille: e = 300, tourne: n }) {
+function RoueSvg({ angle: angle = 0, taille: taille = 300, tourne: tourne }) {
   return W.default.createElement(
     "svg",
     {
-      className: "roue-svg" + (n ? " vite" : ""),
+      className: "roue-svg" + (tourne ? " vite" : ""),
       viewBox: "-118 -122 236 240",
-      width: e,
-      height: (e * 240) / 236,
+      width: taille,
+      height: (taille * 240) / 236,
       style: { display: "block", overflow: "visible" },
       "aria-hidden": "true",
     },
@@ -274,7 +274,7 @@ function HI({ angle: t = 0, taille: e = 300, tourne: n }) {
     }),
     W.default.createElement(
       "g",
-      { transform: `rotate(${t})` },
+      { transform: `rotate(${angle})` },
       Array.from({ length: QI }, (i, o) => {
         let s = o * gr - gr / 2,
           l = s + gr,
@@ -347,17 +347,17 @@ function VM() {
               P = 1 - Math.pow(1 - S, 3),
               z = f + (E - f) * P,
               j = Math.floor((z + gr / 2) / gr);
-            (j !== M && ((M = j), OM(0.6 + 0.4 * (1 - S))),
+            j !== M && ((M = j), OM(0.6 + 0.4 * (1 - S))),
               (n.current = z),
               e(z),
-              S < 1 ? (r.current = requestAnimationFrame(C)) : s());
+              S < 1 ? (r.current = requestAnimationFrame(C)) : s();
           };
         r.current = requestAnimationFrame(C);
       },
     ]
   );
 }
-function zM({ onClose: t }) {
+function ReglementRoue({ onClose: onClose }) {
   return W.default.createElement(
     "div",
     { className: "roue-regl" },
@@ -406,6 +406,6 @@ function zM({ onClose: t }) {
         "Vous pouvez refuser de participer \xE0 tout moment, et changer d'avis dans \xAB Mes donn\xE9es \xBB.",
       ),
     ),
-    W.default.createElement("button", { className: "roue-b2", onClick: t }, "Fermer"),
+    W.default.createElement("button", { className: "roue-b2", onClick: onClose }, "Fermer"),
   );
 }

@@ -1,22 +1,22 @@
 var E = vn(Pn()),
   _E = ["galette", "chandeleur", "valentin", "paques", "muguet", "meres", "musique", "peres", "juillet"],
-  DE = ({ t = 18, c: e = "#D4AF37" }) =>
+  DE = ({ t = 18, c: c = "#D4AF37" }) =>
     E.default.createElement(
       "svg",
       { viewBox: "0 0 26 20", width: t, height: t * 0.77, "aria-hidden": "true" },
-      E.default.createElement("path", { d: "M1 18V5l6 6 6-10 6 10 6-6v13z", fill: e }),
+      E.default.createElement("path", { d: "M1 18V5l6 6 6-10 6 10 6-6v13z", fill: c }),
       E.default.createElement("path", { d: "M1 15h24", stroke: "#A8841C", strokeWidth: "1.4" }),
       E.default.createElement("circle", { cx: "13", cy: "10", r: "1.8", fill: "#C62828" }),
       E.default.createElement("circle", { cx: "6", cy: "13", r: "1.3", fill: "#1F6FB2" }),
       E.default.createElement("circle", { cx: "20", cy: "13", r: "1.3", fill: "#2E7D32" }),
     );
-var Qx = ({ t = 14, c: e = "#F4D774" }) =>
+var Qx = ({ t = 14, c: c = "#F4D774" }) =>
     E.default.createElement(
       "svg",
       { viewBox: "0 0 24 24", width: t, height: t, "aria-hidden": "true" },
       E.default.createElement("path", {
         d: "M12 1.5l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.6 5.6 21.1 7 14l-5.3-5 7.2-.9z",
-        fill: e,
+        fill: c,
       }),
     ),
   wE = ({ t = 18 }) =>
@@ -50,13 +50,13 @@ var Qx = ({ t = 14, c: e = "#F4D774" }) =>
       }),
       E.default.createElement("path", { d: "M8 10v-1", stroke: "#3B2A1E", strokeWidth: "1" }),
     ),
-  nl = ({ t = 16, c: e = "#E05A73" }) =>
+  nl = ({ t = 16, c: c = "#E05A73" }) =>
     E.default.createElement(
       "svg",
       { viewBox: "0 0 24 22", width: t, height: t * 0.92, "aria-hidden": "true" },
       E.default.createElement("path", {
         d: "M12 21C4 15 1 11 2.5 6.5 4 2.5 9 2 12 6 15 2 20 2.5 21.5 6.5 23 11 20 15 12 21z",
-        fill: e,
+        fill: c,
       }),
       E.default.createElement("ellipse", {
         cx: "7.4",
@@ -67,23 +67,23 @@ var Qx = ({ t = 14, c: e = "#F4D774" }) =>
         opacity: ".45",
       }),
     ),
-  gi = ({ t = 14, c: e = "#F6C6D9", r: n = "#E05A73" }) =>
+  gi = ({ t = 14, c: c = "#F6C6D9", r: r = "#E05A73" }) =>
     E.default.createElement(
       "svg",
       { viewBox: "0 0 20 26", width: t * 0.77, height: t, "aria-hidden": "true" },
       E.default.createElement("path", {
         d: "M10 1C4.5 1 1 9 1 15.5 1 21 5 25 10 25s9-4 9-9.5C19 9 15.5 1 10 1z",
-        fill: e,
+        fill: c,
       }),
       E.default.createElement("path", {
         d: "M1.6 12.5q2.8-2.4 5.6 0t5.6 0 5.6 0",
-        stroke: n,
+        stroke: r,
         strokeWidth: "1.6",
         fill: "none",
       }),
       E.default.createElement(
         "g",
-        { fill: n },
+        { fill: r },
         E.default.createElement("circle", { cx: "6", cy: "18", r: "1.3" }),
         E.default.createElement("circle", { cx: "10", cy: "19.5", r: "1.3" }),
         E.default.createElement("circle", { cx: "14", cy: "18", r: "1.3" }),
@@ -97,7 +97,7 @@ var Qx = ({ t = 14, c: e = "#F4D774" }) =>
         opacity: ".45",
       }),
     ),
-  Ai = ({ t = 14, c: e = "#F48FB1", m: n = "#FFD54F" }) =>
+  Ai = ({ t = 14, c: c = "#F48FB1", m: m = "#FFD54F" }) =>
     E.default.createElement(
       "svg",
       { viewBox: "0 0 24 24", width: t, height: t, "aria-hidden": "true" },
@@ -108,11 +108,11 @@ var Qx = ({ t = 14, c: e = "#F4D774" }) =>
           cy: "6",
           rx: "4.2",
           ry: "5.6",
-          fill: e,
+          fill: c,
           transform: `rotate(${r} 12 12)`,
         }),
       ),
-      E.default.createElement("circle", { cx: "12", cy: "12", r: "3.4", fill: n }),
+      E.default.createElement("circle", { cx: "12", cy: "12", r: "3.4", fill: m }),
     ),
   ol = ({ t = 18 }) =>
     E.default.createElement(
@@ -149,43 +149,43 @@ var Qx = ({ t = 14, c: e = "#F4D774" }) =>
         ),
       ),
     ),
-  rl = ({ t = 16, c: e = "#F2B134", d: n }) =>
+  rl = ({ t = 16, c: c = "#F2B134", d: d }) =>
     E.default.createElement(
       "svg",
       { viewBox: "0 0 24 24", width: t, height: t, "aria-hidden": "true" },
-      n
+      d
         ? E.default.createElement(
             E.default.Fragment,
             null,
             E.default.createElement("path", {
               d: "M8 18V5l12-3v13",
-              stroke: e,
+              stroke: c,
               strokeWidth: "2.2",
               fill: "none",
             }),
-            E.default.createElement("path", { d: "M8 5l12-3v3.4L8 8.4z", fill: e }),
-            E.default.createElement("ellipse", { cx: "5.4", cy: "18.6", rx: "3.4", ry: "2.6", fill: e }),
-            E.default.createElement("ellipse", { cx: "17.4", cy: "15.6", rx: "3.4", ry: "2.6", fill: e }),
+            E.default.createElement("path", { d: "M8 5l12-3v3.4L8 8.4z", fill: c }),
+            E.default.createElement("ellipse", { cx: "5.4", cy: "18.6", rx: "3.4", ry: "2.6", fill: c }),
+            E.default.createElement("ellipse", { cx: "17.4", cy: "15.6", rx: "3.4", ry: "2.6", fill: c }),
           )
         : E.default.createElement(
             E.default.Fragment,
             null,
             E.default.createElement("path", {
               d: "M14 18V2c2 3 6 4 6 9",
-              stroke: e,
+              stroke: c,
               strokeWidth: "2.2",
               fill: "none",
               strokeLinecap: "round",
             }),
-            E.default.createElement("ellipse", { cx: "10.4", cy: "18.6", rx: "4", ry: "3", fill: e }),
+            E.default.createElement("ellipse", { cx: "10.4", cy: "18.6", rx: "4", ry: "3", fill: c }),
           ),
     ),
-  j_ = ({ t = 16, c: e = "#24507E" }) =>
+  j_ = ({ t = 16, c: c = "#24507E" }) =>
     E.default.createElement(
       "svg",
       { viewBox: "0 0 16 28", width: t * 0.57, height: t, "aria-hidden": "true" },
-      E.default.createElement("path", { d: "M4 1h8l-2 5H6z", fill: e }),
-      E.default.createElement("path", { d: "M6 6h4l4 14-6 7-6-7z", fill: e }),
+      E.default.createElement("path", { d: "M4 1h8l-2 5H6z", fill: c }),
+      E.default.createElement("path", { d: "M6 6h4l4 14-6 7-6-7z", fill: c }),
       E.default.createElement("path", {
         d: "M5 11l7 3M4 16l8 3",
         stroke: "#fff",
@@ -193,23 +193,23 @@ var Qx = ({ t = 14, c: e = "#F4D774" }) =>
         opacity: ".55",
       }),
     ),
-  q_ = ({ t = 18, c: e = "#4E342E" }) =>
+  q_ = ({ t = 18, c: c = "#4E342E" }) =>
     E.default.createElement(
       "svg",
       { viewBox: "0 0 30 12", width: t, height: t * 0.4, "aria-hidden": "true" },
       E.default.createElement("path", {
         d: "M15 4c-3-3-7-3-10 0-2 2-3 2-5 1 1 4 5 6 9 5 3-1 5-3 6-4 1 1 3 3 6 4 4 1 8-1 9-5-2 1-3 1-5-1-3-3-7-3-10 0z",
-        fill: e,
+        fill: c,
       }),
     ),
-  OC = ({ t = 13, c: e = "#1F3A93" }) =>
+  OC = ({ t = 13, c: c = "#1F3A93" }) =>
     E.default.createElement(
       "svg",
       { viewBox: "0 0 16 18", width: t * 0.9, height: t, "aria-hidden": "true" },
       E.default.createElement("path", {
         d: "M1 1h14L8 17z",
-        fill: e,
-        stroke: e === "#FFFFFF" ? "#C8D0E8" : "none",
+        fill: c,
+        stroke: c === "#FFFFFF" ? "#C8D0E8" : "none",
         strokeWidth: ".8",
       }),
     ),
@@ -294,7 +294,7 @@ var Qx = ({ t = 14, c: e = "#F4D774" }) =>
         E.default.createElement("circle", { cx: "76", cy: "5", r: "2.6", fill: "#fff", opacity: ".5" }),
       ),
     ),
-  Cr = ({ v: t, back: e, front: n }) =>
+  Cr = ({ v: v, back: back, front: front }) =>
     E.default.createElement(
       "svg",
       {
@@ -303,31 +303,31 @@ var Qx = ({ t = 14, c: e = "#F4D774" }) =>
         preserveAspectRatio: "xMidYMax slice",
         "aria-hidden": "true",
       },
-      e,
-      E.default.createElement("path", { d: "M0 94Q70 72 150 86t250-6V150H0z", fill: t.fond, opacity: ".6" }),
-      E.default.createElement("path", { d: "M0 110Q100 98 200 106t200-4V150H0z", fill: t.sol[0] }),
-      E.default.createElement("path", { d: "M0 124Q120 114 220 121t180-6V150H0z", fill: t.sol[1] }),
-      n,
+      back,
+      E.default.createElement("path", { d: "M0 94Q70 72 150 86t250-6V150H0z", fill: v.fond, opacity: ".6" }),
+      E.default.createElement("path", { d: "M0 110Q100 98 200 106t200-4V150H0z", fill: v.sol[0] }),
+      E.default.createElement("path", { d: "M0 124Q120 114 220 121t180-6V150H0z", fill: v.sol[1] }),
+      front,
     ),
-  il = ({ x: t, y: e, h: n, c: r = "#2E5A2E", tronc: i = "#4A3222" }) =>
+  il = ({ x: x, y: y, h: h, c: c = "#2E5A2E", tronc: tronc = "#4A3222" }) =>
     E.default.createElement(
       "g",
       null,
       E.default.createElement("rect", {
-        x: t - n * 0.05,
-        y: e - n * 0.45,
-        width: n * 0.1,
-        height: n * 0.45,
-        fill: i,
+        x: x - h * 0.05,
+        y: y - h * 0.45,
+        width: h * 0.1,
+        height: h * 0.45,
+        fill: tronc,
       }),
-      E.default.createElement("circle", { cx: t, cy: e - n * 0.62, r: n * 0.3, fill: r }),
-      E.default.createElement("circle", { cx: t - n * 0.2, cy: e - n * 0.5, r: n * 0.22, fill: r }),
-      E.default.createElement("circle", { cx: t + n * 0.2, cy: e - n * 0.52, r: n * 0.22, fill: r }),
+      E.default.createElement("circle", { cx: x, cy: y - h * 0.62, r: h * 0.3, fill: c }),
+      E.default.createElement("circle", { cx: x - h * 0.2, cy: y - h * 0.5, r: h * 0.22, fill: c }),
+      E.default.createElement("circle", { cx: x + h * 0.2, cy: y - h * 0.52, r: h * 0.22, fill: c }),
     ),
-  H_ = ({ x: t, y: e, c: n = "#3E7A2E" }) =>
+  H_ = ({ x: x, y: y, c: c = "#3E7A2E" }) =>
     E.default.createElement("path", {
-      d: `M${t} ${e}l-3-7M${t} ${e}l0-9M${t} ${e}l3-7`,
-      stroke: n,
+      d: `M${x} ${y}l-3-7M${x} ${y}l0-9M${x} ${y}l3-7`,
+      stroke: c,
       strokeWidth: "1.3",
       strokeLinecap: "round",
     }),
@@ -1726,7 +1726,7 @@ var Qx = ({ t = 14, c: e = "#F4D774" }) =>
     },
   };
 for (let t of _E) kE[t].scene = K_[t];
-var LC = `
+var CSS_MONTEE = `
 .amb2-monte{position:fixed;inset:0;z-index:57;pointer-events:none;overflow:hidden;max-width:440px;margin:0 auto}
 .amb2-monte.apercu{position:absolute}
 .amb2-monte span{position:absolute;bottom:-30px;animation:monteAmb 10s ease-in-out infinite}
@@ -1746,46 +1746,46 @@ var LC = `
 @media (prefers-reduced-motion: reduce){.amb2-monte,.amb3-saute,.amb3-balance,.amb3-flotte,.amb3-clochette,.amb3-fumee{animation:none}.amb2-monte{display:none}}
 `;
 var IE = ["beaujolais", "stnicolas", "nouvelan", ..._E],
-  Q_ = ({ t = 16, c: e = "#6E1F45", f: n = "#6E9B3A" }) =>
-    ee.default.createElement(
+  Q_ = ({ t = 16, c: c = "#6E1F45", f: f = "#6E9B3A" }) =>
+    ReactDecors.default.createElement(
       "svg",
       { viewBox: "0 0 24 30", width: t, height: t * 1.25, "aria-hidden": "true" },
-      ee.default.createElement("path", {
+      ReactDecors.default.createElement("path", {
         d: "M12 4c0-2 1-3 3-4",
         stroke: "#5C3D2E",
         strokeWidth: "1.6",
         fill: "none",
       }),
-      ee.default.createElement("path", { d: "M13 4c4-3 8-2 10 0-3 3-7 3-10 0z", fill: n }),
-      ee.default.createElement(
+      ReactDecors.default.createElement("path", { d: "M13 4c4-3 8-2 10 0-3 3-7 3-10 0z", fill: f }),
+      ReactDecors.default.createElement(
         "g",
-        { fill: e },
-        ee.default.createElement("circle", { cx: "8", cy: "9", r: "3.4" }),
-        ee.default.createElement("circle", { cx: "15", cy: "9", r: "3.4" }),
-        ee.default.createElement("circle", { cx: "11.5", cy: "14", r: "3.4" }),
-        ee.default.createElement("circle", { cx: "5", cy: "14", r: "3.2" }),
-        ee.default.createElement("circle", { cx: "18", cy: "14", r: "3.2" }),
-        ee.default.createElement("circle", { cx: "8", cy: "19", r: "3.2" }),
-        ee.default.createElement("circle", { cx: "15", cy: "19", r: "3.2" }),
-        ee.default.createElement("circle", { cx: "11.5", cy: "24", r: "3" }),
+        { fill: c },
+        ReactDecors.default.createElement("circle", { cx: "8", cy: "9", r: "3.4" }),
+        ReactDecors.default.createElement("circle", { cx: "15", cy: "9", r: "3.4" }),
+        ReactDecors.default.createElement("circle", { cx: "11.5", cy: "14", r: "3.4" }),
+        ReactDecors.default.createElement("circle", { cx: "5", cy: "14", r: "3.2" }),
+        ReactDecors.default.createElement("circle", { cx: "18", cy: "14", r: "3.2" }),
+        ReactDecors.default.createElement("circle", { cx: "8", cy: "19", r: "3.2" }),
+        ReactDecors.default.createElement("circle", { cx: "15", cy: "19", r: "3.2" }),
+        ReactDecors.default.createElement("circle", { cx: "11.5", cy: "24", r: "3" }),
       ),
-      ee.default.createElement(
+      ReactDecors.default.createElement(
         "g",
         { fill: "#fff", opacity: ".35" },
-        ee.default.createElement("circle", { cx: "7", cy: "8", r: "1" }),
-        ee.default.createElement("circle", { cx: "14", cy: "8", r: "1" }),
-        ee.default.createElement("circle", { cx: "10.5", cy: "13", r: "1" }),
+        ReactDecors.default.createElement("circle", { cx: "7", cy: "8", r: "1" }),
+        ReactDecors.default.createElement("circle", { cx: "14", cy: "8", r: "1" }),
+        ReactDecors.default.createElement("circle", { cx: "10.5", cy: "13", r: "1" }),
       ),
     ),
-  Y_ = ({ t = 16, c: e = "#C9562A" }) =>
-    ee.default.createElement(
+  Y_ = ({ t = 16, c: c = "#C9562A" }) =>
+    ReactDecors.default.createElement(
       "svg",
       { viewBox: "0 0 24 24", width: t, height: t, "aria-hidden": "true" },
-      ee.default.createElement("path", {
+      ReactDecors.default.createElement("path", {
         d: "M12 22v-6M12 16c-3 0-9-2-10-7 3 0 5-1 5-4 2 2 3 1 5-3 2 4 3 5 5 3 0 3 2 4 5 4-1 5-7 7-10 7z",
-        fill: e,
+        fill: c,
       }),
-      ee.default.createElement("path", {
+      ReactDecors.default.createElement("path", {
         d: "M12 16V6M12 12l-5-4M12 12l5-4",
         stroke: "#7A2E14",
         strokeWidth: ".8",
@@ -1794,55 +1794,74 @@ var IE = ["beaujolais", "stnicolas", "nouvelan", ..._E],
       }),
     ),
   VC = ({ t = 18 }) =>
-    ee.default.createElement(
+    ReactDecors.default.createElement(
       "svg",
       { viewBox: "0 0 24 22", width: t, height: t * 0.92, "aria-hidden": "true" },
-      ee.default.createElement("path", {
+      ReactDecors.default.createElement("path", {
         d: "M12 21C4 15 1 11 2.5 6.5 4 2.5 9 2 12 6 15 2 20 2.5 21.5 6.5 23 11 20 15 12 21z",
         fill: "#B5652E",
       }),
-      ee.default.createElement("path", {
+      ReactDecors.default.createElement("path", {
         d: "M12 18.5C6 14 3.5 11 4.6 7.4 5.7 4.6 9.3 4.4 12 7.8c2.7-3.4 6.3-3.2 7.4-.4 1.1 3.6-1.4 6.6-7.4 11.1z",
         fill: "none",
         stroke: "#FFF6E8",
         strokeWidth: "1.2",
         strokeDasharray: "1.6 1.4",
       }),
-      ee.default.createElement("circle", { cx: "9", cy: "10", r: "1.2", fill: "#E8463A" }),
-      ee.default.createElement("circle", { cx: "15", cy: "10", r: "1.2", fill: "#4E9A3E" }),
-      ee.default.createElement("circle", { cx: "12", cy: "13.5", r: "1.2", fill: "#F2C14E" }),
+      ReactDecors.default.createElement("circle", { cx: "9", cy: "10", r: "1.2", fill: "#E8463A" }),
+      ReactDecors.default.createElement("circle", { cx: "15", cy: "10", r: "1.2", fill: "#4E9A3E" }),
+      ReactDecors.default.createElement("circle", { cx: "12", cy: "13.5", r: "1.2", fill: "#F2C14E" }),
     ),
-  zC = ({ t = 14, c: e = "#E9B949" }) =>
-    ee.default.createElement(
+  zC = ({ t = 14, c: c = "#E9B949" }) =>
+    ReactDecors.default.createElement(
       "svg",
       { viewBox: "0 0 24 24", width: t, height: t, "aria-hidden": "true" },
-      ee.default.createElement("path", {
+      ReactDecors.default.createElement("path", {
         d: "M12 1.5l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.6 5.6 21.1 7 14l-5.3-5 7.2-.9z",
-        fill: e,
+        fill: c,
       }),
     );
-var X_ = ({ t = 14, c: e = "#E9B949" }) =>
-  ee.default.createElement(
+var X_ = ({ t = 14, c: c = "#E9B949" }) =>
+  ReactDecors.default.createElement(
     "svg",
     { viewBox: "0 0 24 28", width: t, height: t * 1.16, "aria-hidden": "true" },
-    ee.default.createElement("rect", { x: "9", y: "1", width: "6", height: "4", rx: "1", fill: "#B8860B" }),
-    ee.default.createElement("circle", { cx: "12", cy: "16", r: "10", fill: e }),
-    ee.default.createElement("path", {
+    ReactDecors.default.createElement("rect", {
+      x: "9",
+      y: "1",
+      width: "6",
+      height: "4",
+      rx: "1",
+      fill: "#B8860B",
+    }),
+    ReactDecors.default.createElement("circle", { cx: "12", cy: "16", r: "10", fill: c }),
+    ReactDecors.default.createElement("path", {
       d: "M3 14h18M4 19h16",
       stroke: "#fff",
       strokeWidth: "1",
       opacity: ".5",
     }),
-    ee.default.createElement("circle", { cx: "8", cy: "12", r: "2.4", fill: "#fff", opacity: ".5" }),
+    ReactDecors.default.createElement("circle", { cx: "8", cy: "12", r: "2.4", fill: "#fff", opacity: ".5" }),
   );
 var Yx = {
   beaujolais: {
-    accessoire: ee.default.createElement(
+    accessoire: ReactDecors.default.createElement(
       "svg",
       { viewBox: "0 0 40 24", width: "32", height: "19" },
-      ee.default.createElement("ellipse", { cx: "20", cy: "15", rx: "18", ry: "7", fill: "#1E1A1C" }),
-      ee.default.createElement("ellipse", { cx: "20", cy: "12", rx: "15", ry: "7", fill: "#2E2A2C" }),
-      ee.default.createElement("path", {
+      ReactDecors.default.createElement("ellipse", {
+        cx: "20",
+        cy: "15",
+        rx: "18",
+        ry: "7",
+        fill: "#1E1A1C",
+      }),
+      ReactDecors.default.createElement("ellipse", {
+        cx: "20",
+        cy: "12",
+        rx: "15",
+        ry: "7",
+        fill: "#2E2A2C",
+      }),
+      ReactDecors.default.createElement("path", {
         d: "M20 5v-4",
         stroke: "#1E1A1C",
         strokeWidth: "2.4",
@@ -1851,14 +1870,17 @@ var Yx = {
     ),
     accPos: { left: 26, top: -1 },
     fil: "#5A1830",
-    items: [() => ee.default.createElement(Q_, { t: 14 }), () => ee.default.createElement(Y_, { t: 15 })],
+    items: [
+      () => ReactDecors.default.createElement(Q_, { t: 14 }),
+      () => ReactDecors.default.createElement(Y_, { t: 15 }),
+    ],
     vol: "feuilles",
     tampon: "\u{1F347}",
-    pastille: ee.default.createElement(
-      ee.default.Fragment,
+    pastille: ReactDecors.default.createElement(
+      ReactDecors.default.Fragment,
       null,
       "Avec",
-      ee.default.createElement("br", null),
+      ReactDecors.default.createElement("br", null),
       "mod\xE9ration",
     ),
     carte: { bg: "linear-gradient(140deg,#7A2346,#3A0F22)", titre: "#F2C14E" },
@@ -1885,17 +1907,20 @@ var Yx = {
     },
   },
   stnicolas: {
-    accessoire: ee.default.createElement(VC, { t: 17 }),
+    accessoire: ReactDecors.default.createElement(VC, { t: 17 }),
     accPos: { left: 42, top: 26 },
     fil: "#8E2430",
-    items: [() => ee.default.createElement(VC, { t: 15 }), () => ee.default.createElement(zC, { t: 13 })],
+    items: [
+      () => ReactDecors.default.createElement(VC, { t: 15 }),
+      () => ReactDecors.default.createElement(zC, { t: 13 }),
+    ],
     vol: "ane",
     tampon: "\u2B50",
-    pastille: ee.default.createElement(
-      ee.default.Fragment,
+    pastille: ReactDecors.default.createElement(
+      ReactDecors.default.Fragment,
       null,
       "Bonne",
-      ee.default.createElement("br", null),
+      ReactDecors.default.createElement("br", null),
       "St-Nicolas",
     ),
     carte: { bg: "linear-gradient(140deg,#8E2430,#3A0E14)", titre: "#F4D774" },
@@ -1924,19 +1949,19 @@ var Yx = {
     },
   },
   nouvelan: {
-    accessoire: ee.default.createElement(
+    accessoire: ReactDecors.default.createElement(
       "svg",
       { viewBox: "0 0 30 40", width: "24", height: "32" },
-      ee.default.createElement("path", { d: "M15 2 26 34H4z", fill: "#D4AF37" }),
-      ee.default.createElement("path", { d: "M15 2 20 16 8 22z", fill: "#F4D774", opacity: ".7" }),
-      ee.default.createElement("path", {
+      ReactDecors.default.createElement("path", { d: "M15 2 26 34H4z", fill: "#D4AF37" }),
+      ReactDecors.default.createElement("path", { d: "M15 2 20 16 8 22z", fill: "#F4D774", opacity: ".7" }),
+      ReactDecors.default.createElement("path", {
         d: "M7 26l4-2M12 30l5-3M17 23l4-2M9 14l3-1",
         stroke: "#1B1B2F",
         strokeWidth: "1.6",
         strokeLinecap: "round",
       }),
-      ee.default.createElement("circle", { cx: "15", cy: "3", r: "3.4", fill: "#fff" }),
-      ee.default.createElement("rect", {
+      ReactDecors.default.createElement("circle", { cx: "15", cy: "3", r: "3.4", fill: "#fff" }),
+      ReactDecors.default.createElement("rect", {
         x: "2",
         y: "32",
         width: "26",
@@ -1948,16 +1973,16 @@ var Yx = {
     accPos: { left: 30, top: -10 },
     fil: "#D4AF37",
     items: [
-      () => ee.default.createElement(zC, { t: 14, c: "#F4D774" }),
-      () => ee.default.createElement(X_, { t: 13, c: "#C9A227" }),
+      () => ReactDecors.default.createElement(zC, { t: 14, c: "#F4D774" }),
+      () => ReactDecors.default.createElement(X_, { t: 13, c: "#C9A227" }),
     ],
     vol: "feux",
     tampon: "\u2728",
-    pastille: ee.default.createElement(
-      ee.default.Fragment,
+    pastille: ReactDecors.default.createElement(
+      ReactDecors.default.Fragment,
       null,
       "Bonne",
-      ee.default.createElement("br", null),
+      ReactDecors.default.createElement("br", null),
       "ann\xE9e !",
     ),
     carte: { bg: "linear-gradient(140deg,#2A2A48,#0B0B18)", titre: "#F4D774" },
@@ -1986,26 +2011,26 @@ var Yx = {
   },
 };
 Object.assign(Yx, kE);
-var UC = ({ id: t, decal: e = {} }) => {
-  let n = Yx[t];
+var UC = ({ id: id, decal: decal = {} }) => {
+  let n = Yx[id];
   return n
-    ? ee.default.createElement(
+    ? ReactDecors.default.createElement(
         "span",
-        { className: "amb2-acc", style: { ...n.accPos, ...e }, "aria-hidden": "true" },
+        { className: "amb2-acc", style: { ...n.accPos, ...decal }, "aria-hidden": "true" },
         n.accessoire,
       )
     : null;
 };
-function RC({ id: t, n: e = 9, apercu: n }) {
-  let r = Yx[t];
+function RC({ id: id, n: e = 9, apercu: apercu }) {
+  let r = Yx[id];
   return r
-    ? ee.default.createElement(
+    ? ReactDecors.default.createElement(
         "div",
-        { className: "amb-guirl" + (n ? " apercu" : ""), "aria-hidden": "true" },
-        ee.default.createElement(
+        { className: "amb-guirl" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
+        ReactDecors.default.createElement(
           "svg",
           { className: "amb-fil", viewBox: "0 0 300 24", preserveAspectRatio: "none" },
-          ee.default.createElement("path", {
+          ReactDecors.default.createElement("path", {
             d:
               "M0 3 " +
               Array.from(
@@ -2019,14 +2044,14 @@ function RC({ id: t, n: e = 9, apercu: n }) {
         ),
         Array.from({ length: e * 2 }, (i, o) => {
           let s = r.items[o % 2];
-          return ee.default.createElement(
+          return ReactDecors.default.createElement(
             "span",
             {
               key: o,
               className: "amb-lanterne",
               style: { left: ((o + 0.5) * 100) / (e * 2) + "%", animationDelay: (o % 5) * 0.37 + "s" },
             },
-            ee.default.createElement(s, null),
+            ReactDecors.default.createElement(s, null),
           );
         }),
       )

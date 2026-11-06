@@ -1,6 +1,6 @@
 var T9 = /(\d{1,3})\s*[,.]\s*(\d{2})\s*(?:€|e|eur)?\s*$/i,
   CS = (t) => (t == null || t === "" || isNaN(t) ? "" : Number(t).toFixed(2).replace(".", ",") + " \u20AC");
-function SS(t, e = new Date()) {
+function GrilleMenuSemaine(t, e = new Date()) {
   let n = t
       .map((T) => ({
         text: String(T.text || "")
@@ -12,13 +12,13 @@ function SS(t, e = new Date()) {
     r = [],
     i = null,
     s = -1;
-  (n.forEach((T, M) => {
+  n.forEach((T, M) => {
     if (!i && /semaine|du .* au /i.test(X2(T.text))) {
       let V = A9(T.text, e);
       V && ((i = V), (s = M));
     }
   }),
-    i || r.push("dates"));
+    i || r.push("dates");
   let o = n.slice(s + 1),
     a = [];
   o.forEach((T) => {
@@ -29,9 +29,9 @@ function SS(t, e = new Date()) {
     let b = V >= 0 ? M.slice(O + 1).join(" ") : T.text,
       v = null,
       x = b.match(T9);
-    (x && ((v = +(x[1] + "." + x[2])), (b = b.slice(0, x.index))),
+    x && ((v = +(x[1] + "." + x[2])), (b = b.slice(0, x.index))),
       (b = b.replace(/^[^A-Za-zÀ-ÿ0-9]+|[^A-Za-zÀ-ÿ0-9)]+$/g, "").trim()),
-      a.push({ y: T.y, j: V, prix: v, texte: b }));
+      a.push({ y: T.y, j: V, prix: v, texte: b });
   });
   let u = a.filter((T) => T.j >= 0 || T.prix != null);
   if (
@@ -41,7 +41,7 @@ function SS(t, e = new Date()) {
           .slice(0, M)
           .reverse()
           .find((O) => O.j >= 0);
-        ((T.j = V ? Math.min(6, V.j + (M - u.indexOf(V))) : M), (T.devine = !0));
+        (T.j = V ? Math.min(6, V.j + (M - u.indexOf(V))) : M), (T.devine = !0);
       }
     }),
     !u.length)
@@ -66,11 +66,11 @@ function SS(t, e = new Date()) {
       return;
     let M = m[0],
       V = 1e9;
-    (m.forEach((O, b) => {
+    m.forEach((O, b) => {
       let v = Math.abs(u[b].y - T.y);
       v < V && ((V = v), (M = O));
     }),
-      M.lignes.push({ y: T.y, t: T.texte }));
+      M.lignes.push({ y: T.y, t: T.texte });
   });
   let w = o
       .filter((T) => T.y > p + h * 0.3)
@@ -106,18 +106,18 @@ var I9 = () => On(new Date()),
   Z2 = (t) => (new Date(t + "T12:00").getDay() + 6) % 7,
   R2 = (t, e) => {
     let n = new Date(t.du + "T12:00");
-    return (n.setDate(n.getDate() + (e - Z2(t.du))), On(n));
+    return n.setDate(n.getDate() + (e - Z2(t.du))), On(n);
   },
   ew = (t, e = I9()) =>
     !!(t && t.actif !== !1 && t.du && t.au && Array.isArray(t.jours) && t.jours.length && e <= t.au);
 var Tf = (t) => (_f[t] ? _f[t][0].toUpperCase() + _f[t].slice(1) : ""),
-  Ki = (t) =>
+  dateFr = (t) =>
     new Date(t + "T12:00")
       .toLocaleDateString("fr-FR", { day: "numeric", month: "long" })
       .replace(/^1 /, "1er ");
 var Pe = en(hn());
-var k9 = ({ plat: t }) => {
-  let [e, ...n] = String(t || "")
+var k9 = ({ plat: plat }) => {
+  let [e, ...n] = String(plat || "")
     .split(
       `
 `,
@@ -131,17 +131,22 @@ var k9 = ({ plat: t }) => {
     !!n.length && Pe.default.createElement("div", { className: "mn-acc" }, n.join(" \xB7 ")),
   );
 };
-function tw({ menu: t, onClose: e, aujourdhui: n = On(new Date()), apercu: r }) {
+function FeuilleMenu({
+  menu: menu,
+  onClose: onClose,
+  aujourdhui: aujourdhui = On(new Date()),
+  apercu: apercu,
+}) {
   if (
     ((0, Pe.useEffect)(() => {
-      if (r) return;
-      let o = (a) => a.key === "Escape" && e?.();
-      return (addEventListener("keydown", o), () => removeEventListener("keydown", o));
+      if (apercu) return;
+      let o = (a) => a.key === "Escape" && onClose?.();
+      return addEventListener("keydown", o), () => removeEventListener("keydown", o);
     }, []),
-    !t?.jours?.length)
+    !menu?.jours?.length)
   )
     return null;
-  let i = n >= t.du && n <= t.au ? Z2(n) : -1,
+  let i = aujourdhui >= menu.du && aujourdhui <= menu.au ? Z2(aujourdhui) : -1,
     s = Pe.default.createElement(
       "div",
       { className: "mn-feuille", onClick: (o) => o.stopPropagation() },
@@ -160,19 +165,19 @@ function tw({ menu: t, onClose: e, aujourdhui: n = On(new Date()), apercu: r }) 
           { className: "mn-dates" },
           Pe.default.createElement("i", null),
           "du ",
-          Ki(t.du),
+          dateFr(menu.du),
           " au ",
-          Ki(t.au),
+          dateFr(menu.au),
           Pe.default.createElement("i", null),
         ),
       ),
       Pe.default.createElement(
         "div",
         { className: "mn-liste" },
-        t.jours
+        menu.jours
           .filter((o) => o.plat)
           .map((o) => {
-            let a = i >= 0 ? o.j < i : n > R2(t, o.j);
+            let a = i >= 0 ? o.j < i : aujourdhui > R2(menu, o.j);
             return Pe.default.createElement(
               "div",
               { key: o.j, className: "mn-ligne" + (o.j === i ? " auj" : "") + (a ? " passe" : "") },
@@ -180,7 +185,7 @@ function tw({ menu: t, onClose: e, aujourdhui: n = On(new Date()), apercu: r }) 
                 "div",
                 { className: "mn-jour" },
                 Pe.default.createElement("span", null, Tf(o.j)),
-                Pe.default.createElement("small", null, Ki(R2(t, o.j))),
+                Pe.default.createElement("small", null, dateFr(R2(menu, o.j))),
               ),
               Pe.default.createElement(
                 "div",
@@ -192,19 +197,20 @@ function tw({ menu: t, onClose: e, aujourdhui: n = On(new Date()), apercu: r }) 
             );
           }),
       ),
-      !!t.message && Pe.default.createElement("div", { className: "mn-msg" }, "\xAB ", t.message, " \xBB"),
+      !!menu.message &&
+        Pe.default.createElement("div", { className: "mn-msg" }, "\xAB ", menu.message, " \xBB"),
       Pe.default.createElement(
         "div",
         { className: "mn-pied" },
         "Plats \xE0 retrouver \xE0 l'\xE9picerie, dans la limite des quantit\xE9s disponibles",
       ),
-      !r && Pe.default.createElement("button", { className: "mn-fermer", onClick: e }, "Fermer"),
+      !apercu && Pe.default.createElement("button", { className: "mn-fermer", onClick: onClose }, "Fermer"),
     );
-  return r
+  return apercu
     ? Pe.default.createElement("div", { className: "mn-apercu" }, s)
     : Pe.default.createElement(
         "div",
-        { className: "mn-fond", onClick: e, role: "dialog", "aria-label": "Menu de la semaine" },
+        { className: "mn-fond", onClick: onClose, role: "dialog", "aria-label": "Menu de la semaine" },
         s,
       );
 }

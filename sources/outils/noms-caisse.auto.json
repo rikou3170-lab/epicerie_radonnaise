@@ -1,0 +1,97 @@
+{
+ "B_": {
+  "nom": "firebaseConfig",
+  "source": "firebase.js",
+  "score": 1
+ },
+ "Hx": {
+  "nom": "CONFIG_REF",
+  "source": "firebase.js",
+  "score": 1
+ },
+ "b_": {
+  "nom": "versionEnLigne",
+  "source": "maj.jsx",
+  "score": 1
+ },
+ "yC": {
+  "nom": "useMiseAJour",
+  "source": "maj.jsx",
+  "score": 1
+ },
+ "N_": {
+  "nom": "styleBandeau",
+  "source": "maj.jsx",
+  "score": 1
+ },
+ "M_": {
+  "nom": "CMD_DEF",
+  "source": "commande.js",
+  "score": 1
+ },
+ "cb": {
+  "nom": "LISTE_RACLETTE",
+  "source": "commande.js",
+  "score": 1
+ },
+ "Gt": {
+  "nom": "FRISE",
+  "source": "themes.jsx",
+  "score": 1
+ },
+ "nk": {
+  "nom": "persoVersTheme",
+  "source": "themes.jsx",
+  "score": 1
+ },
+ "Dk": {
+  "nom": "LOGO",
+  "source": "caisse.jsx",
+  "score": 1
+ },
+ "AE": {
+  "nom": "BandeauMaj",
+  "source": "maj.jsx",
+  "score": 0.93
+ },
+ "ek": {
+  "nom": "THEMES",
+  "source": "themes.jsx",
+  "score": 0.93
+ },
+ "Mk": {
+  "nom": "Caisse",
+  "source": "caisse.jsx",
+  "score": 0.93
+ },
+ "Ab": {
+  "nom": "ILLU",
+  "source": "themes.jsx",
+  "score": 0.92
+ },
+ "wk": {
+  "nom": "Connexion",
+  "source": "caisse.jsx",
+  "score": 0.91
+ },
+ "QC": {
+  "nom": "Particules",
+  "source": "themes.jsx",
+  "score": 0.87
+ },
+ "kk": {
+  "nom": "crediter",
+  "source": "caisse.jsx",
+  "score": 0.82
+ },
+ "xv": {
+  "nom": "Scanner",
+  "source": "caisse.jsx",
+  "score": 0.58
+ },
+ "al": {
+  "nom": "avertirMessage",
+  "source": "commande.js",
+  "score": 0.52
+ }
+}

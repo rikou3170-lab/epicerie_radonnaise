@@ -2,15 +2,15 @@ VD({
   loadJS(t) {
     return new Promise((e, n) => {
       let r = document.createElement("script");
-      (r.setAttribute("src", t),
+      r.setAttribute("src", t),
         (r.onload = e),
         (r.onerror = (i) => {
           let o = Qn("internal-error");
-          ((o.customData = i), n(o));
+          (o.customData = i), n(o);
         }),
         (r.type = "text/javascript"),
         (r.charset = "UTF-8"),
-        y_().appendChild(r));
+        y_().appendChild(r);
     });
   },
   gapiScript: "https://apis.google.com/js/api.js",
@@ -18,7 +18,7 @@ VD({
   recaptchaEnterpriseScript: "https://www.google.com/recaptcha/enterprise.js?render=",
 });
 g_("Browser");
-var B_ = {
+var firebaseConfig = {
     apiKey: "AIzaSyCRvvyP7yCOSj2u4WDFCDvBWnGix0Ck-os",
     authDomain: "application-famille-897df.firebaseapp.com",
     projectId: "application-famille-897df",
@@ -26,24 +26,24 @@ var B_ = {
     messagingSenderId: "718726611261",
     appId: "1:718726611261:web:793adf52ab34c8739d8554",
   },
-  gC = up(B_),
-  Gx;
+  app2 = initializeApp(firebaseConfig),
+  cacheLocal;
 try {
-  Gx = AA({ tabManager: CA() });
+  cacheLocal = persistentLocalCache({ tabManager: persistentMultipleTabManager() });
 } catch {
-  Gx = void 0;
+  cacheLocal = void 0;
 }
-var ve = lA(gC, Gx ? { localCache: Gx } : {}),
-  el = EE(gC),
-  Hx = Ve(ve, "shop", "config");
-var tl = "2.37";
+var db2 = initializeFirestore(app2, cacheLocal ? { localCache: cacheLocal } : {}),
+  auth2 = getAuth(app2),
+  CONFIG_REF = doc2(db2, "shop", "config");
+var VERSION = "2.37";
 var Wt = vn(Pn()),
   AC = vn(zf()),
   go = [],
   gE = null,
   D_ = (t) =>
     new Promise((e) => {
-      ((go = [...go, { ...t, res: e, id: Math.random() }]), gE?.(go));
+      (go = [...go, { ...t, res: e, id: Math.random() }]), gE?.(go);
     });
 var CC = (t, e = {}) => D_({ texte: t, ...e }),
   w_ = /^(supprimer|effacer|annuler|retirer|vider)/i,
@@ -59,7 +59,7 @@ var CC = (t, e = {}) => D_({ texte: t, ...e }),
       e[1][0].toUpperCase() + e[1].slice(1)
     );
   },
-  k_ = `
+  CSS_DIALOGUE = `
 .dlg-fond{position:fixed;inset:0;z-index:1000;background:rgba(20,32,26,.55);display:flex;align-items:center;justify-content:center;padding:20px;animation:dlgIn .15s ease}
 .dlg{background:#FFFFFF;border-radius:20px;max-width:400px;width:100%;padding:22px 20px 18px;box-shadow:0 18px 50px rgba(0,0,0,.25);font-family:'Nunito',system-ui,sans-serif;color:#22302A}
 .dlg-t{font-size:15.5px;font-weight:700;line-height:1.5;white-space:pre-line;word-break:break-word;user-select:text;-webkit-user-select:text;margin:0 0 18px}
@@ -69,7 +69,7 @@ var CC = (t, e = {}) => D_({ texte: t, ...e }),
 .dlg-b button.ok.danger{background:#B2563F;border-color:#B2563F}
 @keyframes dlgIn{from{opacity:0}to{opacity:1}}
 `;
-function I_() {
+function Dialogue() {
   let [t, e] = (0, Wt.useState)(go);
   (0, Wt.useEffect)(
     () => (
@@ -85,21 +85,21 @@ function I_() {
     ((0, Wt.useEffect)(() => {
       if (!n) return;
       let o = (s) => {
-        (s.key === "Escape" && r(!1), s.key === "Enter" && r(!0));
+        s.key === "Escape" && r(!1), s.key === "Enter" && r(!0);
       };
-      return (window.addEventListener("keydown", o), () => window.removeEventListener("keydown", o));
+      return window.addEventListener("keydown", o), () => window.removeEventListener("keydown", o);
     }, [n?.id]),
     !n)
   )
     return null;
   function r(o) {
-    (n.res(n.seul ? void 0 : o), (go = go.filter((s) => s.id !== n.id)), e(go));
+    n.res(n.seul ? void 0 : o), (go = go.filter((s) => s.id !== n.id)), e(go);
   }
   let i = n.danger ?? w_.test(n.texte.trim());
   return Wt.default.createElement(
     "div",
     { className: "dlg-fond", onClick: () => r(!1) },
-    Wt.default.createElement("style", null, k_),
+    Wt.default.createElement("style", null, CSS_DIALOGUE),
     Wt.default.createElement(
       "div",
       { className: "dlg", role: "alertdialog", "aria-modal": "true", onClick: (o) => o.stopPropagation() },
@@ -119,11 +119,11 @@ function I_() {
 }
 if (typeof document < "u") {
   let t = document.createElement("div");
-  ((t.id = "dialogues"),
+  (t.id = "dialogues"),
     (document.body || document.documentElement).appendChild(t),
-    (0, AC.createRoot)(t).render(Wt.default.createElement(I_, null)));
+    (0, AC.createRoot)(t).render(Wt.default.createElement(Dialogue, null));
 }
-function T_() {
+function typeAppareil() {
   let t = navigator.userAgent || "",
     e = /iPhone/.test(t)
       ? "iPhone"
@@ -158,10 +158,12 @@ function vC(t) {
     if (sessionStorage.getItem(e)) return;
     sessionStorage.setItem(e, "1");
   } catch {}
-  j1($t(ve, "connexions"), { date: Date.now(), app: t, appareil: T_() }).catch(() => {});
+  addDoc(collection(db2, "connexions"), { date: Date.now(), app: t, appareil: typeAppareil() }).catch(
+    () => {},
+  );
 }
 var Xn = vn(Pn());
-async function b_() {
+async function versionEnLigne() {
   try {
     let t = await fetch("version.json?t=" + Date.now(), { cache: "no-store" });
     return (t.ok && (await t.json()).version) || null;
@@ -186,14 +188,14 @@ async function P_() {
   } catch {}
   location.reload();
 }
-function yC() {
-  let [t, e] = (0, Xn.useState)(null);
+function useMiseAJour() {
+  let [dispo, setDispo] = (0, Xn.useState)(null);
   return (
     (0, Xn.useEffect)(() => {
       location.search.includes("maj=") && history.replaceState(null, "", location.pathname);
       let n = async () => {
-        let o = await b_();
-        o && o !== tl && e(o);
+        let o = await versionEnLigne();
+        o && o !== VERSION && setDispo(o);
       };
       n();
       let r = setInterval(n, 300 * 1e3),
@@ -203,14 +205,14 @@ function yC() {
       return (
         document.addEventListener("visibilitychange", i),
         () => {
-          (clearInterval(r), document.removeEventListener("visibilitychange", i));
+          clearInterval(r), document.removeEventListener("visibilitychange", i);
         }
       );
     }, []),
-    t
+    dispo
   );
 }
-var N_ = {
+var styleBandeau = {
   position: "fixed",
   left: "50%",
   transform: "translateX(-50%)",
@@ -228,12 +230,12 @@ var N_ = {
   boxShadow: "0 8px 28px rgba(0,0,0,.25)",
   fontFamily: "'Nunito',system-ui,sans-serif",
 };
-function AE({ dispo: t }) {
-  let [e, n] = (0, Xn.useState)(!1);
-  return t
+function BandeauMaj({ dispo: dispo }) {
+  let [enCours, setEnCours] = (0, Xn.useState)(!1);
+  return dispo
     ? Xn.default.createElement(
         "div",
-        { style: N_ },
+        { style: styleBandeau },
         Xn.default.createElement(
           "div",
           { style: { flex: 1, fontSize: 12.5, lineHeight: 1.35 } },
@@ -241,18 +243,18 @@ function AE({ dispo: t }) {
             "b",
             { style: { display: "block", fontSize: 13.5 } },
             "Nouvelle version ",
-            t,
+            dispo,
           ),
           "Vous avez la version ",
-          tl,
+          VERSION,
           ".",
         ),
         Xn.default.createElement(
           "button",
           {
-            disabled: e,
+            disabled: enCours,
             onClick: () => {
-              (n(!0), P_());
+              setEnCours(!0), P_();
             },
             style: {
               border: "none",
@@ -267,7 +269,7 @@ function AE({ dispo: t }) {
               flexShrink: 0,
             },
           },
-          e ? "Mise \xE0 jour\u2026" : "Mettre \xE0 jour",
+          enCours ? "Mise \xE0 jour\u2026" : "Mettre \xE0 jour",
         ),
       )
     : null;
@@ -305,7 +307,7 @@ var FC = {
     delai: 30,
   },
   DC = () => !0,
-  yE = (t) => {
+  MENTION_EXCLUSIONS = (t) => {
     let e = { ...FC, ...(t?.tampons || {}) };
     (!e.exclus || e.exclus === "carburant, gaz, alcools, tabac, presse, jeux") && (e.exclus = FC.exclus);
     let n = Math.min(30, Math.max(3, parseInt(e.nb) || 20)),
@@ -321,7 +323,7 @@ var FC = {
     };
   },
   wC = (t) => {
-    let e = yE(t);
+    let e = MENTION_EXCLUSIONS(t);
     return (
       (e.seuil ? "1 passage d\xE8s " + e.seuil + " \u20AC d'achats = 1 tampon" : "1 passage = 1 tampon") +
       " \xB7 " +
@@ -341,7 +343,7 @@ var FC = {
   kC = (t, e, n) => {
     let r = (Number(t) || 0) + 1,
       i = Math.max(0, Number(e) || 0);
-    return (n.palier && r <= n.palier && (i = Math.min(i, n.palier - r)), Math.max(0, Math.min(i, n.nb - r)));
+    return n.palier && r <= n.palier && (i = Math.min(i, n.palier - r)), Math.max(0, Math.min(i, n.nb - r));
   },
   BC = [
     { min: 2, nom: "Membre supporter", ico: "\u{1F49A}" },
@@ -353,7 +355,7 @@ var FC = {
       r = BC.find((i) => e < i.min) || null;
     return { k: e, niv: n, suivant: r, reste: r ? r.min - e : 0 };
   };
-var M_ = {
+var CMD_DEF = {
     active: !0,
     delaiMin: 2,
     horizon: 60,
@@ -364,10 +366,10 @@ var M_ = {
     heureDefaut: "17:00",
     script: "",
   },
-  IC = (t) => ({ ...M_, ...(t || {}) }),
+  IC = (t) => ({ ...CMD_DEF, ...(t || {}) }),
   O_ = (t) => /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(t || ""),
   FE = O_;
-var cb = {
+var LISTE_RACLETTE = {
   titre: "Vos fromages \xE0 raclette",
   min: 1,
   max: 3,
@@ -411,15 +413,15 @@ var BE = {
     vert: "#7FBF3F",
     os: "#F3E9D2",
   },
-  TC = ({ taille: t = 30, style: e }) =>
+  SvgChapeauSorciere = ({ taille: taille = 30, style: style }) =>
     Ee.default.createElement(
       "svg",
       {
         className: "amb-chapeau",
         viewBox: "0 0 44 40",
-        width: t,
-        height: t * 0.9,
-        style: e,
+        width: taille,
+        height: taille * 0.9,
+        style: style,
         "aria-hidden": "true",
       },
       Ee.default.createElement("path", {
@@ -444,14 +446,14 @@ var BE = {
       Ee.default.createElement("ellipse", { cx: "22", cy: "28", rx: "20", ry: "5", fill: "#5A3690" }),
       Ee.default.createElement("ellipse", { cx: "22", cy: "27", rx: "18", ry: "3.4", fill: "#7650B2" }),
     ),
-  V_ = ({ taille: t = 22, cls: e = "" }) =>
+  SvgCitrouille = ({ taille: taille = 22, cls: cls = "" }) =>
     Ee.default.createElement(
       "svg",
       {
-        className: "amb-citrouille " + e,
+        className: "amb-citrouille " + cls,
         viewBox: "0 0 40 36",
-        width: t,
-        height: t * 0.9,
+        width: taille,
+        height: taille * 0.9,
         "aria-hidden": "true",
       },
       Ee.default.createElement("path", { d: "M20 7c-2-4-1-6 1-7l2 1c-2 1-2 3-1 6z", fill: "#4E6B2A" }),
@@ -465,10 +467,10 @@ var BE = {
         Ee.default.createElement("path", { d: "M10 24c4 4 16 4 20 0l-3 1-2-2-2 2-3-2-3 2-2-2-2 2z" }),
       ),
     );
-function bC({ n: t = 9, apercu: e }) {
+function bC({ n: t = 9, apercu: apercu }) {
   return Ee.default.createElement(
     "div",
-    { className: "amb-guirl" + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-guirl" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     Ee.default.createElement(
       "svg",
       { className: "amb-fil", viewBox: "0 0 300 24", preserveAspectRatio: "none" },
@@ -494,7 +496,7 @@ function bC({ n: t = 9, apercu: e }) {
               className: "amb-lanterne",
               style: { left: i + "%", animationDelay: (r % 5) * 0.37 + "s" },
             },
-            Ee.default.createElement(V_, { taille: 17 }),
+            Ee.default.createElement(SvgCitrouille, { taille: 17 }),
           )
         : Ee.default.createElement("span", {
             key: r,
@@ -505,29 +507,29 @@ function bC({ n: t = 9, apercu: e }) {
   );
 }
 var z_ = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%235E3F82' stroke-width='.9' opacity='.75'%3E%3Cpath d='M40 0L8 32M40 0L22 40M40 0L0 18M40 0v40M40 0H0'/%3E%3Cpath d='M28 0q2 6 12 12M16 0q4 12 24 24M6 0q6 20 34 34'/%3E%3C/g%3E%3C/svg%3E")`;
-var SC = ({ taille: t = 18, c1: e = "#EC407A", c2: n = "#F06292", cls: r = "" }) =>
+var SC = ({ taille: taille = 18, c1: e = "#EC407A", c2: c2 = "#F06292", cls: cls = "" }) =>
     Ee.default.createElement(
       "svg",
-      { className: r, viewBox: "0 0 24 30", width: t, height: t * 1.25, "aria-hidden": "true" },
+      { className: cls, viewBox: "0 0 24 30", width: taille, height: taille * 1.25, "aria-hidden": "true" },
       Ee.default.createElement("path", {
         d: "M12 2c-3.4 0-5.5 2.4-5.5 5.4 0 3.4 2.2 6.8 5.5 11.6 3.3-4.8 5.5-8.2 5.5-11.6C17.5 4.4 15.4 2 12 2zm0 3c1.5 0 2.5 1 2.5 2.5 0 1.6-1 3.5-2.5 6-1.5-2.5-2.5-4.4-2.5-6C9.5 6 10.5 5 12 5z",
         fill: e,
       }),
       Ee.default.createElement("path", {
         d: "M10 17 3.5 27.5l3.7-.4 1.7 3.4 5.3-9.4zM14 17l6.5 10.5-3.7-.4-1.7 3.4-5.3-9.4z",
-        fill: n,
+        fill: c2,
       }),
     ),
-  PC = ({ style: t }) =>
+  PC = ({ style: style }) =>
     Ee.default.createElement(
       "span",
-      { className: "amb-ruban-logo", style: t },
+      { className: "amb-ruban-logo", style: style },
       Ee.default.createElement(SC, { taille: 15 }),
     );
-function NC({ n: t = 9, apercu: e }) {
+function NC({ n: t = 9, apercu: apercu }) {
   return Ee.default.createElement(
     "div",
-    { className: "amb-guirl" + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-guirl" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     Ee.default.createElement(
       "svg",
       { className: "amb-fil", viewBox: "0 0 300 24", preserveAspectRatio: "none" },

@@ -2,8 +2,8 @@ var gM = (t) => {
     let e = mM(t, 5, 0);
     return e === Go(DI(t), 49) ? Go(e, 7) : e;
   },
-  rn = (t, e, n = 10) => `repeating-linear-gradient(90deg,${t} 0 ${n}px,${e} ${n}px ${2 * n}px)`,
-  vM = [
+  FRISE = (t, e, n = 10) => `repeating-linear-gradient(90deg,${t} 0 ${n}px,${e} ${n}px ${2 * n}px)`,
+  THEMES = [
     {
       id: "galette",
       nom: "Galette des rois",
@@ -12,7 +12,7 @@ var gM = (t) => {
       top: "#7A5A12",
       accent: "#C69A3C",
       soft: "#FBF3DC",
-      frise: rn("#C69A3C", "#F4E2A8"),
+      frise: FRISE("#C69A3C", "#F4E2A8"),
       parts: [["etoile", ["#D4AF37", "#E8C766"]]],
       illu: "galette",
       dates: (t) => [Ve(t, 1, 2), Ve(t, 1, 15)],
@@ -26,7 +26,7 @@ var gM = (t) => {
       top: "#9A5A22",
       accent: "#E0A040",
       soft: "#FCF0DE",
-      frise: rn("#E0A040", "#F7DDB0"),
+      frise: FRISE("#E0A040", "#F7DDB0"),
       parts: [["crepe", ["#E9B35A", "#D9973A"]]],
       illu: "crepes",
       dates: (t) => [Ve(t, 1, 28), Ve(t, 2, 2)],
@@ -39,7 +39,7 @@ var gM = (t) => {
       top: "#A3243E",
       accent: "#E05A73",
       soft: "#FCE7EC",
-      frise: rn("#E05A73", "#F7C6D0"),
+      frise: FRISE("#E05A73", "#F7C6D0"),
       parts: [["coeur", ["#E05A73", "#C2185B", "#F48FB1"]]],
       sens: "haut",
       illu: "coeurs",
@@ -53,7 +53,7 @@ var gM = (t) => {
       top: "#4E7F3E",
       accent: "#E9A23B",
       soft: "#F3F7E6",
-      frise: rn("#F6C6D9", "#CDE7B0", 12),
+      frise: FRISE("#F6C6D9", "#CDE7B0", 12),
       parts: [["oeuf", ["#F6C6D9", "#BFE3F2", "#F9E79F", "#C8E6C9"]]],
       illu: "oeufs",
       dates: (t) => {
@@ -69,7 +69,7 @@ var gM = (t) => {
       top: "#3F6B3A",
       accent: "#8BBF6A",
       soft: "#EEF6E8",
-      frise: rn("#8BBF6A", "#FFFFFF", 8),
+      frise: FRISE("#8BBF6A", "#FFFFFF", 8),
       parts: [["clochette", ["#FFFFFF"]]],
       illu: "muguet",
       dates: (t) => [Ve(t, 4, 28), Ve(t, 5, 1)],
@@ -83,7 +83,7 @@ var gM = (t) => {
       top: "#B04A73",
       accent: "#E88AAE",
       soft: "#FCEAF2",
-      frise: rn("#E88AAE", "#FBD3E2"),
+      frise: FRISE("#E88AAE", "#FBD3E2"),
       parts: [["fleur", ["#F48FB1", "#CE93D8", "#FFD54F"]]],
       illu: "bouquet",
       prio: 1,
@@ -100,7 +100,7 @@ var gM = (t) => {
       top: "#4F3A8C",
       accent: "#F2B134",
       soft: "#EFEAF8",
-      frise: rn("#F2B134", "#4F3A8C", 8),
+      frise: FRISE("#F2B134", "#4F3A8C", 8),
       parts: [["note", ["#4F3A8C", "#F2B134", "#E05A73"]]],
       sens: "haut",
       illu: "notes",
@@ -115,7 +115,7 @@ var gM = (t) => {
       top: "#24507E",
       accent: "#5B8FC7",
       soft: "#E6EFF8",
-      frise: rn("#24507E", "#9CC0E6"),
+      frise: FRISE("#24507E", "#9CC0E6"),
       parts: [
         ["cravate", ["#24507E", "#5B8FC7", "#C27B42"]],
         ["moustache", ["#4E342E"]],
@@ -152,7 +152,7 @@ var gM = (t) => {
       top: "#B0235F",
       accent: "#F06292",
       soft: "#FCE4EC",
-      frise: rn("#F48FB1", "#FFFFFF", 9),
+      frise: FRISE("#F48FB1", "#FFFFFF", 9),
       parts: [
         ["ruban", ["#F06292", "#F8BBD0", "#EC407A"]],
         ["coeur", ["#F48FB1", "#FFFFFF"]],
@@ -169,7 +169,7 @@ var gM = (t) => {
       top: "#2B1B3D",
       accent: "#E8731C",
       soft: "#FBEADB",
-      frise: rn("#E8731C", "#2B1B3D", 14),
+      frise: FRISE("#E8731C", "#2B1B3D", 14),
       parts: [
         ["citrouille", ["#E8731C"]],
         ["chauvesouris", ["#5E3F82"]],
@@ -185,7 +185,7 @@ var gM = (t) => {
       top: "#6B1F3A",
       accent: "#9C3D6A",
       soft: "#F6E8EE",
-      frise: rn("#9C3D6A", "#E7C7D6"),
+      frise: FRISE("#9C3D6A", "#E7C7D6"),
       parts: [["raisin", ["#7B1E4A", "#9C3D6A"]]],
       illu: "vin",
       dates: (t) => {
@@ -201,7 +201,7 @@ var gM = (t) => {
       top: "#8E2430",
       accent: "#D4AF37",
       soft: "#FBEFE4",
-      frise: rn("#D4AF37", "#8E2430"),
+      frise: FRISE("#D4AF37", "#8E2430"),
       parts: [
         ["etoile", ["#D4AF37", "#F4D774"]],
         ["flocon", ["#FFFFFF"]],
@@ -231,7 +231,7 @@ var gM = (t) => {
       top: "#1B1B2F",
       accent: "#D4AF37",
       soft: "#F7F1DE",
-      frise: rn("#D4AF37", "#1B1B2F", 6),
+      frise: FRISE("#D4AF37", "#1B1B2F", 6),
       parts: [
         ["confetti", ["#D4AF37", "#F4D774", "#FFFFFF"]],
         ["etincelle", ["#D4AF37"]],
@@ -264,10 +264,10 @@ var yM = (t) => {
       .filter((r) => r.trim() && !/^[\w\s.,;:!?'"()\-]$/.test(r))
       .slice(0, 6);
   };
-function xM(t) {
+function persoVersTheme(t) {
   let e = /^#[0-9a-f]{6}$/i.test(t.couleur || "") ? t.couleur : "#1C433B",
     n = Array.isArray(t.motifs) && t.motifs.length ? t.motifs.filter((r) => !mf[r]) : SI(t.emojis);
-  return PI(
+  return ParticulesMontantes(
     {
       id: t.id,
       perso: !0,
@@ -277,7 +277,7 @@ function xM(t) {
       top: e,
       accent: ff(e, 0.35),
       soft: ff(e, 0.9),
-      frise: rn(ff(e, 0.35), ff(e, 0.82)),
+      frise: FRISE(ff(e, 0.35), ff(e, 0.82)),
       parts: n.length ? [["emoji", n]] : [],
       illuEmoji: SI(t.illu)[0] || n[0] || "\u2B50",
       prio: 2,
@@ -294,9 +294,9 @@ function xM(t) {
   );
 }
 var bM = !1;
-function PI(t, e) {
+function ParticulesMontantes(t, e) {
   if (!t) return t;
-  ((e = e || {}), !bM && !t.perso && (e = {}));
+  (e = e || {}), !bM && !t.perso && (e = {});
   let n = t.parts,
     r = Array.isArray(e.motifs) ? e.motifs.filter(Boolean).slice(0, 6) : null;
   if (r && r.length) {
@@ -365,7 +365,7 @@ function MI(t) {
   }
 }
 var EM = !1,
-  _M = (t) => (EM ? ((t || {}).perso || []).filter((e) => e && e.id).map(xM) : []);
+  _M = (t) => (EM ? ((t || {}).perso || []).filter((e) => e && e.id).map(persoVersTheme) : []);
 function t2(t, e, n) {
   let [r, i] = t.dates(n),
     o = e || {};
@@ -377,7 +377,7 @@ function n2(t, e) {
   let r = e || new Date().toLocaleDateString("sv-SE"),
     i = (h) =>
       h &&
-      PI(
+      ParticulesMontantes(
         { ...h, message: (n.items?.[h.id]?.message || "").trim() || h.message, anim: n.animations !== !1 },
         h.perso ? null : n.items?.[h.id],
       ),
@@ -386,7 +386,7 @@ function n2(t, e) {
     l = 1e9,
     u = -1,
     d = (n.perso || []).filter((h) => h && h.active !== !1).map((h) => h.id);
-  for (let h of [...vM, ..._M(n).filter((f) => d.includes(f.id))])
+  for (let h of [...THEMES, ..._M(n).filter((f) => d.includes(f.id))])
     if (!(!h.perso && n.items?.[h.id]?.active === !1))
       for (let f of [o - 1, o]) {
         let [m, E] = t2(h, n.items?.[h.id], f);
@@ -781,7 +781,7 @@ var AM = {
         d: "M12 11c-1.5-2.5-5-3-7.5-1-1.2 1-2.5 1-3.5.3.5 2.5 3 4 6 3.2 2-.6 3.5-1.5 5-2.5 1.5 1 3 1.9 5 2.5 3 .8 5.5-.7 6-3.2-1 .7-2.3.7-3.5-.3-2.5-2-6-1.5-7.5 1z",
       }),
   },
-  kM = [
+  FORMES_NEIGE = [
     ["flocon", "Flocon", ["#FFFFFF"]],
     ["etoile", "\xC9toile", ["#D4AF37", "#F4D774"]],
     ["etincelle", "\xC9tincelle", ["#F2B134", "#FFFFFF"]],
@@ -818,7 +818,7 @@ var AM = {
     ["cravate", "Cravate", ["#24507E", "#5B8FC7"]],
     ["moustache", "Moustache", ["#4E342E"]],
   ].map(([t, e, n]) => ({ id: t, nom: e, c: n })),
-  mf = Object.fromEntries(kM.map((t) => [t.id, t.c]));
+  mf = Object.fromEntries(FORMES_NEIGE.map((t) => [t.id, t.c]));
 var IM = Array.from({ length: 30 }, (t, e) => {
   let n = (r) => {
     let i = Math.sin(e * 12.9898 + r * 78.233) * 43758.5453;
@@ -834,18 +834,18 @@ var IM = Array.from({ length: 30 }, (t, e) => {
     o: 0.55 + n(7) * 0.4,
   };
 });
-function r2({ theme: t, nb: e = 16, dans: n }) {
-  if (!t) return null;
-  e = t.nb || e;
-  let r = (t.parts || []).flatMap(([i, o]) => o.map((s) => [i, s]));
+function Particules({ theme: theme, nb: nb = 16, dans: dans }) {
+  if (!theme) return null;
+  nb = theme.nb || nb;
+  let r = (theme.parts || []).flatMap(([i, o]) => o.map((s) => [i, s]));
   return r.length
     ? I.default.createElement(
         "div",
         {
-          className: "parts" + (n ? " dans" : "") + (t.sens === "haut" ? " haut" : ""),
+          className: "parts" + (dans ? " dans" : "") + (theme.sens === "haut" ? " haut" : ""),
           "aria-hidden": "true",
         },
-        IM.slice(0, e).map((i, o) => {
+        IM.slice(0, nb).map((i, o) => {
           let [s, l] = r[o % r.length];
           return I.default.createElement(
             "span",
@@ -883,7 +883,7 @@ function r2({ theme: t, nb: e = 16, dans: n }) {
       )
     : null;
 }
-var TM = {
+var ILLU = {
     bonhomme: I.default.createElement(
       "g",
       null,
@@ -1318,50 +1318,50 @@ var TM = {
       }),
     ),
   },
-  CM = ({ theme: t, taille: e = 96 }) =>
-    t.illuEmoji
+  IllustrationTheme = ({ theme: theme, taille: taille = 96 }) =>
+    theme.illuEmoji
       ? I.default.createElement(
           "span",
           {
             "aria-hidden": "true",
             style: {
               display: "inline-block",
-              width: e,
-              height: e,
-              fontSize: e * 0.72,
-              lineHeight: e + "px",
+              width: taille,
+              height: taille,
+              fontSize: taille * 0.72,
+              lineHeight: taille + "px",
               textAlign: "center",
             },
           },
-          t.illuEmoji,
+          theme.illuEmoji,
         )
       : I.default.createElement(
           "svg",
-          { viewBox: "0 0 100 100", width: e, height: e, "aria-hidden": "true" },
-          TM[t.illu],
+          { viewBox: "0 0 100 100", width: taille, height: taille, "aria-hidden": "true" },
+          ILLU[theme.illu],
         );
-function OI({ theme: t }) {
-  return t
+function CarteTheme({ theme: theme }) {
+  return theme
     ? I.default.createElement(
         "div",
         {
-          className: "carte-theme" + (t.magie ? " magie" : "") + (Re(t) ? " " + Re(t) : ""),
-          style: { background: t.soft, borderColor: t.accent + "55" },
+          className: "carte-theme" + (theme.magie ? " magie" : "") + (Re(theme) ? " " + Re(theme) : ""),
+          style: { background: theme.soft, borderColor: theme.accent + "55" },
         },
         I.default.createElement(
           "div",
           { className: "ct-txt" },
-          I.default.createElement("div", { className: "ct-titre", style: { color: t.top } }, t.titre),
-          I.default.createElement("div", { className: "ct-msg" }, t.message),
-          t.magie &&
-            t.id === "noel" &&
+          I.default.createElement("div", { className: "ct-titre", style: { color: theme.top } }, theme.titre),
+          I.default.createElement("div", { className: "ct-msg" }, theme.message),
+          theme.magie &&
+            theme.id === "noel" &&
             FI() &&
             I.default.createElement("div", { className: "ct-compte" }, FI()),
         ),
         I.default.createElement(
           "div",
           { className: "ct-illu" },
-          I.default.createElement(CM, { theme: t, taille: 92 }),
+          I.default.createElement(IllustrationTheme, { theme: theme, taille: 92 }),
         ),
       )
     : null;
@@ -1379,11 +1379,11 @@ var qi = (t, e) => {
     o: 0.5 + qi(e, 6) * 0.5,
     dx: 10 + qi(e, 7) * 30,
   }));
-function i2({ nb: t = 40, dans: e }) {
+function Neige({ nb: nb = 40, dans: dans }) {
   return I.default.createElement(
     "div",
-    { className: "neige" + (e ? " dans" : ""), "aria-hidden": "true" },
-    SM.slice(0, t).map((n, r) =>
+    { className: "neige" + (dans ? " dans" : ""), "aria-hidden": "true" },
+    SM.slice(0, nb).map((n, r) =>
       I.default.createElement(
         "i",
         { key: r, style: { left: n.x + "%", animationDuration: n.d + "s", animationDelay: n.delai + "s" } },
@@ -1402,10 +1402,10 @@ function i2({ nb: t = 40, dans: e }) {
   );
 }
 var NI = ["#FF4D4D", "#FFD54F", "#4FC3F7", "#81C784", "#FF8A65", "#BA68C8"];
-function LI({ n: t = 15, apercu: e }) {
+function GuirlandeNoel({ n: t = 15, apercu: apercu }) {
   return I.default.createElement(
     "div",
-    { className: "guirlande" + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "guirlande" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     I.default.createElement(
       "svg",
       { className: "gl-fil", viewBox: "0 0 300 20", preserveAspectRatio: "none" },
@@ -1433,15 +1433,15 @@ function LI({ n: t = 15, apercu: e }) {
     ),
   );
 }
-var BI = ({ taille: t = 30, style: e }) =>
+var SvgBonnet = ({ taille: taille = 30, style: style }) =>
   I.default.createElement(
     "svg",
     {
       className: "bonnet",
       viewBox: "0 0 40 34",
-      width: t,
-      height: t * 0.85,
-      style: e,
+      width: taille,
+      height: taille * 0.85,
+      style: style,
       "aria-hidden": "true",
     },
     I.default.createElement("path", {
@@ -1452,10 +1452,10 @@ var BI = ({ taille: t = 30, style: e }) =>
     I.default.createElement("rect", { x: "3", y: "24", width: "30", height: "8", rx: "4", fill: "#FFFFFF" }),
     I.default.createElement("circle", { cx: "34", cy: "17", r: "4.5", fill: "#FFFFFF" }),
   );
-function o2({ boucle: t, apercu: e }) {
+function Traineau({ boucle: boucle, apercu: apercu }) {
   return I.default.createElement(
     "div",
-    { className: "traineau" + (t ? " boucle" : "") + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "traineau" + (boucle ? " boucle" : "") + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     I.default.createElement(
       "svg",
       { viewBox: "0 0 150 46", width: "150", height: "46" },
@@ -1519,7 +1519,7 @@ function o2({ boucle: t, apercu: e }) {
     I.default.createElement("span", { className: "poussiere" }),
   );
 }
-var NM = () =>
+var VillageNoel = () =>
   I.default.createElement(
     "svg",
     {
@@ -1652,31 +1652,31 @@ var NM = () =>
       ),
     ),
   );
-function VI({ apercu: t }) {
+function CielEtoile({ apercu: apercu }) {
   return I.default.createElement(
     "div",
     { className: "decor-magie", "aria-hidden": "true" },
     I.default.createElement("div", { className: "etoiles-ciel" }),
     I.default.createElement("div", { className: "lune" }),
-    I.default.createElement(o2, { apercu: t }),
-    I.default.createElement(NM, null),
-    I.default.createElement(i2, { nb: t ? 26 : 44, dans: t }),
+    I.default.createElement(Traineau, { apercu: apercu }),
+    I.default.createElement(VillageNoel, null),
+    I.default.createElement(Neige, { nb: apercu ? 26 : 44, dans: apercu }),
   );
 }
-function zI(t) {
+function PoudreMagique(t) {
   (0, I.useEffect)(() => {
     if (!t || typeof window > "u" || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
     let e = (n) => {
       let r = document.createElement("div");
-      ((r.className = "poudre"), (r.style.left = n.clientX + "px"), (r.style.top = n.clientY + "px"));
+      (r.className = "poudre"), (r.style.left = n.clientX + "px"), (r.style.top = n.clientY + "px");
       for (let i = 0; i < 8; i++) {
         let o = document.createElement("i");
-        (o.style.setProperty("--a", i * 45 + Math.random() * 20 + "deg"),
+        o.style.setProperty("--a", i * 45 + Math.random() * 20 + "deg"),
           o.style.setProperty("--d", 18 + Math.random() * 18 + "px"),
           (o.style.background = ["#F4D774", "#FFFFFF", "#FFD54F"][i % 3]),
-          r.appendChild(o));
+          r.appendChild(o);
       }
-      (document.body.appendChild(r), setTimeout(() => r.remove(), 900));
+      document.body.appendChild(r), setTimeout(() => r.remove(), 900);
     };
     return (
       window.addEventListener("pointerdown", e, { passive: !0 }),

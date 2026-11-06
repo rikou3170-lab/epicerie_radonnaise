@@ -31,22 +31,29 @@ var UM = () =>
       }),
     ),
   );
-function YI({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: o }) {
+function RoueNoel({
+  tours: tours,
+  tickets: tickets,
+  onFini: onFini,
+  onRefus: onRefus,
+  demo: demo,
+  premiere: premiere,
+}) {
   let [s, l] = (0, W.useState)(0),
-    [u, d] = (0, W.useState)(o ? "intro" : "pret"),
+    [u, d] = (0, W.useState)(premiere ? "intro" : "pret"),
     [h, f] = VM(),
-    m = t[s],
+    m = tours[s],
     E = () => {
-      (MM(),
+      MM(),
         d("tourne"),
         f(!!m?.g, () => {
-          (LM(!!m?.g), d("res"));
-        }));
+          LM(!!m?.g), d("res");
+        });
     },
     F = () => {
-      s + 1 < t.length ? (l(s + 1), d("pret")) : n?.();
+      s + 1 < tours.length ? (l(s + 1), d("pret")) : onFini?.();
     },
-    D = t.length - s - 1;
+    D = tours.length - s - 1;
   return u === "regl"
     ? W.default.createElement(
         "div",
@@ -54,7 +61,9 @@ function YI({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: o 
         W.default.createElement(
           "div",
           { className: "roue-in" },
-          W.default.createElement(zM, { onClose: () => d(o && s === 0 ? "intro" : "pret") }),
+          W.default.createElement(ReglementRoue, {
+            onClose: () => d(premiere && s === 0 ? "intro" : "pret"),
+          }),
         ),
       )
     : u === "refus"
@@ -70,7 +79,11 @@ function YI({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: o 
               null,
               "La roue de No\xEBl ne s'affichera plus. Si vous changez d'avis, vous pourrez la r\xE9activer dans l'onglet Fid\xE9lit\xE9, rubrique \xAB Mes donn\xE9es \xBB.",
             ),
-            W.default.createElement("button", { className: "roue-b", onClick: () => r?.() }, "D'accord"),
+            W.default.createElement(
+              "button",
+              { className: "roue-b", onClick: () => onRefus?.() },
+              "D'accord",
+            ),
           ),
         )
       : W.default.createElement(
@@ -93,7 +106,7 @@ function YI({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: o 
                     W.default.createElement("b", null, "Chaque tampon en caisse vous offre un tour de roue."),
                     " Une part \xAB Gagn\xE9 \xBB ? Vous recevez un ticket pour le tirage au sort de No\xEBl. Plus vous gagnez, plus vous avez de chances !",
                   ),
-                  W.default.createElement(HI, { angle: h, taille: 250 }),
+                  W.default.createElement(RoueSvg, { angle: h, taille: 250 }),
                   W.default.createElement(
                     "button",
                     { className: "roue-b", onClick: () => d("pret") },
@@ -116,14 +129,14 @@ function YI({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: o 
                   W.default.createElement(
                     "p",
                     null,
-                    t.length > 1
+                    tours.length > 1
                       ? W.default.createElement(
                           W.default.Fragment,
                           null,
                           "Tour ",
                           s + 1,
                           " sur ",
-                          t.length,
+                          tours.length,
                           " : merci pour votre passage !",
                         )
                       : W.default.createElement(
@@ -132,7 +145,7 @@ function YI({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: o 
                           "Merci pour votre passage : un tour de roue pour vous !",
                         ),
                   ),
-                  W.default.createElement(HI, { angle: h, taille: 290, tourne: u === "tourne" }),
+                  W.default.createElement(RoueSvg, { angle: h, taille: 290, tourne: u === "tourne" }),
                   u === "pret" &&
                     W.default.createElement(
                       "button",
@@ -158,17 +171,17 @@ function YI({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: o 
                           : "Revenez vite : chaque tampon vous offre un nouveau tour.",
                       ),
                       D === 0 &&
-                        e != null &&
+                        tickets != null &&
                         W.default.createElement(
                           "div",
                           { className: "roue-cpt" },
                           "Vos tickets pour le prochain tirage : ",
-                          W.default.createElement("b", null, e),
+                          W.default.createElement("b", null, tickets),
                         ),
                       W.default.createElement(
                         "button",
                         { className: "roue-b", onClick: F },
-                        D > 0 ? "Tour suivant \u279C" : i ? "Fermer la d\xE9mo" : "Fermer",
+                        D > 0 ? "Tour suivant \u279C" : demo ? "Fermer la d\xE9mo" : "Fermer",
                       ),
                     ),
                   u !== "tourne" &&
@@ -181,7 +194,7 @@ function YI({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: o 
                         { className: "roue-lien", onClick: () => d("regl") },
                         "R\xE8glement du jeu",
                       ),
-                      !i &&
+                      !demo &&
                         W.default.createElement(
                           "button",
                           { className: "roue-lien", onClick: () => d("refus") },
@@ -201,7 +214,7 @@ var XI = () => gc(new Date()),
   vc = (t) => (new Date(t + "T12:00").getDay() + 6) % 7,
   d2 = (t, e) => {
     let n = new Date(t.du + "T12:00");
-    return (n.setDate(n.getDate() + (e - vc(t.du))), gc(n));
+    return n.setDate(n.getDate() + (e - vc(t.du))), gc(n);
   },
   h2 = (t, e = XI()) =>
     !!(t && t.actif !== !1 && t.du && t.au && Array.isArray(t.jours) && t.jours.length && e <= t.au);
@@ -211,12 +224,12 @@ function ZI(t, e = XI()) {
   return t.jours.find((r) => r.j === n && r.plat) || null;
 }
 var p2 = (t) => (u2[t] ? u2[t][0].toUpperCase() + u2[t].slice(1) : ""),
-  za = (t) =>
+  dateFr = (t) =>
     new Date(t + "T12:00")
       .toLocaleDateString("fr-FR", { day: "numeric", month: "long" })
       .replace(/^1 /, "1er ");
-var m2 = ({ plat: t }) => {
-    let [e, ...n] = String(t || "")
+var m2 = ({ plat: plat }) => {
+    let [e, ...n] = String(plat || "")
       .split(
         `
 `,
@@ -276,17 +289,17 @@ var m2 = ({ plat: t }) => {
         opacity: ".5",
       }),
     );
-function RI({ menu: t, onOuvrir: e, aujourdhui: n = gc(new Date()) }) {
-  if (!h2(t, n)) return null;
-  let r = ZI(t, n),
-    i = n < t.du;
+function TuileMenu({ menu: menu, onOuvrir: onOuvrir, aujourdhui: aujourdhui = gc(new Date()) }) {
+  if (!h2(menu, aujourdhui)) return null;
+  let r = ZI(menu, aujourdhui),
+    i = aujourdhui < menu.du;
   if (!r && !i) {
-    let o = vc(n),
-      s = t.jours.find((l) => l.j > o && l.plat);
+    let o = vc(aujourdhui),
+      s = menu.jours.find((l) => l.j > o && l.plat);
     return s
       ? ne.default.createElement(
           "button",
-          { className: "mn-carte petite", onClick: e },
+          { className: "mn-carte petite", onClick: onOuvrir },
           ne.default.createElement("span", { className: "mn-ic" }, ne.default.createElement(f2, { t: 38 })),
           ne.default.createElement(
             "span",
@@ -307,19 +320,26 @@ function RI({ menu: t, onOuvrir: e, aujourdhui: n = gc(new Date()) }) {
   return i
     ? ne.default.createElement(
         "button",
-        { className: "mn-carte petite", onClick: e },
+        { className: "mn-carte petite", onClick: onOuvrir },
         ne.default.createElement("span", { className: "mn-ic" }, ne.default.createElement(f2, { t: 38 })),
         ne.default.createElement(
           "span",
           { className: "mn-txt" },
           ne.default.createElement("span", { className: "mn-lab" }, "Le menu de la semaine est arriv\xE9"),
-          ne.default.createElement("div", { className: "mn-plat" }, "Du ", za(t.du), " au ", za(t.au)),
+          ne.default.createElement(
+            "div",
+            { className: "mn-plat" },
+            "Du ",
+            dateFr(menu.du),
+            " au ",
+            dateFr(menu.au),
+          ),
         ),
         ne.default.createElement("span", { className: "mn-voir" }, "Voir \u203A"),
       )
     : ne.default.createElement(
         "button",
-        { className: "mn-carte", onClick: e },
+        { className: "mn-carte", onClick: onOuvrir },
         ne.default.createElement("span", { className: "mn-ruban" }, "Plat du jour"),
         ne.default.createElement("span", { className: "mn-ic" }, ne.default.createElement(f2, null)),
         ne.default.createElement(
@@ -341,17 +361,22 @@ function RI({ menu: t, onOuvrir: e, aujourdhui: n = gc(new Date()) }) {
         ),
       );
 }
-function e5({ menu: t, onClose: e, aujourdhui: n = gc(new Date()), apercu: r }) {
+function FeuilleMenu({
+  menu: menu,
+  onClose: onClose,
+  aujourdhui: aujourdhui = gc(new Date()),
+  apercu: apercu,
+}) {
   if (
     ((0, ne.useEffect)(() => {
-      if (r) return;
-      let s = (l) => l.key === "Escape" && e?.();
-      return (addEventListener("keydown", s), () => removeEventListener("keydown", s));
+      if (apercu) return;
+      let s = (l) => l.key === "Escape" && onClose?.();
+      return addEventListener("keydown", s), () => removeEventListener("keydown", s);
     }, []),
-    !t?.jours?.length)
+    !menu?.jours?.length)
   )
     return null;
-  let i = n >= t.du && n <= t.au ? vc(n) : -1,
+  let i = aujourdhui >= menu.du && aujourdhui <= menu.au ? vc(aujourdhui) : -1,
     o = ne.default.createElement(
       "div",
       { className: "mn-feuille", onClick: (s) => s.stopPropagation() },
@@ -370,19 +395,19 @@ function e5({ menu: t, onClose: e, aujourdhui: n = gc(new Date()), apercu: r }) 
           { className: "mn-dates" },
           ne.default.createElement("i", null),
           "du ",
-          za(t.du),
+          dateFr(menu.du),
           " au ",
-          za(t.au),
+          dateFr(menu.au),
           ne.default.createElement("i", null),
         ),
       ),
       ne.default.createElement(
         "div",
         { className: "mn-liste" },
-        t.jours
+        menu.jours
           .filter((s) => s.plat)
           .map((s) => {
-            let l = i >= 0 ? s.j < i : n > d2(t, s.j);
+            let l = i >= 0 ? s.j < i : aujourdhui > d2(menu, s.j);
             return ne.default.createElement(
               "div",
               { key: s.j, className: "mn-ligne" + (s.j === i ? " auj" : "") + (l ? " passe" : "") },
@@ -390,7 +415,7 @@ function e5({ menu: t, onClose: e, aujourdhui: n = gc(new Date()), apercu: r }) 
                 "div",
                 { className: "mn-jour" },
                 ne.default.createElement("span", null, p2(s.j)),
-                ne.default.createElement("small", null, za(d2(t, s.j))),
+                ne.default.createElement("small", null, dateFr(d2(menu, s.j))),
               ),
               ne.default.createElement(
                 "div",
@@ -402,19 +427,20 @@ function e5({ menu: t, onClose: e, aujourdhui: n = gc(new Date()), apercu: r }) 
             );
           }),
       ),
-      !!t.message && ne.default.createElement("div", { className: "mn-msg" }, "\xAB ", t.message, " \xBB"),
+      !!menu.message &&
+        ne.default.createElement("div", { className: "mn-msg" }, "\xAB ", menu.message, " \xBB"),
       ne.default.createElement(
         "div",
         { className: "mn-pied" },
         "Plats \xE0 retrouver \xE0 l'\xE9picerie, dans la limite des quantit\xE9s disponibles",
       ),
-      !r && ne.default.createElement("button", { className: "mn-fermer", onClick: e }, "Fermer"),
+      !apercu && ne.default.createElement("button", { className: "mn-fermer", onClick: onClose }, "Fermer"),
     );
-  return r
+  return apercu
     ? ne.default.createElement("div", { className: "mn-apercu" }, o)
     : ne.default.createElement(
         "div",
-        { className: "mn-fond", onClick: e, role: "dialog", "aria-label": "Menu de la semaine" },
+        { className: "mn-fond", onClick: onClose, role: "dialog", "aria-label": "Menu de la semaine" },
         o,
       );
 }

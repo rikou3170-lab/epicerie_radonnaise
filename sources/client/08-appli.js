@@ -2,15 +2,15 @@ o8({
   loadJS(t) {
     return new Promise((e, n) => {
       let r = document.createElement("script");
-      (r.setAttribute("src", t),
+      r.setAttribute("src", t),
         (r.onload = e),
         (r.onerror = (i) => {
           let o = fr("internal-error");
-          ((o.customData = i), n(o));
+          (o.customData = i), n(o);
         }),
         (r.type = "text/javascript"),
         (r.charset = "UTF-8"),
-        jP().appendChild(r));
+        jP().appendChild(r);
     });
   },
   gapiScript: "https://apis.google.com/js/api.js",
@@ -18,7 +18,7 @@ o8({
   recaptchaEnterpriseScript: "https://www.google.com/recaptcha/enterprise.js?render=",
 });
 LP("Browser");
-var HP = {
+var firebaseConfig = {
     apiKey: "AIzaSyCRvvyP7yCOSj2u4WDFCDvBWnGix0Ck-os",
     authDomain: "application-famille-897df.firebaseapp.com",
     projectId: "application-famille-897df",
@@ -26,24 +26,24 @@ var HP = {
     messagingSenderId: "718726611261",
     appId: "1:718726611261:web:793adf52ab34c8739d8554",
   },
-  hf = L0(HP),
-  df;
+  app2 = initializeApp(firebaseConfig),
+  cacheLocal;
 try {
-  df = Rk({ tabManager: e3() });
+  cacheLocal = persistentLocalCache({ tabManager: persistentMultipleTabManager() });
 } catch {
-  df = void 0;
+  cacheLocal = void 0;
 }
-var ce = Uk(hf, df ? { localCache: df } : {}),
-  vV = Uy(hf),
-  Z3 = we(ce, "shop", "config"),
-  X3 = "ABCDEFGHJKMNPQRSTUVWXYZ23456789",
+var db2 = initializeFirestore(app2, cacheLocal ? { localCache: cacheLocal } : {}),
+  auth2 = getAuth(app2),
+  CONFIG_REF = doc2(db2, "shop", "config"),
+  ALPHA = "ABCDEFGHJKMNPQRSTUVWXYZ23456789",
   qy = () => {
     let t = "",
       e = new Uint32Array(5);
     return (
       crypto.getRandomValues(e),
       e.forEach((n) => {
-        t += X3[n % X3.length];
+        t += ALPHA[n % ALPHA.length];
       }),
       "RAD-" + t
     );
@@ -72,18 +72,20 @@ function tn(t) {
   if (!e || KP()) return;
   let n = eI();
   try {
-    Sn(we(ce, "stats", n + "_" + e), { jour: n, cle: e, n: Gu(1) }, { merge: !0 }).catch(() => {});
+    setDoc(doc2(db2, "stats", n + "_" + e), { jour: n, cle: e, n: increment2(1) }, { merge: !0 }).catch(
+      () => {},
+    );
   } catch {}
 }
 function tI() {
-  (tn("ouvertures"), tn("h_" + String(new Date().getHours()).padStart(2, "0")));
+  tn("ouvertures"), tn("h_" + String(new Date().getHours()).padStart(2, "0"));
   try {
     let t = eI();
     localStorage.getItem(R3) !== t && (localStorage.setItem(R3, t), tn("visiteurs"));
   } catch {}
 }
 var $t = On(Ln());
-async function nI() {
+async function versionEnLigne() {
   try {
     let t = await fetch("version.json?t=" + Date.now(), { cache: "no-store" });
     return (t.ok && (await t.json()).version) || null;
@@ -108,14 +110,14 @@ async function Wy() {
   } catch {}
   location.reload();
 }
-function rI() {
-  let [t, e] = (0, $t.useState)(null);
+function useMiseAJour() {
+  let [dispo, setDispo] = (0, $t.useState)(null);
   return (
     (0, $t.useEffect)(() => {
       location.search.includes("maj=") && history.replaceState(null, "", location.pathname);
       let n = async () => {
-        let o = await nI();
-        o && o !== yi && e(o);
+        let o = await versionEnLigne();
+        o && o !== VERSION && setDispo(o);
       };
       n();
       let r = setInterval(n, 300 * 1e3),
@@ -125,14 +127,14 @@ function rI() {
       return (
         document.addEventListener("visibilitychange", i),
         () => {
-          (clearInterval(r), document.removeEventListener("visibilitychange", i));
+          clearInterval(r), document.removeEventListener("visibilitychange", i);
         }
       );
     }, []),
-    t
+    dispo
   );
 }
-var YP = {
+var styleBandeau = {
   position: "fixed",
   left: "50%",
   transform: "translateX(-50%)",
@@ -150,12 +152,12 @@ var YP = {
   boxShadow: "0 8px 28px rgba(0,0,0,.25)",
   fontFamily: "'Nunito',system-ui,sans-serif",
 };
-function iI({ dispo: t }) {
-  let [e, n] = (0, $t.useState)(!1);
-  return t
+function BandeauMaj({ dispo: dispo }) {
+  let [enCours, setEnCours] = (0, $t.useState)(!1);
+  return dispo
     ? $t.default.createElement(
         "div",
-        { style: YP },
+        { style: styleBandeau },
         $t.default.createElement(
           "div",
           { style: { flex: 1, fontSize: 12.5, lineHeight: 1.35 } },
@@ -163,18 +165,18 @@ function iI({ dispo: t }) {
             "b",
             { style: { display: "block", fontSize: 13.5 } },
             "Nouvelle version ",
-            t,
+            dispo,
           ),
           "Vous avez la version ",
-          yi,
+          VERSION,
           ".",
         ),
         $t.default.createElement(
           "button",
           {
-            disabled: e,
+            disabled: enCours,
             onClick: () => {
-              (n(!0), Wy());
+              setEnCours(!0), Wy();
             },
             style: {
               border: "none",
@@ -189,45 +191,45 @@ function iI({ dispo: t }) {
               flexShrink: 0,
             },
           },
-          e ? "Mise \xE0 jour\u2026" : "Mettre \xE0 jour",
+          enCours ? "Mise \xE0 jour\u2026" : "Mettre \xE0 jour",
         ),
       )
     : null;
 }
-function oI({ className: t = "btn gh", style: e }) {
-  let [n, r] = (0, $t.useState)("");
+function BoutonMaj({ className: className = "btn gh", style: style }) {
+  let [etat, setEtat] = (0, $t.useState)("");
   return $t.default.createElement(
     "div",
-    { style: e },
+    { style: style },
     $t.default.createElement(
       "button",
       {
-        className: t,
+        className: className,
         onClick: async () => {
-          r("Recherche\u2026");
-          let o = await nI();
-          o && o !== yi
-            ? (r("Installation de la version " + o + "\u2026"), Wy())
-            : r(
+          setEtat("Recherche\u2026");
+          let o = await versionEnLigne();
+          o && o !== VERSION
+            ? (setEtat("Installation de la version " + o + "\u2026"), Wy())
+            : setEtat(
                 o
-                  ? "Vous avez d\xE9j\xE0 la derni\xE8re version (" + yi + ")"
+                  ? "Vous avez d\xE9j\xE0 la derni\xE8re version (" + VERSION + ")"
                   : "Impossible de v\xE9rifier : pas de connexion internet",
               );
         },
       },
       "Rechercher une mise \xE0 jour \xB7 v",
-      yi,
+      VERSION,
     ),
-    n &&
+    etat &&
       $t.default.createElement(
         "div",
         { style: { fontSize: 11.5, color: "#5C6A62", textAlign: "center", marginTop: 7 } },
-        n,
+        etat,
       ),
-    n.startsWith("Vous avez") &&
+    etat.startsWith("Vous avez") &&
       $t.default.createElement(
         "button",
-        { className: t, style: { marginTop: 8 }, onClick: Wy },
+        { className: className, style: { marginTop: 8 }, onClick: Wy },
         "Recharger quand m\xEAme",
       ),
   );
@@ -270,15 +272,15 @@ var Vr = {
     vert: "#7FBF3F",
     os: "#F3E9D2",
   },
-  lI = ({ taille: t = 30, style: e }) =>
+  SvgChapeauSorciere = ({ taille: taille = 30, style: style }) =>
     U.default.createElement(
       "svg",
       {
         className: "amb-chapeau",
         viewBox: "0 0 44 40",
-        width: t,
-        height: t * 0.9,
-        style: e,
+        width: taille,
+        height: taille * 0.9,
+        style: style,
         "aria-hidden": "true",
       },
       U.default.createElement("path", {
@@ -303,14 +305,14 @@ var Vr = {
       U.default.createElement("ellipse", { cx: "22", cy: "28", rx: "20", ry: "5", fill: "#5A3690" }),
       U.default.createElement("ellipse", { cx: "22", cy: "27", rx: "18", ry: "3.4", fill: "#7650B2" }),
     ),
-  ZP = ({ taille: t = 22, cls: e = "" }) =>
+  SvgCitrouille = ({ taille: taille = 22, cls: cls = "" }) =>
     U.default.createElement(
       "svg",
       {
-        className: "amb-citrouille " + e,
+        className: "amb-citrouille " + cls,
         viewBox: "0 0 40 36",
-        width: t,
-        height: t * 0.9,
+        width: taille,
+        height: taille * 0.9,
         "aria-hidden": "true",
       },
       U.default.createElement("path", { d: "M20 7c-2-4-1-6 1-7l2 1c-2 1-2 3-1 6z", fill: "#4E6B2A" }),
@@ -324,10 +326,10 @@ var Vr = {
         U.default.createElement("path", { d: "M10 24c4 4 16 4 20 0l-3 1-2-2-2 2-3-2-3 2-2-2-2 2z" }),
       ),
     ),
-  RP = ({ w: t = 34 }) =>
+  RP = ({ w: w = 34 }) =>
     U.default.createElement(
       "svg",
-      { viewBox: "0 0 60 26", width: t, height: t * 0.43, "aria-hidden": "true" },
+      { viewBox: "0 0 60 26", width: w, height: w * 0.43, "aria-hidden": "true" },
       U.default.createElement(
         "g",
         { fill: "#1A0F28" },
@@ -351,10 +353,10 @@ var Vr = {
       U.default.createElement("circle", { cx: "28.5", cy: "12.5", r: ".9", fill: Vr.flamme }),
       U.default.createElement("circle", { cx: "31.5", cy: "12.5", r: ".9", fill: Vr.flamme }),
     );
-function uI({ n: t = 9, apercu: e }) {
+function uI({ n: t = 9, apercu: apercu }) {
   return U.default.createElement(
     "div",
-    { className: "amb-guirl" + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-guirl" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     U.default.createElement(
       "svg",
       { className: "amb-fil", viewBox: "0 0 300 24", preserveAspectRatio: "none" },
@@ -380,7 +382,7 @@ function uI({ n: t = 9, apercu: e }) {
               className: "amb-lanterne",
               style: { left: i + "%", animationDelay: (r % 5) * 0.37 + "s" },
             },
-            U.default.createElement(ZP, { taille: 17 }),
+            U.default.createElement(SvgCitrouille, { taille: 17 }),
           )
         : U.default.createElement("span", {
             key: r,
@@ -390,10 +392,10 @@ function uI({ n: t = 9, apercu: e }) {
     }),
   );
 }
-function Gy({ boucle: t = !0, apercu: e }) {
+function DecorVol({ boucle: boucle = !0, apercu: apercu }) {
   return U.default.createElement(
     "div",
-    { className: "amb-vol" + (t ? " boucle" : "") + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-vol" + (boucle ? " boucle" : "") + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     [
       [0, 0, 34],
       [38, -18, 26],
@@ -407,7 +409,7 @@ function Gy({ boucle: t = !0, apercu: e }) {
     ),
   );
 }
-var eM = () =>
+var SvgSorciere = () =>
   U.default.createElement(
     "svg",
     { className: "amb-sorciere", viewBox: "0 0 120 60", width: "120", height: "60", "aria-hidden": "true" },
@@ -515,7 +517,7 @@ var tM = () =>
       ),
     ),
   );
-function cI({ apercu: t }) {
+function cI({ apercu: apercu }) {
   return U.default.createElement(
     "div",
     { className: "decor-magie amb-intro-h", "aria-hidden": "true" },
@@ -523,15 +525,15 @@ function cI({ apercu: t }) {
     U.default.createElement(
       "div",
       { className: "amb-lune" },
-      U.default.createElement("span", { className: "amb-passe" }, U.default.createElement(eM, null)),
+      U.default.createElement("span", { className: "amb-passe" }, U.default.createElement(SvgSorciere, null)),
     ),
-    U.default.createElement(Gy, { boucle: !1, apercu: !0 }),
+    U.default.createElement(DecorVol, { boucle: !1, apercu: !0 }),
     U.default.createElement(tM, null),
     U.default.createElement("div", { className: "amb-brume" }),
     U.default.createElement("div", { className: "amb-brume b2" }),
   );
 }
-var Hy = () =>
+var SvgAraignee = () =>
   U.default.createElement(
     "div",
     { className: "amb-araignee", "aria-hidden": "true" },
@@ -574,18 +576,18 @@ function dI(t) {
     if (!e) return;
     let n = (r) => {
       let i = document.createElement("div");
-      ((i.className = "poudre amb-poudre"),
+      (i.className = "poudre amb-poudre"),
         (i.style.left = r.clientX + "px"),
-        (i.style.top = r.clientY + "px"));
+        (i.style.top = r.clientY + "px");
       for (let o = 0; o < 9; o++) {
         let s = document.createElement("i");
-        (s.style.setProperty("--a", o * 40 + Math.random() * 20 + "deg"),
+        s.style.setProperty("--a", o * 40 + Math.random() * 20 + "deg"),
           s.style.setProperty("--d", 18 + Math.random() * 20 + "px"),
           (s.style.background = e[o % e.length]),
           (s.style.boxShadow = "0 0 6px " + e[o % e.length]),
-          i.appendChild(s));
+          i.appendChild(s);
       }
-      (document.body.appendChild(i), setTimeout(() => i.remove(), 900));
+      document.body.appendChild(i), setTimeout(() => i.remove(), 900);
     };
     return (
       window.addEventListener("pointerdown", n, { passive: !0 }),
@@ -594,10 +596,10 @@ function dI(t) {
   }, [t]);
 }
 var nM = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%235E3F82' stroke-width='.9' opacity='.75'%3E%3Cpath d='M40 0L8 32M40 0L22 40M40 0L0 18M40 0v40M40 0H0'/%3E%3Cpath d='M28 0q2 6 12 12M16 0q4 12 24 24M6 0q6 20 34 34'/%3E%3C/g%3E%3C/svg%3E")`;
-var hI = ({ taille: t = 18, c1: e = "#EC407A", c2: n = "#F06292", cls: r = "" }) =>
+var hI = ({ taille: taille = 18, c1: e = "#EC407A", c2: n = "#F06292", cls: cls = "" }) =>
     U.default.createElement(
       "svg",
-      { className: r, viewBox: "0 0 24 30", width: t, height: t * 1.25, "aria-hidden": "true" },
+      { className: cls, viewBox: "0 0 24 30", width: taille, height: taille * 1.25, "aria-hidden": "true" },
       U.default.createElement("path", {
         d: "M12 2c-3.4 0-5.5 2.4-5.5 5.4 0 3.4 2.2 6.8 5.5 11.6 3.3-4.8 5.5-8.2 5.5-11.6C17.5 4.4 15.4 2 12 2zm0 3c1.5 0 2.5 1 2.5 2.5 0 1.6-1 3.5-2.5 6-1.5-2.5-2.5-4.4-2.5-6C9.5 6 10.5 5 12 5z",
         fill: e,
@@ -607,16 +609,16 @@ var hI = ({ taille: t = 18, c1: e = "#EC407A", c2: n = "#F06292", cls: r = "" })
         fill: n,
       }),
     ),
-  pI = ({ style: t }) =>
+  pI = ({ style: style }) =>
     U.default.createElement(
       "span",
-      { className: "amb-ruban-logo", style: t },
+      { className: "amb-ruban-logo", style: style },
       U.default.createElement(hI, { taille: 15 }),
     );
-function fI({ n: t = 9, apercu: e }) {
+function fI({ n: t = 9, apercu: apercu }) {
   return U.default.createElement(
     "div",
-    { className: "amb-guirl" + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-guirl" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     U.default.createElement(
       "svg",
       { className: "amb-fil", viewBox: "0 0 300 24", preserveAspectRatio: "none" },
@@ -648,10 +650,10 @@ function fI({ n: t = 9, apercu: e }) {
     }),
   );
 }
-function Ky({ apercu: t }) {
+function DecorBallons({ apercu: apercu }) {
   return U.default.createElement(
     "div",
-    { className: "amb-ballons" + (t ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-ballons" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     [
       [12, 0, 34, "#EC407A"],
       [58, 1.2, 26, "#F48FB1"],
@@ -745,7 +747,7 @@ function mI() {
     { className: "decor-magie amb-intro-r", "aria-hidden": "true" },
     U.default.createElement("div", { className: "amb-aurore" }),
     U.default.createElement("div", { className: "amb-bokeh-r" }),
-    U.default.createElement(Ky, { apercu: !0 }),
+    U.default.createElement(DecorBallons, { apercu: !0 }),
     U.default.createElement(rM, null),
   );
 }

@@ -24,7 +24,7 @@ var wt = vn(Pn()),
   },
   bE = () => {
     let t = new Uint32Array(1);
-    return (crypto.getRandomValues(t), t[0] / 4294967296);
+    return crypto.getRandomValues(t), t[0] / 4294967296;
   },
   nv = () => bE() < 0.5,
   pk = (t, e) => (t && Number(t.roueP) === $s(e).periode && Number(t.roueG)) || 0,

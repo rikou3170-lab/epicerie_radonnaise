@@ -9,64 +9,66 @@ var RL = [
   tO = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
 async function Hk(t) {
   for (let e = 0; e < t.length; e += 400) {
-    let n = _n(de);
-    (t.slice(e, e + 400).forEach((r) => n.delete(r)), await n.commit());
+    let n = writeBatch(db2);
+    t.slice(e, e + 400).forEach((r) => n.delete(r)), await n.commit();
   }
 }
-var nO = ({ v: t, max: e, c: n = "var(--apple)" }) =>
-  re.default.createElement(
+var nO = ({ v: v, max: max, c: c = "var(--apple)" }) =>
+  ReactB.default.createElement(
     "div",
     { style: { flex: 1, height: 10, background: "var(--line)", borderRadius: 5, overflow: "hidden" } },
-    re.default.createElement("div", {
-      style: { width: Math.max(2, (t / e) * 100) + "%", height: "100%", background: n, borderRadius: 5 },
+    ReactB.default.createElement("div", {
+      style: { width: Math.max(2, (v / max) * 100) + "%", height: "100%", background: c, borderRadius: 5 },
     }),
   );
-function Kk({ d: t }) {
-  let [e, n] = (0, re.useState)(7),
-    [r, i] = (0, re.useState)(null),
-    [s, o] = (0, re.useState)([]),
+function Statistiques2({ d: t }) {
+  let [e, n] = (0, ReactB.useState)(7),
+    [r, i] = (0, ReactB.useState)(null),
+    [s, o] = (0, ReactB.useState)([]),
     a = Hu(new Date(Date.now() - 29 * 864e5));
   if (
-    ((0, re.useEffect)(() => {
-      let $ = fr(
-          vp(Ge(de, "stats"), yp("jour", ">=", a)),
+    ((0, ReactB.useEffect)(() => {
+      let $ = onSnapshot(
+          query2(collection(db2, "stats"), where2("jour", ">=", a)),
           (Y) => i(Y.docs.map((U) => U.data())),
           () => i([]),
         ),
-        Q = fr(
-          Ge(de, "connexions"),
+        Q = onSnapshot(
+          collection(db2, "connexions"),
           (Y) =>
             o(Y.docs.map((U) => ({ ...U.data(), id: U.id })).sort((U, G) => (G.date || 0) - (U.date || 0))),
           () => {},
         );
       return () => {
-        ($(), Q());
+        $(), Q();
       };
     }, [a]),
-    (0, re.useEffect)(() => {
+    (0, ReactB.useEffect)(() => {
       try {
         if (sessionStorage.getItem("menage-stats")) return;
         sessionStorage.setItem("menage-stats", "1");
       } catch {}
       (async () => {
         try {
-          let $ = await Oi(vp(Ge(de, "stats"), yp("jour", "<", Hu(new Date(Date.now() - 342144e5))))),
+          let $ = await getDocs(
+              query2(collection(db2, "stats"), where2("jour", "<", Hu(new Date(Date.now() - 342144e5)))),
+            ),
             Q = [];
-          ($.forEach((Y) => Q.push(Y.ref)), Q.length && (await Hk(Q)));
+          $.forEach((Y) => Q.push(Y.ref)), Q.length && (await Hk(Q));
         } catch {}
       })();
     }, []),
-    (0, re.useEffect)(() => {
+    (0, ReactB.useEffect)(() => {
       let $ = s.filter((Q) => (Q.date || 0) < Date.now() - 7776e6);
-      $.length && Hk($.map((Q) => xe(de, "connexions", Q.id))).catch(() => {});
+      $.length && Hk($.map((Q) => doc2(db2, "connexions", Q.id))).catch(() => {});
     }, [s.length]),
     r === null)
   )
-    return re.default.createElement(
+    return ReactB.default.createElement(
       "div",
       { className: "card" },
-      re.default.createElement("div", { className: "nm" }, "\u{1F4C8} Fr\xE9quentation de l'appli"),
-      re.default.createElement("div", { className: "de" }, "Chargement\u2026"),
+      ReactB.default.createElement("div", { className: "nm" }, "\u{1F4C8} Fr\xE9quentation de l'appli"),
+      ReactB.default.createElement("div", { className: "de" }, "Chargement\u2026"),
     );
   let u = Hu(new Date(Date.now() - (e - 1) * 864e5)),
     d = r.filter(($) => $.jour >= u),
@@ -119,7 +121,7 @@ function Kk({ d: t }) {
   });
   let F = Object.entries(C).sort(($, Q) => Q[1] - $[1])[0],
     P = [];
-  (T &&
+  T &&
     T[1] >= 3 &&
     P.push(
       "C'est vers " +
@@ -128,7 +130,7 @@ function Kk({ d: t }) {
     ),
     F &&
       F[1] >= 3 &&
-      P.push("Le " + tO[F[0]] + " est le jour o\xF9 vous avez le plus de visiteurs (sur 30 jours)."));
+      P.push("Le " + tO[F[0]] + " est le jour o\xF9 vous avez le plus de visiteurs (sur 30 jours).");
   let k = A.filter(($) => $[0] !== "Fid\xE9lit\xE9" && $[0] !== "Accueil").slice(-1)[0];
   return (
     k &&
@@ -149,18 +151,18 @@ function Kk({ d: t }) {
     b[0] &&
       b[0][1] >= 3 &&
       P.push("\xAB " + b[0][0] + " \xBB attire beaucoup : ce genre de bon plan marche, refaites-en !"),
-    re.default.createElement(
+    ReactB.default.createElement(
       "div",
       { className: "card stats" },
-      re.default.createElement(
+      ReactB.default.createElement(
         "div",
         { className: "row", style: { marginBottom: 10, flexWrap: "wrap", gap: 8 } },
-        re.default.createElement("div", { className: "nm" }, "\u{1F4C8} Fr\xE9quentation de l'appli"),
-        re.default.createElement(
+        ReactB.default.createElement("div", { className: "nm" }, "\u{1F4C8} Fr\xE9quentation de l'appli"),
+        ReactB.default.createElement(
           "div",
           { className: "seg", style: { margin: 0, marginLeft: "auto", width: "auto" } },
           [7, 30].map(($) =>
-            re.default.createElement(
+            ReactB.default.createElement(
               "button",
               { key: $, className: e === $ ? "on" : "", onClick: () => n($) },
               $,
@@ -170,29 +172,29 @@ function Kk({ d: t }) {
         ),
       ),
       d.length
-        ? re.default.createElement(
-            re.default.Fragment,
+        ? ReactB.default.createElement(
+            ReactB.default.Fragment,
             null,
-            re.default.createElement(
+            ReactB.default.createElement(
               "div",
               { className: "grid2", style: { marginBottom: 12 } },
-              re.default.createElement(
+              ReactB.default.createElement(
                 "div",
                 { className: "stat" },
-                re.default.createElement("b", null, v),
-                re.default.createElement("span", null, "visiteurs (un par jour et par t\xE9l\xE9phone)"),
+                ReactB.default.createElement("b", null, v),
+                ReactB.default.createElement("span", null, "visiteurs (un par jour et par t\xE9l\xE9phone)"),
               ),
-              re.default.createElement(
+              ReactB.default.createElement(
                 "div",
                 { className: "stat" },
-                re.default.createElement("b", null, x),
-                re.default.createElement("span", null, "ouvertures de l'appli"),
+                ReactB.default.createElement("b", null, x),
+                ReactB.default.createElement("span", null, "ouvertures de l'appli"),
               ),
-              re.default.createElement(
+              ReactB.default.createElement(
                 "div",
                 { className: "stat" },
-                re.default.createElement("b", null, h("reservations")),
-                re.default.createElement(
+                ReactB.default.createElement("b", null, h("reservations")),
+                ReactB.default.createElement(
                   "span",
                   null,
                   "r\xE9servations \xB7 ",
@@ -200,11 +202,11 @@ function Kk({ d: t }) {
                   " commande(s)",
                 ),
               ),
-              re.default.createElement(
+              ReactB.default.createElement(
                 "div",
                 { className: "stat" },
-                re.default.createElement("b", null, h("notif_on") + h("notif_bonsplans")),
-                re.default.createElement(
+                ReactB.default.createElement("b", null, h("notif_on") + h("notif_bonsplans")),
+                ReactB.default.createElement(
                   "span",
                   null,
                   "notifs activ\xE9es (",
@@ -213,48 +215,52 @@ function Kk({ d: t }) {
                 ),
               ),
             ),
-            re.default.createElement(
+            ReactB.default.createElement(
               "div",
               { className: "de", style: { marginBottom: 4 } },
               "Visiteurs par jour",
             ),
-            re.default.createElement(
+            ReactB.default.createElement(
               "div",
               { className: "barres" },
               m.map(($) =>
-                re.default.createElement(
+                ReactB.default.createElement(
                   "div",
                   { className: "bcol", key: $.cle, title: w[$.cle] + " visiteur(s)" },
-                  re.default.createElement("span", { className: "bv" }, e <= 7 && w[$.cle] ? w[$.cle] : ""),
-                  re.default.createElement("i", {
+                  ReactB.default.createElement(
+                    "span",
+                    { className: "bv" },
+                    e <= 7 && w[$.cle] ? w[$.cle] : "",
+                  ),
+                  ReactB.default.createElement("i", {
                     style: { height: Math.max(3, (w[$.cle] / E) * 80) + "px" },
                   }),
-                  re.default.createElement("span", { className: "bm" }, $.nom),
+                  ReactB.default.createElement("span", { className: "bm" }, $.nom),
                 ),
               ),
             ),
-            re.default.createElement(
+            ReactB.default.createElement(
               "div",
               { style: { display: "flex", gap: 18, flexWrap: "wrap", marginTop: 14 } },
-              re.default.createElement(
+              ReactB.default.createElement(
                 "div",
                 { style: { flex: "1 1 220px" } },
-                re.default.createElement(
+                ReactB.default.createElement(
                   "div",
                   { className: "de", style: { fontWeight: 800, marginBottom: 4 } },
                   "Rubriques les plus vues",
                 ),
                 A.map(([$, Q]) =>
-                  re.default.createElement(
+                  ReactB.default.createElement(
                     "div",
                     { key: $, style: { display: "flex", alignItems: "center", gap: 8, margin: "4px 0" } },
-                    re.default.createElement(
+                    ReactB.default.createElement(
                       "span",
                       { className: "de", style: { width: 70, color: "var(--ink)" } },
                       $,
                     ),
-                    re.default.createElement(nO, { v: Q, max: S }),
-                    re.default.createElement(
+                    ReactB.default.createElement(nO, { v: Q, max: S }),
+                    ReactB.default.createElement(
                       "b",
                       { style: { fontSize: 12, width: 30, textAlign: "right" } },
                       Q,
@@ -262,20 +268,20 @@ function Kk({ d: t }) {
                   ),
                 ),
               ),
-              re.default.createElement(
+              ReactB.default.createElement(
                 "div",
                 { style: { flex: "1 1 220px" } },
-                re.default.createElement(
+                ReactB.default.createElement(
                   "div",
                   { className: "de", style: { fontWeight: 800, marginBottom: 4 } },
                   "\xC0 quelle heure l'appli est ouverte",
                 ),
-                re.default.createElement(
+                ReactB.default.createElement(
                   "div",
                   { style: { display: "flex", alignItems: "flex-end", gap: 2, height: 60 } },
                   Array.from({ length: 24 }, ($, Q) => {
                     let Y = _[String(Q).padStart(2, "0")] || 0;
-                    return re.default.createElement("div", {
+                    return ReactB.default.createElement("div", {
                       key: Q,
                       title: Q + "h : " + Y,
                       style: {
@@ -288,34 +294,34 @@ function Kk({ d: t }) {
                     });
                   }),
                 ),
-                re.default.createElement(
+                ReactB.default.createElement(
                   "div",
                   {
                     className: "de",
                     style: { display: "flex", justifyContent: "space-between", fontSize: 10 },
                   },
-                  re.default.createElement("span", null, "0h"),
-                  re.default.createElement("span", null, "6h"),
-                  re.default.createElement("span", null, "12h"),
-                  re.default.createElement("span", null, "18h"),
-                  re.default.createElement("span", null, "23h"),
+                  ReactB.default.createElement("span", null, "0h"),
+                  ReactB.default.createElement("span", null, "6h"),
+                  ReactB.default.createElement("span", null, "12h"),
+                  ReactB.default.createElement("span", null, "18h"),
+                  ReactB.default.createElement("span", null, "23h"),
                 ),
               ),
             ),
-            re.default.createElement(
+            ReactB.default.createElement(
               "div",
               { style: { display: "flex", gap: 18, flexWrap: "wrap", marginTop: 12 } },
-              re.default.createElement(
+              ReactB.default.createElement(
                 "div",
                 { style: { flex: "1 1 220px" } },
-                re.default.createElement(
+                ReactB.default.createElement(
                   "div",
                   { className: "de", style: { fontWeight: 800 } },
                   "Plateaux les plus regard\xE9s",
                 ),
                 O.length
                   ? O.map(([$, Q], Y) =>
-                      re.default.createElement(
+                      ReactB.default.createElement(
                         "div",
                         { key: Y, className: "de", style: { color: "var(--ink)" } },
                         $,
@@ -324,19 +330,19 @@ function Kk({ d: t }) {
                         " fois",
                       ),
                     )
-                  : re.default.createElement("div", { className: "de" }, "Aucun pour l'instant."),
+                  : ReactB.default.createElement("div", { className: "de" }, "Aucun pour l'instant."),
               ),
-              re.default.createElement(
+              ReactB.default.createElement(
                 "div",
                 { style: { flex: "1 1 220px" } },
-                re.default.createElement(
+                ReactB.default.createElement(
                   "div",
                   { className: "de", style: { fontWeight: 800 } },
                   "Bons plans qui donnent envie (\xAB Je r\xE9serve \xBB)",
                 ),
                 b.length
                   ? b.map(([$, Q], Y) =>
-                      re.default.createElement(
+                      ReactB.default.createElement(
                         "div",
                         { key: Y, className: "de", style: { color: "var(--ink)" } },
                         $,
@@ -345,11 +351,11 @@ function Kk({ d: t }) {
                         " fois",
                       ),
                     )
-                  : re.default.createElement("div", { className: "de" }, "Aucun pour l'instant."),
+                  : ReactB.default.createElement("div", { className: "de" }, "Aucun pour l'instant."),
               ),
             ),
             !!P.length &&
-              re.default.createElement(
+              ReactB.default.createElement(
                 "div",
                 {
                   style: {
@@ -360,13 +366,13 @@ function Kk({ d: t }) {
                     marginTop: 12,
                   },
                 },
-                re.default.createElement(
+                ReactB.default.createElement(
                   "div",
                   { className: "de", style: { fontWeight: 900, color: "var(--terra)", marginBottom: 4 } },
                   "\u{1F4A1} Conseils",
                 ),
                 P.map(($) =>
-                  re.default.createElement(
+                  ReactB.default.createElement(
                     "div",
                     { key: $, className: "de", style: { color: "var(--ink)", margin: "3px 0" } },
                     "\u2022 ",
@@ -375,55 +381,53 @@ function Kk({ d: t }) {
                 ),
               ),
           )
-        : re.default.createElement(
+        : ReactB.default.createElement(
             "div",
             { className: "de" },
             "Pas encore de visite enregistr\xE9e sur cette p\xE9riode. Les chiffres apparaissent d\xE8s que des clients ouvrent l'appli.",
           ),
-      re.default.createElement(
+      ReactB.default.createElement(
         "details",
         { style: { marginTop: 12 } },
-        re.default.createElement(
+        ReactB.default.createElement(
           "summary",
           { className: "de", style: { cursor: "pointer", fontWeight: 800 } },
           "\u{1F510} Derni\xE8res connexions \xE0 l'administration et \xE0 la caisse",
         ),
         !s.length &&
-          re.default.createElement(
+          ReactB.default.createElement(
             "div",
             { className: "de", style: { marginTop: 6 } },
             "Aucune connexion enregistr\xE9e pour l'instant.",
           ),
-        s
-          .slice(0, 10)
-          .map(($) =>
-            re.default.createElement(
-              "div",
-              {
-                key: $.id,
-                className: "de",
-                style: { color: "var(--ink)", padding: "4px 0", borderBottom: "1px solid var(--line)" },
-              },
-              new Date($.date).toLocaleString("fr-FR", {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
-              " \xB7 ",
-              $.app === "caisse" ? "Caisse" : "Admin",
-              " \xB7 ",
-              $.appareil,
-            ),
+        s.slice(0, 10).map(($) =>
+          ReactB.default.createElement(
+            "div",
+            {
+              key: $.id,
+              className: "de",
+              style: { color: "var(--ink)", padding: "4px 0", borderBottom: "1px solid var(--line)" },
+            },
+            new Date($.date).toLocaleString("fr-FR", {
+              weekday: "short",
+              day: "numeric",
+              month: "short",
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            " \xB7 ",
+            $.app === "caisse" ? "Caisse" : "Admin",
+            " \xB7 ",
+            $.appareil,
           ),
-        re.default.createElement(
+        ),
+        ReactB.default.createElement(
           "div",
           { className: "de", style: { marginTop: 6 } },
           "Une connexion que vous ne reconnaissez pas ? Changez votre mot de passe et pr\xE9venez Eric.",
         ),
       ),
-      re.default.createElement(
+      ReactB.default.createElement(
         "div",
         { className: "de", style: { marginTop: 8, fontSize: 10.5 } },
         "Compteurs anonymes : on compte des passages, jamais qui regarde quoi.",
@@ -432,7 +436,7 @@ function Kk({ d: t }) {
   );
 }
 var Rt = en(hn());
-async function Qk() {
+async function versionEnLigne() {
   try {
     let t = await fetch("version.json?t=" + Date.now(), { cache: "no-store" });
     return (t.ok && (await t.json()).version) || null;
@@ -457,14 +461,14 @@ async function b2() {
   } catch {}
   location.reload();
 }
-function Yk() {
-  let [t, e] = (0, Rt.useState)(null);
+function useMiseAJour() {
+  let [dispo, setDispo] = (0, Rt.useState)(null);
   return (
     (0, Rt.useEffect)(() => {
       location.search.includes("maj=") && history.replaceState(null, "", location.pathname);
       let n = async () => {
-        let s = await Qk();
-        s && s !== yr && e(s);
+        let s = await versionEnLigne();
+        s && s !== VERSION && setDispo(s);
       };
       n();
       let r = setInterval(n, 300 * 1e3),
@@ -474,14 +478,14 @@ function Yk() {
       return (
         document.addEventListener("visibilitychange", i),
         () => {
-          (clearInterval(r), document.removeEventListener("visibilitychange", i));
+          clearInterval(r), document.removeEventListener("visibilitychange", i);
         }
       );
     }, []),
-    t
+    dispo
   );
 }
-var iO = {
+var styleBandeau = {
   position: "fixed",
   left: "50%",
   transform: "translateX(-50%)",
@@ -499,12 +503,12 @@ var iO = {
   boxShadow: "0 8px 28px rgba(0,0,0,.25)",
   fontFamily: "'Nunito',system-ui,sans-serif",
 };
-function Jk({ dispo: t }) {
-  let [e, n] = (0, Rt.useState)(!1);
-  return t
+function BandeauMaj({ dispo: dispo }) {
+  let [enCours, setEnCours] = (0, Rt.useState)(!1);
+  return dispo
     ? Rt.default.createElement(
         "div",
-        { style: iO },
+        { style: styleBandeau },
         Rt.default.createElement(
           "div",
           { style: { flex: 1, fontSize: 12.5, lineHeight: 1.35 } },
@@ -512,18 +516,18 @@ function Jk({ dispo: t }) {
             "b",
             { style: { display: "block", fontSize: 13.5 } },
             "Nouvelle version ",
-            t,
+            dispo,
           ),
           "Vous avez la version ",
-          yr,
+          VERSION,
           ".",
         ),
         Rt.default.createElement(
           "button",
           {
-            disabled: e,
+            disabled: enCours,
             onClick: () => {
-              (n(!0), b2());
+              setEnCours(!0), b2();
             },
             style: {
               border: "none",
@@ -538,45 +542,45 @@ function Jk({ dispo: t }) {
               flexShrink: 0,
             },
           },
-          e ? "Mise \xE0 jour\u2026" : "Mettre \xE0 jour",
+          enCours ? "Mise \xE0 jour\u2026" : "Mettre \xE0 jour",
         ),
       )
     : null;
 }
-function Xk({ className: t = "btn gh", style: e }) {
-  let [n, r] = (0, Rt.useState)("");
+function BoutonMaj({ className: className = "btn gh", style: style }) {
+  let [etat, setEtat] = (0, Rt.useState)("");
   return Rt.default.createElement(
     "div",
-    { style: e },
+    { style: style },
     Rt.default.createElement(
       "button",
       {
-        className: t,
+        className: className,
         onClick: async () => {
-          r("Recherche\u2026");
-          let s = await Qk();
-          s && s !== yr
-            ? (r("Installation de la version " + s + "\u2026"), b2())
-            : r(
+          setEtat("Recherche\u2026");
+          let s = await versionEnLigne();
+          s && s !== VERSION
+            ? (setEtat("Installation de la version " + s + "\u2026"), b2())
+            : setEtat(
                 s
-                  ? "Vous avez d\xE9j\xE0 la derni\xE8re version (" + yr + ")"
+                  ? "Vous avez d\xE9j\xE0 la derni\xE8re version (" + VERSION + ")"
                   : "Impossible de v\xE9rifier : pas de connexion internet",
               );
         },
       },
       "Rechercher une mise \xE0 jour \xB7 v",
-      yr,
+      VERSION,
     ),
-    n &&
+    etat &&
       Rt.default.createElement(
         "div",
         { style: { fontSize: 11.5, color: "#5C6A62", textAlign: "center", marginTop: 7 } },
-        n,
+        etat,
       ),
-    n.startsWith("Vous avez") &&
+    etat.startsWith("Vous avez") &&
       Rt.default.createElement(
         "button",
-        { className: t, style: { marginTop: 8 }, onClick: b2 },
+        { className: className, style: { marginTop: 8 }, onClick: b2 },
         "Recharger quand m\xEAme",
       ),
   );
@@ -586,7 +590,7 @@ var uf = (t) =>
       .replace(/\s+/g, " ")
       .trim()
       .slice(0, 110),
-  E2 = (t) => {
+  heureMsg = (t) => {
     let e = new Date(t),
       n = new Date(),
       r = new Date();
@@ -598,7 +602,7 @@ var uf = (t) =>
         ? "hier " + i
         : e.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) + " " + i;
   },
-  Zk = (t) => {
+  jourMsg = (t) => {
     let e = new Date(t),
       n = new Date(),
       r = new Date();
@@ -644,7 +648,7 @@ var it = {
     delai: 30,
   },
   eC = () => !0,
-  cf = (t) => {
+  MENTION_EXCLUSIONS = (t) => {
     let e = { ...it, ...(t?.tampons || {}) };
     (!e.exclus || e.exclus === "carburant, gaz, alcools, tabac, presse, jeux") && (e.exclus = it.exclus);
     let n = Math.min(30, Math.max(3, parseInt(e.nb) || 20)),
@@ -660,7 +664,7 @@ var it = {
     };
   },
   A2 = (t) => {
-    let e = cf(t);
+    let e = MENTION_EXCLUSIONS(t);
     return (
       (e.seuil ? "1 passage d\xE8s " + e.seuil + " \u20AC d'achats = 1 tampon" : "1 passage = 1 tampon") +
       " \xB7 " +
@@ -706,15 +710,15 @@ var to = {
     vert: "#7FBF3F",
     os: "#F3E9D2",
   },
-  tC = ({ taille: t = 30, style: e }) =>
+  SvgChapeauSorciere = ({ taille: taille = 30, style: style }) =>
     J.default.createElement(
       "svg",
       {
         className: "amb-chapeau",
         viewBox: "0 0 44 40",
-        width: t,
-        height: t * 0.9,
-        style: e,
+        width: taille,
+        height: taille * 0.9,
+        style: style,
         "aria-hidden": "true",
       },
       J.default.createElement("path", {
@@ -739,14 +743,14 @@ var to = {
       J.default.createElement("ellipse", { cx: "22", cy: "28", rx: "20", ry: "5", fill: "#5A3690" }),
       J.default.createElement("ellipse", { cx: "22", cy: "27", rx: "18", ry: "3.4", fill: "#7650B2" }),
     ),
-  oO = ({ taille: t = 22, cls: e = "" }) =>
+  SvgCitrouille = ({ taille: taille = 22, cls: cls = "" }) =>
     J.default.createElement(
       "svg",
       {
-        className: "amb-citrouille " + e,
+        className: "amb-citrouille " + cls,
         viewBox: "0 0 40 36",
-        width: t,
-        height: t * 0.9,
+        width: taille,
+        height: taille * 0.9,
         "aria-hidden": "true",
       },
       J.default.createElement("path", { d: "M20 7c-2-4-1-6 1-7l2 1c-2 1-2 3-1 6z", fill: "#4E6B2A" }),
@@ -760,10 +764,10 @@ var to = {
         J.default.createElement("path", { d: "M10 24c4 4 16 4 20 0l-3 1-2-2-2 2-3-2-3 2-2-2-2 2z" }),
       ),
     ),
-  aO = ({ w: t = 34 }) =>
+  aO = ({ w: w = 34 }) =>
     J.default.createElement(
       "svg",
-      { viewBox: "0 0 60 26", width: t, height: t * 0.43, "aria-hidden": "true" },
+      { viewBox: "0 0 60 26", width: w, height: w * 0.43, "aria-hidden": "true" },
       J.default.createElement(
         "g",
         { fill: "#1A0F28" },
@@ -787,10 +791,10 @@ var to = {
       J.default.createElement("circle", { cx: "28.5", cy: "12.5", r: ".9", fill: to.flamme }),
       J.default.createElement("circle", { cx: "31.5", cy: "12.5", r: ".9", fill: to.flamme }),
     );
-function nC({ n: t = 9, apercu: e }) {
+function nC({ n: t = 9, apercu: apercu }) {
   return J.default.createElement(
     "div",
-    { className: "amb-guirl" + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-guirl" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     J.default.createElement(
       "svg",
       { className: "amb-fil", viewBox: "0 0 300 24", preserveAspectRatio: "none" },
@@ -816,7 +820,7 @@ function nC({ n: t = 9, apercu: e }) {
               className: "amb-lanterne",
               style: { left: i + "%", animationDelay: (r % 5) * 0.37 + "s" },
             },
-            J.default.createElement(oO, { taille: 17 }),
+            J.default.createElement(SvgCitrouille, { taille: 17 }),
           )
         : J.default.createElement("span", {
             key: r,
@@ -826,10 +830,10 @@ function nC({ n: t = 9, apercu: e }) {
     }),
   );
 }
-function lO({ boucle: t = !0, apercu: e }) {
+function DecorVol({ boucle: boucle = !0, apercu: apercu }) {
   return J.default.createElement(
     "div",
-    { className: "amb-vol" + (t ? " boucle" : "") + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-vol" + (boucle ? " boucle" : "") + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     [
       [0, 0, 34],
       [38, -18, 26],
@@ -843,7 +847,7 @@ function lO({ boucle: t = !0, apercu: e }) {
     ),
   );
 }
-var uO = () =>
+var SvgSorciere = () =>
   J.default.createElement(
     "svg",
     { className: "amb-sorciere", viewBox: "0 0 120 60", width: "120", height: "60", "aria-hidden": "true" },
@@ -951,7 +955,7 @@ var cO = () =>
       ),
     ),
   );
-function rC({ apercu: t }) {
+function rC({ apercu: apercu }) {
   return J.default.createElement(
     "div",
     { className: "decor-magie amb-intro-h", "aria-hidden": "true" },
@@ -959,19 +963,19 @@ function rC({ apercu: t }) {
     J.default.createElement(
       "div",
       { className: "amb-lune" },
-      J.default.createElement("span", { className: "amb-passe" }, J.default.createElement(uO, null)),
+      J.default.createElement("span", { className: "amb-passe" }, J.default.createElement(SvgSorciere, null)),
     ),
-    J.default.createElement(lO, { boucle: !1, apercu: !0 }),
+    J.default.createElement(DecorVol, { boucle: !1, apercu: !0 }),
     J.default.createElement(cO, null),
     J.default.createElement("div", { className: "amb-brume" }),
     J.default.createElement("div", { className: "amb-brume b2" }),
   );
 }
 var dO = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%235E3F82' stroke-width='.9' opacity='.75'%3E%3Cpath d='M40 0L8 32M40 0L22 40M40 0L0 18M40 0v40M40 0H0'/%3E%3Cpath d='M28 0q2 6 12 12M16 0q4 12 24 24M6 0q6 20 34 34'/%3E%3C/g%3E%3C/svg%3E")`;
-var iC = ({ taille: t = 18, c1: e = "#EC407A", c2: n = "#F06292", cls: r = "" }) =>
+var iC = ({ taille: taille = 18, c1: e = "#EC407A", c2: n = "#F06292", cls: cls = "" }) =>
     J.default.createElement(
       "svg",
-      { className: r, viewBox: "0 0 24 30", width: t, height: t * 1.25, "aria-hidden": "true" },
+      { className: cls, viewBox: "0 0 24 30", width: taille, height: taille * 1.25, "aria-hidden": "true" },
       J.default.createElement("path", {
         d: "M12 2c-3.4 0-5.5 2.4-5.5 5.4 0 3.4 2.2 6.8 5.5 11.6 3.3-4.8 5.5-8.2 5.5-11.6C17.5 4.4 15.4 2 12 2zm0 3c1.5 0 2.5 1 2.5 2.5 0 1.6-1 3.5-2.5 6-1.5-2.5-2.5-4.4-2.5-6C9.5 6 10.5 5 12 5z",
         fill: e,
@@ -981,16 +985,16 @@ var iC = ({ taille: t = 18, c1: e = "#EC407A", c2: n = "#F06292", cls: r = "" })
         fill: n,
       }),
     ),
-  sC = ({ style: t }) =>
+  sC = ({ style: style }) =>
     J.default.createElement(
       "span",
-      { className: "amb-ruban-logo", style: t },
+      { className: "amb-ruban-logo", style: style },
       J.default.createElement(iC, { taille: 15 }),
     );
-function oC({ n: t = 9, apercu: e }) {
+function oC({ n: t = 9, apercu: apercu }) {
   return J.default.createElement(
     "div",
-    { className: "amb-guirl" + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-guirl" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     J.default.createElement(
       "svg",
       { className: "amb-fil", viewBox: "0 0 300 24", preserveAspectRatio: "none" },
@@ -1022,10 +1026,10 @@ function oC({ n: t = 9, apercu: e }) {
     }),
   );
 }
-function hO({ apercu: t }) {
+function DecorBallons({ apercu: apercu }) {
   return J.default.createElement(
     "div",
-    { className: "amb-ballons" + (t ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "amb-ballons" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     [
       [12, 0, 34, "#EC407A"],
       [58, 1.2, 26, "#F48FB1"],
@@ -1119,7 +1123,7 @@ function aC() {
     { className: "decor-magie amb-intro-r", "aria-hidden": "true" },
     J.default.createElement("div", { className: "amb-aurore" }),
     J.default.createElement("div", { className: "amb-bokeh-r" }),
-    J.default.createElement(hO, { apercu: !0 }),
+    J.default.createElement(DecorBallons, { apercu: !0 }),
     J.default.createElement(pO, null),
   );
 }

@@ -2,8 +2,8 @@ var Z_ = (t) => {
     let e = J_(t, 5, 0);
     return e === Ao(GC(t), 49) ? Ao(e, 7) : e;
   },
-  Gt = (t, e, n = 10) => `repeating-linear-gradient(90deg,${t} 0 ${n}px,${e} ${n}px ${2 * n}px)`,
-  ek = [
+  FRISE = (t, e, n = 10) => `repeating-linear-gradient(90deg,${t} 0 ${n}px,${e} ${n}px ${2 * n}px)`,
+  THEMES = [
     {
       id: "galette",
       nom: "Galette des rois",
@@ -12,7 +12,7 @@ var Z_ = (t) => {
       top: "#7A5A12",
       accent: "#C69A3C",
       soft: "#FBF3DC",
-      frise: Gt("#C69A3C", "#F4E2A8"),
+      frise: FRISE("#C69A3C", "#F4E2A8"),
       parts: [["etoile", ["#D4AF37", "#E8C766"]]],
       illu: "galette",
       dates: (t) => [ze(t, 1, 2), ze(t, 1, 15)],
@@ -26,7 +26,7 @@ var Z_ = (t) => {
       top: "#9A5A22",
       accent: "#E0A040",
       soft: "#FCF0DE",
-      frise: Gt("#E0A040", "#F7DDB0"),
+      frise: FRISE("#E0A040", "#F7DDB0"),
       parts: [["crepe", ["#E9B35A", "#D9973A"]]],
       illu: "crepes",
       dates: (t) => [ze(t, 1, 28), ze(t, 2, 2)],
@@ -39,7 +39,7 @@ var Z_ = (t) => {
       top: "#A3243E",
       accent: "#E05A73",
       soft: "#FCE7EC",
-      frise: Gt("#E05A73", "#F7C6D0"),
+      frise: FRISE("#E05A73", "#F7C6D0"),
       parts: [["coeur", ["#E05A73", "#C2185B", "#F48FB1"]]],
       sens: "haut",
       illu: "coeurs",
@@ -53,7 +53,7 @@ var Z_ = (t) => {
       top: "#4E7F3E",
       accent: "#E9A23B",
       soft: "#F3F7E6",
-      frise: Gt("#F6C6D9", "#CDE7B0", 12),
+      frise: FRISE("#F6C6D9", "#CDE7B0", 12),
       parts: [["oeuf", ["#F6C6D9", "#BFE3F2", "#F9E79F", "#C8E6C9"]]],
       illu: "oeufs",
       dates: (t) => {
@@ -69,7 +69,7 @@ var Z_ = (t) => {
       top: "#3F6B3A",
       accent: "#8BBF6A",
       soft: "#EEF6E8",
-      frise: Gt("#8BBF6A", "#FFFFFF", 8),
+      frise: FRISE("#8BBF6A", "#FFFFFF", 8),
       parts: [["clochette", ["#FFFFFF"]]],
       illu: "muguet",
       dates: (t) => [ze(t, 4, 28), ze(t, 5, 1)],
@@ -83,7 +83,7 @@ var Z_ = (t) => {
       top: "#B04A73",
       accent: "#E88AAE",
       soft: "#FCEAF2",
-      frise: Gt("#E88AAE", "#FBD3E2"),
+      frise: FRISE("#E88AAE", "#FBD3E2"),
       parts: [["fleur", ["#F48FB1", "#CE93D8", "#FFD54F"]]],
       illu: "bouquet",
       prio: 1,
@@ -100,7 +100,7 @@ var Z_ = (t) => {
       top: "#4F3A8C",
       accent: "#F2B134",
       soft: "#EFEAF8",
-      frise: Gt("#F2B134", "#4F3A8C", 8),
+      frise: FRISE("#F2B134", "#4F3A8C", 8),
       parts: [["note", ["#4F3A8C", "#F2B134", "#E05A73"]]],
       sens: "haut",
       illu: "notes",
@@ -115,7 +115,7 @@ var Z_ = (t) => {
       top: "#24507E",
       accent: "#5B8FC7",
       soft: "#E6EFF8",
-      frise: Gt("#24507E", "#9CC0E6"),
+      frise: FRISE("#24507E", "#9CC0E6"),
       parts: [
         ["cravate", ["#24507E", "#5B8FC7", "#C27B42"]],
         ["moustache", ["#4E342E"]],
@@ -152,7 +152,7 @@ var Z_ = (t) => {
       top: "#B0235F",
       accent: "#F06292",
       soft: "#FCE4EC",
-      frise: Gt("#F48FB1", "#FFFFFF", 9),
+      frise: FRISE("#F48FB1", "#FFFFFF", 9),
       parts: [
         ["ruban", ["#F06292", "#F8BBD0", "#EC407A"]],
         ["coeur", ["#F48FB1", "#FFFFFF"]],
@@ -169,7 +169,7 @@ var Z_ = (t) => {
       top: "#2B1B3D",
       accent: "#E8731C",
       soft: "#FBEADB",
-      frise: Gt("#E8731C", "#2B1B3D", 14),
+      frise: FRISE("#E8731C", "#2B1B3D", 14),
       parts: [
         ["citrouille", ["#E8731C"]],
         ["chauvesouris", ["#5E3F82"]],
@@ -185,7 +185,7 @@ var Z_ = (t) => {
       top: "#6B1F3A",
       accent: "#9C3D6A",
       soft: "#F6E8EE",
-      frise: Gt("#9C3D6A", "#E7C7D6"),
+      frise: FRISE("#9C3D6A", "#E7C7D6"),
       parts: [["raisin", ["#7B1E4A", "#9C3D6A"]]],
       illu: "vin",
       dates: (t) => {
@@ -201,7 +201,7 @@ var Z_ = (t) => {
       top: "#8E2430",
       accent: "#D4AF37",
       soft: "#FBEFE4",
-      frise: Gt("#D4AF37", "#8E2430"),
+      frise: FRISE("#D4AF37", "#8E2430"),
       parts: [
         ["etoile", ["#D4AF37", "#F4D774"]],
         ["flocon", ["#FFFFFF"]],
@@ -231,7 +231,7 @@ var Z_ = (t) => {
       top: "#1B1B2F",
       accent: "#D4AF37",
       soft: "#F7F1DE",
-      frise: Gt("#D4AF37", "#1B1B2F", 6),
+      frise: FRISE("#D4AF37", "#1B1B2F", 6),
       parts: [
         ["confetti", ["#D4AF37", "#F4D774", "#FFFFFF"]],
         ["etincelle", ["#D4AF37"]],
@@ -264,10 +264,10 @@ var tk = (t) => {
       .filter((r) => r.trim() && !/^[\w\s.,;:!?'"()\-]$/.test(r))
       .slice(0, 6);
   };
-function nk(t) {
+function persoVersTheme(t) {
   let e = /^#[0-9a-f]{6}$/i.test(t.couleur || "") ? t.couleur : "#1C433B",
     n = Array.isArray(t.motifs) && t.motifs.length ? t.motifs.filter((r) => !Jx[r]) : $C(t.emojis);
-  return HC(
+  return ParticulesMontantes(
     {
       id: t.id,
       perso: !0,
@@ -277,7 +277,7 @@ function nk(t) {
       top: e,
       accent: Xx(e, 0.35),
       soft: Xx(e, 0.9),
-      frise: Gt(Xx(e, 0.35), Xx(e, 0.82)),
+      frise: FRISE(Xx(e, 0.35), Xx(e, 0.82)),
       parts: n.length ? [["emoji", n]] : [],
       illuEmoji: $C(t.illu)[0] || n[0] || "\u2B50",
       prio: 2,
@@ -294,9 +294,9 @@ function nk(t) {
   );
 }
 var rk = !1;
-function HC(t, e) {
+function ParticulesMontantes(t, e) {
   if (!t) return t;
-  ((e = e || {}), !rk && !t.perso && (e = {}));
+  (e = e || {}), !rk && !t.perso && (e = {});
   let n = t.parts,
     r = Array.isArray(e.motifs) ? e.motifs.filter(Boolean).slice(0, 6) : null;
   if (r && r.length) {
@@ -327,7 +327,7 @@ var ik = [
   { id: "confettis", nom: "Confettis" },
 ];
 var ok = !1,
-  sk = (t) => (ok ? ((t || {}).perso || []).filter((e) => e && e.id).map(nk) : []);
+  sk = (t) => (ok ? ((t || {}).perso || []).filter((e) => e && e.id).map(persoVersTheme) : []);
 function ak(t, e, n) {
   let [r, i] = t.dates(n),
     o = e || {};
@@ -339,7 +339,7 @@ function KC(t, e) {
   let r = e || new Date().toLocaleDateString("sv-SE"),
     i = (d) =>
       d &&
-      HC(
+      ParticulesMontantes(
         { ...d, message: (n.items?.[d.id]?.message || "").trim() || d.message, anim: n.animations !== !1 },
         d.perso ? null : n.items?.[d.id],
       ),
@@ -348,7 +348,7 @@ function KC(t, e) {
     a = 1e9,
     u = -1,
     c = (n.perso || []).filter((d) => d && d.active !== !1).map((d) => d.id);
-  for (let d of [...ek, ...sk(n).filter((f) => c.includes(f.id))])
+  for (let d of [...THEMES, ...sk(n).filter((f) => c.includes(f.id))])
     if (!(!d.perso && n.items?.[d.id]?.active === !1))
       for (let f of [o - 1, o]) {
         let [h, B] = ak(d, n.items?.[d.id], f);
@@ -743,7 +743,7 @@ var lk = {
         d: "M12 11c-1.5-2.5-5-3-7.5-1-1.2 1-2.5 1-3.5.3.5 2.5 3 4 6 3.2 2-.6 3.5-1.5 5-2.5 1.5 1 3 1.9 5 2.5 3 .8 5.5-.7 6-3.2-1 .7-2.3.7-3.5-.3-2.5-2-6-1.5-7.5 1z",
       }),
   },
-  uk = [
+  FORMES_NEIGE = [
     ["flocon", "Flocon", ["#FFFFFF"]],
     ["etoile", "\xC9toile", ["#D4AF37", "#F4D774"]],
     ["etincelle", "\xC9tincelle", ["#F2B134", "#FFFFFF"]],
@@ -780,7 +780,7 @@ var lk = {
     ["cravate", "Cravate", ["#24507E", "#5B8FC7"]],
     ["moustache", "Moustache", ["#4E342E"]],
   ].map(([t, e, n]) => ({ id: t, nom: e, c: n })),
-  Jx = Object.fromEntries(uk.map((t) => [t.id, t.c]));
+  Jx = Object.fromEntries(FORMES_NEIGE.map((t) => [t.id, t.c]));
 var ck = Array.from({ length: 30 }, (t, e) => {
   let n = (r) => {
     let i = Math.sin(e * 12.9898 + r * 78.233) * 43758.5453;
@@ -796,18 +796,18 @@ var ck = Array.from({ length: 30 }, (t, e) => {
     o: 0.55 + n(7) * 0.4,
   };
 });
-function QC({ theme: t, nb: e = 16, dans: n }) {
-  if (!t) return null;
-  e = t.nb || e;
-  let r = (t.parts || []).flatMap(([i, o]) => o.map((s) => [i, s]));
+function Particules({ theme: theme, nb: nb = 16, dans: dans }) {
+  if (!theme) return null;
+  nb = theme.nb || nb;
+  let r = (theme.parts || []).flatMap(([i, o]) => o.map((s) => [i, s]));
   return r.length
     ? S.default.createElement(
         "div",
         {
-          className: "parts" + (n ? " dans" : "") + (t.sens === "haut" ? " haut" : ""),
+          className: "parts" + (dans ? " dans" : "") + (theme.sens === "haut" ? " haut" : ""),
           "aria-hidden": "true",
         },
-        ck.slice(0, e).map((i, o) => {
+        ck.slice(0, nb).map((i, o) => {
           let [s, a] = r[o % r.length];
           return S.default.createElement(
             "span",
@@ -845,7 +845,7 @@ function QC({ theme: t, nb: e = 16, dans: n }) {
       )
     : null;
 }
-var Ab = {
+var ILLU = {
   bonhomme: S.default.createElement(
     "g",
     null,
@@ -1272,35 +1272,33 @@ var Ci = (t, e) => {
     o: 0.5 + Ci(e, 6) * 0.5,
     dx: 10 + Ci(e, 7) * 30,
   }));
-function YC({ nb: t = 40, dans: e }) {
+function Neige({ nb: nb = 40, dans: dans }) {
   return S.default.createElement(
     "div",
-    { className: "neige" + (e ? " dans" : ""), "aria-hidden": "true" },
-    xk
-      .slice(0, t)
-      .map((n, r) =>
-        S.default.createElement(
-          "i",
-          { key: r, style: { left: n.x + "%", animationDuration: n.d + "s", animationDelay: n.delai + "s" } },
-          S.default.createElement("b", {
-            style: {
-              width: n.s,
-              height: n.s,
-              opacity: n.o,
-              filter: n.b ? "blur(" + n.b + "px)" : "none",
-              animationDuration: 2.5 + n.d / 4 + "s",
-              "--dx": n.dx + "px",
-            },
-          }),
-        ),
+    { className: "neige" + (dans ? " dans" : ""), "aria-hidden": "true" },
+    xk.slice(0, nb).map((n, r) =>
+      S.default.createElement(
+        "i",
+        { key: r, style: { left: n.x + "%", animationDuration: n.d + "s", animationDelay: n.delai + "s" } },
+        S.default.createElement("b", {
+          style: {
+            width: n.s,
+            height: n.s,
+            opacity: n.o,
+            filter: n.b ? "blur(" + n.b + "px)" : "none",
+            animationDuration: 2.5 + n.d / 4 + "s",
+            "--dx": n.dx + "px",
+          },
+        }),
       ),
+    ),
   );
 }
 var WC = ["#FF4D4D", "#FFD54F", "#4FC3F7", "#81C784", "#FF8A65", "#BA68C8"];
-function XC({ n: t = 15, apercu: e }) {
+function GuirlandeNoel({ n: t = 15, apercu: apercu }) {
   return S.default.createElement(
     "div",
-    { className: "guirlande" + (e ? " apercu" : ""), "aria-hidden": "true" },
+    { className: "guirlande" + (apercu ? " apercu" : ""), "aria-hidden": "true" },
     S.default.createElement(
       "svg",
       { className: "gl-fil", viewBox: "0 0 300 20", preserveAspectRatio: "none" },
@@ -1328,15 +1326,15 @@ function XC({ n: t = 15, apercu: e }) {
     ),
   );
 }
-var JC = ({ taille: t = 30, style: e }) =>
+var SvgBonnet = ({ taille: taille = 30, style: style }) =>
   S.default.createElement(
     "svg",
     {
       className: "bonnet",
       viewBox: "0 0 40 34",
-      width: t,
-      height: t * 0.85,
-      style: e,
+      width: taille,
+      height: taille * 0.85,
+      style: style,
       "aria-hidden": "true",
     },
     S.default.createElement("path", {

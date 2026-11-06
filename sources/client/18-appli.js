@@ -1,11 +1,11 @@
-var v2 = { retrait: "Retrait \xE0 l'\xE9picerie", livraison: "Livraison" },
+var MODES = { retrait: "Retrait \xE0 l'\xE9picerie", livraison: "Livraison" },
   ze = (t) => (Math.round((Number(t) || 0) * 100) / 100).toFixed(2).replace(".", ",") + " \u20AC",
   Wt = (t) => t.toLocaleDateString("sv-SE"),
   Ko = (t) => {
     let e = new Date();
-    return (e.setHours(12, 0, 0, 0), e.setDate(e.getDate() + t), e);
+    return e.setHours(12, 0, 0, 0), e.setDate(e.getDate() + t), e;
   },
-  ja = (t) =>
+  jourFr = (t) =>
     t
       ? new Date(t + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
       : "";
@@ -33,15 +33,15 @@ var xc = (t) => Number(String(t?.prixPersonne ?? "").replace(",", ".")) || 0,
       n = Math.max(e, parseInt(t?.partsMax) || 50);
     return [e, n];
   },
-  n5 = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789",
+  ALPHA_R = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789",
   i5 = () => {
     let t = new Uint32Array(5);
     return (
       (globalThis.crypto || window.crypto).getRandomValues(t),
-      "C-" + [...t].map((e) => n5[e % n5.length]).join("")
+      "C-" + [...t].map((e) => ALPHA_R[e % ALPHA_R.length]).join("")
     );
   };
-async function o5(t, e) {
+async function envoyerMail(t, e) {
   let n = Nn(t).script;
   if (!bf(n) || !e) return "non-configure";
   try {
@@ -53,7 +53,7 @@ async function o5(t, e) {
     return "erreur:" + (r?.message || "r\xE9seau");
   }
 }
-async function s5(t, e) {
+async function avertirMessage(t, e) {
   let n = Nn(t).script;
   if (!(!bf(n) || !e))
     try {
@@ -64,7 +64,7 @@ async function s5(t, e) {
       });
     } catch {}
 }
-async function a5(t, e) {
+async function avertirResa(t, e) {
   let n = Nn(t).script;
   if (!(!bf(n) || !e))
     try {
@@ -77,7 +77,7 @@ async function a5(t, e) {
 }
 var l5 = (t) => (t ? t.replace(":", "h") : ""),
   Ua = (t) => t.dateRetrait || t.date,
-  b2 = {
+  SUIVI = {
     nouvelle: { t: "En attente de validation", c: "#B08A2E" },
     acceptee: { t: "Valid\xE9e \u2713", c: "#6E9B3A" },
     prep: { t: "Valid\xE9e \xB7 en pr\xE9paration", c: "#6E9B3A" },
@@ -87,7 +87,7 @@ var l5 = (t) => (t ? t.replace(":", "h") : ""),
     annulee: { t: "Annul\xE9e", c: "#93A099" },
   },
   yf = (t) => String(t).padStart(2, "0"),
-  yc = (t, e, n = 0) => {
+  icsDate = (t, e, n = 0) => {
     let [r, i] = (e || "17:00").split(":").map(Number),
       o = new Date(t + "T12:00");
     return (
@@ -105,7 +105,7 @@ var l5 = (t) => (t ? t.replace(":", "h") : ""),
     String(t || "")
       .replace(/[\\,;]/g, (e) => "\\" + e)
       .replace(/\n/g, "\\n");
-function u5(t, e) {
+function rappelTexte(t, e) {
   let n = t.mode === "livraison";
   return {
     titre:
@@ -122,8 +122,8 @@ T\xE9l. \xE9picerie : ` + e.phone
         : ""),
   };
 }
-function c5(t, e) {
-  let n = u5(t, e),
+function fichierAgenda(t, e) {
+  let n = rappelTexte(t, e),
     r = Ua(t);
   return [
     "BEGIN:VCALENDAR",
@@ -133,9 +133,9 @@ function c5(t, e) {
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
     "UID:" + t.numero + "@epicerie-raddonnaise",
-    "DTSTAMP:" + yc(Wt(new Date()), "00:00"),
-    "DTSTART:" + yc(r, t.heure),
-    "DTEND:" + yc(r, t.heure, 30),
+    "DTSTAMP:" + icsDate(Wt(new Date()), "00:00"),
+    "DTSTART:" + icsDate(r, t.heure),
+    "DTEND:" + icsDate(r, t.heure, 30),
     "SUMMARY:" + xf(n.titre),
     "LOCATION:" + xf(n.lieu),
     "DESCRIPTION:" + xf(n.detail),
@@ -149,16 +149,16 @@ function c5(t, e) {
   ].join(`\r
 `);
 }
-function d5(t, e) {
-  let n = u5(t, e),
+function lienGoogleAgenda(t, e) {
+  let n = rappelTexte(t, e),
     r = Ua(t);
   return (
     "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" +
     encodeURIComponent(n.titre) +
     "&dates=" +
-    yc(r, t.heure) +
+    icsDate(r, t.heure) +
     "/" +
-    yc(r, t.heure, 30) +
+    icsDate(r, t.heure, 30) +
     "&details=" +
     encodeURIComponent(n.detail) +
     "&location=" +
@@ -179,7 +179,7 @@ var w2 = (t, e = []) => {
     let n = Qo(t);
     return xc(t) + (n ? n.options.filter((r) => e.includes(r.nom)).reduce((r, i) => r + i.supp, 0) : 0);
   },
-  OV = {
+  LISTE_RACLETTE = {
     titre: "Vos fromages \xE0 raclette",
     min: 1,
     max: 3,
@@ -207,13 +207,13 @@ function _2(t, e = Wt(new Date())) {
     o = qM(e, r.du);
   return !i && o > 14 ? null : { ...r, au: r.au || r.du, enCours: i, dans: o };
 }
-var wf = (t) =>
+var dateLongue = (t) =>
   new Date(t + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-function h5(t) {
+function texteFermeture(t) {
   if (!t) return "";
-  let e = t.du === t.au ? "le " + wf(t.du) : "du " + wf(t.du) + " au " + wf(t.au),
+  let e = t.du === t.au ? "le " + dateLongue(t.du) : "du " + dateLongue(t.du) + " au " + dateLongue(t.au),
     n = t.motif ? " (" + t.motif + ")" : "";
   return t.enCours
-    ? "L'\xE9picerie est ferm\xE9e" + n + " jusqu'au " + wf(t.au) + " inclus. \xC0 tr\xE8s vite !"
+    ? "L'\xE9picerie est ferm\xE9e" + n + " jusqu'au " + dateLongue(t.au) + " inclus. \xC0 tr\xE8s vite !"
     : "Fermeture exceptionnelle" + n + " " + e + ".";
 }

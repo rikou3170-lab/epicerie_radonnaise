@@ -41,6 +41,6 @@ var N2=t=>wr[t]?.village.ciel,wC=Object.entries(wr).map(([t,e])=>`
 @keyframes feu{0%{transform:rotate(var(--a)) translateX(0);opacity:0}4%{opacity:1}30%{transform:rotate(var(--a)) translateX(46px);opacity:.9}46%,100%{transform:rotate(var(--a)) translateX(54px) translateY(8px);opacity:0}}
 @keyframes fusee{0%{stroke-dashoffset:0;opacity:0}10%{opacity:1}40%,100%{stroke-dashoffset:-66;opacity:0}}
 .amb2-fusee{animation:fusee 2.8s ease-out infinite}
-${cC}
+${CSS_MONTEE}
 @media (prefers-reduced-motion: reduce){.amb2-fusee,.amb2-ane,.amb2-feuilles,.amb2-feux{display:none}}
 `;var Ye=(t,e,n)=>new Date(t,e-1,n,12).toLocaleDateString("sv-SE"),no=(t,e)=>{let n=new Date(t+"T12:00");return n.setDate(n.getDate()+e),n.toLocaleDateString("sv-SE")},bC=(t,e,n,r)=>{let i=new Date(t,e-1,1,12);for(;i.getDay()!==n;)i.setDate(i.getDate()+1);return i.setDate(i.getDate()+7*(r-1)),i.toLocaleDateString("sv-SE")},TO=(t,e,n)=>{let r=new Date(t,e,0,12);for(;r.getDay()!==n;)r.setDate(r.getDate()-1);return r.toLocaleDateString("sv-SE")};function _C(t){let e=t%19,n=Math.floor(t/100),r=t%100,i=Math.floor(n/4),s=n%4,o=Math.floor((n+8)/25),a=Math.floor((n-o+1)/3),u=(19*e+n-i-a+15)%30,d=Math.floor(r/4),h=r%4,p=(32+2*s+2*d-u-h)%7,m=Math.floor((e+11*u+22*p)/451),w=Math.floor((u+p-7*m+114)/31),E=(u+p-7*m+114)%31+1;return Ye(t,w,E)}

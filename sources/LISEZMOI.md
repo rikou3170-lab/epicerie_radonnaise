@@ -23,17 +23,42 @@ Elles ont été **reconstituées à partir de l'appli en ligne v2.37** :
 - **preuve** : l'appli en ligne et l'appli recompilée depuis ces sources donnent un code **strictement identique** une fois passées dans le même compilateur (`node sources/outils/verifier.mjs client.js sources/client` → ✅ IDENTIQUE, idem admin et caisse) ;
 - l'appli recompilée a aussi été testée en simulation : démarrage, onglets, thème de Noël, création de carte, admin et caisse, sans erreur.
 
-Limite : les **noms internes** (variables, fonctions) sont restés courts, comme dans la version compilée (`v9`, `fO`…). Le code fonctionne et se modifie, mais il est moins agréable à lire que l'original. Les renommer en noms clairs pourra se faire petit à petit, en s'aidant de `reference-v1.43/`.
+### Noms clairs (6 novembre 2026, soir)
+
+Les noms courts de la version compilée ont ensuite été remplacés par des noms clairs :
+
+- **noms d'origine retrouvés** : en comparant les textes de chaque fonction avec la v1.43 (`reference-v1.43/`), environ 200 fonctions et constantes ont retrouvé leur nom d'origine (`Fidelite`, `useMiseAJour`, `envoyerMail`, `CONFIG_REF`…) ;
+- **outils** : `React`, et pour Firebase `db`, `doc`, `collection`, `onSnapshot`, `setDoc`, `writeBatch`…, comme dans le code d'origine ;
+- **fonctions ajoutées depuis la v1.43** : nommées d'après ce qu'elles font (`FormulaireCarte`, `RoueNoel`, `EditeurMenuDaval`, `MESSAGES_PRETS`…) ;
+- **à l'intérieur des fonctions** : les propriétés reçues (`onDone`, `onClose`…) et, quand la fonction correspond à la v1.43, les états (`prenom`, `setPrenom`…).
+
+Chaque étape est **prouvée sans effet sur le fonctionnement** : `verifier.mjs` compare l'appli en ligne et la recompilation des sources en remplaçant chaque nom de variable par un numéro selon sa portée ; le résultat doit être identique (✅), sinon c'est refusé (❌). Testé aussi en simulation (démarrage, onglets, thème de Noël, création de carte, admin, caisse).
+
+Il reste des petits noms d'une lettre pour les variables locales (`t`, `e`, `n`…) et pour les décors des thèmes : le code reste lisible grâce aux textes affichés, et on peut continuer à renommer petit à petit avec `outils/renommer.mjs` (fichiers `outils/noms-<appli>.manuel.json`), toujours suivi de `verifier.mjs`.
 
 ### Repères utiles
 
 | Nom | Où | Rôle |
 |---|---|---|
-| `v9` | client | Formulaire « Ma carte de fidélité » (création de carte, garde-fou Facebook / Safari) |
-| `fO` | client | Détection du navigateur (iPhone, Android, Facebook, Instagram…) |
-| `__nomP`, `__telF` | client | Mise en forme des noms (Majuscules) et des téléphones (06 12 34 56 78) |
-| `X9` | admin | Messages tout prêts envoyés aux clients (commandes, réservations) |
-| `fw`, `mw` | admin | Statuts des commandes et boutons « étape suivante » |
+| `FormulaireCarte` | client | Formulaire « Ma carte de fidélité » (création de carte, garde-fou Facebook / Safari) |
+| `plateforme` | client | Détection du navigateur (iPhone, Android, Facebook, Instagram…) |
+| `nomPropre`, `telFormate` | client | Mise en forme des noms (Majuscules) et des téléphones (06 12 34 56 78) |
+| `RoueNoel`, `ReglementRoue` | client / admin | Roue de Noël et son règlement |
+| `MESSAGES_PRETS` | admin | Messages tout prêts envoyés aux clients (commandes, réservations) |
+| `STATUTS_COMMANDE`, `ETAPE_SUIVANTE` | admin | Statuts des commandes et boutons « étape suivante » |
+| `EditeurMenuDaval`, `lancerOCR` | admin | Menu de la semaine de la charcuterie Daval (lecture de la photo) |
+| `EcranCaisse`, `FicheClient` | caisse | Écran principal de la caisse, fiche client |
+| `VERSION` | les trois | Numéro de version (changé par `publier.mjs`) |
+
+## Outils
+
+| Outil | Rôle |
+|---|---|
+| `outils/compiler.mjs` | Recolle les morceaux et compile |
+| `outils/verifier.mjs` | Preuve d'équivalence avec un fichier compilé |
+| `outils/renommer.mjs`, `outils/renommer-locaux.mjs` | Renommage sûr (analyse du code) |
+| `outils/analyse.mjs`, `outils/externes.mjs` | Aide pour retrouver les noms |
+| `outils/decouper.mjs` | Découpage d'un fichier compilé en morceaux |
 
 ## Publier une nouvelle version
 

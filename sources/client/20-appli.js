@@ -1,10 +1,10 @@
-var kf = "epicerie-raddonnaise-chat";
+var CHAT_KEY = "epicerie-raddonnaise-chat";
 var U2 = (t) =>
     String(t || "")
       .replace(/\s+/g, " ")
       .trim()
       .slice(0, 110),
-  Q5 = (t) => {
+  heureMsg = (t) => {
     let e = new Date(t),
       n = new Date(),
       r = new Date();
@@ -16,7 +16,7 @@ var U2 = (t) =>
         ? "hier " + i
         : e.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) + " " + i;
   },
-  J5 = (t) => {
+  jourMsg = (t) => {
     let e = new Date(t),
       n = new Date(),
       r = new Date();
@@ -35,10 +35,10 @@ var U2 = (t) =>
       .split("/")
       .pop();
 var cO = () => new Date().toLocaleDateString("sv-SE"),
-  qa = "epicerie-raddonnaise-carte",
-  rs =
+  USER_KEY = "epicerie-raddonnaise-carte",
+  LOGO =
     "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCABoAHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5wOO9Bx3oOKDitTxQ4zRxmjjNHGaADjNHGaD1rQh0PV7jQrjW4tOnbTrcgS3W3CAkgAZ7nJHSplJR3YGfxmjjNX9P0+O9chpyG2u4jjXc5CKWYnJAAAB5z+FTXmkQx+GrbXrG6aa1luGtJElTY8MqqHwcEgqVbIPsQQO9BYyuM0cZqa1tp729jtbWMySyHCjIHbJOT0AGTmmPFIkskbId0ZIfHOMHH86AGcZo4zRxmjjNIA4zRxmjjNHGaAAY7UUDFFAAaDig0HFMA71oaVoer65cSQ6Tp0920SGSTylyEUDOWPQdDVOOGaZisMMkhA3EIpbA9eK7TwJ4k8Tabp9/oWiJAlvqJCzXEiZaLjaWTkbiASdvJ44FY13UUP3Su/MaOOs7Sa/vI7a2UM7sFyxwq5OMsegGSOTxXpdlJ4rvvhu3gy+EFvpdo8olWMATMyeXKI93IJPm7gAMtsIrIvr7SPDdu1gIbO6uDaJbTQW5KvDMpyzmZcq/8QBGSQ+DggGuPvtTv9RKC+upJlTIRGOVQE5wP89hVTpQqW51ezuvUext+F57fQ/F8t3cxW91ZRW9xbzeaRj54HTgZ5OWxxmtVUmbR7DVI9Lb+wDazvCtrAZYrK92hZDJk8kbVI3H7pTHSuDJVVycADv6VoaJY3uu30emaXIXFwdzAOdmB/E2OwqpTjBOUtEgvZHb6be+Df7Sf7Df29k17G8ZuLuBleCSS4AzxlQiw9ADyS2cCopdET/hDlt9H/cfapS1y8kouGY72EcYKD5m2xs5xwu4+vF/UvAGh6D4Lvr+6lkubuOElZC21Q54GFHue9ebWt9e2KSpZXk9uJhiQROV3geuPqfzrmwmNp4pN09loJSTC6s7qykRLu3eEuu5N4xuXJGR7ZBqDjNdjpviKx1iS0sPE8IljiJSHDiOMZARAf7iJySRnOTxk5FS48Fah/wkkGk2c1u8lxdC1jV5RujLcqJMfKG24JAJIzziumTUU23oFuxzPejvXR+NfCj+C/Ey6LNfR3cwt0lkeNdoDNn5Rnnt+tc53qadSNSKnB6MQDFFAxRVgBoJoNBxTA6PwsNMvbg6NqEF8z3EySQmyZQ0jKGxC2SOGJABHIOODmtXwjrM2i2F5/aEMttpk1yEjdh81rcbWKvGWB+ZNqbiBnHXtXEBirBlJDA5BBwQavaprmta5PHNrWrXuoyRLsja6maQovoMnigaZVuUjivJoo5xOiuQso/jGfvfjUtlp2o6nMYtN0+6vHHVbeFpCPyBrqvhf4Cn+IPj6HSN0kdlEPOu5UHzLGDjav8AtMSAPz7V9q6d4XsvB9hHoun6SmlwxqCIVXBI/vE9WJ9TXhZrnccC+SMeaX4L1LhTctT4CvtE1ayUpqOkX9sCMHzrd0/mK2PgreW2lXuqwXUdxJNEfJhSGFpXYbs4AUH2r7ivhbt8sqF3I471zGjeE4dD8R65rNqHH9rzRTyRbAqxskYT5ceuAa+fr8SrEUZU6lO3o/NeRsqa5JRb3seQ6h4A8bePLdIZY4vD+kgh8XZ3TzHsSi/dHsTXL+I/gD4p0ewa90m7t9ZVBl4YlMcuPZSSG+gOa+rraG2kQt5RyOPmNLNZRshMQ2sOw6GvOoZ9iqFlSso9rfrv+JPsVY/Pl1ZJGjkQo6kqysMEHuCK7bwjqUmszW+g6hPDvRwYJpZPLlZeSYlk2nbk87spwOWwMV6B8ffAkFusfjTTYFjLyCG/RBgMT92T69j+FeExztBcJJDKY5VOVIOCDX6Bl+OhjaCrR67rszFpxdjR16C+h16d9RljlnlJkLxymVSMkcM3JAxgZ7Dv1rM71JNcS3MokmYMwGBhQvH0AqPvXalbREgMUUDFFAATignFBOKCcUwDPNV576C3uord93mSEBQB61YzzWZqunvdTQXUTvvtzuCA43DOT+NTK9tDSkouVpvQ+vP2RoLeys9R1xrdppW1COEqi5YqqZAH4vmvoPxPqq6v4he4SF4kRREFkGG465Hbk18zfsj+LorWTWLG2eN54ZY72ON+pBGxwR7fL+dfQ15dSXuoTXkwUPK5dgvQZr88z2tKNWrRb3kna3Sytr+h0w0hYgIBOSATS1yGq/EvwtpHitvD08moXF3E6R3DWdjLcRWrPjYJXRSEJyDz61154BJ4A714Eqc4JOStcpprcKK5fxHqHj1dWhsPBXhWx1FfJM897qN2YIF5wIl2hmLnrkjAHrXRWb3UmnwSX1sttdNGplgV94jfHKhuM4PGaudCcYKo9mNwaSk9mcR8TbGK/wDhp4ktZANps5HHsyjeD+YFfBxiuP8AhMfMjQGHywz89MjGfrxX3L8XdWOlfCXxJdpgySW7W8Sk4yzkIP518W2lu0Ks0r75ZDudsY/Ae1fZ8Jxl7Cb6c36GLnyXfdWLA9KM80Z5xRnmvrTlAHNFAOaKAAnFBOKCcUE4pgGeaD6UZ5ozzQBv+A/Ez+B/iNY+J7eHeYiY7hF4MsLcOv8AUe4FfdGlapYa3ottq2l3KXFncxiSKVTwQf69iPWvz4PXFekfCz4t6l8Pr02N2kl9ocz7pLYH5oSf4489D6joa+bz/J3i4qtSXvr8V/mawqW0Z9o2z2lvbzKLRPMlO5nAA3HGMn14FcX4i+GvhLxdr39q+I7S8vmFt9mW2+3TRQAZJ3bEYAtzjJ9q0fDvjHw54q0tb/Q9TiuYiOVB+dD6MvUH61D4m8aaF4V077brGow2kXQGTJZz6Ko5P4V8UsRiYzjCOko6JJanb9Ylo09jodNjTSNOgsLAeXbwRLDGh+baqjAHPsKbczbI2kJyx/U1xmkfFLwdrFi1za+JNNKr94TyiBl+qtg1578RvjtpenWUlh4UuotS1KQFRdR/NBbj1B6O3pjj19KqnhMZiZLDqL073su/oZyrPls3oct+0H4xju7618HWMoZbZvtF4VOf3mPlT8AST9RXhw64qSaee6upLm5leWaVi8kjnLMx5JJqPPNfpOX4KODoRox6b+bOKTu7hnmjPNGeaM812iAHNFANFAATQTQaCaYBnmjPNHejvQAZ5oJ5o70GgDPgvtbi1vy4DLZxhwwuLeUoSo5xkHucVrXV5d39x517dz3Mn9+aQufzJquYwTzmjYBwCahQV+a2pc581rKwrKrAq6gg9jWbbWeoQ6mB9qAsYwQkY6nPY/StEoDwSaAgDcEiqauEZuKaXUdnnFGeaM80Z5pkBnmjPNHejvSAAaKAaKAA0HNFFMA70d6KKQB3o5zRRQAc5o5zRRTAO9HOaKKADnNHOaKKADvR3oopAAzRRRQB/9k=",
-  J2 = {
+  EMPTY2 = {
     store: {
       name: "\xC9picerie Raddonnaise",
       slogan: "Votre \xE9picerie, tout pr\xE8s de chez vous",
@@ -86,7 +86,7 @@ var cO = () => new Date().toLocaleDateString("sv-SE"),
     clients: [],
     onglets: { carte: !0, fidelite: !0 },
   },
-  X5 = {
+  TYPES = {
     frais: { label: "Frais du jour", c: "#6E9B3A", bg: "#EEF3E2" },
     plat: { label: "Fait maison", c: "#1C433B", bg: "#E4EDE9" },
     promo: { label: "Promo", c: "#C27B42", bg: "#FBEFE4" },
@@ -97,35 +97,35 @@ var cO = () => new Date().toLocaleDateString("sv-SE"),
   vn = (t) => !!t && t.active !== !1 && (!t.debut || t.debut <= Z5()) && (!t.fin || t.fin >= Z5()),
   dO = (t) =>
     t ? new Date(t + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) : "";
-function Wa({ texte: t, taille: e = 148, couleur: n = "#1C433B", style: r }) {
-  let i = (0, a.useMemo)(() => {
+function QR({ texte: texte, taille: taille = 148, couleur: couleur = "#1C433B", style: style }) {
+  let i = (0, React.useMemo)(() => {
     let o = G_(0, "M");
-    (o.addData(t), o.make());
+    o.addData(texte), o.make();
     let s = o.getModuleCount(),
       l = "";
     for (let u = 0; u < s; u++)
       for (let d = 0; d < s; d++) o.isDark(u, d) && (l += "M" + d + " " + u + "h1v1h-1z");
     return { d: l, n: s };
-  }, [t]);
-  return a.default.createElement(
+  }, [texte]);
+  return React.default.createElement(
     "svg",
     {
       role: "img",
-      "aria-label": "QR code " + t,
+      "aria-label": "QR code " + texte,
       viewBox: "0 0 " + i.n + " " + i.n,
-      width: typeof e == "number" ? e : void 0,
-      height: typeof e == "number" ? e : void 0,
+      width: typeof taille == "number" ? taille : void 0,
+      height: typeof taille == "number" ? taille : void 0,
       shapeRendering: "crispEdges",
-      style: { display: "block", background: "#fff", ...r },
+      style: { display: "block", background: "#fff", ...style },
     },
-    a.default.createElement("path", { d: i.d, fill: n }),
+    React.default.createElement("path", { d: i.d, fill: couleur }),
   );
 }
 var $2 = (t, e) => [...t].sort((n, r) => (e ? (r.cree || 0) - (n.cree || 0) : (n.cree || 0) - (r.cree || 0)));
-function hO() {
-  let [t, e] = (0, a.useState)({}),
-    [n, r] = (0, a.useState)(!1),
-    [i, o] = (0, a.useState)({
+function useShop() {
+  let [t, e] = (0, React.useState)({}),
+    [n, r] = (0, React.useState)(!1),
+    [i, o] = (0, React.useState)({
       offres: [],
       actus: [],
       jour: [],
@@ -135,12 +135,12 @@ function hO() {
       recettes: [],
     });
   return (
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       let s = [
-        Or(
-          Z3,
+        onSnapshot(
+          CONFIG_REF,
           (l) => {
-            (e(l.exists() ? l.data() : {}), r(!0));
+            e(l.exists() ? l.data() : {}), r(!0);
           },
           () => r(!0),
         ),
@@ -148,8 +148,8 @@ function hO() {
       return (
         ["offres", "actus", "jour", "pubs", "plateaux", "producteurs", "recettes"].forEach((l) =>
           s.push(
-            Or(
-              Qn(ce, l),
+            onSnapshot(
+              collection(db2, l),
               (u) => o((d) => ({ ...d, [l]: u.docs.map((h) => ({ ...h.data(), id: h.id })) })),
               () => {},
             ),
@@ -158,8 +158,8 @@ function hO() {
         () => s.forEach((l) => l())
       );
     }, []),
-    (0, a.useMemo)(() => {
-      let s = { ...J2, ...t };
+    (0, React.useMemo)(() => {
+      let s = { ...EMPTY2, ...t };
       return {
         ...s,
         pret: n,
@@ -181,28 +181,28 @@ function hO() {
     }, [t, i, n])
   );
 }
-function pO() {
+function useMoi() {
   let t = () => {
       try {
-        let i = localStorage.getItem(qa),
+        let i = localStorage.getItem(USER_KEY),
           o = i ? JSON.parse(i) : null;
         return o && o.ref ? o : null;
       } catch {
         return null;
       }
     },
-    [e, n] = (0, a.useState)(t),
+    [moi, setMoi] = (0, React.useState)(t),
     r = (i) => {
-      n(i);
+      setMoi(i);
       try {
-        i ? localStorage.setItem(qa, JSON.stringify(i)) : localStorage.removeItem(qa);
+        i ? localStorage.setItem(USER_KEY, JSON.stringify(i)) : localStorage.removeItem(USER_KEY);
       } catch {}
     };
   return (
-    (0, a.useEffect)(() => {
-      if (e?.ref)
-        return Or(
-          we(ce, "clients", e.ref),
+    (0, React.useEffect)(() => {
+      if (moi?.ref)
+        return onSnapshot(
+          doc2(db2, "clients", moi.ref),
           (i) => {
             if (i.exists()) {
               let o = i.data();
@@ -229,12 +229,12 @@ function pO() {
           },
           () => {},
         );
-    }, [e?.ref]),
-    [e, r]
+    }, [moi?.ref]),
+    [moi, r]
   );
 }
-var R5 = "epicerie-raddonnaise-install-masque";
-function fO() {
+var INSTALL_KEY = "epicerie-raddonnaise-install-masque";
+function plateforme() {
   let t = navigator.userAgent || "",
     e = /iPhone|iPad|iPod/i.test(t) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1),
     n = /Android/i.test(t),
@@ -267,66 +267,66 @@ function fO() {
     mobile: d,
   };
 }
-function mO() {
-  let t = (0, a.useMemo)(fO, []),
-    [e, n] = (0, a.useState)(null),
-    [r, i] = (0, a.useState)(!1),
-    [o, s] = (0, a.useState)(() => {
+function useInstall() {
+  let t = (0, React.useMemo)(plateforme, []),
+    [evt, setEvt] = (0, React.useState)(null),
+    [ouvert, setOuvert] = (0, React.useState)(!1),
+    [masque, setMasque] = (0, React.useState)(() => {
       try {
-        return localStorage.getItem(R5) === "1";
+        return localStorage.getItem(INSTALL_KEY) === "1";
       } catch {
         return !1;
       }
     }),
-    [l, u] = (0, a.useState)(
+    [installee, setInstallee] = (0, React.useState)(
       () => window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === !0,
     );
-  (0, a.useEffect)(() => {
+  (0, React.useEffect)(() => {
     let h = (m) => {
-        (m.preventDefault(), n(m));
+        m.preventDefault(), setEvt(m);
       },
       f = () => {
-        (n(null), u(!0), i(!1));
+        setEvt(null), setInstallee(!0), setOuvert(!1);
       };
     return (
       window.addEventListener("beforeinstallprompt", h),
       window.addEventListener("appinstalled", f),
       () => {
-        (window.removeEventListener("beforeinstallprompt", h), window.removeEventListener("appinstalled", f));
+        window.removeEventListener("beforeinstallprompt", h), window.removeEventListener("appinstalled", f);
       }
     );
   }, []);
   let d = async () => {
-    if (e) {
-      e.prompt();
+    if (evt) {
+      evt.prompt();
       try {
-        await e.userChoice;
+        await evt.userChoice;
       } catch {}
-      n(null);
+      setEvt(null);
     }
   };
   return {
     p: t,
-    evt: e,
-    installee: l,
-    ouvert: r,
-    possible: !l,
-    bandeau: !l && !o,
+    evt: evt,
+    installee: installee,
+    ouvert: ouvert,
+    possible: !installee,
+    bandeau: !installee && !masque,
     lancer: () => {
-      e && !t.inApp ? d() : i(!0);
+      evt && !t.inApp ? d() : setOuvert(!0);
     },
     direct: d,
-    fermerAssistant: () => i(!1),
+    fermerAssistant: () => setOuvert(!1),
     fermer: () => {
-      s(!0);
+      setMasque(!0);
       try {
-        localStorage.setItem(R5, "1");
+        localStorage.setItem(INSTALL_KEY, "1");
       } catch {}
     },
   };
 }
-var eT = () =>
-    a.default.createElement(
+var IcPartage = () =>
+    React.default.createElement(
       "svg",
       {
         width: "17",
@@ -339,11 +339,11 @@ var eT = () =>
         strokeLinejoin: "round",
         style: { verticalAlign: "-3px" },
       },
-      a.default.createElement("path", { d: "M12 3v12M8 7l4-4 4 4" }),
-      a.default.createElement("path", { d: "M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" }),
+      React.default.createElement("path", { d: "M12 3v12M8 7l4-4 4 4" }),
+      React.default.createElement("path", { d: "M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" }),
     ),
-  If = ({ v: t }) =>
-    a.default.createElement(
+  IcPoints = ({ v: v }) =>
+    React.default.createElement(
       "svg",
       {
         width: "17",
@@ -352,24 +352,24 @@ var eT = () =>
         fill: "currentColor",
         style: { verticalAlign: "-3px" },
       },
-      t
-        ? a.default.createElement(
-            a.default.Fragment,
+      v
+        ? React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement("circle", { cx: "12", cy: "5", r: "2" }),
-            a.default.createElement("circle", { cx: "12", cy: "12", r: "2" }),
-            a.default.createElement("circle", { cx: "12", cy: "19", r: "2" }),
+            React.default.createElement("circle", { cx: "12", cy: "5", r: "2" }),
+            React.default.createElement("circle", { cx: "12", cy: "12", r: "2" }),
+            React.default.createElement("circle", { cx: "12", cy: "19", r: "2" }),
           )
-        : a.default.createElement(
-            a.default.Fragment,
+        : React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement("circle", { cx: "5", cy: "12", r: "2" }),
-            a.default.createElement("circle", { cx: "12", cy: "12", r: "2" }),
-            a.default.createElement("circle", { cx: "19", cy: "12", r: "2" }),
+            React.default.createElement("circle", { cx: "5", cy: "12", r: "2" }),
+            React.default.createElement("circle", { cx: "12", cy: "12", r: "2" }),
+            React.default.createElement("circle", { cx: "19", cy: "12", r: "2" }),
           ),
     ),
-  gO = () =>
-    a.default.createElement(
+  IcMenu = () =>
+    React.default.createElement(
       "svg",
       {
         width: "17",
@@ -381,10 +381,10 @@ var eT = () =>
         strokeLinecap: "round",
         style: { verticalAlign: "-3px" },
       },
-      a.default.createElement("path", { d: "M4 7h16M4 12h16M4 17h16" }),
+      React.default.createElement("path", { d: "M4 7h16M4 12h16M4 17h16" }),
     ),
-  tT = () =>
-    a.default.createElement(
+  IcPlus = () =>
+    React.default.createElement(
       "svg",
       {
         width: "17",
@@ -396,20 +396,20 @@ var eT = () =>
         strokeLinecap: "round",
         style: { verticalAlign: "-3px" },
       },
-      a.default.createElement("rect", { x: "3", y: "3", width: "18", height: "18", rx: "4" }),
-      a.default.createElement("path", { d: "M12 8v8M8 12h8" }),
+      React.default.createElement("rect", { x: "3", y: "3", width: "18", height: "18", rx: "4" }),
+      React.default.createElement("path", { d: "M12 8v8M8 12h8" }),
     ),
-  Fn = ({ children: t }) => a.default.createElement("span", { className: "bt" }, t);
-function vO({ inst: t }) {
-  let { p: e } = t,
-    [n, r] = (0, a.useState)(""),
+  Fn = ({ children: children }) => React.default.createElement("span", { className: "bt" }, children);
+function AssistantInstall({ inst: inst }) {
+  let { p: e } = inst,
+    [msg, setMsg] = (0, React.useState)(""),
     i = location.origin + location.pathname,
     o = async () => {
       try {
-        (await navigator.clipboard.writeText(i),
-          r("Lien copi\xE9 \u2713 \u2014 collez-le dans " + (e.ios ? "Safari" : "Chrome")));
+        await navigator.clipboard.writeText(i),
+          setMsg("Lien copi\xE9 \u2713 \u2014 collez-le dans " + (e.ios ? "Safari" : "Chrome"));
       } catch {
-        r("Appuyez longuement sur le lien ci-dessous pour le copier");
+        setMsg("Appuyez longuement sur le lien ci-dessous pour le copier");
       }
     },
     s = "Installer l'application",
@@ -420,20 +420,20 @@ function vO({ inst: t }) {
     e.inApp
       ? ((s = "Ouvrez d'abord dans votre navigateur"),
         (l = [
-          a.default.createElement(
-            a.default.Fragment,
+          React.default.createElement(
+            React.default.Fragment,
             null,
             "Vous \xEAtes dans ",
-            a.default.createElement("b", null, e.appli),
+            React.default.createElement("b", null, e.appli),
             " : l'installation n'y est pas possible.",
           ),
-          a.default.createElement(
-            a.default.Fragment,
+          React.default.createElement(
+            React.default.Fragment,
             null,
             "Touchez ",
-            a.default.createElement(Fn, null, a.default.createElement(If, null)),
+            React.default.createElement(Fn, null, React.default.createElement(IcPoints, null)),
             " en haut \xE0 droite, puis ",
-            a.default.createElement(
+            React.default.createElement(
               "b",
               null,
               "\xAB Ouvrir dans ",
@@ -442,19 +442,19 @@ function vO({ inst: t }) {
             ),
             ".",
           ),
-          a.default.createElement(
-            a.default.Fragment,
+          React.default.createElement(
+            React.default.Fragment,
             null,
             "Une fois la page ouverte, touchez \xE0 nouveau ",
-            a.default.createElement("b", null, "Installer l'application"),
+            React.default.createElement("b", null, "Installer l'application"),
             ".",
           ),
         ]),
-        (u = a.default.createElement(
-          a.default.Fragment,
+        (u = React.default.createElement(
+          React.default.Fragment,
           null,
           e.android &&
-            a.default.createElement(
+            React.default.createElement(
               "a",
               {
                 className: "btn",
@@ -467,100 +467,105 @@ function vO({ inst: t }) {
               },
               "Ouvrir dans Chrome",
             ),
-          a.default.createElement("button", { className: "btn gh", onClick: o }, "Copier le lien"),
+          React.default.createElement("button", { className: "btn gh", onClick: o }, "Copier le lien"),
         )))
-      : t.evt
+      : inst.evt
         ? ((s = "Installer en un clic"),
           (l = [
-            a.default.createElement(
-              a.default.Fragment,
+            React.default.createElement(
+              React.default.Fragment,
               null,
               "Touchez le bouton ci-dessous, puis confirmez ",
-              a.default.createElement("b", null, "\xAB Installer \xBB"),
+              React.default.createElement("b", null, "\xAB Installer \xBB"),
               ".",
             ),
           ]),
-          (u = a.default.createElement(
+          (u = React.default.createElement(
             "button",
-            { className: "btn", onClick: t.direct },
+            { className: "btn", onClick: inst.direct },
             "Installer maintenant",
           )))
         : e.ios && !e.chromeIOS && !e.autreIOS
           ? ((l = [
-              a.default.createElement(
-                a.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
                 "Touchez ",
-                a.default.createElement(Fn, null, a.default.createElement(eT, null), " Partager"),
+                React.default.createElement(
+                  Fn,
+                  null,
+                  React.default.createElement(IcPartage, null),
+                  " Partager",
+                ),
                 " ",
                 e.ipad ? "en haut de l'\xE9cran" : "en bas de l'\xE9cran",
                 ".",
-                a.default.createElement("br", null),
-                a.default.createElement(
+                React.default.createElement("br", null),
+                React.default.createElement(
                   "span",
                   { className: "pt2" },
                   "Sur les iPhone r\xE9cents, il est dans le menu ",
-                  a.default.createElement(Fn, null, a.default.createElement(If, null)),
+                  React.default.createElement(Fn, null, React.default.createElement(IcPoints, null)),
                   " en bas \xE0 droite.",
                 ),
               ),
-              a.default.createElement(
-                a.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
                 "Faites d\xE9filer et touchez ",
-                a.default.createElement(
+                React.default.createElement(
                   Fn,
                   null,
-                  a.default.createElement(tT, null),
+                  React.default.createElement(IcPlus, null),
                   " Sur l'\xE9cran d'accueil",
                 ),
                 ".",
               ),
-              a.default.createElement(
-                a.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
                 "Touchez ",
-                a.default.createElement("b", null, "Ajouter"),
+                React.default.createElement("b", null, "Ajouter"),
                 " en haut \xE0 droite. C'est fait !",
               ),
             ]),
             (d = "bas"))
           : e.chromeIOS
             ? ((l = [
-                a.default.createElement(
-                  a.default.Fragment,
+                React.default.createElement(
+                  React.default.Fragment,
                   null,
                   "Touchez ",
-                  a.default.createElement(Fn, null, a.default.createElement(eT, null)),
+                  React.default.createElement(Fn, null, React.default.createElement(IcPartage, null)),
                   " en haut \xE0 droite, dans la barre d'adresse.",
                 ),
-                a.default.createElement(
-                  a.default.Fragment,
+                React.default.createElement(
+                  React.default.Fragment,
                   null,
                   "Choisissez ",
-                  a.default.createElement(
+                  React.default.createElement(
                     Fn,
                     null,
-                    a.default.createElement(tT, null),
+                    React.default.createElement(IcPlus, null),
                     " Ajouter \xE0 l'\xE9cran d'accueil",
                   ),
                   ".",
                 ),
-                a.default.createElement(
-                  a.default.Fragment,
+                React.default.createElement(
+                  React.default.Fragment,
                   null,
                   "Touchez ",
-                  a.default.createElement("b", null, "Ajouter"),
+                  React.default.createElement("b", null, "Ajouter"),
                   ".",
                 ),
               ]),
-              (u = a.default.createElement(
+              (u = React.default.createElement(
                 "div",
                 { className: "pt2", style: { textAlign: "center" } },
                 "L'option n'appara\xEEt pas ? Ouvrez le lien dans ",
-                a.default.createElement("b", null, "Safari"),
+                React.default.createElement("b", null, "Safari"),
                 " :",
-                a.default.createElement(
+                React.default.createElement(
                   "button",
                   { className: "btn gh", style: { marginTop: 8 }, onClick: o },
                   "Copier le lien",
@@ -568,141 +573,157 @@ function vO({ inst: t }) {
               )))
             : e.ios
               ? ((l = [
-                  a.default.createElement(
-                    a.default.Fragment,
+                  React.default.createElement(
+                    React.default.Fragment,
                     null,
                     "Sur iPhone, l'installation se fait depuis ",
-                    a.default.createElement("b", null, "Safari"),
+                    React.default.createElement("b", null, "Safari"),
                     ".",
                   ),
-                  a.default.createElement(
-                    a.default.Fragment,
+                  React.default.createElement(
+                    React.default.Fragment,
                     null,
                     "Copiez le lien, ouvrez ",
-                    a.default.createElement("b", null, "Safari"),
+                    React.default.createElement("b", null, "Safari"),
                     " et collez-le dans la barre d'adresse.",
                   ),
-                  a.default.createElement(
-                    a.default.Fragment,
+                  React.default.createElement(
+                    React.default.Fragment,
                     null,
                     "Touchez ensuite ",
-                    a.default.createElement("b", null, "Installer l'application"),
+                    React.default.createElement("b", null, "Installer l'application"),
                     ".",
                   ),
                 ]),
-                (u = a.default.createElement("button", { className: "btn", onClick: o }, "Copier le lien")))
+                (u = React.default.createElement(
+                  "button",
+                  { className: "btn", onClick: o },
+                  "Copier le lien",
+                )))
               : e.samsung
                 ? ((l = [
-                    a.default.createElement(
-                      a.default.Fragment,
+                    React.default.createElement(
+                      React.default.Fragment,
                       null,
                       "Touchez ",
-                      a.default.createElement(Fn, null, a.default.createElement(gO, null)),
+                      React.default.createElement(Fn, null, React.default.createElement(IcMenu, null)),
                       " en bas \xE0 droite.",
                     ),
-                    a.default.createElement(
-                      a.default.Fragment,
+                    React.default.createElement(
+                      React.default.Fragment,
                       null,
                       "Touchez ",
-                      a.default.createElement(Fn, null, "Ajouter page \xE0"),
+                      React.default.createElement(Fn, null, "Ajouter page \xE0"),
                       " puis ",
-                      a.default.createElement("b", null, "\xAB \xC9cran d'accueil \xBB"),
+                      React.default.createElement("b", null, "\xAB \xC9cran d'accueil \xBB"),
                       ".",
                     ),
-                    a.default.createElement(
-                      a.default.Fragment,
+                    React.default.createElement(
+                      React.default.Fragment,
                       null,
                       "Confirmez avec ",
-                      a.default.createElement("b", null, "Ajouter"),
+                      React.default.createElement("b", null, "Ajouter"),
                       ".",
                     ),
                   ]),
                   (d = "basdroite"))
                 : e.firefox
                   ? (l = [
-                      a.default.createElement(
-                        a.default.Fragment,
+                      React.default.createElement(
+                        React.default.Fragment,
                         null,
                         "Touchez ",
-                        a.default.createElement(Fn, null, a.default.createElement(If, { v: !0 })),
+                        React.default.createElement(
+                          Fn,
+                          null,
+                          React.default.createElement(IcPoints, { v: !0 }),
+                        ),
                         " (menu du navigateur).",
                       ),
-                      a.default.createElement(
-                        a.default.Fragment,
+                      React.default.createElement(
+                        React.default.Fragment,
                         null,
                         "Touchez ",
-                        a.default.createElement(Fn, null, "Installer"),
+                        React.default.createElement(Fn, null, "Installer"),
                         " ou ",
-                        a.default.createElement("b", null, "\xAB Ajouter \xE0 l'\xE9cran d'accueil \xBB"),
+                        React.default.createElement("b", null, "\xAB Ajouter \xE0 l'\xE9cran d'accueil \xBB"),
                         ".",
                       ),
-                      a.default.createElement(a.default.Fragment, null, "Confirmez."),
+                      React.default.createElement(React.default.Fragment, null, "Confirmez."),
                     ])
                   : e.android
                     ? ((l = [
-                        a.default.createElement(
-                          a.default.Fragment,
+                        React.default.createElement(
+                          React.default.Fragment,
                           null,
                           "Touchez ",
-                          a.default.createElement(Fn, null, a.default.createElement(If, { v: !0 })),
+                          React.default.createElement(
+                            Fn,
+                            null,
+                            React.default.createElement(IcPoints, { v: !0 }),
+                          ),
                           " en haut \xE0 droite.",
                         ),
-                        a.default.createElement(
-                          a.default.Fragment,
+                        React.default.createElement(
+                          React.default.Fragment,
                           null,
                           "Touchez ",
-                          a.default.createElement(Fn, null, "Installer l'application"),
+                          React.default.createElement(Fn, null, "Installer l'application"),
                           " ou ",
-                          a.default.createElement("b", null, "\xAB Ajouter \xE0 l'\xE9cran d'accueil \xBB"),
+                          React.default.createElement(
+                            "b",
+                            null,
+                            "\xAB Ajouter \xE0 l'\xE9cran d'accueil \xBB",
+                          ),
                           ".",
                         ),
-                        a.default.createElement(
-                          a.default.Fragment,
+                        React.default.createElement(
+                          React.default.Fragment,
                           null,
                           "Confirmez avec ",
-                          a.default.createElement("b", null, "Installer"),
+                          React.default.createElement("b", null, "Installer"),
                           ".",
                         ),
                       ]),
                       (d = "hautdroite"))
                     : ((s = "Installez-la sur votre t\xE9l\xE9phone"),
                       (l = [
-                        a.default.createElement(
-                          a.default.Fragment,
+                        React.default.createElement(
+                          React.default.Fragment,
                           null,
                           "Scannez ce code avec l'appareil photo de votre t\xE9l\xE9phone pour ouvrir l'application, puis touchez ",
-                          a.default.createElement("b", null, "Installer l'application"),
+                          React.default.createElement("b", null, "Installer l'application"),
                           ".",
                         ),
                       ]),
-                      (u = a.default.createElement(
+                      (u = React.default.createElement(
                         "div",
                         { style: { textAlign: "center" } },
-                        a.default.createElement(Wa, {
+                        React.default.createElement(QR, {
                           texte: i,
                           taille: 170,
                           style: { display: "inline-block" },
                         }),
                       ))),
-    a.default.createElement(
+    React.default.createElement(
       "div",
-      { className: "sheet-bg", onClick: t.fermerAssistant },
-      d && a.default.createElement("div", { className: "fleche " + d }, "\u2193"),
-      a.default.createElement(
+      { className: "sheet-bg", onClick: inst.fermerAssistant },
+      d && React.default.createElement("div", { className: "fleche " + d }, "\u2193"),
+      React.default.createElement(
         "div",
         {
           className: "sheet" + (d && d.startsWith("bas") ? " avec-fleche" : ""),
           onClick: (h) => h.stopPropagation(),
         },
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 14 } },
-          a.default.createElement("img", {
-            src: rs,
+          React.default.createElement("img", {
+            src: LOGO,
             alt: "",
             style: { width: 48, height: 48, borderRadius: 12 },
           }),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             {
               style: {
@@ -715,37 +736,37 @@ function vO({ inst: t }) {
             },
             s,
           ),
-          a.default.createElement(
+          React.default.createElement(
             "button",
-            { className: "ix", "aria-label": "Fermer", onClick: t.fermerAssistant },
+            { className: "ix", "aria-label": "Fermer", onClick: inst.fermerAssistant },
             "\xD7",
           ),
         ),
-        a.default.createElement(
+        React.default.createElement(
           "ol",
           { className: "etapes" },
           l.map((h, f) =>
-            a.default.createElement(
+            React.default.createElement(
               "li",
               { key: f },
-              a.default.createElement("span", { className: "num" }, f + 1),
-              a.default.createElement("div", null, h),
+              React.default.createElement("span", { className: "num" }, f + 1),
+              React.default.createElement("div", null, h),
             ),
           ),
         ),
-        u && a.default.createElement("div", { style: { marginTop: 14 } }, u),
-        n &&
-          a.default.createElement(
+        u && React.default.createElement("div", { style: { marginTop: 14 } }, u),
+        msg &&
+          React.default.createElement(
             "div",
             {
               className: "pt2",
               style: { textAlign: "center", marginTop: 10, color: "var(--apple)", fontWeight: 800 },
             },
-            n,
+            msg,
           ),
         (e.inApp || e.ios) &&
-          n &&
-          a.default.createElement(
+          msg &&
+          React.default.createElement(
             "div",
             {
               style: {
@@ -761,7 +782,7 @@ function vO({ inst: t }) {
             },
             i,
           ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "pt2", style: { textAlign: "center", marginTop: 14 } },
           "Facultatif : sans installation, votre carte reste m\xE9moris\xE9e sur ce t\xE9l\xE9phone.",
@@ -770,67 +791,67 @@ function vO({ inst: t }) {
     )
   );
 }
-function ox({ inst: t, compact: e, texte: n }) {
-  return t.possible
-    ? a.default.createElement(
+function Installer({ inst: inst, compact: compact, texte: texte }) {
+  return inst.possible
+    ? React.default.createElement(
         "div",
         { className: "inst" },
-        a.default.createElement("img", { src: rs, alt: "" }),
-        a.default.createElement(
+        React.default.createElement("img", { src: LOGO, alt: "" }),
+        React.default.createElement(
           "div",
           { style: { flex: 1, minWidth: 0 } },
-          a.default.createElement("div", { className: "it" }, "Installer l'application"),
-          a.default.createElement(
+          React.default.createElement("div", { className: "it" }, "Installer l'application"),
+          React.default.createElement(
             "div",
             { className: "id" },
-            n || "Retrouvez l'\xE9picerie et votre carte d'un geste.",
+            texte || "Retrouvez l'\xE9picerie et votre carte d'un geste.",
           ),
         ),
-        a.default.createElement("button", { className: "ib2", onClick: t.lancer }, "Installer"),
-        !e &&
-          a.default.createElement(
+        React.default.createElement("button", { className: "ib2", onClick: inst.lancer }, "Installer"),
+        !compact &&
+          React.default.createElement(
             "button",
-            { className: "ix", "aria-label": "Fermer", onClick: t.fermer },
+            { className: "ix", "aria-label": "Fermer", onClick: inst.fermer },
             "\xD7",
           ),
       )
     : null;
 }
-function yO({ inst: t, onClose: e }) {
-  return a.default.createElement(
+function ProposeInstall({ inst: inst, onClose: onClose }) {
+  return React.default.createElement(
     "div",
-    { className: "sheet-bg", onClick: e },
-    a.default.createElement(
+    { className: "sheet-bg", onClick: onClose },
+    React.default.createElement(
       "div",
       { className: "sheet", onClick: (n) => n.stopPropagation(), style: { textAlign: "center" } },
-      a.default.createElement("img", {
-        src: rs,
+      React.default.createElement("img", {
+        src: LOGO,
         alt: "",
         style: { width: 70, height: 70, borderRadius: 18, marginBottom: 10 },
       }),
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { fontFamily: "var(--script)", fontSize: 31, color: "var(--forest)", lineHeight: 1 } },
         "Votre carte est pr\xEAte !",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "p",
         { style: { fontSize: 13.5, color: "var(--ink2)", lineHeight: 1.5, margin: "10px 0 16px" } },
         "Gardez-la \xE0 port\xE9e de main : installez l'application sur votre \xE9cran d'accueil et retrouvez votre carte d'un simple geste.",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "btn",
           onClick: () => {
-            (e(), t.lancer());
+            onClose(), inst.lancer();
           },
         },
         "Installer l'application",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn gh", style: { marginTop: 8 }, onClick: e },
+        { className: "btn gh", style: { marginTop: 8 }, onClick: onClose },
         "Plus tard",
       ),
     ),
@@ -841,10 +862,10 @@ var sx = (t, e = 12e3) =>
       let r = setTimeout(() => n("lent"), e);
       t.then(
         () => {
-          (clearTimeout(r), n("ok"));
+          clearTimeout(r), n("ok");
         },
         () => {
-          (clearTimeout(r), n("erreur"));
+          clearTimeout(r), n("erreur");
         },
       );
     }),
@@ -865,15 +886,20 @@ var sx = (t, e = 12e3) =>
   ux = (t, e) => lx([...ax().filter((n) => n.id !== e), { type: t, id: e, cree: Date.now() }]),
   Cf = (t) => lx(ax().filter((e) => e.id !== t));
 async function ns(t, e, n) {
-  (Cf(n), e === "cmd" ? await o5(t, n) : e === "resa" ? await a5(t, n) : await s5(t, n));
+  Cf(n),
+    e === "cmd"
+      ? await envoyerMail(t, n)
+      : e === "resa"
+        ? await avertirResa(t, n)
+        : await avertirMessage(t, n);
 }
 function xO(t) {
   let e = ax().filter((n) => Date.now() - (n.cree || 0) < 864e5);
-  (lx(e),
+  lx(e),
     !(!e.length || !g2(Nn(t).script)) &&
-      Dp(ce)
+      waitForPendingWrites(db2)
         .then(() => e.forEach((n) => ns(t, n.type, n.id)))
-        .catch(() => {}));
+        .catch(() => {});
 }
 var W2 = (t, e) => {
     let n = (t || [])[(e.getDay() + 6) % 7];
@@ -882,7 +908,7 @@ var W2 = (t, e) => {
       i = [],
       o,
       s = [n.am, n.pm].filter(Boolean).join(" ");
-    for (; (o = r.exec(s));) i.push([+o[1] * 60 + +(o[2] || 0), +o[3] * 60 + +(o[4] || 0)]);
+    for (; (o = r.exec(s)); ) i.push([+o[1] * 60 + +(o[2] || 0), +o[3] * 60 + +(o[4] || 0)]);
     if (!i.length) {
       let l = (h) => {
           let f = /^\s*(\d{1,2})\s*(?:[h:.]\s*(\d{2})?)?\s*$/i.exec(h || "");
@@ -895,7 +921,7 @@ var W2 = (t, e) => {
     return i.sort((l, u) => l[0] - u[0]);
   },
   G2 = (t) => Math.floor(t / 60) + "h" + String(t % 60).padStart(2, "0");
-function bO(t, e, n = new Date()) {
+function texteOuverture(t, e, n = new Date()) {
   let r = n.getHours() * 60 + n.getMinutes(),
     i = W2(t, n);
   if (!!!E2(e, Wt(n))) {
@@ -930,59 +956,59 @@ function bO(t, e, n = new Date()) {
   return i.length || W2(t, new Date(n.getTime() + 864e5)).length ? { ouvert: !1, texte: "Ferm\xE9" } : null;
 }
 function wO() {
-  let [t, e] = (0, a.useState)(() => Date.now());
+  let [t, e] = (0, React.useState)(() => Date.now());
   return (
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       let n = setInterval(() => e(Date.now()), 6e4);
       return () => clearInterval(n);
     }, []),
     t
   );
 }
-function EO({ e: t }) {
-  return t
-    ? a.default.createElement(
+function BadgeOuverture({ e: e }) {
+  return e
+    ? React.default.createElement(
         "div",
-        { className: "ouverture " + (t.ouvert ? (t.bientot ? "bientot" : "on") : "off"), role: "status" },
-        a.default.createElement("span", { className: "pt" }),
-        a.default.createElement(
+        { className: "ouverture " + (e.ouvert ? (e.bientot ? "bientot" : "on") : "off"), role: "status" },
+        React.default.createElement("span", { className: "pt" }),
+        React.default.createElement(
           "b",
           null,
-          t.ouvert ? (t.bientot ? "Ferme bient\xF4t" : "Ouvert") : "Ferm\xE9",
+          e.ouvert ? (e.bientot ? "Ferme bient\xF4t" : "Ouvert") : "Ferm\xE9",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "span",
           null,
           "\xB7 ",
-          t.ouvert && t.bientot ? t.texte.replace("Ferme ", "") : t.texte,
+          e.ouvert && e.bientot ? e.texte.replace("Ferme ", "") : e.texte,
         ),
       )
     : null;
 }
-function cx({ inst: t, quoi: e = "votre commande" }) {
-  let [n, r] = (0, a.useState)(!1);
-  return !t?.p?.ios || !t.possible || n
+function ConseilInstallCommande({ inst: inst, quoi: quoi = "votre commande" }) {
+  let [n, r] = (0, React.useState)(!1);
+  return !inst?.p?.ios || !inst.possible || n
     ? null
-    : a.default.createElement(
+    : React.default.createElement(
         "div",
         { className: "ios-avant" },
-        a.default.createElement("b", null, "\u{1F4F1} Sur iPhone : installez d'abord l'application"),
-        a.default.createElement(
+        React.default.createElement("b", null, "\u{1F4F1} Sur iPhone : installez d'abord l'application"),
+        React.default.createElement(
           "p",
           null,
           "Si vous l'installez apr\xE8s, ",
-          e,
+          quoi,
           " n'appara\xEEtra pas dans l'appli install\xE9e (l'iPhone s\xE9pare Safari et les applis).",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 8 } },
-          a.default.createElement(
+          React.default.createElement(
             "button",
-            { className: "btn sm", onClick: t.lancer },
+            { className: "btn sm", onClick: inst.lancer },
             "Installer maintenant",
           ),
-          a.default.createElement(
+          React.default.createElement(
             "button",
             { className: "btn gh sm", onClick: () => r(!0) },
             "Continuer ici",
@@ -991,21 +1017,21 @@ function cx({ inst: t, quoi: e = "votre commande" }) {
       );
 }
 var nT = "epicerie-raddonnaise-carte-notif";
-function _O({ n: t, inst: e }) {
-  let [n, r] = (0, a.useState)(() => {
+function BandeauNotifications({ n: t, inst: inst }) {
+  let [n, r] = (0, React.useState)(() => {
       try {
         return Date.now() - Number(localStorage.getItem(nT) || 0) < 2592e6;
       } catch {
         return !1;
       }
     }),
-    [i, o] = (0, a.useState)(!0);
+    [i, o] = (0, React.useState)(!0);
   return !t?.dispo || n || !["off", "ios"].includes(t.etat)
     ? null
-    : a.default.createElement(
+    : React.default.createElement(
         "div",
         { className: "carte-notif" },
-        a.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "ix",
@@ -1019,41 +1045,41 @@ function _O({ n: t, inst: e }) {
           },
           "\xD7",
         ),
-        a.default.createElement("b", null, "\u{1F514} Ne ratez plus nos bons plans"),
-        a.default.createElement(
+        React.default.createElement("b", null, "\u{1F514} Ne ratez plus nos bons plans"),
+        React.default.createElement(
           "p",
           null,
           "Arrivages, promos, commande pr\xEAte\u2026 on vous pr\xE9vient sur votre t\xE9l\xE9phone.",
         ),
         t.etat === "ios"
-          ? a.default.createElement(
-              a.default.Fragment,
+          ? React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement(
+              React.default.createElement(
                 "p",
                 { style: { fontWeight: 700 } },
                 "Sur iPhone, installez d'abord l'application, puis activez les notifications.",
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "button",
-                { className: "btn sm", onClick: e.lancer },
+                { className: "btn sm", onClick: inst.lancer },
                 "Installer l'application",
               ),
             )
-          : a.default.createElement(
-              a.default.Fragment,
+          : React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement(
+              React.default.createElement(
                 "label",
                 { className: "accord", style: { margin: "4px 0 8px" } },
-                a.default.createElement("input", {
+                React.default.createElement("input", {
                   type: "checkbox",
                   checked: i,
                   onChange: (l) => o(l.target.checked),
                 }),
-                a.default.createElement("span", null, "Recevoir aussi les bons plans"),
+                React.default.createElement("span", null, "Recevoir aussi les bons plans"),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "button",
                 { className: "btn sm", onClick: () => t.activer(i) },
                 "Activer les notifications",
@@ -1061,9 +1087,9 @@ function _O({ n: t, inst: e }) {
             ),
       );
 }
-var Yn = {
+var Ic2 = {
     home: (t = 21, e = "currentColor") =>
-      a.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1074,12 +1100,12 @@ var Yn = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        a.default.createElement("path", {
+        React.default.createElement("path", {
           d: "M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z",
         }),
       ),
     basket: (t = 21, e = "currentColor") =>
-      a.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1090,11 +1116,11 @@ var Yn = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        a.default.createElement("path", { d: "M3 9h18l-2 11H5z" }),
-        a.default.createElement("path", { d: "M8 9 12 3l4 6" }),
+        React.default.createElement("path", { d: "M3 9h18l-2 11H5z" }),
+        React.default.createElement("path", { d: "M8 9 12 3l4 6" }),
       ),
     star: (t = 21, e = "currentColor") =>
-      a.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1105,12 +1131,12 @@ var Yn = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        a.default.createElement("path", {
+        React.default.createElement("path", {
           d: "m12 3 2.7 5.6 6.3.9-4.5 4.3 1 6.2-5.5-3-5.5 3 1-6.2L3 9.5l6.3-.9z",
         }),
       ),
     news: (t = 21, e = "currentColor") =>
-      a.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1121,11 +1147,11 @@ var Yn = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        a.default.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
-        a.default.createElement("path", { d: "M7 9h6M7 13h10M7 17h7" }),
+        React.default.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
+        React.default.createElement("path", { d: "M7 9h6M7 13h10M7 17h7" }),
       ),
     info: (t = 21, e = "currentColor") =>
-      a.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1136,11 +1162,11 @@ var Yn = {
           strokeWidth: "1.7",
           strokeLinecap: "round",
         },
-        a.default.createElement("circle", { cx: "12", cy: "12", r: "9" }),
-        a.default.createElement("path", { d: "M12 11v5M12 7.5h.01" }),
+        React.default.createElement("circle", { cx: "12", cy: "12", r: "9" }),
+        React.default.createElement("path", { d: "M12 11v5M12 7.5h.01" }),
       ),
     leaf: (t = 18, e = "currentColor") =>
-      a.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1151,13 +1177,13 @@ var Yn = {
           strokeWidth: "1.6",
           strokeLinecap: "round",
         },
-        a.default.createElement("path", {
+        React.default.createElement("path", {
           d: "M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 1 8-1 3.5-3.5 5-6.5 6",
         }),
-        a.default.createElement("path", { d: "M2 21c0-3 1.9-5.4 5.1-6" }),
+        React.default.createElement("path", { d: "M2 21c0-3 1.9-5.4 5.1-6" }),
       ),
     phone: (t = 16, e = "currentColor") =>
-      a.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1168,12 +1194,12 @@ var Yn = {
           strokeWidth: "1.7",
           strokeLinecap: "round",
         },
-        a.default.createElement("path", {
+        React.default.createElement("path", {
           d: "M6 3h3l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4 5.2 2 2 0 0 1 6 3z",
         }),
       ),
     pin: (t = 16, e = "currentColor") =>
-      a.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1184,11 +1210,11 @@ var Yn = {
           strokeWidth: "1.7",
           strokeLinecap: "round",
         },
-        a.default.createElement("path", { d: "M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z" }),
-        a.default.createElement("circle", { cx: "12", cy: "10", r: "2.5" }),
+        React.default.createElement("path", { d: "M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z" }),
+        React.default.createElement("circle", { cx: "12", cy: "10", r: "2.5" }),
       ),
   },
-  Zo =
+  CSS_APPLI =
     jI +
     t5 +
     `
@@ -1776,38 +1802,38 @@ var Yn = {
   .intro .logo,.intro .slogan,.intro .accueil-perso,.intro .lieu,.intro .halo,.bienv .ecran.vu .illu svg{animation:none}
 }
 `,
-  Xn = ({ a: t = "right" }) =>
-    a.default.createElement(
+  Deco = ({ a: a = "right" }) =>
+    React.default.createElement(
       "div",
       {
         style: {
           display: "flex",
-          justifyContent: t === "right" ? "flex-end" : "flex-start",
+          justifyContent: a === "right" ? "flex-end" : "flex-start",
           gap: 5,
           opacity: 0.28,
           margin: "2px 0 10px",
         },
       },
-      Yn.leaf(15, "#8AAD3B"),
-      a.default.createElement("span", {
+      Ic2.leaf(15, "#8AAD3B"),
+      React.default.createElement("span", {
         style: { width: 4, height: 4, borderRadius: "50%", background: "#C9D6AE", alignSelf: "center" },
       }),
-      Yn.leaf(11, "#C9D6AE"),
+      Ic2.leaf(11, "#C9D6AE"),
     ),
-  dx = ({ t, s: e }) =>
-    a.default.createElement(
+  dx = ({ t, s: s }) =>
+    React.default.createElement(
       "div",
       { className: "empty" },
-      a.default.createElement("b", null, t),
-      a.default.createElement("span", null, e),
+      React.default.createElement("b", null, t),
+      React.default.createElement("span", null, s),
     );
-function AO({ pubs: t, versCarte: e, tel: n }) {
-  let r = (0, a.useRef)(null),
-    [i, o] = (0, a.useState)(0),
-    s = (0, a.useRef)(!1),
-    l = t.length;
+function Bannieres({ pubs: pubs, versCarte: versCarte, tel: tel }) {
+  let r = (0, React.useRef)(null),
+    [idx, setIdx] = (0, React.useState)(0),
+    s = (0, React.useRef)(!1),
+    l = pubs.length;
   if (
-    ((0, a.useEffect)(() => {
+    ((0, React.useEffect)(() => {
       if (l < 2) return;
       let d = setInterval(() => {
         let h = r.current;
@@ -1822,18 +1848,18 @@ function AO({ pubs: t, versCarte: e, tel: n }) {
     return null;
   let u = (d) => {
     d.action === "carte"
-      ? e()
-      : d.action === "appeler" && n && (location.href = "tel:" + n.replace(/\s/g, ""));
+      ? versCarte()
+      : d.action === "appeler" && tel && (location.href = "tel:" + tel.replace(/\s/g, ""));
   };
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "pubs" },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       {
         className: "rail",
         ref: r,
-        onScroll: (d) => o(Math.round(d.currentTarget.scrollLeft / d.currentTarget.clientWidth)),
+        onScroll: (d) => setIdx(Math.round(d.currentTarget.scrollLeft / d.currentTarget.clientWidth)),
         onTouchStart: () => {
           s.current = !0;
         },
@@ -1843,92 +1869,92 @@ function AO({ pubs: t, versCarte: e, tel: n }) {
           }, 6e3);
         },
       },
-      t.map((d) =>
-        a.default.createElement(
+      pubs.map((d) =>
+        React.default.createElement(
           "div",
           { className: "pub", key: d.id, onClick: () => u(d) },
-          a.default.createElement("img", { src: d.photo, alt: d.titre || "" }),
+          React.default.createElement("img", { src: d.photo, alt: d.titre || "" }),
           (d.titre || d.texte || (d.action && d.action !== "aucune")) &&
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "txt" },
-              d.titre && a.default.createElement("div", { className: "t" }, d.titre),
-              d.texte && a.default.createElement("div", { className: "s" }, d.texte),
+              d.titre && React.default.createElement("div", { className: "t" }, d.titre),
+              d.texte && React.default.createElement("div", { className: "s" }, d.texte),
               d.action === "carte" &&
-                a.default.createElement("span", { className: "go" }, "Voir la carte \u2192"),
+                React.default.createElement("span", { className: "go" }, "Voir la carte \u2192"),
               d.action === "appeler" &&
-                a.default.createElement("span", { className: "go" }, "Appeler pour commander"),
+                React.default.createElement("span", { className: "go" }, "Appeler pour commander"),
             ),
         ),
       ),
     ),
     l > 1 &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "dots" },
-        t.map((d, h) => a.default.createElement("i", { key: d.id, className: h === i ? "on" : "" })),
+        pubs.map((d, h) => React.default.createElement("i", { key: d.id, className: h === idx ? "on" : "" })),
       ),
   );
 }
-function rT({ items: t, maj: e, onReserver: n }) {
-  return a.default.createElement(
+function ListeJour({ items: items, maj: maj, onReserver: onReserver }) {
+  return React.default.createElement(
     "div",
     { className: "jour" },
-    t.map((r) => {
-      let i = X5[r.type] || X5.frais;
-      return a.default.createElement(
+    items.map((r) => {
+      let i = TYPES[r.type] || TYPES.frais;
+      return React.default.createElement(
         "div",
         { className: "ji", key: r.id },
-        r.photo && a.default.createElement("img", { src: r.photo, alt: "" }),
-        a.default.createElement(
+        r.photo && React.default.createElement("img", { src: r.photo, alt: "" }),
+        React.default.createElement(
           "div",
           { style: { minWidth: 0 } },
-          a.default.createElement(
+          React.default.createElement(
             "span",
             { className: "lb", style: { background: i.bg, color: i.c } },
             i.label.toUpperCase(),
           ),
-          a.default.createElement("div", { className: "nm" }, r.titre),
-          r.note && a.default.createElement("div", { className: "no" }, r.note),
+          React.default.createElement("div", { className: "nm" }, r.titre),
+          r.note && React.default.createElement("div", { className: "no" }, r.note),
           r.fin &&
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "no", style: { color: i.c, fontWeight: 700 } },
               "Jusqu'au ",
               dO(r.fin),
             ),
           j9(r) &&
-            n &&
-            a.default.createElement(
+            onReserver &&
+            React.default.createElement(
               "div",
               { className: "resa-l" },
               Ro(r) > 0
-                ? a.default.createElement(
-                    a.default.Fragment,
+                ? React.default.createElement(
+                    React.default.Fragment,
                     null,
-                    a.default.createElement(
+                    React.default.createElement(
                       "button",
-                      { className: "resa-btn", onClick: () => n(r) },
+                      { className: "resa-btn", onClick: () => onReserver(r) },
                       "Je r\xE9serve",
                     ),
                     parseInt(r.stock) < 999 &&
-                      a.default.createElement(
+                      React.default.createElement(
                         "span",
                         { className: Ro(r) <= 2 ? "chaud" : "" },
                         Ro(r) <= 2 ? "Plus que " + Ro(r) + " !" : Ro(r) + " dispo.",
                       ),
                   )
-                : a.default.createElement("span", { className: "epuise" }, "\xC9puis\xE9"),
+                : React.default.createElement("span", { className: "epuise" }, "\xC9puis\xE9"),
             ),
         ),
         r.prix !== "" &&
           r.prix != null &&
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "px" },
             !!r.ancienPrix &&
               Number(r.ancienPrix) > Number(r.prix) &&
-              a.default.createElement(
+              React.default.createElement(
                 "span",
                 { className: "old" },
                 Number(r.ancienPrix).toFixed(2),
@@ -1936,34 +1962,34 @@ function rT({ items: t, maj: e, onReserver: n }) {
               ),
             Number(r.prix).toFixed(2),
             " \u20AC",
-            r.unite && a.default.createElement("span", { className: "un" }, "/ ", r.unite),
+            r.unite && React.default.createElement("span", { className: "un" }, "/ ", r.unite),
           ),
       );
     }),
-    e && a.default.createElement("div", { className: "maj" }, "Mis \xE0 jour ", e),
+    maj && React.default.createElement("div", { className: "maj" }, "Mis \xE0 jour ", maj),
   );
 }
-function vT({ a: t }) {
-  return a.default.createElement(
+function CarteActu({ a: a }) {
+  return React.default.createElement(
     "div",
     { className: "card" },
-    t.photo && a.default.createElement("img", { className: "ph", src: t.photo, alt: "" }),
-    a.default.createElement(
+    a.photo && React.default.createElement("img", { className: "ph", src: a.photo, alt: "" }),
+    React.default.createElement(
       "div",
       { className: "b" },
-      a.default.createElement("h3", null, t.titre),
-      t.date &&
-        a.default.createElement(
+      React.default.createElement("h3", null, a.titre),
+      a.date &&
+        React.default.createElement(
           "div",
           { style: { fontSize: 10.5, color: "var(--ink3)", marginBottom: 5 } },
-          t.date,
+          a.date,
         ),
-      a.default.createElement("p", null, t.texte),
+      React.default.createElement("p", null, a.texte),
     ),
   );
 }
-var kO = {
-  promo: a.default.createElement(
+var IcR = {
+  promo: React.default.createElement(
     "svg",
     {
       width: "24",
@@ -1975,12 +2001,12 @@ var kO = {
       strokeLinecap: "round",
       strokeLinejoin: "round",
     },
-    a.default.createElement("path", {
+    React.default.createElement("path", {
       d: "M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z",
     }),
-    a.default.createElement("circle", { cx: "7.5", cy: "7.5", r: "1.5", fill: "currentColor" }),
+    React.default.createElement("circle", { cx: "7.5", cy: "7.5", r: "1.5", fill: "currentColor" }),
   ),
-  jour: a.default.createElement(
+  jour: React.default.createElement(
     "svg",
     {
       width: "24",
@@ -1991,12 +2017,12 @@ var kO = {
       strokeWidth: "1.8",
       strokeLinecap: "round",
     },
-    a.default.createElement("path", {
+    React.default.createElement("path", {
       d: "M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 1 8-1 3.5-3.5 5-6.5 6",
     }),
-    a.default.createElement("path", { d: "M2 21c0-3 1.9-5.4 5.1-6" }),
+    React.default.createElement("path", { d: "M2 21c0-3 1.9-5.4 5.1-6" }),
   ),
-  plateau: a.default.createElement(
+  plateau: React.default.createElement(
     "svg",
     {
       width: "24",
@@ -2008,11 +2034,11 @@ var kO = {
       strokeLinecap: "round",
       strokeLinejoin: "round",
     },
-    a.default.createElement("path", { d: "M3 16h18" }),
-    a.default.createElement("path", { d: "M4 16a8 8 0 0 1 16 0" }),
-    a.default.createElement("path", { d: "M12 6V4M10 4h4M2 20h20" }),
+    React.default.createElement("path", { d: "M3 16h18" }),
+    React.default.createElement("path", { d: "M4 16a8 8 0 0 1 16 0" }),
+    React.default.createElement("path", { d: "M12 6V4M10 4h4M2 20h20" }),
   ),
-  actus: a.default.createElement(
+  actus: React.default.createElement(
     "svg",
     {
       width: "24",
@@ -2023,10 +2049,10 @@ var kO = {
       strokeWidth: "1.8",
       strokeLinejoin: "round",
     },
-    a.default.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
-    a.default.createElement("path", { d: "M7 9h6M7 13h10M7 17h7" }),
+    React.default.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
+    React.default.createElement("path", { d: "M7 9h6M7 13h10M7 17h7" }),
   ),
-  carte: a.default.createElement(
+  carte: React.default.createElement(
     "svg",
     {
       width: "24",
@@ -2037,36 +2063,38 @@ var kO = {
       strokeWidth: "1.8",
       strokeLinejoin: "round",
     },
-    a.default.createElement("rect", { x: "2.5", y: "5", width: "19", height: "14", rx: "3" }),
-    a.default.createElement("circle", { cx: "7.5", cy: "14", r: "1.3", fill: "currentColor" }),
-    a.default.createElement("circle", { cx: "11.5", cy: "14", r: "1.3", fill: "currentColor" }),
-    a.default.createElement("path", { d: "M6 9h7" }),
+    React.default.createElement("rect", { x: "2.5", y: "5", width: "19", height: "14", rx: "3" }),
+    React.default.createElement("circle", { cx: "7.5", cy: "14", r: "1.3", fill: "currentColor" }),
+    React.default.createElement("circle", { cx: "11.5", cy: "14", r: "1.3", fill: "currentColor" }),
+    React.default.createElement("path", { d: "M6 9h7" }),
   ),
 };
-function IO({ liens: t }) {
-  return t.length < 2
+function Raccourcis({ liens: liens }) {
+  return liens.length < 2
     ? null
-    : a.default.createElement(
+    : React.default.createElement(
         "nav",
         { className: "racc", "aria-label": "Raccourcis" },
-        t.map((e) =>
-          a.default.createElement(
+        liens.map((e) =>
+          React.default.createElement(
             "button",
             { key: e.id, className: "rc " + (e.chaud ? "chaud" : ""), onClick: e.go },
-            a.default.createElement(
+            React.default.createElement(
               "span",
               { className: "ic" },
-              kO[e.id],
-              !!e.n && a.default.createElement("b", null, e.n),
+              IcR[e.id],
+              !!e.n && React.default.createElement("b", null, e.n),
             ),
-            a.default.createElement("span", { className: "lb2" }, e.label),
+            React.default.createElement("span", { className: "lb2" }, e.label),
           ),
         ),
       );
 }
-var iT = (t) =>
-  document.getElementById(t)?.scrollIntoView({ behavior: Ac() ? "auto" : "smooth", block: "start" });
-function TO({ aCommander: t, onClick: e }) {
+var aller = (t) =>
+  document
+    .getElementById(t)
+    ?.scrollIntoView({ behavior: mouvementReduit() ? "auto" : "smooth", block: "start" });
+function VoeuxDuJour({ aCommander: aCommander, onClick: onClick }) {
   let [n, r] = new Date()
     .toLocaleDateString("sv-SE", { timeZone: "Europe/Paris" })
     .slice(5)
@@ -2076,52 +2104,52 @@ function TO({ aCommander: t, onClick: e }) {
   let i = 25 - r,
     o =
       i === 0
-        ? a.default.createElement(
-            a.default.Fragment,
+        ? React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement("b", null, "Joyeux No\xEBl !"),
+            React.default.createElement("b", null, "Joyeux No\xEBl !"),
             " Toute l'\xE9picerie vous souhaite de belles f\xEAtes",
           )
         : i === 1
-          ? a.default.createElement(
-              a.default.Fragment,
+          ? React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement("b", null, "No\xEBl, c'est demain !"),
+              React.default.createElement("b", null, "No\xEBl, c'est demain !"),
               " Joyeux r\xE9veillon \xE0 tous",
             )
-          : a.default.createElement(
-              a.default.Fragment,
+          : React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement("b", null, "No\xEBl dans ", i, " jours"),
-              t && i >= 3 ? " : pensez \xE0 vos plateaux !" : "",
+              React.default.createElement("b", null, "No\xEBl dans ", i, " jours"),
+              aCommander && i >= 3 ? " : pensez \xE0 vos plateaux !" : "",
             ),
-    s = t && i >= 2;
-  return a.default.createElement(
+    s = aCommander && i >= 2;
+  return React.default.createElement(
     "div",
-    { className: "noel-b" + (s ? " clic" : ""), onClick: s ? e : void 0, role: s ? "button" : void 0 },
-    a.default.createElement("span", { className: "noel-i" }, "\u{1F384}"),
-    a.default.createElement("span", null, o),
-    s && a.default.createElement("span", { className: "noel-f" }, "\u203A"),
+    { className: "noel-b" + (s ? " clic" : ""), onClick: s ? onClick : void 0, role: s ? "button" : void 0 },
+    React.default.createElement("span", { className: "noel-i" }, "\u{1F384}"),
+    React.default.createElement("span", null, o),
+    s && React.default.createElement("span", { className: "noel-f" }, "\u203A"),
   );
 }
-function CO({
+function Accueil({
   d: t,
-  theme: e,
-  prenom: n,
-  onReserver: r,
-  mesResas: i = [],
-  moi: o,
-  onFid: s,
-  versCarte: l,
-  versActus: u,
-  versFid: d,
-  inst: h,
-  mesCmds: f = [],
-  ouverture: m,
-  notifs: E,
+  theme: theme,
+  prenom: prenom,
+  onReserver: onReserver,
+  mesResas: mesResas = [],
+  moi: moi,
+  onFid: onFid,
+  versCarte: versCarte,
+  versActus: versActus,
+  versFid: versFid,
+  inst: inst,
+  mesCmds: mesCmds = [],
+  ouverture: ouverture,
+  notifs: notifs,
 }) {
-  let [F, D] = (0, a.useState)(!1),
-    M = f.filter(
+  let [F, D] = (0, React.useState)(!1),
+    M = mesCmds.filter(
       (v) =>
         v.ref &&
         ["nouvelle", "acceptee", "prep", "prete"].includes(v.statut) &&
@@ -2141,110 +2169,134 @@ function CO({
         return !!v && v.slice(5) <= "12-24" && v.slice(0, 4) === String(new Date().getFullYear());
       })(),
     y = [
-      A.length && { id: "promo", label: "Promos", n: A.length, chaud: !0, go: () => iT("sec-promos") },
-      S.length && { id: "jour", label: "Du jour", n: S.length, go: () => iT("sec-jour") },
-      (P.length || z.length) && { id: "plateau", label: "Plateaux", n: P.length + z.length, go: l },
-      j.length && { id: "actus", label: "Actus", n: j.length, go: u },
-      t.fidActive && { id: "carte", label: "Ma carte", go: d },
+      A.length && { id: "promo", label: "Promos", n: A.length, chaud: !0, go: () => aller("sec-promos") },
+      S.length && { id: "jour", label: "Du jour", n: S.length, go: () => aller("sec-jour") },
+      (P.length || z.length) && { id: "plateau", label: "Plateaux", n: P.length + z.length, go: versCarte },
+      j.length && { id: "actus", label: "Actus", n: j.length, go: versActus },
+      t.fidActive && { id: "carte", label: "Ma carte", go: versFid },
     ].filter(Boolean);
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    a.default.createElement(OI, { theme: e }),
-    c9(o?.anniv) &&
+    React.default.createElement(CarteTheme, { theme: theme }),
+    c9(moi?.anniv) &&
       t.fidelite?.anniv !== !1 &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "anniv-b" },
         "\u{1F382} ",
-        a.default.createElement("b", null, "Joyeux anniversaire", o.prenom ? " " + o.prenom : "", " !"),
-        o.annivAn === new Date().getFullYear()
+        React.default.createElement(
+          "b",
+          null,
+          "Joyeux anniversaire",
+          moi.prenom ? " " + moi.prenom : "",
+          " !",
+        ),
+        moi.annivAn === new Date().getFullYear()
           ? " Un tampon vous a \xE9t\xE9 offert sur votre carte \u{1F34F}"
           : " Un tampon vous est offert aujourd'hui \u{1F34F}",
       ),
     (() => {
       let v = t.roue?.annonce;
       return v?.prenom && Date.now() - (v.date || 0) < 10 * 864e5
-        ? a.default.createElement(
+        ? React.default.createElement(
             "div",
             { className: "roue-annonce" },
             "\u{1F389} ",
-            a.default.createElement("b", null, "Bravo \xE0 ", v.prenom),
+            React.default.createElement("b", null, "Bravo \xE0 ", v.prenom),
             ", qui remporte ",
             s9(v.titre),
             " !",
           )
         : null;
     })(),
-    !(e?.magie && e.id === "noel") && a.default.createElement(TO, { aCommander: b, onClick: l }),
-    o && t.fidActive && a.default.createElement(r9, { moi: o }),
-    a.default.createElement(OO, { d: t, mesCmds: f }),
-    a.default.createElement(AO, { pubs: t.pubs, versCarte: l, tel: t.store.phone }),
-    a.default.createElement(
+    !(theme?.magie && theme.id === "noel") &&
+      React.default.createElement(VoeuxDuJour, { aCommander: b, onClick: versCarte }),
+    moi && t.fidActive && React.default.createElement(BravoNiveau, { moi: moi }),
+    React.default.createElement(DemandeAvis, { d: t, mesCmds: mesCmds }),
+    React.default.createElement(Bannieres, { pubs: t.pubs, versCarte: versCarte, tel: t.store.phone }),
+    React.default.createElement(
       "div",
       { className: "hero" },
-      a.default.createElement("img", { src: rs, alt: "" }),
-      a.default.createElement(
+      React.default.createElement("img", { src: LOGO, alt: "" }),
+      React.default.createElement(
         "div",
         { className: "hero-t" },
-        a.default.createElement("p", null, n ? "Bonjour " + n + " !" : t.store.slogan || "Bienvenue !"),
-        a.default.createElement(EO, { e: m }),
+        React.default.createElement(
+          "p",
+          null,
+          prenom ? "Bonjour " + prenom + " !" : t.store.slogan || "Bienvenue !",
+        ),
+        React.default.createElement(BadgeOuverture, { e: ouverture }),
       ),
     ),
-    a.default.createElement(_O, { n: E, inst: h }),
-    a.default.createElement(RI, { menu: t.menu, onOuvrir: () => D(!0) }),
-    F && a.default.createElement(e5, { menu: t.menu, onClose: () => D(!1) }),
-    a.default.createElement(IO, { liens: y }),
-    a.default.createElement(q9, { resas: i }),
+    React.default.createElement(BandeauNotifications, { n: notifs, inst: inst }),
+    React.default.createElement(TuileMenu, { menu: t.menu, onOuvrir: () => D(!0) }),
+    F && React.default.createElement(FeuilleMenu, { menu: t.menu, onClose: () => D(!1) }),
+    React.default.createElement(Raccourcis, { liens: y }),
+    React.default.createElement(MesResas, { resas: mesResas }),
     M.slice(0, 2).map((v) =>
-      a.default.createElement(hx, { key: v.numero, c: v, store: t.store, compact: !0 }),
+      React.default.createElement(SuiviCommande, { key: v.numero, c: v, store: t.store, compact: !0 }),
     ),
-    h.bandeau &&
-      o &&
-      a.default.createElement(ox, { inst: h, texte: "Retrouvez votre carte de fid\xE9lit\xE9 d'un geste." }),
+    inst.bandeau &&
+      moi &&
+      React.default.createElement(Installer, {
+        inst: inst,
+        texte: "Retrouvez votre carte de fid\xE9lit\xE9 d'un geste.",
+      }),
     _2(t.fermetures) &&
-      a.default.createElement("div", { className: "annonce terra" }, "\u{1F514} ", h5(_2(t.fermetures))),
+      React.default.createElement(
+        "div",
+        { className: "annonce terra" },
+        "\u{1F514} ",
+        texteFermeture(_2(t.fermetures)),
+      ),
     vn(t.annonce) &&
       t.annonce.active &&
       t.annonce.text &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "annonce " + (t.annonce.couleur || "apple") },
         t.annonce.text,
       ),
     !!A.length &&
-      a.default.createElement(
+      React.default.createElement(
         "section",
         { id: "sec-promos", className: "ancre" },
-        a.default.createElement(
+        React.default.createElement(
           "h3",
           { className: "h2" },
-          a.default.createElement("i", { style: { background: "var(--terra)" } }),
+          React.default.createElement("i", { style: { background: "var(--terra)" } }),
           "Promos & bonnes affaires",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "sub" },
           "Prix r\xE9duits et dates courtes, tant qu'il y en a",
         ),
-        a.default.createElement(rT, { items: A, onReserver: r }),
+        React.default.createElement(ListeJour, { items: A, onReserver: onReserver }),
       ),
-    a.default.createElement(
+    React.default.createElement(
       "section",
       { id: "sec-jour", className: "ancre" },
-      a.default.createElement("h3", { className: "h2" }, a.default.createElement("i", null), "Aujourd'hui"),
-      a.default.createElement("div", { className: "sub" }, "Le frais et les plats maison du moment"),
+      React.default.createElement(
+        "h3",
+        { className: "h2" },
+        React.default.createElement("i", null),
+        "Aujourd'hui",
+      ),
+      React.default.createElement("div", { className: "sub" }, "Le frais et les plats maison du moment"),
       S.length
-        ? a.default.createElement(rT, { items: S, maj: t.jour?.maj, onReserver: r })
+        ? React.default.createElement(ListeJour, { items: S, maj: t.jour?.maj, onReserver: onReserver })
         : !A.length &&
-            a.default.createElement(dx, {
+            React.default.createElement(dx, {
               t: "Rien de publi\xE9 pour aujourd'hui",
               s: "Passez \xE0 l'\xE9picerie : le frais et les plats du jour vous y attendent.",
             }),
       !S.length &&
         !!A.length &&
         t.jour?.maj &&
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "sub", style: { marginLeft: 0 } },
           "Mis \xE0 jour ",
@@ -2252,78 +2304,78 @@ function CO({
         ),
     ),
     !!j.length &&
-      a.default.createElement(
-        a.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement(Xn, null),
-        a.default.createElement(
+        React.default.createElement(Deco, null),
+        React.default.createElement(
           "h3",
           { className: "h2" },
-          a.default.createElement("i", null),
+          React.default.createElement("i", null),
           "Actualit\xE9s",
         ),
-        a.default.createElement("div", { className: "sub" }),
-        j.slice(0, 2).map((v) => a.default.createElement(vT, { key: v.id, a: v })),
+        React.default.createElement("div", { className: "sub" }),
+        j.slice(0, 2).map((v) => React.default.createElement(CarteActu, { key: v.id, a: v })),
         j.length > 2 &&
-          a.default.createElement(
+          React.default.createElement(
             "button",
-            { className: "voirtout", onClick: u },
+            { className: "voirtout", onClick: versActus },
             "Toutes les actualit\xE9s (",
             j.length,
             ") \u2192",
           ),
       ),
     !!(P.length || z.length) &&
-      a.default.createElement(
-        a.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement(Xn, null),
-        a.default.createElement(
+        React.default.createElement(Deco, null),
+        React.default.createElement(
           "h3",
           { className: "h2" },
-          a.default.createElement("i", { style: { background: "var(--terra)" } }),
+          React.default.createElement("i", { style: { background: "var(--terra)" } }),
           "Plateaux & paniers",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "sub" },
           z.length && Nn(t.cmd).active
             ? "\xC0 commander directement dans l'application"
             : "Sur commande, \xE0 retirer en boutique",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "scroll" },
           z
             .slice(0, 6)
             .map((v) =>
-              a.default.createElement(
+              React.default.createElement(
                 "div",
-                { className: "mini", key: "p" + v.id, onClick: l },
-                v.photo && a.default.createElement("img", { src: v.photo, alt: "" }),
-                a.default.createElement(
+                { className: "mini", key: "p" + v.id, onClick: versCarte },
+                v.photo && React.default.createElement("img", { src: v.photo, alt: "" }),
+                React.default.createElement(
                   "div",
                   { className: "b" },
-                  a.default.createElement("div", { className: "nm" }, v.nom),
-                  a.default.createElement(
+                  React.default.createElement("div", { className: "nm" }, v.nom),
+                  React.default.createElement(
                     "div",
                     { className: "px", style: { fontSize: 16 } },
                     ze(xc(v)),
-                    a.default.createElement("span", { className: "pp" }, " /pers."),
+                    React.default.createElement("span", { className: "pp" }, " /pers."),
                   ),
                 ),
               ),
             ),
           P.slice(0, 6).map((v) =>
-            a.default.createElement(
+            React.default.createElement(
               "div",
-              { className: "mini", key: v.id, onClick: l },
-              v.photo && a.default.createElement("img", { src: v.photo, alt: "" }),
-              a.default.createElement(
+              { className: "mini", key: v.id, onClick: versCarte },
+              v.photo && React.default.createElement("img", { src: v.photo, alt: "" }),
+              React.default.createElement(
                 "div",
                 { className: "b" },
-                a.default.createElement("div", { className: "nm" }, v.titre),
-                a.default.createElement(
+                React.default.createElement("div", { className: "nm" }, v.titre),
+                React.default.createElement(
                   "div",
                   { className: "px", style: { fontSize: 16 } },
                   v.prix ? Number(v.prix).toFixed(2) + " \u20AC" : "Sur devis",
@@ -2332,30 +2384,30 @@ function CO({
             ),
           ),
         ),
-        a.default.createElement(
+        React.default.createElement(
           "button",
-          { className: "voirtout", onClick: l },
+          { className: "voirtout", onClick: versCarte },
           "Voir toute la carte \u2192",
         ),
       ),
     !t.fidActive &&
       t.onglets?.fidelite !== !1 &&
-      a.default.createElement(
-        a.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement(Xn, { a: "left" }),
-        a.default.createElement(_T, { compact: !0 }),
+        React.default.createElement(Deco, { a: "left" }),
+        React.default.createElement(Bientot, { compact: !0 }),
       ),
     t.fidActive &&
-      a.default.createElement(
-        a.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement(Xn, { a: "left" }),
-        a.default.createElement(ET, { d: t, moi: o, onFid: s, compact: !0 }),
+        React.default.createElement(Deco, { a: "left" }),
+        React.default.createElement(FidCarte, { d: t, moi: moi, onFid: onFid, compact: !0 }),
       ),
-    a.default.createElement(MO, { liste: t.producteurs || [] }),
-    a.default.createElement(d9, { liste: t.recettes || [] }),
-    a.default.createElement(f9, { d: t, moi: o }),
+    React.default.createElement(SectionProducteurs, { liste: t.producteurs || [] }),
+    React.default.createElement(RecetteSemaine, { liste: t.recettes || [] }),
+    React.default.createElement(Sondage, { d: t, moi: moi }),
   );
 }
 var oT = "epicerie-raddonnaise-tampons-vu",
@@ -2378,10 +2430,10 @@ var oT = "epicerie-raddonnaise-tampons-vu",
     };
   });
 function NO(t, e) {
-  let [n, r] = (0, a.useState)(null),
+  let [n, r] = (0, React.useState)(null),
     i = t?.tampons;
   return (
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       if (!t?.ref || i == null || !fc(e)) return;
       let o = {};
       try {
@@ -2400,30 +2452,30 @@ function NO(t, e) {
     [n, () => r(null)]
   );
 }
-function FO({ fete: t, f: e, onFin: n }) {
-  let r = Ho(e),
-    { avant: i, apres: o } = t,
-    s = !t.cadeau && r.palier && i < r.palier && o === r.palier,
-    l = !t.cadeau && o >= r.nb,
+function PopupFete({ fete: fete, f: e, onFin: onFin }) {
+  let r = MENTION_EXCLUSIONS(e),
+    { avant: i, apres: o } = fete,
+    s = !fete.cadeau && r.palier && i < r.palier && o === r.palier,
+    l = !fete.cadeau && o >= r.nb,
     u = s || l;
-  (0, a.useEffect)(() => {
+  (0, React.useEffect)(() => {
     try {
       navigator.vibrate?.(u ? [60, 60, 60, 60, 200] : [40, 40, 90]);
     } catch {}
-    let h = setTimeout(n, u ? 7e3 : 4200);
+    let h = setTimeout(onFin, u ? 7e3 : 4200);
     return () => clearTimeout(h);
-  }, [t.cle]);
+  }, [fete.cle]);
   let d = Array.from({ length: r.nb }, (h, f) => f);
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
-    { className: "fete" + (u ? " gros" : ""), onClick: n, role: "dialog", "aria-live": "polite" },
+    { className: "fete" + (u ? " gros" : ""), onClick: onFin, role: "dialog", "aria-live": "polite" },
     u &&
-      !Ac() &&
-      a.default.createElement(
+      !mouvementReduit() &&
+      React.default.createElement(
         "div",
         { className: "confettis", "aria-hidden": "true" },
         SO.map((h, f) =>
-          a.default.createElement("i", {
+          React.default.createElement("i", {
             key: f,
             style: {
               left: h.x + "%",
@@ -2439,77 +2491,77 @@ function FO({ fete: t, f: e, onFin: n }) {
           }),
         ),
       ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "fete-in" },
-      t.cadeau
-        ? a.default.createElement(
-            a.default.Fragment,
+      fete.cadeau
+        ? React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "fete-boite ouverte" },
-              a.default.createElement(aT, null),
+              React.default.createElement(aT, null),
             ),
-            a.default.createElement("div", { className: "fete-t" }, "Profitez bien de votre cadeau !"),
-            a.default.createElement(
+            React.default.createElement("div", { className: "fete-t" }, "Profitez bien de votre cadeau !"),
+            React.default.createElement(
               "div",
               { className: "fete-s" },
               "Votre carte repart \xE0 z\xE9ro : c'est parti pour une nouvelle collection \u{1F34F}",
             ),
           )
         : u
-          ? a.default.createElement(
-              a.default.Fragment,
+          ? React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "fete-boite" },
-                a.default.createElement(aT, null),
-                a.default.createElement("span", { className: "fete-rayons" }),
+                React.default.createElement(aT, null),
+                React.default.createElement("span", { className: "fete-rayons" }),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "fete-t" },
                 l ? "BRAVO ! Carte compl\xE8te !" : "Cadeau d\xE9bloqu\xE9 !",
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "fete-s" },
                 l
-                  ? a.default.createElement(
-                      a.default.Fragment,
+                  ? React.default.createElement(
+                      React.default.Fragment,
                       null,
-                      a.default.createElement("b", null, "Votre cadeau"),
+                      React.default.createElement("b", null, "Votre cadeau"),
                       " vous attend en caisse \u{1F389}",
                     )
-                  : a.default.createElement(
-                      a.default.Fragment,
+                  : React.default.createElement(
+                      React.default.Fragment,
                       null,
                       "\xC0 vous de choisir, dites-le en caisse :",
                     ),
               ),
               s &&
-                a.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "fete-choix" },
-                  a.default.createElement(
+                  React.default.createElement(
                     "div",
                     null,
-                    a.default.createElement("span", null, "\u{1F381}"),
-                    a.default.createElement("b", null, "Je prends mon cadeau"),
-                    a.default.createElement(
+                    React.default.createElement("span", null, "\u{1F381}"),
+                    React.default.createElement("b", null, "Je prends mon cadeau"),
+                    React.default.createElement(
                       "small",
                       null,
                       "Votre cadeau maintenant, et votre carte repart \xE0 z\xE9ro",
                     ),
                   ),
-                  a.default.createElement(
+                  React.default.createElement(
                     "div",
                     null,
-                    a.default.createElement("span", null, "\u{1F680}"),
-                    a.default.createElement("b", null, "Je continue"),
-                    a.default.createElement(
+                    React.default.createElement("span", null, "\u{1F680}"),
+                    React.default.createElement("b", null, "Je continue"),
+                    React.default.createElement(
                       "small",
                       null,
                       "Jusqu'\xE0 ",
@@ -2519,24 +2571,24 @@ function FO({ fete: t, f: e, onFin: n }) {
                   ),
                 ),
             )
-          : a.default.createElement(
-              a.default.Fragment,
+          : React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement("div", { className: "fete-plus" }, "+", o - i),
-              a.default.createElement(
+              React.default.createElement("div", { className: "fete-plus" }, "+", o - i),
+              React.default.createElement(
                 "div",
                 { className: "fete-t" },
                 o - i > 1 ? "Tampons gagn\xE9s !" : "Tampon gagn\xE9 !",
               ),
             ),
-      !t.cadeau &&
-        a.default.createElement(
+      !fete.cadeau &&
+        React.default.createElement(
           "div",
           { className: "fete-rang" },
           d.map((h) => {
             let f = h >= i && h < o,
               m = h === r.nb - 1 || (r.palier && h === r.palier - 1);
-            return a.default.createElement(
+            return React.default.createElement(
               "span",
               {
                 key: h,
@@ -2544,7 +2596,7 @@ function FO({ fete: t, f: e, onFin: n }) {
                 style: f ? { animationDelay: 0.35 + (h - i) * 0.25 + "s" } : void 0,
               },
               h < o
-                ? a.default.createElement(
+                ? React.default.createElement(
                     "b",
                     { style: f ? { animationDelay: 0.35 + (h - i) * 0.25 + "s" } : void 0 },
                     "\u{1F34F}",
@@ -2552,15 +2604,16 @@ function FO({ fete: t, f: e, onFin: n }) {
                 : m
                   ? "\u{1F381}"
                   : "",
-              f && a.default.createElement("em", { style: { animationDelay: 0.55 + (h - i) * 0.25 + "s" } }),
+              f &&
+                React.default.createElement("em", { style: { animationDelay: 0.55 + (h - i) * 0.25 + "s" } }),
             );
           }),
         ),
-      !t.cadeau &&
-        a.default.createElement(
+      !fete.cadeau &&
+        React.default.createElement(
           "div",
           { className: "fete-cpt" },
-          a.default.createElement("b", null, Math.min(o, r.nb)),
+          React.default.createElement("b", null, Math.min(o, r.nb)),
           " / ",
           r.nb,
           !u && r.palier && o < r.palier
@@ -2583,7 +2636,7 @@ function FO({ fete: t, f: e, onFin: n }) {
   );
 }
 var aT = () =>
-    a.default.createElement(
+    React.default.createElement(
       "svg",
       {
         viewBox: "0 0 120 120",
@@ -2592,10 +2645,10 @@ var aT = () =>
         "aria-hidden": "true",
         style: { overflow: "visible" },
       },
-      a.default.createElement(
+      React.default.createElement(
         "g",
         { className: "b-couv" },
-        a.default.createElement("rect", {
+        React.default.createElement("rect", {
           x: "18",
           y: "38",
           width: "84",
@@ -2603,13 +2656,13 @@ var aT = () =>
           rx: "4",
           fill: "#E05A73",
         }),
-        a.default.createElement("rect", { x: "53", y: "38", width: "14", height: "20", fill: "#F2B134" }),
-        a.default.createElement("path", {
+        React.default.createElement("rect", { x: "53", y: "38", width: "14", height: "20", fill: "#F2B134" }),
+        React.default.createElement("path", {
           d: "M60 38c-8-16-30-18-30-6 0 8 16 8 30 6zm0 0c8-16 30-18 30-6 0 8-16 8-30 6z",
           fill: "#F2B134",
         }),
       ),
-      a.default.createElement("rect", {
+      React.default.createElement("rect", {
         x: "24",
         y: "58",
         width: "72",
@@ -2617,7 +2670,7 @@ var aT = () =>
         rx: "4",
         fill: "#C2185B",
       }),
-      a.default.createElement("rect", { x: "53", y: "58", width: "14", height: "50", fill: "#F2B134" }),
+      React.default.createElement("rect", { x: "53", y: "58", width: "14", height: "50", fill: "#F2B134" }),
     ),
   lT = "epicerie-raddonnaise-popup-vu",
   DO = (t) => {
@@ -2626,9 +2679,9 @@ var aT = () =>
     for (let r = 0; r < e.length; r++) n = (n * 31 + e.charCodeAt(r)) | 0;
     return String(n);
   };
-function PO({ d: t }) {
-  let e = t.popup,
-    [n, r] = (0, a.useState)(!1);
+function PopupMessage({ d: d }) {
+  let e = d.popup,
+    [n, r] = (0, React.useState)(!1);
   if (n || !e || !vn({ ...e, active: !!e.active }) || !(e.titre || e.texte)) return null;
   let i = DO(e);
   if (e.frequence !== "chaque")
@@ -2641,17 +2694,17 @@ function PO({ d: t }) {
     } catch {}
     r(!0);
   };
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "pop-fond", onClick: o },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "pop", role: "dialog", "aria-modal": "true", onClick: (s) => s.stopPropagation() },
-      e.photo && a.default.createElement("img", { src: e.photo, alt: "", className: "pop-ph" }),
-      e.emoji && a.default.createElement("div", { className: "pop-em" }, e.emoji),
-      e.titre && a.default.createElement("div", { className: "pop-t" }, e.titre),
-      e.texte && a.default.createElement("div", { className: "pop-x" }, e.texte),
-      a.default.createElement(
+      e.photo && React.default.createElement("img", { src: e.photo, alt: "", className: "pop-ph" }),
+      e.emoji && React.default.createElement("div", { className: "pop-em" }, e.emoji),
+      e.titre && React.default.createElement("div", { className: "pop-t" }, e.titre),
+      e.texte && React.default.createElement("div", { className: "pop-x" }, e.texte),
+      React.default.createElement(
         "button",
         { className: "btn", style: { marginTop: 14 }, onClick: o },
         "J'en prends note",
@@ -2659,60 +2712,61 @@ function PO({ d: t }) {
     ),
   );
 }
-function MO({ liste: t }) {
-  let [e, n] = (0, a.useState)(null);
-  return t.length
-    ? a.default.createElement(
-        a.default.Fragment,
+function SectionProducteurs({ liste: liste }) {
+  let [e, n] = (0, React.useState)(null);
+  return liste.length
+    ? React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement(Xn, { a: "left" }),
-        a.default.createElement(
+        React.default.createElement(Deco, { a: "left" }),
+        React.default.createElement(
           "h3",
           { className: "h2", id: "sec-prod" },
-          a.default.createElement("i", null),
+          React.default.createElement("i", null),
           "Nos producteurs",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "sub" },
           "Ils fabriquent, on vous les propose : du local, pr\xE8s de chez vous",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "prods" },
-          t.map((r) =>
-            a.default.createElement(
+          liste.map((r) =>
+            React.default.createElement(
               "button",
               {
                 key: r.id,
                 className: "prod",
                 onClick: () => {
-                  (n(r), tn("prod_" + r.id));
+                  n(r), tn("prod_" + r.id);
                 },
               },
-              a.default.createElement(
+              React.default.createElement(
                 "span",
                 { className: "prod-ph" },
                 r.photo
-                  ? a.default.createElement("img", { src: r.photo, alt: "" })
-                  : a.default.createElement("span", null, "\u{1F9D1}\u200D\u{1F33E}"),
+                  ? React.default.createElement("img", { src: r.photo, alt: "" })
+                  : React.default.createElement("span", null, "\u{1F9D1}\u200D\u{1F33E}"),
               ),
-              a.default.createElement("b", null, r.nom),
-              r.metier && a.default.createElement("span", { className: "prod-m" }, r.metier),
+              React.default.createElement("b", null, r.nom),
+              r.metier && React.default.createElement("span", { className: "prod-m" }, r.metier),
               r.lieu &&
-                a.default.createElement("span", { className: "prod-l" }, Yn.pin(12, "#93A099"), r.lieu),
+                React.default.createElement("span", { className: "prod-l" }, Ic2.pin(12, "#93A099"), r.lieu),
             ),
           ),
         ),
         e &&
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "sheet-fond", onClick: () => n(null) },
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "sheet", onClick: (r) => r.stopPropagation() },
-              e.photo && a.default.createElement("img", { src: e.photo, alt: "", className: "prod-grande" }),
-              a.default.createElement(
+              e.photo &&
+                React.default.createElement("img", { src: e.photo, alt: "", className: "prod-grande" }),
+              React.default.createElement(
                 "h3",
                 {
                   style: {
@@ -2725,14 +2779,14 @@ function MO({ liste: t }) {
                 },
                 e.nom,
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 { style: { fontWeight: 800, color: "var(--apple)", fontSize: 14 } },
                 e.metier,
                 e.lieu ? " \xB7 " + e.lieu : "",
               ),
               e.texte &&
-                a.default.createElement(
+                React.default.createElement(
                   "p",
                   {
                     style: {
@@ -2746,15 +2800,15 @@ function MO({ liste: t }) {
                   e.texte,
                 ),
               e.produits &&
-                a.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "prod-pr" },
-                  a.default.createElement("b", null, "\xC0 l'\xE9picerie :"),
+                  React.default.createElement("b", null, "\xC0 l'\xE9picerie :"),
                   " ",
                   e.produits,
                 ),
               /^https?:\/\//.test(e.lien || "") &&
-                a.default.createElement(
+                React.default.createElement(
                   "a",
                   {
                     className: "btn gh",
@@ -2765,7 +2819,7 @@ function MO({ liste: t }) {
                   },
                   "Voir sa page",
                 ),
-              a.default.createElement(
+              React.default.createElement(
                 "button",
                 { className: "btn", style: { marginTop: 10 }, onClick: () => n(null) },
                 "Fermer",
@@ -2782,16 +2836,16 @@ var uT = "epicerie-raddonnaise-avis",
     )
       ? t.store.avis
       : "";
-function OO({ d: t, mesCmds: e }) {
-  let [n, r] = (0, a.useState)(() => {
+function DemandeAvis({ d: d, mesCmds: mesCmds }) {
+  let [n, r] = (0, React.useState)(() => {
       try {
         return JSON.parse(localStorage.getItem(uT) || "{}");
       } catch {
         return {};
       }
     }),
-    i = Y2(t),
-    o = e.find((l) => l.statut === "remise" && l.ref);
+    i = Y2(d),
+    o = mesCmds.find((l) => l.statut === "remise" && l.ref);
   if (!i || !o || n.fait || (n.plusTard && Date.now() - n.plusTard < 30 * 864e5)) return null;
   let s = (l) => {
     r(l);
@@ -2799,25 +2853,25 @@ function OO({ d: t, mesCmds: e }) {
       localStorage.setItem(uT, JSON.stringify(l));
     } catch {}
   };
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "avis" },
-    a.default.createElement("div", { className: "avis-et" }, "\u2B50\u2B50\u2B50\u2B50\u2B50"),
-    a.default.createElement("div", { className: "avis-t" }, "Votre plateau vous a plu ?"),
-    a.default.createElement(
+    React.default.createElement("div", { className: "avis-et" }, "\u2B50\u2B50\u2B50\u2B50\u2B50"),
+    React.default.createElement("div", { className: "avis-t" }, "Votre plateau vous a plu ?"),
+    React.default.createElement(
       "div",
       { className: "avis-s" },
       "Un petit avis Google aide beaucoup une \xE9picerie de village. Merci !",
     ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 8, marginTop: 10 } },
-      a.default.createElement(
+      React.default.createElement(
         "button",
         { className: "btn gh", style: { flex: 1 }, onClick: () => s({ plusTard: Date.now() }) },
         "Plus tard",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "a",
         {
           className: "btn",
@@ -2826,7 +2880,7 @@ function OO({ d: t, mesCmds: e }) {
           target: "_blank",
           rel: "noopener noreferrer",
           onClick: () => {
-            (s({ fait: Date.now() }), tn("avis"));
+            s({ fait: Date.now() }), tn("avis");
           },
         },
         "Laisser un avis",
@@ -2834,44 +2888,52 @@ function OO({ d: t, mesCmds: e }) {
     ),
   );
 }
-function LO({ d: t }) {
-  let e = t.actus.filter(vn);
-  return a.default.createElement(
+function Actus({ d: d }) {
+  let e = d.actus.filter(vn);
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    a.default.createElement("h3", { className: "h2" }, a.default.createElement("i", null), "Actualit\xE9s"),
-    a.default.createElement("div", { className: "sub" }, "Les nouvelles de l'\xE9picerie"),
+    React.default.createElement(
+      "h3",
+      { className: "h2" },
+      React.default.createElement("i", null),
+      "Actualit\xE9s",
+    ),
+    React.default.createElement("div", { className: "sub" }, "Les nouvelles de l'\xE9picerie"),
     e.length
-      ? e.map((n) => a.default.createElement(vT, { key: n.id, a: n }))
-      : a.default.createElement(dx, { t: "Pas d'actualit\xE9 pour le moment", s: "Revenez bient\xF4t !" }),
+      ? e.map((n) => React.default.createElement(CarteActu, { key: n.id, a: n }))
+      : React.default.createElement(dx, {
+          t: "Pas d'actualit\xE9 pour le moment",
+          s: "Revenez bient\xF4t !",
+        }),
   );
 }
-var yT = "epicerie-raddonnaise-commandes",
+var CMD_KEY = "epicerie-raddonnaise-commandes",
   Dn = () => {
     try {
-      return JSON.parse(localStorage.getItem(yT) || "[]");
+      return JSON.parse(localStorage.getItem(CMD_KEY) || "[]");
     } catch {
       return [];
     }
   },
   $a = (t) => {
     try {
-      localStorage.setItem(yT, JSON.stringify(t.slice(0, 10)));
+      localStorage.setItem(CMD_KEY, JSON.stringify(t.slice(0, 10)));
     } catch {}
   };
-function BO(t) {
-  let [e, n] = (0, a.useState)(Dn),
-    [r, i] = (0, a.useState)({});
-  (0, a.useEffect)(() => {
-    n(Dn());
+function useMesCommandes(t) {
+  let [liste, setListe] = (0, React.useState)(Dn),
+    [live, setLive] = (0, React.useState)({});
+  (0, React.useEffect)(() => {
+    setListe(Dn());
   }, [t]);
-  let o = e.filter((h) => h.ref && (Ua(h) || "") >= Wt(Ko(-14))).map((h) => h.ref);
-  (0, a.useEffect)(() => {
+  let o = liste.filter((h) => h.ref && (Ua(h) || "") >= Wt(Ko(-14))).map((h) => h.ref);
+  (0, React.useEffect)(() => {
     let h = o.map((f) =>
-      Or(
-        we(ce, "commandes", f),
+      onSnapshot(
+        doc2(db2, "commandes", f),
         (m) =>
-          i((E) => ({
+          setLive((E) => ({
             ...E,
             [f]: m.exists() ? m.data() : m.metadata?.fromCache ? E[f] : { statut: "supprimee" },
           })),
@@ -2880,9 +2942,9 @@ function BO(t) {
     );
     return () => h.forEach((f) => f());
   }, [o.join()]);
-  let s = e
+  let s = liste
       .map((h) => {
-        let f = h.ref && r[h.ref];
+        let f = h.ref && live[h.ref];
         return f
           ? {
               ...h,
@@ -2897,37 +2959,37 @@ function BO(t) {
           : h;
       })
       .filter((h) => h.statut !== "supprimee"),
-    l = Object.keys(r)
-      .filter((h) => r[h]?.statut === "supprimee")
+    l = Object.keys(live)
+      .filter((h) => live[h]?.statut === "supprimee")
       .join();
   return (
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       if (!l) return;
       let h = l.split(","),
         f = Dn().filter((m) => !h.includes(m.ref));
-      f.length !== Dn().length && ($a(f), n(f));
+      f.length !== Dn().length && ($a(f), setListe(f));
     }, [l]),
     [
       s,
       (h, f) => {
         let m = Dn().map((E) => (E.ref === h ? { ...E, vu: f } : E));
-        ($a(m), n(m));
+        $a(m), setListe(m);
       },
       (h) => {
         let f = Dn().filter((m) => m.numero !== h);
-        ($a(f), n(f));
+        $a(f), setListe(f);
       },
     ]
   );
 }
-var VO = ["acceptee", "prete", "refusee", "annulee"],
-  cT = (t) => t.ref && t.statut && VO.includes(t.statut) && t.vu !== t.statut;
-function zO(t) {
+var AVERTIR = ["acceptee", "prete", "refusee", "annulee"],
+  cT = (t) => t.ref && t.statut && AVERTIR.includes(t.statut) && t.vu !== t.statut;
+function phraseSuivi(t) {
   let e = t.mode === "livraison",
     n = Ua(t),
     r = Wt(new Date()),
     i =
-      (n === r ? "aujourd'hui" : n === Wt(Ko(1)) ? "demain" : "le " + ja(n)) +
+      (n === r ? "aujourd'hui" : n === Wt(Ko(1)) ? "demain" : "le " + jourFr(n)) +
       (t.heure ? " \xE0 " + l5(t.heure) : "");
   switch (t.statut) {
     case "acceptee":
@@ -2949,76 +3011,76 @@ function zO(t) {
       return "Envoy\xE9e, en attente de validation par l'\xE9picerie.";
   }
 }
-function jO({ c: t, store: e }) {
-  return !t.heure || !["acceptee", "prep", "prete"].includes(t.statut)
+function BoutonsRappel({ c: c, store: store }) {
+  return !c.heure || !["acceptee", "prep", "prete"].includes(c.statut)
     ? null
-    : a.default.createElement(
+    : React.default.createElement(
         "div",
         { className: "rappel" },
-        a.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn",
             onClick: () => {
               let r = document.createElement("a");
-              ((r.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(c5(t, e))),
-                (r.download = "commande-" + t.numero + ".ics"),
+              (r.href = "data:text/calendar;charset=utf-8," + encodeURIComponent(fichierAgenda(c, store))),
+                (r.download = "commande-" + c.numero + ".ics"),
                 document.body.appendChild(r),
                 r.click(),
-                r.remove());
+                r.remove();
             },
           },
           "\u{1F514} Me le rappeler (agenda du t\xE9l\xE9phone)",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "a",
-          { className: "lien", href: d5(t, e), target: "_blank", rel: "noopener" },
+          { className: "lien", href: lienGoogleAgenda(c, store), target: "_blank", rel: "noopener" },
           "ou l'ajouter \xE0 Google Agenda",
         ),
       );
 }
-function hx({ c: t, store: e, compact: n, recommander: r, oublier: i }) {
-  let o = b2[t.statut] || b2.nouvelle;
-  return a.default.createElement(
+function SuiviCommande({ c: c, store: store, compact: compact, recommander: recommander, oublier: oublier }) {
+  let o = SUIVI[c.statut] || SUIVI.nouvelle;
+  return React.default.createElement(
     "div",
-    { className: "suivi" + (n ? " compact" : ""), style: { borderLeftColor: o.c } },
-    a.default.createElement(
+    { className: "suivi" + (compact ? " compact" : ""), style: { borderLeftColor: o.c } },
+    React.default.createElement(
       "div",
       { className: "suivi-hd" },
-      a.default.createElement("b", null, t.numero),
-      a.default.createElement("span", { style: { background: o.c } }, o.t),
+      React.default.createElement("b", null, c.numero),
+      React.default.createElement("span", { style: { background: o.c } }, o.t),
     ),
-    a.default.createElement("div", { className: "suivi-tx" }, zO(t)),
-    t.message &&
-      a.default.createElement(
+    React.default.createElement("div", { className: "suivi-tx" }, phraseSuivi(c)),
+    c.message &&
+      React.default.createElement(
         "div",
         { className: "suivi-msg" },
         "\xAB ",
-        t.message,
+        c.message,
         " \xBB",
-        a.default.createElement("small", null, "\u2014 l'\xE9picerie"),
+        React.default.createElement("small", null, "\u2014 l'\xE9picerie"),
       ),
-    !n &&
-      t.resume &&
-      a.default.createElement(
+    !compact &&
+      c.resume &&
+      React.default.createElement(
         "div",
         { className: "suivi-res" },
-        t.resume,
-        t.total ? " \xB7 " + ze(t.total) : "",
+        c.resume,
+        c.total ? " \xB7 " + ze(c.total) : "",
       ),
-    a.default.createElement(jO, { c: t, store: e }),
-    r &&
-      !n &&
-      ["remise", "refusee", "annulee", "prete", "prep", "acceptee"].includes(t.statut) &&
-      t.lignes?.length > 0 &&
-      a.default.createElement(
+    React.default.createElement(BoutonsRappel, { c: c, store: store }),
+    recommander &&
+      !compact &&
+      ["remise", "refusee", "annulee", "prete", "prep", "acceptee"].includes(c.statut) &&
+      c.lignes?.length > 0 &&
+      React.default.createElement(
         "button",
-        { className: "lien", style: { marginTop: 8 }, onClick: () => r(t.lignes) },
+        { className: "lien", style: { marginTop: 8 }, onClick: () => recommander(c.lignes) },
         "\u{1F501} Recommander la m\xEAme chose",
       ),
-    i &&
-      !n &&
-      a.default.createElement(
+    oublier &&
+      !compact &&
+      React.default.createElement(
         "button",
         {
           className: "lien",
@@ -3026,95 +3088,102 @@ function hx({ c: t, store: e, compact: n, recommander: r, oublier: i }) {
           onClick: async () =>
             (await p0(
               "Retirer la commande " +
-                t.numero +
+                c.numero +
                 ` de ce t\xE9l\xE9phone ?
 
 Si l'\xE9picerie l'a bien re\xE7ue, elle reste enregistr\xE9e chez elle.`,
               { oui: "Retirer" },
-            )) && i(t.numero),
+            )) && oublier(c.numero),
         },
         "Retirer de ma liste",
       ),
   );
 }
-function UO({ c: t, store: e, onClose: n }) {
-  let r = t.statut === "acceptee" || t.statut === "prete";
-  return a.default.createElement(
+function AlerteCommande({ c: c, store: store, onClose: onClose }) {
+  let r = c.statut === "acceptee" || c.statut === "prete";
+  return React.default.createElement(
     "div",
-    { className: "sheet-fond", onClick: n },
-    a.default.createElement(
+    { className: "sheet-fond", onClick: onClose },
+    React.default.createElement(
       "div",
       { className: "sheet", onClick: (i) => i.stopPropagation(), role: "dialog" },
-      a.default.createElement("div", { className: "ok-rond" + (r ? "" : " non") }, r ? "\u2713" : "!"),
-      a.default.createElement(
+      React.default.createElement("div", { className: "ok-rond" + (r ? "" : " non") }, r ? "\u2713" : "!"),
+      React.default.createElement(
         "h3",
         { className: "alerte-t" },
-        t.statut === "prete"
+        c.statut === "prete"
           ? "Votre commande est pr\xEAte !"
           : r
             ? "Commande valid\xE9e !"
             : "Commande non accept\xE9e",
       ),
-      a.default.createElement(hx, { c: t, store: e }),
+      React.default.createElement(SuiviCommande, { c: c, store: store }),
       !r &&
-        e.phone &&
-        a.default.createElement(
+        store.phone &&
+        React.default.createElement(
           "a",
-          { href: "tel:" + e.phone.replace(/\s/g, ""), style: { textDecoration: "none" } },
-          a.default.createElement(
+          { href: "tel:" + store.phone.replace(/\s/g, ""), style: { textDecoration: "none" } },
+          React.default.createElement(
             "button",
             { className: "btn gh", style: { marginTop: 8 } },
             "Appeler l'\xE9picerie",
           ),
         ),
-      a.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn gh", style: { marginTop: 8 }, onClick: n },
+        { className: "btn gh", style: { marginTop: 8 }, onClick: onClose },
         r ? "Merci !" : "J'ai compris",
       ),
     ),
   );
 }
-function qO({ d: t, panier: e, choisir: n, mesCmds: r, recommander: i, oublier: o }) {
+function Carte({
+  d: t,
+  panier: panier,
+  choisir: choisir,
+  mesCmds: mesCmds,
+  recommander: recommander,
+  oublier: oublier,
+}) {
   let s = t.offres.filter(vn),
     l = t.plateaux.filter(vn),
     u = [...new Set(s.map((f) => f.type).filter(Boolean))],
     d = Nn(t.cmd),
-    h = r;
-  return a.default.createElement(
+    h = mesCmds;
+  return React.default.createElement(
     "div",
     { className: "wrap" },
     !!l.length &&
-      a.default.createElement(
-        a.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement(
+        React.default.createElement(
           "h3",
           { className: "h2" },
-          a.default.createElement("i", { style: { background: "var(--terra)" } }),
+          React.default.createElement("i", { style: { background: "var(--terra)" } }),
           "Plateaux \xE0 commander",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "sub" },
           "Choisissez votre plateau et le nombre de personnes : le prix se calcule tout seul",
         ),
-        d.note && a.default.createElement("div", { className: "cmd-note" }, d.note),
+        d.note && React.default.createElement("div", { className: "cmd-note" }, d.note),
         l.map((f) => {
           let [m, E] = x2(f),
-            F = e.find((D) => D.id === f.id);
-          return a.default.createElement(
+            F = panier.find((D) => D.id === f.id);
+          return React.default.createElement(
             "div",
             { className: "card", key: f.id },
-            f.photo && a.default.createElement("img", { className: "ph", src: f.photo, alt: "" }),
-            a.default.createElement(
+            f.photo && React.default.createElement("img", { className: "ph", src: f.photo, alt: "" }),
+            React.default.createElement(
               "div",
               { className: "b" },
-              a.default.createElement("h3", null, f.nom),
+              React.default.createElement("h3", null, f.nom),
               f.composition &&
-                a.default.createElement("p", { style: { whiteSpace: "pre-line" } }, f.composition),
+                React.default.createElement("p", { style: { whiteSpace: "pre-line" } }, f.composition),
               Qo(f) &&
-                a.default.createElement(
+                React.default.createElement(
                   "p",
                   { className: "ch-annonce" },
                   "\u{1F9C0} ",
@@ -3123,24 +3192,24 @@ function qO({ d: t, panier: e, choisir: n, mesCmds: r, recommander: i, oublier: 
                   Qo(f).options.length,
                   " au choix",
                 ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "foot" },
-                a.default.createElement(
+                React.default.createElement(
                   "div",
                   null,
-                  a.default.createElement("span", { className: "px" }, ze(xc(f))),
-                  a.default.createElement("span", { className: "pp" }, " / personne"),
-                  a.default.createElement(
+                  React.default.createElement("span", { className: "px" }, ze(xc(f))),
+                  React.default.createElement("span", { className: "pp" }, " / personne"),
+                  React.default.createElement(
                     "div",
                     { className: "serves" },
                     m === E ? "Pour " + m + " personnes" : "De " + m + " \xE0 " + E + " personnes",
                   ),
                 ),
                 d.active &&
-                  a.default.createElement(
+                  React.default.createElement(
                     "button",
-                    { className: "btn choisir", onClick: () => n(f) },
+                    { className: "btn choisir", onClick: () => choisir(f) },
                     F ? F.personnes + " pers. \u2713" : "Choisir",
                   ),
               ),
@@ -3149,7 +3218,7 @@ function qO({ d: t, panier: e, choisir: n, mesCmds: r, recommander: i, oublier: 
         }),
         !d.active &&
           t.store.phone &&
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "cmd-note" },
             "Les commandes en ligne sont momentan\xE9ment ferm\xE9es. Appelez-nous au ",
@@ -3158,27 +3227,27 @@ function qO({ d: t, panier: e, choisir: n, mesCmds: r, recommander: i, oublier: 
           ),
       ),
     !!s.length &&
-      a.default.createElement(
-        a.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        !!l.length && a.default.createElement(Xn, null),
-        a.default.createElement(
+        !!l.length && React.default.createElement(Deco, null),
+        React.default.createElement(
           "h3",
           { className: "h2" },
-          a.default.createElement("i", null),
+          React.default.createElement("i", null),
           l.length ? "Paniers & autres offres" : "Plateaux & paniers",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "sub" },
           "Sur commande \u2014 pr\xE9venez-nous \xE0 l'avance, on pr\xE9pare tout",
         ),
         (u.length ? u : [null]).map((f) =>
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { key: f || "x" },
             f &&
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 {
                   style: {
@@ -3193,25 +3262,25 @@ function qO({ d: t, panier: e, choisir: n, mesCmds: r, recommander: i, oublier: 
             s
               .filter((m) => !f || m.type === f)
               .map((m) =>
-                a.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "card", key: m.id },
-                  m.photo && a.default.createElement("img", { className: "ph", src: m.photo, alt: "" }),
-                  m.badge && a.default.createElement("span", { className: "badge" }, m.badge),
-                  a.default.createElement(
+                  m.photo && React.default.createElement("img", { className: "ph", src: m.photo, alt: "" }),
+                  m.badge && React.default.createElement("span", { className: "badge" }, m.badge),
+                  React.default.createElement(
                     "div",
                     { className: "b" },
-                    a.default.createElement("h3", null, m.titre),
-                    m.desc && a.default.createElement("p", null, m.desc),
-                    a.default.createElement(
+                    React.default.createElement("h3", null, m.titre),
+                    m.desc && React.default.createElement("p", null, m.desc),
+                    React.default.createElement(
                       "div",
                       { className: "foot" },
-                      a.default.createElement(
+                      React.default.createElement(
                         "span",
                         { className: "px" },
                         m.prix ? Number(m.prix).toFixed(2) + " \u20AC" : "Sur devis",
                       ),
-                      m.portions && a.default.createElement("span", { className: "serves" }, m.portions),
+                      m.portions && React.default.createElement("span", { className: "serves" }, m.portions),
                     ),
                   ),
                 ),
@@ -3219,10 +3288,10 @@ function qO({ d: t, panier: e, choisir: n, mesCmds: r, recommander: i, oublier: 
           ),
         ),
         t.store.phone &&
-          a.default.createElement(
+          React.default.createElement(
             "a",
             { href: "tel:" + t.store.phone.replace(/\s/g, ""), style: { textDecoration: "none" } },
-            a.default.createElement(
+            React.default.createElement(
               "button",
               { className: "btn gh", style: { marginTop: 8 } },
               "Commander par t\xE9l\xE9phone \u2014 ",
@@ -3232,100 +3301,106 @@ function qO({ d: t, panier: e, choisir: n, mesCmds: r, recommander: i, oublier: 
       ),
     !s.length &&
       !l.length &&
-      a.default.createElement(dx, {
+      React.default.createElement(dx, {
         t: "La carte arrive bient\xF4t",
         s: "Plateaux ap\xE9ritifs, paniers garnis et corbeilles de fruits seront pr\xE9sent\xE9s ici, en photo.",
       }),
     !!h.length &&
-      a.default.createElement(
-        a.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement(Xn, { a: "left" }),
-        a.default.createElement(
+        React.default.createElement(Deco, { a: "left" }),
+        React.default.createElement(
           "h3",
           { className: "h2" },
-          a.default.createElement("i", null),
+          React.default.createElement("i", null),
           "Mes commandes envoy\xE9es",
         ),
-        a.default.createElement("div", { className: "sub" }, "Enregistr\xE9es sur ce t\xE9l\xE9phone"),
-        h
-          .slice(0, 5)
-          .map((f) =>
-            f.ref
-              ? a.default.createElement(hx, {
-                  key: f.numero,
-                  c: f,
-                  store: t.store,
-                  recommander: i,
-                  oublier: o,
-                })
-              : a.default.createElement(
+        React.default.createElement("div", { className: "sub" }, "Enregistr\xE9es sur ce t\xE9l\xE9phone"),
+        h.slice(0, 5).map((f) =>
+          f.ref
+            ? React.default.createElement(SuiviCommande, {
+                key: f.numero,
+                c: f,
+                store: t.store,
+                recommander: recommander,
+                oublier: oublier,
+              })
+            : React.default.createElement(
+                "div",
+                { className: "cmd-hist", key: f.numero },
+                React.default.createElement(
                   "div",
-                  { className: "cmd-hist", key: f.numero },
-                  a.default.createElement(
-                    "div",
-                    null,
-                    a.default.createElement("b", null, f.numero),
-                    " \xB7 pour le ",
-                    ja(f.date),
-                  ),
-                  a.default.createElement("div", null, f.resume),
-                  a.default.createElement("div", { className: "t" }, ze(f.total)),
-                  o &&
-                    a.default.createElement(
-                      "button",
-                      {
-                        className: "lien",
-                        style: { marginTop: 6 },
-                        onClick: async () =>
-                          (await p0("Retirer la commande " + f.numero + " de ce t\xE9l\xE9phone ?")) &&
-                          o(f.numero),
-                      },
-                      "Retirer de ma liste",
-                    ),
+                  null,
+                  React.default.createElement("b", null, f.numero),
+                  " \xB7 pour le ",
+                  jourFr(f.date),
                 ),
-          ),
+                React.default.createElement("div", null, f.resume),
+                React.default.createElement("div", { className: "t" }, ze(f.total)),
+                oublier &&
+                  React.default.createElement(
+                    "button",
+                    {
+                      className: "lien",
+                      style: { marginTop: 6 },
+                      onClick: async () =>
+                        (await p0("Retirer la commande " + f.numero + " de ce t\xE9l\xE9phone ?")) &&
+                        oublier(f.numero),
+                    },
+                    "Retirer de ma liste",
+                  ),
+              ),
+        ),
       ),
   );
 }
-function $O({ p: t, actuel: e, onValider: n, onRetirer: r, onClose: i }) {
-  let [o, s] = x2(t),
-    l = Qo(t),
-    [u, d] = (0, a.useState)(e?.personnes || o),
-    [h, f] = (0, a.useState)(() => (e?.choix || []).filter((M) => l?.options.some((C) => C.nom === M))),
+function ChoixPlateau({
+  p: p,
+  actuel: actuel,
+  onValider: onValider,
+  onRetirer: onRetirer,
+  onClose: onClose,
+}) {
+  let [o, s] = x2(p),
+    l = Qo(p),
+    [n, setN] = (0, React.useState)(actuel?.personnes || o),
+    [sel, setSel] = (0, React.useState)(() =>
+      (actuel?.choix || []).filter((M) => l?.options.some((C) => C.nom === M)),
+    ),
     m = (M) =>
-      f((C) =>
+      setSel((C) =>
         C.includes(M) ? C.filter((A) => A !== M) : l.max === 1 ? [M] : C.length >= l.max ? C : [...C, M],
       ),
-    E = w2(t, h),
-    F = parseInt(u) || 0,
-    D = !l || (h.length >= Math.max(l.min, 0) && h.length <= l.max);
-  return a.default.createElement(
+    E = w2(p, sel),
+    F = parseInt(n) || 0,
+    D = !l || (sel.length >= Math.max(l.min, 0) && sel.length <= l.max);
+  return React.default.createElement(
     "div",
-    { className: "sheet-fond", onClick: i },
-    a.default.createElement(
+    { className: "sheet-fond", onClick: onClose },
+    React.default.createElement(
       "div",
-      { className: "sheet", onClick: (M) => M.stopPropagation(), role: "dialog", "aria-label": t.nom },
-      a.default.createElement(
+      { className: "sheet", onClick: (M) => M.stopPropagation(), role: "dialog", "aria-label": p.nom },
+      React.default.createElement(
         "div",
         { className: "sheet-hd" },
-        t.photo && a.default.createElement("img", { src: t.photo, alt: "" }),
-        a.default.createElement(
+        p.photo && React.default.createElement("img", { src: p.photo, alt: "" }),
+        React.default.createElement(
           "div",
           null,
-          a.default.createElement("h3", null, t.nom),
-          a.default.createElement("span", null, ze(xc(t)), " par personne"),
+          React.default.createElement("h3", null, p.nom),
+          React.default.createElement("span", null, ze(xc(p)), " par personne"),
         ),
       ),
       l &&
-        a.default.createElement(
-          a.default.Fragment,
+        React.default.createElement(
+          React.default.Fragment,
           null,
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "lab", style: { marginTop: 14 } },
             l.titre,
-            a.default.createElement(
+            React.default.createElement(
               "span",
               { className: "ch-regle" },
               l.min === l.max
@@ -3335,13 +3410,13 @@ function $O({ p: t, actuel: e, onValider: n, onRetirer: r, onClose: i }) {
                   : " \xB7 jusqu'\xE0 " + l.max,
             ),
           ),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "ch-liste" },
             l.options.map((M) => {
-              let C = h.includes(M.nom),
-                A = !C && l.max > 1 && h.length >= l.max;
-              return a.default.createElement(
+              let C = sel.includes(M.nom),
+                A = !C && l.max > 1 && sel.length >= l.max;
+              return React.default.createElement(
                 "button",
                 {
                   key: M.nom,
@@ -3349,166 +3424,178 @@ function $O({ p: t, actuel: e, onValider: n, onRetirer: r, onClose: i }) {
                   onClick: () => m(M.nom),
                   "aria-pressed": C,
                 },
-                a.default.createElement("span", { className: "ch-case" }, C ? "\u2713" : ""),
-                a.default.createElement("span", { className: "ch-nom" }, M.nom),
+                React.default.createElement("span", { className: "ch-case" }, C ? "\u2713" : ""),
+                React.default.createElement("span", { className: "ch-nom" }, M.nom),
                 M.supp > 0 &&
-                  a.default.createElement("span", { className: "ch-supp" }, "+", ze(M.supp), "/pers."),
+                  React.default.createElement("span", { className: "ch-supp" }, "+", ze(M.supp), "/pers."),
               );
             }),
           ),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "ch-compte" },
-            h.length,
+            sel.length,
             " / ",
             l.max,
             " choisi",
-            h.length > 1 ? "s" : "",
-            !D && l.min > h.length ? " \xB7 encore " + (l.min - h.length) + " \xE0 choisir" : "",
+            sel.length > 1 ? "s" : "",
+            !D && l.min > sel.length ? " \xB7 encore " + (l.min - sel.length) + " \xE0 choisir" : "",
           ),
         ),
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "lab", style: { textAlign: "center", marginTop: 14 } },
         "Nombre de personnes",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "pas" },
-        a.default.createElement(
+        React.default.createElement(
           "button",
-          { onClick: () => d(Math.max(o, F - 1)), disabled: F <= o, "aria-label": "Une personne de moins" },
+          {
+            onClick: () => setN(Math.max(o, F - 1)),
+            disabled: F <= o,
+            "aria-label": "Une personne de moins",
+          },
           "\u2212",
         ),
-        a.default.createElement("input", {
+        React.default.createElement("input", {
           type: "number",
           inputMode: "numeric",
-          value: u,
+          value: n,
           min: o,
           max: s,
           onChange: (M) =>
-            d(M.target.value === "" ? "" : Math.min(s, Math.max(0, parseInt(M.target.value) || 0))),
-          onBlur: () => d(Math.min(s, Math.max(o, F || o))),
+            setN(M.target.value === "" ? "" : Math.min(s, Math.max(0, parseInt(M.target.value) || 0))),
+          onBlur: () => setN(Math.min(s, Math.max(o, F || o))),
           "aria-label": "Nombre de personnes",
         }),
-        a.default.createElement(
+        React.default.createElement(
           "button",
           {
-            onClick: () => d(Math.min(s, (F || o) + 1)),
+            onClick: () => setN(Math.min(s, (F || o) + 1)),
             disabled: F >= s,
             "aria-label": "Une personne de plus",
           },
           "+",
         ),
       ),
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "pas-info" },
         o === s ? "Plateau pour " + o + " personnes" : "De " + o + " \xE0 " + s + " personnes",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "calcul" },
         F,
         " \xD7 ",
         ze(E),
         " = ",
-        a.default.createElement("b", null, ze(F * E)),
+        React.default.createElement("b", null, ze(F * E)),
       ),
-      a.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn", disabled: !(F >= o && F <= s) || !D, onClick: () => n(F, h) },
+        { className: "btn", disabled: !(F >= o && F <= s) || !D, onClick: () => onValider(F, sel) },
         D
-          ? (e ? "Mettre \xE0 jour" : "Ajouter \xE0 ma commande") + " \u2014 " + ze(F * E || 0)
+          ? (actuel ? "Mettre \xE0 jour" : "Ajouter \xE0 ma commande") + " \u2014 " + ze(F * E || 0)
           : "Choisissez " +
               (l.min === l.max ? l.min : "au moins " + l.min) +
               " option" +
               (l.min > 1 ? "s" : ""),
       ),
-      e
-        ? a.default.createElement(
+      actuel
+        ? React.default.createElement(
             "button",
-            { className: "btn gh", style: { marginTop: 8 }, onClick: r },
+            { className: "btn gh", style: { marginTop: 8 }, onClick: onRetirer },
             "Retirer ce plateau",
           )
-        : a.default.createElement(
+        : React.default.createElement(
             "button",
-            { className: "btn gh", style: { marginTop: 8 }, onClick: i },
+            { className: "btn gh", style: { marginTop: 8 }, onClick: onClose },
             "Annuler",
           ),
     ),
   );
 }
-function WO({ lignes: t, onOuvrir: e }) {
-  if (!t.length) return null;
-  let n = t.reduce((r, i) => r + i.montant, 0);
-  return a.default.createElement(
+function BarrePanier({ lignes: lignes, onOuvrir: onOuvrir }) {
+  if (!lignes.length) return null;
+  let n = lignes.reduce((r, i) => r + i.montant, 0);
+  return React.default.createElement(
     "button",
-    { className: "barre-panier", onClick: e },
-    a.default.createElement(
+    { className: "barre-panier", onClick: onOuvrir },
+    React.default.createElement(
       "span",
       null,
-      a.default.createElement("b", null, "Ma commande"),
+      React.default.createElement("b", null, "Ma commande"),
       " \xB7 ",
-      t.length,
+      lignes.length,
       " plateau",
-      t.length > 1 ? "x" : "",
+      lignes.length > 1 ? "x" : "",
     ),
-    a.default.createElement("span", { className: "t" }, ze(n), " \u2192"),
+    React.default.createElement("span", { className: "t" }, ze(n), " \u2192"),
   );
 }
-function GO({ regle: t, value: e, onChange: n }) {
-  let [r, i] = (0, a.useState)(() => (e || t.premiere || t.min).slice(0, 7)),
-    [o, s] = r.split("-").map(Number),
+function Calendrier({ regle: regle, value: value, onChange: onChange }) {
+  let [mois, setMois] = (0, React.useState)(() => (value || regle.premiere || regle.min).slice(0, 7)),
+    [o, s] = mois.split("-").map(Number),
     l = new Date(o, s - 1, 1, 12),
     u = (l.getDay() + 6) % 7,
     d = new Date(o, s, 0).getDate(),
     h = [...Array(u).fill(null), ...Array.from({ length: d }, (m, E) => Wt(new Date(o, s - 1, E + 1, 12)))],
-    f = (m) => i(Wt(new Date(o, s - 1 + m, 1, 12)).slice(0, 7));
-  return a.default.createElement(
+    f = (m) => setMois(Wt(new Date(o, s - 1 + m, 1, 12)).slice(0, 7));
+  return React.default.createElement(
     "div",
     { className: "cal" },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "cal-hd" },
-      a.default.createElement(
+      React.default.createElement(
         "button",
-        { disabled: r <= t.min.slice(0, 7), onClick: () => f(-1), "aria-label": "Mois pr\xE9c\xE9dent" },
+        {
+          disabled: mois <= regle.min.slice(0, 7),
+          onClick: () => f(-1),
+          "aria-label": "Mois pr\xE9c\xE9dent",
+        },
         "\u2039",
       ),
-      a.default.createElement("b", null, l.toLocaleDateString("fr-FR", { month: "long", year: "numeric" })),
-      a.default.createElement(
+      React.default.createElement(
+        "b",
+        null,
+        l.toLocaleDateString("fr-FR", { month: "long", year: "numeric" }),
+      ),
+      React.default.createElement(
         "button",
-        { disabled: r >= t.max.slice(0, 7), onClick: () => f(1), "aria-label": "Mois suivant" },
+        { disabled: mois >= regle.max.slice(0, 7), onClick: () => f(1), "aria-label": "Mois suivant" },
         "\u203A",
       ),
     ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "cal-g" },
       ["L", "M", "M", "J", "V", "S", "D"].map((m, E) =>
-        a.default.createElement("span", { key: "h" + E, className: "cal-j" }, m),
+        React.default.createElement("span", { key: "h" + E, className: "cal-j" }, m),
       ),
       h.map((m, E) =>
         m
-          ? a.default.createElement(
+          ? React.default.createElement(
               "button",
               {
                 key: m,
-                disabled: !t.ok(m),
-                className: "cal-d" + (m === e ? " on" : ""),
-                onClick: () => n(m),
-                "aria-label": ja(m),
-                "aria-pressed": m === e,
+                disabled: !regle.ok(m),
+                className: "cal-d" + (m === value ? " on" : ""),
+                onClick: () => onChange(m),
+                "aria-label": jourFr(m),
+                "aria-pressed": m === value,
               },
               +m.slice(8),
             )
-          : a.default.createElement("span", { key: "v" + E }),
+          : React.default.createElement("span", { key: "v" + E }),
       ),
     ),
   );
 }
-var HO = [
+var ALLERGENES = [
     "Gluten",
     "Lait / lactose",
     "\u0152ufs",
@@ -3524,70 +3611,70 @@ var HO = [
     "Sulfites",
     "Lupin",
   ],
-  KO = ["Sans porc", "V\xE9g\xE9tarien", "Sans alcool"],
-  QO = "\u26A0\uFE0F Allergies / r\xE9gime : ";
-function JO({
+  REGIMES = ["Sans porc", "V\xE9g\xE9tarien", "Sans alcool"],
+  ALLERG_PREFIXE = "\u26A0\uFE0F Allergies / r\xE9gime : ";
+function Commande({
   d: t,
-  moi: e,
-  lignes: n,
-  modifier: r,
-  vider: i,
-  onClose: o,
-  ouvrirLegal: s,
-  onEnvoyee: l,
-  notifs: u,
-  inst: d,
+  moi: moi,
+  lignes: lignes,
+  modifier: modifier,
+  vider: vider,
+  onClose: onClose,
+  ouvrirLegal: ouvrirLegal,
+  onEnvoyee: onEnvoyee,
+  notifs: notifs,
+  inst: inst,
 }) {
   let h = Nn(t.cmd),
-    f = (0, a.useMemo)(() => y2(h, t.fermetures), [t.cmd, t.fermetures]),
+    f = (0, React.useMemo)(() => y2(h, t.fermetures), [t.cmd, t.fermetures]),
     m = Dn()[0] || {},
-    [E, F] = (0, a.useState)(""),
-    [D, M] = (0, a.useState)(h.mode === "livraison" ? "livraison" : "retrait"),
-    [C, A] = (0, a.useState)(e?.nom || m.nom || Sf().prenom || ""),
-    [S, P] = (0, a.useState)(m.tel || ""),
-    [z, j] = (0, a.useState)(m.adresse || ""),
-    [b, y] = (0, a.useState)(""),
-    [v, w] = (0, a.useState)([]),
-    k = (Q) => w((Ae) => (Ae.includes(Q) ? Ae.filter((ot) => ot !== Q) : [...Ae, Q])),
-    [N, T] = (0, a.useState)(""),
-    [X, le] = (0, a.useState)(null),
-    se = n.reduce((Q, Ae) => Q + Ae.montant, 0),
-    R = n.length
-      ? E
-        ? C.trim()
-          ? S.replace(/\D/g, "").length < 10
+    [date, setDate] = (0, React.useState)(""),
+    [mode, setMode] = (0, React.useState)(h.mode === "livraison" ? "livraison" : "retrait"),
+    [nom, setNom] = (0, React.useState)(moi?.nom || m.nom || Sf().prenom || ""),
+    [tel, setTel] = (0, React.useState)(m.tel || ""),
+    [adresse, setAdresse] = (0, React.useState)(m.adresse || ""),
+    [remarque, setRemarque] = (0, React.useState)(""),
+    [allergies, setAllergies] = (0, React.useState)([]),
+    k = (Q) => setAllergies((Ae) => (Ae.includes(Q) ? Ae.filter((ot) => ot !== Q) : [...Ae, Q])),
+    [etat, setEtat] = (0, React.useState)(""),
+    [fini, setFini] = (0, React.useState)(null),
+    se = lignes.reduce((Q, Ae) => Q + Ae.montant, 0),
+    R = lignes.length
+      ? date
+        ? nom.trim()
+          ? tel.replace(/\D/g, "").length < 10
             ? "Indiquez un num\xE9ro de t\xE9l\xE9phone pour que l'\xE9picerie puisse vous joindre."
-            : D === "livraison" && !z.trim()
+            : mode === "livraison" && !adresse.trim()
               ? "Indiquez l'adresse de livraison."
               : ""
           : "Indiquez votre nom."
-        : "Choisissez une date de " + (D === "livraison" ? "livraison" : "retrait") + "."
+        : "Choisissez une date de " + (mode === "livraison" ? "livraison" : "retrait") + "."
       : "Ajoutez au moins un plateau.",
     fe = async () => {
-      if (R || N === "envoi") return;
-      if (!f.ok(E)) {
-        (T("Cette date n'est plus disponible, choisissez-en une autre."), F(""));
+      if (R || etat === "envoi") return;
+      if (!f.ok(date)) {
+        setEtat("Cette date n'est plus disponible, choisissez-en une autre."), setDate("");
         return;
       }
-      T("envoi");
+      setEtat("envoi");
       let Q = {
           numero: i5(),
           cree: Date.now(),
           statut: "nouvelle",
-          nom: C.trim().slice(0, 60),
-          tel: S.trim().slice(0, 20),
-          mode: D,
-          adresse: D === "livraison" ? z.trim().slice(0, 200) : "",
-          date: E,
-          remarque: [v.length ? QO + v.join(", ") : "", b.trim()]
+          nom: nom.trim().slice(0, 60),
+          tel: tel.trim().slice(0, 20),
+          mode: mode,
+          adresse: mode === "livraison" ? adresse.trim().slice(0, 200) : "",
+          date: date,
+          remarque: [allergies.length ? ALLERG_PREFIXE + allergies.join(", ") : "", remarque.trim()]
             .filter(Boolean)
             .join(
               `
 `,
             )
             .slice(0, 500),
-          carte: e?.code || "",
-          lignes: n.map((st) => ({
+          carte: moi?.code || "",
+          lignes: lignes.map((st) => ({
             id: String(st.id),
             nom: st.nom.slice(0, 300),
             choix: (st.choix || []).slice(0, 12),
@@ -3597,10 +3684,10 @@ function JO({
           })),
           total: Math.round(se * 100) / 100,
         },
-        Ae = we(Qn(ce, "commandes")),
+        Ae = doc2(collection(db2, "commandes")),
         ot = Ae.id,
         et = () => {
-          ($a(Dn().filter((st) => st.ref !== ot)), Cf(ot));
+          $a(Dn().filter((st) => st.ref !== ot)), Cf(ot);
         };
       try {
         let st = Q.lignes.map((is) => is.nom + " (" + is.personnes + " pers.)").join(", ");
@@ -3608,8 +3695,8 @@ function JO({
           {
             numero: Q.numero,
             ref: ot,
-            date: E,
-            mode: D,
+            date: date,
+            mode: mode,
             total: Q.total,
             resume: st,
             nom: Q.nom,
@@ -3622,207 +3709,207 @@ function JO({
         ]);
       } catch {}
       ux("cmd", ot);
-      let de = Sn(Ae, Q),
+      let de = setDoc(Ae, Q),
         Ht = await sx(de);
       if (Ht === "erreur") {
-        (et(),
-          T(
+        et(),
+          setEtat(
             "La commande n'a pas pu \xEAtre envoy\xE9e. V\xE9rifiez votre connexion et r\xE9essayez" +
               (t.store.phone ? ", ou appelez le " + t.store.phone : "") +
               ".",
-          ));
+          );
         return;
       }
-      (Ht === "ok" ? ns(t.cmd, "cmd", ot) : de.then(() => ns(t.cmd, "cmd", ot), et),
-        l?.(),
+      Ht === "ok" ? ns(t.cmd, "cmd", ot) : de.then(() => ns(t.cmd, "cmd", ot), et),
+        onEnvoyee?.(),
         _c(),
-        i(),
-        le({ ...Q, attente: Ht === "lent" }),
-        window.scrollTo(0, 0));
+        vider(),
+        setFini({ ...Q, attente: Ht === "lent" }),
+        window.scrollTo(0, 0);
     };
-  return X
-    ? a.default.createElement(
+  return fini
+    ? React.default.createElement(
         "div",
         { className: "legal" },
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "legal-in", style: { textAlign: "center", paddingTop: 50 } },
-          a.default.createElement("div", { className: "ok-rond" }, "\u2713"),
-          a.default.createElement("h2", null, "Commande envoy\xE9e !"),
-          X.attente
-            ? a.default.createElement(
-                a.default.Fragment,
+          React.default.createElement("div", { className: "ok-rond" }, "\u2713"),
+          React.default.createElement("h2", null, "Commande envoy\xE9e !"),
+          fini.attente
+            ? React.default.createElement(
+                React.default.Fragment,
                 null,
-                a.default.createElement(
+                React.default.createElement(
                   "p",
                   { className: "chapo" },
                   "Merci ",
-                  X.nom.split(" ")[0],
+                  fini.nom.split(" ")[0],
                   ". Votre commande ",
-                  a.default.createElement("b", null, X.numero),
+                  React.default.createElement("b", null, fini.numero),
                   " est enregistr\xE9e sur votre t\xE9l\xE9phone.",
                 ),
-                a.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "envoi-lent" },
                   "\u{1F4F6} La connexion est faible : elle partira automatiquement \xE0 l'\xE9picerie d\xE8s que le r\xE9seau revient. Inutile de la renvoyer. Rouvrez l'appli plus tard pour voir sa validation.",
                 ),
               )
-            : a.default.createElement(
+            : React.default.createElement(
                 "p",
                 { className: "chapo" },
                 "Merci ",
-                X.nom.split(" ")[0],
+                fini.nom.split(" ")[0],
                 ". L'\xE9picerie a bien re\xE7u votre commande ",
-                a.default.createElement("b", null, X.numero),
+                React.default.createElement("b", null, fini.numero),
                 ".",
               ),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "recap", style: { textAlign: "left", margin: "18px 0" } },
-            X.lignes.map((Q) =>
-              a.default.createElement(
+            fini.lignes.map((Q) =>
+              React.default.createElement(
                 "div",
                 { className: "rl", key: Q.id },
-                a.default.createElement("span", null, Q.nom, " \xB7 ", Q.personnes, " pers."),
-                a.default.createElement("b", null, ze(Q.montant)),
+                React.default.createElement("span", null, Q.nom, " \xB7 ", Q.personnes, " pers."),
+                React.default.createElement("b", null, ze(Q.montant)),
               ),
             ),
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rl tot" },
-              a.default.createElement("span", null, "Total"),
-              a.default.createElement("b", null, ze(X.total)),
+              React.default.createElement("span", null, "Total"),
+              React.default.createElement("b", null, ze(fini.total)),
             ),
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rl" },
-              a.default.createElement("span", null, v2[X.mode]),
-              a.default.createElement("b", null, ja(X.date)),
+              React.default.createElement("span", null, MODES[fini.mode]),
+              React.default.createElement("b", null, jourFr(fini.date)),
             ),
           ),
-          a.default.createElement(
+          React.default.createElement(
             "p",
             null,
-            a.default.createElement("b", null, "L'\xE9picerie va valider votre commande"),
+            React.default.createElement("b", null, "L'\xE9picerie va valider votre commande"),
             " et fixer l'heure ",
-            X.mode === "livraison" ? "de livraison" : "\xE0 laquelle venir la chercher",
+            fini.mode === "livraison" ? "de livraison" : "\xE0 laquelle venir la chercher",
             ". Vous serez pr\xE9venu ici, dans l'application (onglet La carte \u2192 Mes commandes), et pourrez ajouter un rappel \xE0 votre agenda.",
           ),
-          a.default.createElement(
+          React.default.createElement(
             "p",
             null,
             "Le r\xE8glement se fait ",
-            X.mode === "livraison" ? "\xE0 la livraison" : "au retrait, \xE0 l'\xE9picerie",
+            fini.mode === "livraison" ? "\xE0 la livraison" : "au retrait, \xE0 l'\xE9picerie",
             ". En cas de question, l'\xE9picerie vous appellera au ",
-            X.tel,
+            fini.tel,
             ".",
           ),
-          u &&
-            a.default.createElement(
+          notifs &&
+            React.default.createElement(
               "div",
               { style: { textAlign: "left", marginTop: 14 } },
-              a.default.createElement(yx, { n: u, compact: !0 }),
+              React.default.createElement(BlocNotifications, { n: notifs, compact: !0 }),
             ),
-          a.default.createElement(
+          React.default.createElement(
             "button",
-            { className: "btn", style: { marginTop: 18 }, onClick: o },
+            { className: "btn", style: { marginTop: 18 }, onClick: onClose },
             "Termin\xE9",
           ),
         ),
       )
-    : a.default.createElement(
+    : React.default.createElement(
         "div",
         { className: "legal" },
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "legal-top" },
-          a.default.createElement("button", { onClick: o }, "\u2190 Continuer mes achats"),
+          React.default.createElement("button", { onClick: onClose }, "\u2190 Continuer mes achats"),
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "legal-in" },
-          a.default.createElement("h2", null, "Ma commande"),
-          a.default.createElement("h4", null, "1. Vos plateaux"),
-          !n.length && a.default.createElement("p", null, "Votre commande est vide."),
-          a.default.createElement(
+          React.default.createElement("h2", null, "Ma commande"),
+          React.default.createElement("h4", null, "1. Vos plateaux"),
+          !lignes.length && React.default.createElement("p", null, "Votre commande est vide."),
+          React.default.createElement(
             "div",
             { className: "recap" },
-            n.map((Q) =>
-              a.default.createElement(
+            lignes.map((Q) =>
+              React.default.createElement(
                 "div",
                 { className: "rl", key: Q.id },
-                a.default.createElement(
+                React.default.createElement(
                   "span",
                   null,
-                  a.default.createElement("b", null, Q.nom),
-                  a.default.createElement("br", null),
-                  a.default.createElement("small", null, Q.personnes, " pers. \xD7 ", ze(Q.prixPersonne)),
+                  React.default.createElement("b", null, Q.nom),
+                  React.default.createElement("br", null),
+                  React.default.createElement("small", null, Q.personnes, " pers. \xD7 ", ze(Q.prixPersonne)),
                 ),
-                a.default.createElement(
+                React.default.createElement(
                   "span",
                   { style: { textAlign: "right" } },
-                  a.default.createElement("b", null, ze(Q.montant)),
-                  a.default.createElement("br", null),
-                  a.default.createElement(
+                  React.default.createElement("b", null, ze(Q.montant)),
+                  React.default.createElement("br", null),
+                  React.default.createElement(
                     "button",
-                    { className: "lien", onClick: () => r(Q.id) },
+                    { className: "lien", onClick: () => modifier(Q.id) },
                     "Modifier",
                   ),
                 ),
               ),
             ),
-            !!n.length &&
-              a.default.createElement(
+            !!lignes.length &&
+              React.default.createElement(
                 "div",
                 { className: "rl tot" },
-                a.default.createElement("span", null, "Total"),
-                a.default.createElement("b", null, ze(se)),
+                React.default.createElement("span", null, "Total"),
+                React.default.createElement("b", null, ze(se)),
               ),
           ),
           h.mode === "choix" &&
-            a.default.createElement(
-              a.default.Fragment,
+            React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement("h4", null, "2. Retrait ou livraison ?"),
-              a.default.createElement(
+              React.default.createElement("h4", null, "2. Retrait ou livraison ?"),
+              React.default.createElement(
                 "div",
                 { className: "choix-mode" },
                 ["retrait", "livraison"].map((Q) =>
-                  a.default.createElement(
+                  React.default.createElement(
                     "button",
-                    { key: Q, className: D === Q ? "on" : "", onClick: () => M(Q) },
-                    v2[Q],
+                    { key: Q, className: mode === Q ? "on" : "", onClick: () => setMode(Q) },
+                    MODES[Q],
                   ),
                 ),
               ),
             ),
-          a.default.createElement(
+          React.default.createElement(
             "h4",
             null,
             h.mode === "choix" ? "3" : "2",
             ". Date de ",
-            D === "livraison" ? "livraison" : "retrait",
+            mode === "livraison" ? "livraison" : "retrait",
           ),
           f.premiere
-            ? a.default.createElement(
-                a.default.Fragment,
+            ? React.default.createElement(
+                React.default.Fragment,
                 null,
-                a.default.createElement(GO, { regle: f, value: E, onChange: F }),
-                a.default.createElement(
+                React.default.createElement(Calendrier, { regle: f, value: date, onChange: setDate }),
+                React.default.createElement(
                   "p",
                   { className: "cal-info" },
-                  E
-                    ? a.default.createElement(
-                        a.default.Fragment,
+                  date
+                    ? React.default.createElement(
+                        React.default.Fragment,
                         null,
                         "Choisi : ",
-                        a.default.createElement("b", null, ja(E)),
+                        React.default.createElement("b", null, jourFr(date)),
                       )
                     : "Touchez une date disponible.",
                   Number(h.delaiMin) > 0 &&
-                    a.default.createElement(
-                      a.default.Fragment,
+                    React.default.createElement(
+                      React.default.Fragment,
                       null,
                       " Les commandes se passent au moins ",
                       h.delaiMin,
@@ -3832,119 +3919,126 @@ function JO({
                     ),
                 ),
               )
-            : a.default.createElement(
+            : React.default.createElement(
                 "p",
                 null,
                 "Aucune date n'est disponible pour le moment. ",
                 t.store.phone && "Appelez-nous au " + t.store.phone + ".",
               ),
-          a.default.createElement("h4", null, h.mode === "choix" ? "4" : "3", ". Vos coordonn\xE9es"),
-          a.default.createElement("label", { className: "lab" }, "Nom et pr\xE9nom"),
-          a.default.createElement("input", {
+          React.default.createElement("h4", null, h.mode === "choix" ? "4" : "3", ". Vos coordonn\xE9es"),
+          React.default.createElement("label", { className: "lab" }, "Nom et pr\xE9nom"),
+          React.default.createElement("input", {
             className: "inp",
-            value: C,
-            onChange: (Q) => A(Q.target.value),
+            value: nom,
+            onChange: (Q) => setNom(Q.target.value),
             maxLength: 60,
             autoComplete: "name",
           }),
-          a.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "T\xE9l\xE9phone"),
-          a.default.createElement("input", {
+          React.default.createElement(
+            "label",
+            { className: "lab", style: { marginTop: 10 } },
+            "T\xE9l\xE9phone",
+          ),
+          React.default.createElement("input", {
             className: "inp",
             type: "tel",
-            value: S,
-            onChange: (Q) => P(Q.target.value),
+            value: tel,
+            onChange: (Q) => setTel(Q.target.value),
             maxLength: 20,
             autoComplete: "tel",
             placeholder: "06 12 34 56 78",
           }),
-          D === "livraison" &&
-            a.default.createElement(
-              a.default.Fragment,
+          mode === "livraison" &&
+            React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement(
+              React.default.createElement(
                 "label",
                 { className: "lab", style: { marginTop: 10 } },
                 "Adresse de livraison",
               ),
-              a.default.createElement("textarea", {
+              React.default.createElement("textarea", {
                 className: "inp",
                 rows: 2,
-                value: z,
-                onChange: (Q) => j(Q.target.value),
+                value: adresse,
+                onChange: (Q) => setAdresse(Q.target.value),
                 maxLength: 200,
                 autoComplete: "street-address",
               }),
             ),
-          a.default.createElement(
+          React.default.createElement(
             "label",
             { className: "lab", style: { marginTop: 12 } },
             "Allergies ou r\xE9gime (facultatif)",
           ),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "allerg" },
-            [...HO, ...KO].map((Q) =>
-              a.default.createElement(
+            [...ALLERGENES, ...REGIMES].map((Q) =>
+              React.default.createElement(
                 "button",
                 {
                   key: Q,
                   type: "button",
-                  className: v.includes(Q) ? "on" : "",
-                  "aria-pressed": v.includes(Q),
+                  className: allergies.includes(Q) ? "on" : "",
+                  "aria-pressed": allergies.includes(Q),
                   onClick: () => k(Q),
                 },
-                v.includes(Q) ? "\u2713 " : "",
+                allergies.includes(Q) ? "\u2713 " : "",
                 Q,
               ),
             ),
           ),
-          !!v.length &&
-            a.default.createElement(
+          !!allergies.length &&
+            React.default.createElement(
               "div",
               { className: "allerg-info" },
               "L'\xE9picerie fera au mieux pour \xE9viter : ",
-              a.default.createElement("b", null, v.join(", ")),
+              React.default.createElement("b", null, allergies.join(", ")),
               ". Les plateaux sont pr\xE9par\xE9s dans un atelier qui manipule ces ingr\xE9dients : des traces restent possibles. En cas d'allergie s\xE9v\xE8re, appelez l'\xE9picerie",
               t.store.phone ? " au " + t.store.phone : "",
               " avant de commander. Cette information sert uniquement \xE0 pr\xE9parer votre commande.",
             ),
-          a.default.createElement(
+          React.default.createElement(
             "label",
             { className: "lab", style: { marginTop: 10 } },
             "Remarque (facultatif)",
           ),
-          a.default.createElement("textarea", {
+          React.default.createElement("textarea", {
             className: "inp",
             rows: 2,
-            value: b,
-            onChange: (Q) => y(Q.target.value),
+            value: remarque,
+            onChange: (Q) => setRemarque(Q.target.value),
             maxLength: 400,
             placeholder: "Heure souhait\xE9e, ingr\xE9dient \xE0 \xE9viter, message\u2026",
           }),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "rgpd-info", style: { marginTop: 12 } },
             "Vos coordonn\xE9es servent uniquement \xE0 pr\xE9parer et vous remettre cette commande.",
             " ",
-            a.default.createElement(
+            React.default.createElement(
               "button",
-              { className: "lien", onClick: () => s("confidentialite") },
+              { className: "lien", onClick: () => ouvrirLegal("confidentialite") },
               "En savoir plus",
             ),
           ),
-          a.default.createElement(cx, { inst: d, quoi: "le suivi de votre commande" }),
-          R && n.length > 0 && a.default.createElement("p", { className: "manque" }, R),
-          N && N !== "envoi" && a.default.createElement("p", { className: "manque" }, N),
-          a.default.createElement(
+          React.default.createElement(ConseilInstallCommande, {
+            inst: inst,
+            quoi: "le suivi de votre commande",
+          }),
+          R && lignes.length > 0 && React.default.createElement("p", { className: "manque" }, R),
+          etat && etat !== "envoi" && React.default.createElement("p", { className: "manque" }, etat),
+          React.default.createElement(
             "button",
-            { className: "btn envoyer", disabled: !!R || N === "envoi", onClick: fe },
-            N === "envoi" ? "Envoi en cours\u2026" : "Envoyer ma commande \u2014 " + ze(se),
+            { className: "btn envoyer", disabled: !!R || etat === "envoi", onClick: fe },
+            etat === "envoi" ? "Envoi en cours\u2026" : "Envoyer ma commande \u2014 " + ze(se),
           ),
-          a.default.createElement(
+          React.default.createElement(
             "p",
             { className: "cal-info conditions" },
             "Paiement ",
-            D === "livraison" ? "\xE0 la livraison" : "au retrait \xE0 l'\xE9picerie",
+            mode === "livraison" ? "\xE0 la livraison" : "au retrait \xE0 l'\xE9picerie",
             ", aucun paiement en ligne. Produits frais pr\xE9par\xE9s sur commande : pas de droit de r\xE9tractation. Pour annuler ou modifier",
             t.store.phone ? ", appelez le " + t.store.phone : ", contactez l'\xE9picerie",
             " au moins 48 h avant.",
@@ -3952,31 +4046,31 @@ function JO({
         ),
       );
 }
-function YO({ progres: t, taille: e = 136, children: n }) {
+function Jauge({ progres: progres, taille: taille = 136, children: children }) {
   let i = 2 * Math.PI * 42,
-    [o, s] = (0, a.useState)(0);
+    [p, setP] = (0, React.useState)(0);
   return (
-    (0, a.useEffect)(() => {
-      let l = setTimeout(() => s(t), 60);
+    (0, React.useEffect)(() => {
+      let l = setTimeout(() => setP(progres), 60);
       return () => clearTimeout(l);
-    }, [t]),
-    a.default.createElement(
+    }, [progres]),
+    React.default.createElement(
       "div",
-      { className: "jauge", style: { width: e, height: e } },
-      a.default.createElement(
+      { className: "jauge", style: { width: taille, height: taille } },
+      React.default.createElement(
         "svg",
-        { viewBox: "0 0 100 100", width: e, height: e },
-        a.default.createElement(
+        { viewBox: "0 0 100 100", width: taille, height: taille },
+        React.default.createElement(
           "defs",
           null,
-          a.default.createElement(
+          React.default.createElement(
             "linearGradient",
             { id: "jg", x1: "0", y1: "0", x2: "1", y2: "1" },
-            a.default.createElement("stop", { offset: "0", stopColor: "#C9E38A" }),
-            a.default.createElement("stop", { offset: "1", stopColor: "#8AAD3B" }),
+            React.default.createElement("stop", { offset: "0", stopColor: "#C9E38A" }),
+            React.default.createElement("stop", { offset: "1", stopColor: "#8AAD3B" }),
           ),
         ),
-        a.default.createElement("circle", {
+        React.default.createElement("circle", {
           cx: "50",
           cy: "50",
           r: 42,
@@ -3984,7 +4078,7 @@ function YO({ progres: t, taille: e = 136, children: n }) {
           stroke: "rgba(255,255,255,.13)",
           strokeWidth: "9",
         }),
-        a.default.createElement("circle", {
+        React.default.createElement("circle", {
           cx: "50",
           cy: "50",
           r: 42,
@@ -3993,12 +4087,12 @@ function YO({ progres: t, taille: e = 136, children: n }) {
           strokeWidth: "9",
           strokeLinecap: "round",
           strokeDasharray: i,
-          strokeDashoffset: i * (1 - Math.max(0.015, Math.min(1, o))),
+          strokeDashoffset: i * (1 - Math.max(0.015, Math.min(1, p))),
           transform: "rotate(-90 50 50)",
           style: { transition: "stroke-dashoffset 1.1s cubic-bezier(.3,.9,.3,1)" },
         }),
       ),
-      a.default.createElement("div", { className: "jauge-in" }, n),
+      React.default.createElement("div", { className: "jauge-in" }, children),
     )
   );
 }
@@ -4014,87 +4108,87 @@ var xT = "epicerie-raddonnaise-roue-ok",
   Z2 = "";
 async function ZO(t, e) {
   if (
-    (await Sn(we(ce, "clients", t.ref), { choix: e, choixLe: Date.now() }, { merge: !0 }),
+    (await setDoc(doc2(db2, "clients", t.ref), { choix: e, choixLe: Date.now() }, { merge: !0 }),
     e === "cadeau" && g2(Z2))
   )
     try {
-      (await Dp(ce),
+      await waitForPendingWrites(db2),
         fetch(Z2 + "?fid=" + encodeURIComponent(t.ref) + "&e=choix", {
           method: "GET",
           mode: "no-cors",
           redirect: "follow",
-        }).catch(() => {}));
+        }).catch(() => {});
     } catch {}
 }
-function bT({ moi: t, t: e, onFait: n }) {
-  let [r, i] = (0, a.useState)(!1),
-    [o, s] = (0, a.useState)(""),
+function ChoixRecompense({ moi: moi, t: t, onFait: onFait }) {
+  let [r, i] = (0, React.useState)(!1),
+    [o, s] = (0, React.useState)(""),
     l = async (u) => {
-      (i(!0), s(""));
+      i(!0), s("");
       try {
-        (await ZO(t, u), n?.(u));
+        await ZO(moi, u), onFait?.(u);
       } catch {
         s("Pas de connexion : r\xE9essayez dans un instant.");
       }
       i(!1);
     };
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "choix-b" },
-    a.default.createElement(
+    React.default.createElement(
       "button",
       { disabled: r, onClick: () => l("cadeau") },
-      a.default.createElement("span", null, "\u{1F381}"),
-      a.default.createElement("b", null, "Je vais chercher mon cadeau"),
-      a.default.createElement(
+      React.default.createElement("span", null, "\u{1F381}"),
+      React.default.createElement("b", null, "Je vais chercher mon cadeau"),
+      React.default.createElement(
         "small",
         null,
         "L'\xE9picerie est pr\xE9venue, votre carte repartira \xE0 z\xE9ro",
       ),
     ),
-    a.default.createElement(
+    React.default.createElement(
       "button",
       { disabled: r, onClick: () => l("continue") },
-      a.default.createElement("span", null, "\u{1F680}"),
-      a.default.createElement("b", null, "Je continue"),
-      a.default.createElement("small", null, "Jusqu'\xE0 ", e.nb, " tampons pour votre chouette cadeau"),
+      React.default.createElement("span", null, "\u{1F680}"),
+      React.default.createElement("b", null, "Je continue"),
+      React.default.createElement("small", null, "Jusqu'\xE0 ", t.nb, " tampons pour votre chouette cadeau"),
     ),
-    o && a.default.createElement("div", { className: "choix-err" }, o),
+    o && React.default.createElement("div", { className: "choix-err" }, o),
   );
 }
-function RO({ moi: t, f: e, onClose: n }) {
-  let r = Ho(e),
-    [i, o] = (0, a.useState)("");
+function FenetreChoix({ moi: moi, f: f, onClose: onClose }) {
+  let r = MENTION_EXCLUSIONS(f),
+    [i, o] = (0, React.useState)("");
   return (
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       if (!i) return;
-      let s = setTimeout(n, 3200);
+      let s = setTimeout(onClose, 3200);
       return () => clearTimeout(s);
     }, [i]),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "choix-fond", role: "dialog", "aria-modal": "true", "aria-label": "Votre cadeau" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "choix-in" },
-        a.default.createElement("div", { className: "choix-ico" }, "\u{1F381}"),
+        React.default.createElement("div", { className: "choix-ico" }, "\u{1F381}"),
         i
           ? i === "cadeau"
-            ? a.default.createElement(
-                a.default.Fragment,
+            ? React.default.createElement(
+                React.default.Fragment,
                 null,
-                a.default.createElement("h2", null, "C'est not\xE9 !"),
-                a.default.createElement(
+                React.default.createElement("h2", null, "C'est not\xE9 !"),
+                React.default.createElement(
                   "p",
                   null,
                   "Votre cadeau vous attend en caisse. L'\xE9picerie est pr\xE9venue \u{1F389}",
                 ),
               )
-            : a.default.createElement(
-                a.default.Fragment,
+            : React.default.createElement(
+                React.default.Fragment,
                 null,
-                a.default.createElement("h2", null, "On continue !"),
-                a.default.createElement(
+                React.default.createElement("h2", null, "On continue !"),
+                React.default.createElement(
                   "p",
                   null,
                   "Encore ",
@@ -4102,19 +4196,19 @@ function RO({ moi: t, f: e, onClose: n }) {
                   " tampons pour votre chouette cadeau \u{1F381}\u{1F381}",
                 ),
               )
-          : a.default.createElement(
-              a.default.Fragment,
+          : React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement("h2", null, "Bravo, ", r.palier, " tampons !"),
-              a.default.createElement(
+              React.default.createElement("h2", null, "Bravo, ", r.palier, " tampons !"),
+              React.default.createElement(
                 "p",
                 null,
                 "Votre cadeau surprise est d\xE9bloqu\xE9. Que voulez-vous faire ?",
               ),
-              a.default.createElement(bT, { moi: t, t: r, onFait: o }),
-              a.default.createElement(
+              React.default.createElement(ChoixRecompense, { moi: moi, t: r, onFait: o }),
+              React.default.createElement(
                 "button",
-                { className: "choix-tard", onClick: n },
+                { className: "choix-tard", onClick: onClose },
                 "Je d\xE9ciderai plus tard",
               ),
             ),
@@ -4130,15 +4224,15 @@ var wT = "epicerie-raddonnaise-tampons-anim",
       return {};
     }
   };
-function e9(t, e, n) {
-  let [r, i] = (0, a.useState)(() => {
+function useVisible(t, e, n) {
+  let [r, i] = (0, React.useState)(() => {
       let u = dT()[t];
       return u == null || u > e ? e : u;
     }),
-    [o, s] = (0, a.useState)(!1),
-    l = (0, a.useRef)(e);
+    [o, s] = (0, React.useState)(!1),
+    l = (0, React.useRef)(e);
   return (
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       if (o || !n.current) return;
       if (!("IntersectionObserver" in window)) {
         s(!0);
@@ -4150,31 +4244,31 @@ function e9(t, e, n) {
         },
         { threshold: 0.5 },
       );
-      return (u.observe(n.current), () => u.disconnect());
+      return u.observe(n.current), () => u.disconnect();
     }, [o]),
-    (0, a.useEffect)(() => {
-      (e < l.current ? i(e) : e > l.current && i(l.current), (l.current = e));
+    (0, React.useEffect)(() => {
+      e < l.current ? i(e) : e > l.current && i(l.current), (l.current = e);
     }, [e]),
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       if (!(!o || !t))
         try {
           let u = dT();
-          ((u[t] = e), localStorage.setItem(wT, JSON.stringify(u)));
+          (u[t] = e), localStorage.setItem(wT, JSON.stringify(u));
         } catch {}
     }, [o, t, e]),
     [r, o]
   );
 }
-function t9({ f: t, moi: e, amb: n }) {
-  let r = Ho(t),
-    i = e ? Math.min(e.tampons || 0, r.nb) : 0,
-    o = (0, a.useRef)(null),
-    [s, l] = e9(e?.ref, i, o),
+function GrilleTampons({ f: t, moi: moi, amb: amb }) {
+  let r = MENTION_EXCLUSIONS(t),
+    i = moi ? Math.min(moi.tampons || 0, r.nb) : 0,
+    o = (0, React.useRef)(null),
+    [s, l] = useVisible(moi?.ref, i, o),
     u = r.nb > 12 ? 5 : Math.min(r.nb, 5);
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "tp" },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "tp-grille", ref: o, style: { gridTemplateColumns: "repeat(" + u + ",1fr)" } },
       Array.from({ length: r.nb }, (d, h) => {
@@ -4182,7 +4276,7 @@ function t9({ f: t, moi: e, amb: n }) {
           m = h === r.nb - 1,
           E = h >= s && h < i,
           F = h < i && (!E || l);
-        return a.default.createElement(
+        return React.default.createElement(
           "div",
           {
             key: h,
@@ -4190,142 +4284,142 @@ function t9({ f: t, moi: e, amb: n }) {
             style: { animationDelay: (E ? 0.5 + (h - s) * 0.45 : h * 0.04) + "s" },
           },
           F
-            ? a.default.createElement(
+            ? React.default.createElement(
                 "span",
                 null,
-                n === "halloween"
+                amb === "halloween"
                   ? "\u{1F383}"
-                  : n === "octobrerose"
+                  : amb === "octobrerose"
                     ? "\u{1F380}"
-                    : nn[n]
-                      ? nn[n].tampon
+                    : nn[amb]
+                      ? nn[amb].tampon
                       : "\u{1F34F}",
               )
             : m
-              ? a.default.createElement(
+              ? React.default.createElement(
                   "span",
                   { className: r.palier ? "deux" : "" },
                   r.palier ? "\u{1F381}\u{1F381}" : "\u{1F381}",
                 )
               : f
-                ? a.default.createElement("span", null, "\u{1F381}")
-                : a.default.createElement("i", null, h + 1),
+                ? React.default.createElement("span", null, "\u{1F381}")
+                : React.default.createElement("i", null, h + 1),
         );
       }),
     ),
-    e
+    moi
       ? i >= r.nb
-        ? a.default.createElement(
+        ? React.default.createElement(
             "div",
             { className: "tp-plein" },
             "\u{1F389} Carte compl\xE8te ! ",
-            a.default.createElement("b", null, "Votre cadeau"),
+            React.default.createElement("b", null, "Votre cadeau"),
             " vous attend : pr\xE9sentez votre carte en caisse.",
           )
         : r.palier && i === r.palier
-          ? X2(e) === "cadeau"
-            ? a.default.createElement(
+          ? X2(moi) === "cadeau"
+            ? React.default.createElement(
                 "div",
                 { className: "tp-plein" },
                 "\u{1F381} C'est not\xE9 ! ",
-                a.default.createElement("b", null, "Votre cadeau vous attend en caisse."),
-                a.default.createElement("br", null),
+                React.default.createElement("b", null, "Votre cadeau vous attend en caisse."),
+                React.default.createElement("br", null),
                 "L'\xE9picerie est pr\xE9venue. Votre carte repartira \xE0 z\xE9ro.",
               )
-            : X2(e) === "continue"
-              ? a.default.createElement(
+            : X2(moi) === "continue"
+              ? React.default.createElement(
                   "div",
                   { className: "tp-reste" },
                   "Vous continuez : encore ",
-                  a.default.createElement("b", null, r.nb - i),
+                  React.default.createElement("b", null, r.nb - i),
                   " tampon",
                   r.nb - i > 1 ? "s" : "",
                   " pour ",
-                  a.default.createElement("b", null, "votre chouette cadeau"),
+                  React.default.createElement("b", null, "votre chouette cadeau"),
                   " \u{1F381}\u{1F381}",
                 )
-              : a.default.createElement(
+              : React.default.createElement(
                   "div",
                   { className: "tp-plein" },
                   "\u{1F381} Cadeau d\xE9bloqu\xE9 ! \xC0 vous de choisir :",
-                  a.default.createElement(bT, { moi: e, t: r }),
+                  React.default.createElement(ChoixRecompense, { moi: moi, t: r }),
                 )
           : r.palier && i < r.palier
-            ? a.default.createElement(
+            ? React.default.createElement(
                 "div",
                 { className: "tp-reste" },
                 "Encore ",
-                a.default.createElement("b", null, r.palier - i),
+                React.default.createElement("b", null, r.palier - i),
                 " tampon",
                 r.palier - i > 1 ? "s" : "",
                 " pour ",
-                a.default.createElement("b", null, "votre cadeau"),
+                React.default.createElement("b", null, "votre cadeau"),
                 " \u{1F381}",
               )
             : r.palier
-              ? a.default.createElement(
+              ? React.default.createElement(
                   "div",
                   { className: "tp-reste" },
                   "Vous avez continu\xE9 : encore ",
-                  a.default.createElement("b", null, r.nb - i),
+                  React.default.createElement("b", null, r.nb - i),
                   " tampon",
                   r.nb - i > 1 ? "s" : "",
                   " pour ",
-                  a.default.createElement("b", null, "votre chouette cadeau"),
+                  React.default.createElement("b", null, "votre chouette cadeau"),
                   " \u{1F381}\u{1F381}",
                 )
-              : a.default.createElement(
+              : React.default.createElement(
                   "div",
                   { className: "tp-reste" },
                   "Encore ",
-                  a.default.createElement("b", null, r.nb - i),
+                  React.default.createElement("b", null, r.nb - i),
                   " tampon",
                   r.nb - i > 1 ? "s" : "",
                   " pour ",
-                  a.default.createElement("b", null, "votre cadeau"),
+                  React.default.createElement("b", null, "votre cadeau"),
                 )
       : null,
-    e?.bonusAttente > 0 &&
-      a.default.createElement(
+    moi?.bonusAttente > 0 &&
+      React.default.createElement(
         "div",
         { className: "tp-reste" },
         "\u{1F382} ",
-        a.default.createElement(
+        React.default.createElement(
           "b",
           null,
-          e.bonusAttente,
+          moi.bonusAttente,
           " tampon",
-          e.bonusAttente > 1 ? "s" : "",
+          moi.bonusAttente > 1 ? "s" : "",
           " offert",
-          e.bonusAttente > 1 ? "s" : "",
+          moi.bonusAttente > 1 ? "s" : "",
         ),
         " vous attend",
-        e.bonusAttente > 1 ? "ent" : "",
+        moi.bonusAttente > 1 ? "ent" : "",
         " : ajout\xE9",
-        e.bonusAttente > 1 ? "s" : "",
+        moi.bonusAttente > 1 ? "s" : "",
         " sur votre carte \xE0 votre prochain passage en caisse.",
       ),
-    e && a.default.createElement(n9, { moi: e }),
-    r.exclus && a.default.createElement("div", { className: "tp-exclus" }, "Hors ", r.exclus, "."),
+    moi && React.default.createElement(NiveauSuivant, { moi: moi }),
+    r.exclus && React.default.createElement("div", { className: "tp-exclus" }, "Hors ", r.exclus, "."),
   );
 }
-function n9({ moi: t }) {
-  let { niv: e, suivant: n, reste: r } = Va(t),
+function NiveauSuivant({ moi: moi }) {
+  let { niv: e, suivant: n, reste: r } = Va(moi),
     i = (o) => o + " cadeau" + (o > 1 ? "x" : "");
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "niv-l" },
     n
-      ? a.default.createElement(
-          a.default.Fragment,
+      ? React.default.createElement(
+          React.default.Fragment,
           null,
           e
-            ? a.default.createElement(
-                a.default.Fragment,
+            ? React.default.createElement(
+                React.default.Fragment,
                 null,
                 e.ico,
                 " ",
-                a.default.createElement("b", null, e.nom),
+                React.default.createElement("b", null, e.nom),
                 " \xB7 ",
               )
             : null,
@@ -4334,21 +4428,21 @@ function n9({ moi: t }) {
           " re\xE7u",
           r > 1 ? "s" : "",
           " pour devenir ",
-          a.default.createElement("b", null, n.ico, " ", n.nom),
+          React.default.createElement("b", null, n.ico, " ", n.nom),
         )
-      : a.default.createElement(
-          a.default.Fragment,
+      : React.default.createElement(
+          React.default.Fragment,
           null,
           e.ico,
           " ",
-          a.default.createElement("b", null, e.nom),
+          React.default.createElement("b", null, e.nom),
           " : merci pour votre fid\xE9lit\xE9 !",
         ),
   );
 }
 var hT = "epicerie-raddonnaise-niveau-vu";
-function r9({ moi: t }) {
-  let { niv: e } = Va(t),
+function BravoNiveau({ moi: moi }) {
+  let { niv: e } = Va(moi),
     n = e ? gf.indexOf(e) : -1,
     r = () => {
       try {
@@ -4360,40 +4454,40 @@ function r9({ moi: t }) {
     i = (l) => {
       try {
         let u = r();
-        ((u[t.ref] = l), localStorage.setItem(hT, JSON.stringify(u)));
+        (u[moi.ref] = l), localStorage.setItem(hT, JSON.stringify(u));
       } catch {}
     },
-    [o, s] = (0, a.useState)(() => {
-      let l = r()[t?.ref];
+    [o, s] = (0, React.useState)(() => {
+      let l = r()[moi?.ref];
       return l ?? n;
     });
   return (
-    (0, a.useEffect)(() => {
-      t?.ref && r()[t.ref] == null && i(n);
-    }, [t?.ref]),
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
+      moi?.ref && r()[moi.ref] == null && i(n);
+    }, [moi?.ref]),
+    (0, React.useEffect)(() => {
       n < o && (s(n), i(n));
     }, [n]),
-    !t?.ref || !e || n <= o
+    !moi?.ref || !e || n <= o
       ? null
-      : a.default.createElement(
+      : React.default.createElement(
           "div",
           { className: "niv-bravo" },
           "\u{1F389} ",
-          a.default.createElement(
+          React.default.createElement(
             "span",
             null,
             "Bravo",
-            t.prenom ? " " + t.prenom : "",
+            moi.prenom ? " " + moi.prenom : "",
             ", vous devenez ",
-            a.default.createElement("b", null, e.ico, " ", e.nom),
+            React.default.createElement("b", null, e.ico, " ", e.nom),
             " ! Merci pour votre fid\xE9lit\xE9.",
           ),
-          a.default.createElement(
+          React.default.createElement(
             "button",
             {
               onClick: () => {
-                (s(n), i(n));
+                s(n), i(n);
               },
               "aria-label": "Fermer",
             },
@@ -4402,46 +4496,46 @@ function r9({ moi: t }) {
         )
   );
 }
-function i9({ f: t }) {
-  let [e, n] = (0, a.useState)(!1),
-    r = Ho(t);
-  return a.default.createElement(
+function RegleTampons({ f: f }) {
+  let [e, n] = (0, React.useState)(!1),
+    r = MENTION_EXCLUSIONS(f);
+  return React.default.createElement(
     "div",
     { className: "s" },
     r.seuil ? "1 passage d\xE8s " + pc(r.seuil) + " d'achats = 1 tampon" : "1 passage = 1 tampon",
     " ",
-    a.default.createElement(
+    React.default.createElement(
       "button",
       { className: "regle-plus", onClick: () => n(!e), "aria-expanded": e },
       e ? "Moins" : "D\xE9tails",
     ),
     e &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "regle-det" },
-        $I(t).split(" \xB7 ").slice(1).join(" \xB7 "),
+        $I(f).split(" \xB7 ").slice(1).join(" \xB7 "),
         ".",
       ),
   );
 }
-function ET({ d: t, moi: e, onFid: n, compact: r }) {
+function FidCarte({ d: t, moi: moi, onFid: onFid, compact: compact }) {
   let i = t.fidelite,
     o = Re(n2(t.themes));
   if (fc(i))
-    return a.default.createElement(
+    return React.default.createElement(
       "div",
       { className: "fid" },
-      a.default.createElement(
+      React.default.createElement(
         "h3",
         null,
         i.titre || "Carte de fid\xE9lit\xE9",
-        e &&
-          Va(e).niv &&
-          a.default.createElement("span", { className: "niv-b" }, Va(e).niv.ico, " ", Va(e).niv.nom),
+        moi &&
+          Va(moi).niv &&
+          React.default.createElement("span", { className: "niv-b" }, Va(moi).niv.ico, " ", Va(moi).niv.nom),
       ),
-      a.default.createElement(i9, { f: i }),
-      a.default.createElement(t9, { f: i, moi: e, amb: o }),
-      a.default.createElement(
+      React.default.createElement(RegleTampons, { f: i }),
+      React.default.createElement(GrilleTampons, { f: i, moi: moi, amb: o }),
+      React.default.createElement(
         "div",
         {
           style: {
@@ -4451,38 +4545,38 @@ function ET({ d: t, moi: e, onFid: n, compact: r }) {
             textAlign: "center",
           },
         },
-        e
-          ? a.default.createElement(
+        moi
+          ? React.default.createElement(
               "div",
               { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 9 } },
-              a.default.createElement(
+              React.default.createElement(
                 "div",
-                { className: "qr", onClick: n },
-                a.default.createElement(Wa, { texte: e.code, taille: 148 }),
-                a.default.createElement("span", { className: "zoom" }, "Agrandir"),
+                { className: "qr", onClick: onFid },
+                React.default.createElement(QR, { texte: moi.code, taille: 148 }),
+                React.default.createElement("span", { className: "zoom" }, "Agrandir"),
               ),
-              a.default.createElement("div", { className: "code" }, e.code),
-              a.default.createElement(
+              React.default.createElement("div", { className: "code" }, moi.code),
+              React.default.createElement(
                 "div",
                 { style: { fontSize: 10.5, opacity: 0.7 } },
-                e.nom,
+                moi.nom,
                 " \u2014 \xE0 pr\xE9senter en caisse",
               ),
             )
-          : a.default.createElement(
-              a.default.Fragment,
+          : React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 { style: { fontSize: 12, opacity: 0.8, marginBottom: 10 } },
                 "Cr\xE9ez votre carte pour collectionner vos tampons",
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "button",
                 {
                   className: "btn",
                   style: { background: "var(--apple-l)", width: "auto", padding: "11px 22px" },
-                  onClick: n,
+                  onClick: onFid,
                 },
                 "Cr\xE9er ma carte",
               ),
@@ -4490,14 +4584,14 @@ function ET({ d: t, moi: e, onFid: n, compact: r }) {
       ),
     );
   let s = Math.max(1, i.total || 10),
-    l = (e && e.points) || 0,
+    l = (moi && moi.points) || 0,
     u = (i.paliers || []).find((h) => h.at > l),
     d = qI(i, l);
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "fid" },
-    a.default.createElement("h3", null, i.titre || "Carte de fid\xE9lit\xE9"),
-    a.default.createElement(
+    React.default.createElement("h3", null, i.titre || "Carte de fid\xE9lit\xE9"),
+    React.default.createElement(
       "div",
       { className: "s" },
       i.sousTitre ||
@@ -4506,48 +4600,48 @@ function ET({ d: t, moi: e, onFid: n, compact: r }) {
           : `1 point par tranche de ${i.parEuro || 10} \u20AC d'achat`),
     ),
     d
-      ? a.default.createElement(
+      ? React.default.createElement(
           "div",
           { className: "remise" },
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "rm-ligne" },
-            a.default.createElement(
-              YO,
-              { progres: e ? d.progres : 0, taille: r ? 112 : 136 },
-              a.default.createElement("b", null, l % d.points),
-              a.default.createElement("span", null, "/ ", d.points),
+            React.default.createElement(
+              Jauge,
+              { progres: moi ? d.progres : 0, taille: compact ? 112 : 136 },
+              React.default.createElement("b", null, l % d.points),
+              React.default.createElement("span", null, "/ ", d.points),
             ),
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rm-cote" },
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "rm-total" },
-                e
-                  ? a.default.createElement(
-                      a.default.Fragment,
+                moi
+                  ? React.default.createElement(
+                      React.default.Fragment,
                       null,
                       "Vous avez ",
-                      a.default.createElement("b", null, l),
+                      React.default.createElement("b", null, l),
                       " point",
                       l > 1 ? "s" : "",
                     )
-                  : a.default.createElement(a.default.Fragment, null, d.points, " points"),
+                  : React.default.createElement(React.default.Fragment, null, d.points, " points"),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "rm-bon" },
-                e ? "Prochain bon : " : "= ",
-                a.default.createElement("b", null, pc(d.euros)),
-                e ? "" : " de remise",
+                moi ? "Prochain bon : " : "= ",
+                React.default.createElement("b", null, pc(d.euros)),
+                moi ? "" : " de remise",
               ),
-              e &&
-                a.default.createElement(
+              moi &&
+                React.default.createElement(
                   "div",
                   { className: "rm-manque" },
                   "Plus que ",
-                  a.default.createElement("b", null, d.manque),
+                  React.default.createElement("b", null, d.manque),
                   " point",
                   d.manque > 1 ? "s" : "",
                   " pour ",
@@ -4555,21 +4649,21 @@ function ET({ d: t, moi: e, onFid: n, compact: r }) {
                 ),
             ),
           ),
-          e &&
+          moi &&
             d.nb > 0 &&
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "bons" },
               Array.from({ length: Math.min(d.nb, 4) }, (h, f) =>
-                a.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "bon", key: f },
-                  a.default.createElement("b", null, pc(d.euros)),
-                  a.default.createElement("span", null, "de remise"),
+                  React.default.createElement("b", null, pc(d.euros)),
+                  React.default.createElement("span", null, "de remise"),
                 ),
               ),
-              d.nb > 4 && a.default.createElement("div", { className: "bon plus" }, "+", d.nb - 4),
-              a.default.createElement(
+              d.nb > 4 && React.default.createElement("div", { className: "bon plus" }, "+", d.nb - 4),
+              React.default.createElement(
                 "div",
                 { className: "bons-txt" },
                 "\u{1F389} ",
@@ -4578,44 +4672,44 @@ function ET({ d: t, moi: e, onFid: n, compact: r }) {
               ),
             ),
         )
-      : a.default.createElement(
-          a.default.Fragment,
+      : React.default.createElement(
+          React.default.Fragment,
           null,
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "pts", style: { gridTemplateColumns: `repeat(${Math.min(s, 10)},1fr)` } },
             Array.from({ length: s }, (h, f) => {
               let m = (i.paliers || []).some((E) => E.at === f + 1);
-              return a.default.createElement(
+              return React.default.createElement(
                 "div",
                 { key: f, className: "pt" + (f < l ? " on" : m ? " next" : "") },
                 f < l ? "\u25CF" : m ? "\u2605" : "",
               );
             }),
           ),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "cpt" },
-            a.default.createElement("b", null, l),
+            React.default.createElement("b", null, l),
             " / ",
             s,
             " points",
             u ? ` \u2014 encore ${u.at - l} pour \xAB ${u.label} \xBB` : "",
           ),
         ),
-    !r &&
+    !compact &&
       !!(i.paliers || []).length &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { marginTop: 16, borderTop: "1px solid rgba(255,255,255,.15)", paddingTop: 12 } },
         i.paliers.map((h, f) =>
-          a.default.createElement(
+          React.default.createElement(
             "div",
             {
               key: f,
               style: { display: "flex", gap: 10, alignItems: "center", padding: "7px 0", fontSize: 12.5 },
             },
-            a.default.createElement(
+            React.default.createElement(
               "span",
               {
                 style: {
@@ -4632,11 +4726,11 @@ function ET({ d: t, moi: e, onFid: n, compact: r }) {
               },
               h.at,
             ),
-            a.default.createElement("span", { style: { opacity: l >= h.at ? 1 : 0.7 } }, h.label),
+            React.default.createElement("span", { style: { opacity: l >= h.at ? 1 : 0.7 } }, h.label),
           ),
         ),
       ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       {
         style: {
@@ -4646,38 +4740,38 @@ function ET({ d: t, moi: e, onFid: n, compact: r }) {
           textAlign: "center",
         },
       },
-      e
-        ? a.default.createElement(
+      moi
+        ? React.default.createElement(
             "div",
             { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 9 } },
-            a.default.createElement(
+            React.default.createElement(
               "div",
-              { className: "qr", onClick: n },
-              a.default.createElement(Wa, { texte: e.code, taille: 148 }),
-              a.default.createElement("span", { className: "zoom" }, "Agrandir"),
+              { className: "qr", onClick: onFid },
+              React.default.createElement(QR, { texte: moi.code, taille: 148 }),
+              React.default.createElement("span", { className: "zoom" }, "Agrandir"),
             ),
-            a.default.createElement("div", { className: "code" }, e.code),
-            a.default.createElement(
+            React.default.createElement("div", { className: "code" }, moi.code),
+            React.default.createElement(
               "div",
               { style: { fontSize: 10.5, opacity: 0.7 } },
-              e.nom,
+              moi.nom,
               " \u2014 \xE0 pr\xE9senter en caisse",
             ),
           )
-        : a.default.createElement(
-            a.default.Fragment,
+        : React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { style: { fontSize: 12, opacity: 0.8, marginBottom: 10 } },
               "Cr\xE9ez votre carte pour cumuler vos points",
             ),
-            a.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "btn",
                 style: { background: "var(--apple-l)", width: "auto", padding: "11px 22px" },
-                onClick: n,
+                onClick: onFid,
               },
               "Cr\xE9er ma carte",
             ),
@@ -4685,137 +4779,148 @@ function ET({ d: t, moi: e, onFid: n, compact: r }) {
     ),
   );
 }
-function _T({ compact: t }) {
-  return a.default.createElement(
+function Bientot({ compact: compact }) {
+  return React.default.createElement(
     "div",
-    { className: "bientot" + (t ? " compact" : "") },
-    a.default.createElement("div", { className: "bt-badge" }, "Bient\xF4t"),
-    a.default.createElement("div", { className: "bt-titre" }, "La carte de fid\xE9lit\xE9 arrive !"),
-    a.default.createElement(
+    { className: "bientot" + (compact ? " compact" : "") },
+    React.default.createElement("div", { className: "bt-badge" }, "Bient\xF4t"),
+    React.default.createElement("div", { className: "bt-titre" }, "La carte de fid\xE9lit\xE9 arrive !"),
+    React.default.createElement(
       "div",
       { className: "bt-txt" },
       "Tr\xE8s bient\xF4t dans l'application : un tampon \xE0 chaque passage \xE0 l'\xE9picerie, et une r\xE9compense quand la carte est pleine. Restez connect\xE9s \u{1F34F}",
     ),
-    !t &&
-      a.default.createElement(
+    !compact &&
+      React.default.createElement(
         "div",
         { className: "bt-deco", "aria-hidden": "true" },
         [0, 1, 2, 3, 4].map((e) =>
-          a.default.createElement("i", { key: e, style: { animationDelay: e * 0.18 + "s" } }),
+          React.default.createElement("i", { key: e, style: { animationDelay: e * 0.18 + "s" } }),
         ),
       ),
   );
 }
-function o9({ d: t, moi: e, setMoi: n, onFid: r, inst: i, ouvrirLegal: o }) {
-  return t.fidelite?.active
-    ? a.default.createElement(
+function Fidelite({ d: d, moi: moi, setMoi: setMoi, onFid: onFid, inst: inst, ouvrirLegal: ouvrirLegal }) {
+  return d.fidelite?.active
+    ? React.default.createElement(
         "div",
         { className: "wrap" },
-        a.default.createElement(Xn, null),
-        a.default.createElement(ET, { d: t, moi: e, onFid: r }),
-        e && t.fidelite?.parrainage !== !1 && a.default.createElement(g9, { moi: e }),
-        e &&
-          a.default.createElement(ox, {
-            inst: i,
+        React.default.createElement(Deco, null),
+        React.default.createElement(FidCarte, { d: d, moi: moi, onFid: onFid }),
+        moi && d.fidelite?.parrainage !== !1 && React.default.createElement(Parrainage, { moi: moi }),
+        moi &&
+          React.default.createElement(Installer, {
+            inst: inst,
             compact: !0,
             texte: "Gardez votre carte sur l'\xE9cran d'accueil.",
           }),
-        e && a.default.createElement(l9, { moi: e, d: t, setMoi: n, ouvrirLegal: o }),
+        moi &&
+          React.default.createElement(MesDonnees, {
+            moi: moi,
+            d: d,
+            setMoi: setMoi,
+            ouvrirLegal: ouvrirLegal,
+          }),
       )
-    : a.default.createElement(
+    : React.default.createElement(
         "div",
         { className: "wrap" },
-        a.default.createElement(Xn, null),
-        a.default.createElement(_T, null),
+        React.default.createElement(Deco, null),
+        React.default.createElement(Bientot, null),
       );
 }
-function H2({ type: t, d: e, onClose: n }) {
+function PageLegale({ type: type, d: d, onClose: onClose }) {
   let r = Object.fromEntries(
-      Object.entries({ ...J2.legal, ...(e.legal || {}) }).map(([l, u]) => [
+      Object.entries({ ...EMPTY2.legal, ...(d.legal || {}) }).map(([l, u]) => [
         l,
-        u === "" || u == null ? J2.legal[l] : u,
+        u === "" || u == null ? EMPTY2.legal[l] : u,
       ]),
     ),
-    i = e.store,
+    i = d.store,
     o = r.emailDonnees || i.email,
-    s = ({ children: l }) => a.default.createElement("h4", null, l);
-  return a.default.createElement(
+    s = ({ children: children }) => React.default.createElement("h4", null, children);
+  return React.default.createElement(
     "div",
     { className: "legal" },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "legal-top" },
-      a.default.createElement("button", { onClick: n, "aria-label": "Retour" }, "\u2190 Retour"),
+      React.default.createElement("button", { onClick: onClose, "aria-label": "Retour" }, "\u2190 Retour"),
     ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "legal-in" },
-      t === "mentions"
-        ? a.default.createElement(
-            a.default.Fragment,
+      type === "mentions"
+        ? React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement("h2", null, "Mentions l\xE9gales"),
-            a.default.createElement(s, null, "\xC9diteur de l'application"),
-            a.default.createElement(
+            React.default.createElement("h2", null, "Mentions l\xE9gales"),
+            React.default.createElement(s, null, "\xC9diteur de l'application"),
+            React.default.createElement(
               "p",
               null,
-              a.default.createElement("b", null, i.name),
-              a.default.createElement("br", null),
+              React.default.createElement("b", null, i.name),
+              React.default.createElement("br", null),
               r.raison,
               r.forme ? ", " + r.forme : "",
               r.capital ? " au capital de " + r.capital + " \u20AC" : "",
-              a.default.createElement("br", null),
+              React.default.createElement("br", null),
               "Si\xE8ge : ",
               i.address,
-              a.default.createElement("br", null),
+              React.default.createElement("br", null),
               r.siren &&
-                a.default.createElement(
-                  a.default.Fragment,
+                React.default.createElement(
+                  React.default.Fragment,
                   null,
                   "SIREN : ",
                   r.siren,
-                  a.default.createElement("br", null),
+                  React.default.createElement("br", null),
                 ),
               r.rcs &&
-                a.default.createElement(a.default.Fragment, null, r.rcs, a.default.createElement("br", null)),
+                React.default.createElement(
+                  React.default.Fragment,
+                  null,
+                  r.rcs,
+                  React.default.createElement("br", null),
+                ),
               r.tva &&
-                a.default.createElement(
-                  a.default.Fragment,
+                React.default.createElement(
+                  React.default.Fragment,
                   null,
                   "N\xB0 TVA intracommunautaire : ",
                   r.tva,
-                  a.default.createElement("br", null),
+                  React.default.createElement("br", null),
                 ),
               r.naf &&
-                a.default.createElement(
-                  a.default.Fragment,
+                React.default.createElement(
+                  React.default.Fragment,
                   null,
                   "Activit\xE9 : ",
                   r.naf,
-                  a.default.createElement("br", null),
+                  React.default.createElement("br", null),
                 ),
               i.phone &&
-                a.default.createElement(
-                  a.default.Fragment,
+                React.default.createElement(
+                  React.default.Fragment,
                   null,
                   "T\xE9l\xE9phone : ",
                   i.phone,
-                  a.default.createElement("br", null),
+                  React.default.createElement("br", null),
                 ),
-              i.email && a.default.createElement(a.default.Fragment, null, "E-mail : ", i.email),
+              i.email && React.default.createElement(React.default.Fragment, null, "E-mail : ", i.email),
             ),
-            a.default.createElement(s, null, "Directrice de la publication"),
-            a.default.createElement("p", null, r.responsable, ", g\xE9rante"),
-            a.default.createElement(s, null, "H\xE9bergement"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Directrice de la publication"),
+            React.default.createElement("p", null, r.responsable, ", g\xE9rante"),
+            React.default.createElement(s, null, "H\xE9bergement"),
+            React.default.createElement(
               "p",
               null,
               "Application : GitHub Pages \u2014 GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, \xC9tats-Unis.",
-              a.default.createElement("br", null),
+              React.default.createElement("br", null),
               "Donn\xE9es : Firebase \u2014 Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlande.",
             ),
-            a.default.createElement(s, null, "Propri\xE9t\xE9"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Propri\xE9t\xE9"),
+            React.default.createElement(
               "p",
               null,
               "Le nom, le logo et les contenus de l'application appartiennent \xE0 ",
@@ -4823,17 +4928,17 @@ function H2({ type: t, d: e, onClose: n }) {
               ". Toute reproduction sans autorisation est interdite.",
             ),
           )
-        : a.default.createElement(
-            a.default.Fragment,
+        : React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement("h2", null, "Vos donn\xE9es personnelles"),
-            a.default.createElement(
+            React.default.createElement("h2", null, "Vos donn\xE9es personnelles"),
+            React.default.createElement(
               "p",
               { className: "chapo" },
               "L'application est con\xE7ue pour collecter le moins de donn\xE9es possible. Voici exactement ce que nous faisons.",
             ),
-            a.default.createElement(s, null, "Qui est responsable ?"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Qui est responsable ?"),
+            React.default.createElement(
               "p",
               null,
               r.raison,
@@ -4847,133 +4952,141 @@ function H2({ type: t, d: e, onClose: n }) {
               r.responsable,
               ".",
             ),
-            a.default.createElement(s, null, "Quelles donn\xE9es ?"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Quelles donn\xE9es ?"),
+            React.default.createElement(
               "p",
               null,
               "Uniquement si vous cr\xE9ez une carte de fid\xE9lit\xE9 : vos ",
-              a.default.createElement("b", null, "nom et pr\xE9nom"),
+              React.default.createElement("b", null, "nom et pr\xE9nom"),
               ", votre ",
-              a.default.createElement("b", null, "t\xE9l\xE9phone"),
+              React.default.createElement("b", null, "t\xE9l\xE9phone"),
               ", votre ",
-              a.default.createElement("b", null, "adresse e-mail"),
+              React.default.createElement("b", null, "adresse e-mail"),
               ", votre code de carte, vos tampons, la date d'inscription, le code de votre parrain si vous en indiquez un (pour vous offrir \xE0 tous les deux le tampon de parrainage), et, si vous l'indiquez, le jour et le mois de votre anniversaire (sans l'ann\xE9e), pour vous offrir un tampon ce jour-l\xE0. Les r\xE9ponses aux sondages de l'appli sont anonymes et l'historique de vos passages en caisse (date, tampons ou points gagn\xE9s), dont le nombre de cadeaux re\xE7us qui donne votre niveau (Membre supporter, Pilier de l'\xE9picerie).",
             ),
-            a.default.createElement(
+            React.default.createElement(
               "p",
               null,
               "Si vous passez une commande de plateaux : votre ",
-              a.default.createElement("b", null, "nom"),
+              React.default.createElement("b", null, "nom"),
               ", votre ",
-              a.default.createElement("b", null, "t\xE9l\xE9phone"),
+              React.default.createElement("b", null, "t\xE9l\xE9phone"),
               ", l'",
-              a.default.createElement("b", null, "adresse de livraison"),
+              React.default.createElement("b", null, "adresse de livraison"),
               " le cas \xE9ch\xE9ant, la date choisie, le d\xE9tail de la commande, votre remarque \xE9ventuelle et, si vous les indiquez, vos allergies ou votre r\xE9gime alimentaire. Ces derni\xE8res informations servent uniquement \xE0 pr\xE9parer votre commande et sont supprim\xE9es avec elle.",
             ),
-            a.default.createElement(
+            React.default.createElement(
               "p",
               null,
               "Si vous \xE9crivez \xE0 l'\xE9picerie depuis l'application : votre ",
-              a.default.createElement("b", null, "pr\xE9nom"),
+              React.default.createElement("b", null, "pr\xE9nom"),
               ", votre ",
-              a.default.createElement("b", null, "t\xE9l\xE9phone"),
+              React.default.createElement("b", null, "t\xE9l\xE9phone"),
               " si vous le donnez, et vos ",
-              a.default.createElement("b", null, "messages"),
+              React.default.createElement("b", null, "messages"),
               ". Ils servent uniquement \xE0 vous r\xE9pondre et sont supprim\xE9s au plus tard 1 an apr\xE8s le dernier \xE9change.",
             ),
-            a.default.createElement(
+            React.default.createElement(
               "p",
               null,
               "Si vous activez les notifications : un identifiant technique de votre t\xE9l\xE9phone (fourni par Google Firebase Cloud Messaging), utilis\xE9 uniquement pour vous pr\xE9venir de vos commandes, r\xE9servations et messages et, seulement si vous le cochez, des bons plans de l'\xE9picerie. Vous pouvez les d\xE9sactiver \xE0 tout moment (onglet Infos).",
             ),
-            a.default.createElement(
+            React.default.createElement(
               "p",
               null,
               "Aucune donn\xE9e bancaire, aucune g\xE9olocalisation, aucune publicit\xE9. Consulter l'application sans carte ne collecte aucune donn\xE9e personnelle.",
             ),
-            a.default.createElement(s, null, "Pourquoi ?"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Pourquoi ?"),
+            React.default.createElement(
               "p",
               null,
               "Uniquement pour g\xE9rer votre carte de fid\xE9lit\xE9 et vos r\xE9compenses. Base l\xE9gale : l'ex\xE9cution du programme de fid\xE9lit\xE9 auquel vous adh\xE9rez en cr\xE9ant votre carte (article 6.1.b du RGPD). Votre t\xE9l\xE9phone et votre e-mail servent seulement \xE0 vous retrouver ou \xE0 vous contacter au sujet de votre carte : jamais de prospection, jamais de revente.",
             ),
-            a.default.createElement(
+            React.default.createElement(
               "p",
               null,
               "Les coordonn\xE9es donn\xE9es lors d'une commande servent uniquement \xE0 la pr\xE9parer, vous la remettre et vous joindre \xE0 son sujet (ex\xE9cution de la commande, article 6.1.b du RGPD).",
             ),
-            a.default.createElement(s, null, "Qui y a acc\xE8s ?"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Qui y a acc\xE8s ?"),
+            React.default.createElement(
               "p",
               null,
               "Uniquement l'\xE9picerie. Les donn\xE9es sont h\xE9berg\xE9es par notre prestataire technique Firebase (Google)",
               r.hebergementDonnees ? " (" + r.hebergementDonnees + ")" : "",
               ", qui agit pour notre compte et n'a pas le droit de les utiliser. Google adh\xE8re au cadre de protection des donn\xE9es UE\u2013\xC9tats-Unis (Data Privacy Framework).",
-              Nn(e.cmd).script &&
+              Nn(d.cmd).script &&
                 " L'avis de nouvelle commande est envoy\xE9 \xE0 l'\xE9picerie sur sa messagerie Gmail (Google).",
             ),
-            a.default.createElement(s, null, "Combien de temps ?"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Combien de temps ?"),
+            React.default.createElement(
               "p",
               null,
               "Tant que votre carte est utilis\xE9e. Une carte sans aucun passage en caisse depuis ",
-              a.default.createElement("b", null, r.conservation || 3, " ans"),
+              React.default.createElement("b", null, r.conservation || 3, " ans"),
               " est supprim\xE9e avec son historique. Vous pouvez aussi demander sa suppression \xE0 tout moment. Les commandes sont conserv\xE9es ",
-              a.default.createElement("b", null, "1 an"),
+              React.default.createElement("b", null, "1 an"),
               " apr\xE8s la date de retrait ou de livraison, puis supprim\xE9es.",
             ),
-            a.default.createElement(s, null, "Sur votre t\xE9l\xE9phone"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Sur votre t\xE9l\xE9phone"),
+            React.default.createElement(
               "p",
               null,
               "L'application n'enregistre que ce qui est indispensable \xE0 son fonctionnement : l'identifiant de votre carte, de vos commandes et de vos messages, vos pr\xE9f\xE9rences d'affichage et, si vous le donnez, votre pr\xE9nom (qui ne quitte pas votre t\xE9l\xE9phone). Aucun cookie publicitaire ni traceur : c'est pourquoi aucun bandeau de consentement ne vous est demand\xE9.",
             ),
-            a.default.createElement(s, null, "Mesure d'audience anonyme"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Mesure d'audience anonyme"),
+            React.default.createElement(
               "p",
               null,
               "Pour savoir ce qui vous int\xE9resse, l'\xE9picerie compte de fa\xE7on ",
-              a.default.createElement("b", null, "anonyme"),
+              React.default.createElement("b", null, "anonyme"),
               " les ouvertures de l'application et les rubriques consult\xE9es (par exemple : \xAB La carte vue 40 fois aujourd'hui \xBB). Ces compteurs ne contiennent ni nom, ni t\xE9l\xE9phone, ni identifiant : ils ne permettent pas de savoir qui a consult\xE9 quoi, et ne sont partag\xE9s avec personne. Seule la date du jour est gard\xE9e sur votre t\xE9l\xE9phone, pour ne compter qu'un visiteur par jour. Ils sont supprim\xE9s apr\xE8s 13 mois.",
             ),
-            a.default.createElement(s, null, "Vos droits"),
-            a.default.createElement(
+            React.default.createElement(s, null, "Vos droits"),
+            React.default.createElement(
               "p",
               null,
               "Vous pouvez consulter, corriger, t\xE9l\xE9charger ou supprimer vos donn\xE9es, et vous opposer \xE0 leur traitement.",
             ),
-            a.default.createElement(
+            React.default.createElement(
               "ul",
               null,
-              a.default.createElement(
+              React.default.createElement(
                 "li",
                 null,
-                a.default.createElement("b", null, "Consultation et t\xE9l\xE9chargement dans l'application"),
+                React.default.createElement(
+                  "b",
+                  null,
+                  "Consultation et t\xE9l\xE9chargement dans l'application",
+                ),
                 " : onglet Fid\xE9lit\xE9 \u2192 \xAB Mes donn\xE9es \xBB.",
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "li",
                 null,
-                a.default.createElement("b", null, "Ou en nous contactant"),
+                React.default.createElement("b", null, "Ou en nous contactant"),
                 " : ",
                 o,
                 i.phone ? ", " + i.phone : "",
                 ", ou en boutique.",
               ),
             ),
-            a.default.createElement(
+            React.default.createElement(
               "p",
               null,
               "En cas de d\xE9saccord, vous pouvez saisir la CNIL (cnil.fr).",
             ),
-            a.default.createElement(s, null, "S\xE9curit\xE9"),
-            a.default.createElement(
+            React.default.createElement(s, null, "S\xE9curit\xE9"),
+            React.default.createElement(
               "p",
               null,
               "L'administration est prot\xE9g\xE9e par mot de passe. Votre fiche n'est consultable qu'avec l'identifiant secret enregistr\xE9 sur votre t\xE9l\xE9phone : personne ne peut parcourir la liste des clients depuis l'application.",
             ),
           ),
-      a.default.createElement("p", { className: "maj-legal" }, "Derni\xE8re mise \xE0 jour : octobre 2026"),
+      React.default.createElement(
+        "p",
+        { className: "maj-legal" },
+        "Derni\xE8re mise \xE0 jour : octobre 2026",
+      ),
     ),
   );
 }
@@ -4983,62 +5096,62 @@ var s9 = (t) => {
     ? "le " + (/^[A-ZÀ-Ý][a-zà-ÿ]/.test(e) ? e[0].toLowerCase() + e.slice(1) : e).replace(/^le /i, "")
     : "le tirage au sort de No\xEBl";
 };
-function a9({ moi: t, d: e }) {
-  let [n, r] = (0, a.useState)(""),
-    i = e.roue ? l2(e.roue) : null;
+function ParticipationRoue({ moi: moi, d: d }) {
+  let [n, r] = (0, React.useState)(""),
+    i = d.roue ? l2(d.roue) : null;
   if (!i || !i.active || (i.fin && cO() > i.fin)) return null;
   let o = async (s) => {
     r("\u2026");
     try {
-      (await Sn(we(ce, "clients", t.ref), s ? { roueNon: !0, roueAJouer: [] } : { roueNon: !1 }, {
+      await setDoc(doc2(db2, "clients", moi.ref), s ? { roueNon: !0, roueAJouer: [] } : { roueNon: !1 }, {
         merge: !0,
       }),
         r(
           s
             ? "C'est not\xE9, la roue ne s'affichera plus."
             : "\u{1F384} C'est not\xE9, vous participez \xE0 la roue de No\xEBl !",
-        ));
+        );
     } catch {
       r("Pas de connexion : r\xE9essayez dans un instant.");
     }
   };
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "roue-choix" },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       null,
-      a.default.createElement("b", null, "\u{1F384} Roue de No\xEBl"),
-      a.default.createElement(
+      React.default.createElement("b", null, "\u{1F384} Roue de No\xEBl"),
+      React.default.createElement(
         "span",
         null,
-        t.roueNon ? "Vous ne participez pas." : "Vous participez : un tour de roue \xE0 chaque tampon.",
+        moi.roueNon ? "Vous ne participez pas." : "Vous participez : un tour de roue \xE0 chaque tampon.",
       ),
     ),
-    a.default.createElement(
+    React.default.createElement(
       "button",
-      { className: "btn gh sm", style: { width: "auto" }, onClick: () => o(!t.roueNon) },
-      t.roueNon ? "Participer" : "Ne plus participer",
+      { className: "btn gh sm", style: { width: "auto" }, onClick: () => o(!moi.roueNon) },
+      moi.roueNon ? "Participer" : "Ne plus participer",
     ),
-    n && n !== "\u2026" && a.default.createElement("div", { className: "roue-choix-ok" }, n),
+    n && n !== "\u2026" && React.default.createElement("div", { className: "roue-choix-ok" }, n),
   );
 }
-function l9({ moi: t, d: e, setMoi: n, ouvrirLegal: r }) {
-  let [i, o] = (0, a.useState)(""),
-    [s, l] = (0, a.useState)(null),
+function MesDonnees({ moi: moi, d: e, setMoi: setMoi, ouvrirLegal: ouvrirLegal }) {
+  let [i, o] = (0, React.useState)(""),
+    [s, l] = (0, React.useState)(null),
     u = e.store.phone,
     d = async () => {
       o("Chargement\u2026");
       try {
-        let A = await Bo(we(ce, "clients", t.ref)),
+        let A = await getDoc(doc2(db2, "clients", moi.ref)),
           S = [];
         try {
-          S = (await dy(Qn(ce, "clients", t.ref, "historique"))).docs
+          S = (await getDocs(collection(db2, "clients", moi.ref, "historique"))).docs
             .map((z) => z.data())
             .sort((z, j) => (j.date || 0) - (z.date || 0));
         } catch {}
         let P = A.exists() ? A.data() : {};
-        (l({
+        l({
           fiche: {
             nom: P.nom,
             prenom: P.prenom ?? String(P.nom || "").split(" ")[0],
@@ -5059,7 +5172,7 @@ function l9({ moi: t, d: e, setMoi: n, ouvrirLegal: r }) {
           },
           historique: S,
         }),
-          o(""));
+          o("");
       } catch {
         o("Impossible de charger vos donn\xE9es. V\xE9rifiez votre connexion.");
       }
@@ -5077,30 +5190,30 @@ function l9({ moi: t, d: e, setMoi: n, ouvrirLegal: r }) {
           })),
         },
         S = document.createElement("a");
-      ((S.href = URL.createObjectURL(new Blob([JSON.stringify(A, null, 2)], { type: "application/json" }))),
+      (S.href = URL.createObjectURL(new Blob([JSON.stringify(A, null, 2)], { type: "application/json" }))),
         (S.download = "mes-donnees-epicerie-raddonnaise.json"),
-        S.click());
+        S.click();
     },
-    [f, m] = (0, a.useState)(!1),
-    [E, F] = (0, a.useState)(null),
+    [f, m] = (0, React.useState)(!1),
+    [E, F] = (0, React.useState)(null),
     D = async () => {
-      let A = __nomP(E.prenom).slice(0, 40),
-        S = __nomP(E.nomFamille).slice(0, 40);
+      let A = nomPropre(E.prenom).slice(0, 40),
+        S = nomPropre(E.nomFamille).slice(0, 40);
       o("Enregistrement\u2026");
       try {
-        let P = Ma(ce);
-        (P.update(we(ce, "clients", t.ref), {
+        let P = writeBatch(db2);
+        P.update(doc2(db2, "clients", moi.ref), {
           prenom: A,
           nomFamille: S,
           nom: (A + " " + S).slice(0, 60),
-          tel: __telF(E.tel),
+          tel: telFormate(E.tel),
           email: E.email.trim().toLowerCase().slice(0, 100),
           anniv: E.aj && E.am ? String(E.am).padStart(2, "0") + "-" + String(E.aj).padStart(2, "0") : "",
         }),
           await P.commit(),
           F(null),
           await d(),
-          o("\u2713 Vos informations sont enregistr\xE9es."));
+          o("\u2713 Vos informations sont enregistr\xE9es.");
       } catch {
         o("Enregistrement impossible. V\xE9rifiez votre connexion et r\xE9essayez.");
       }
@@ -5110,146 +5223,146 @@ function l9({ moi: t, d: e, setMoi: n, ouvrirLegal: r }) {
       `Bonjour,
 
 Je souhaite la suppression de ma carte de fid\xE9lit\xE9 ` +
-        (t.code || "") +
+        (moi.code || "") +
         " (" +
-        (t.nom || "") +
+        (moi.nom || "") +
         `) et de toutes mes donn\xE9es.
 
 Merci.`,
     );
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "card", style: { marginTop: 14 } },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "b" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { fontWeight: 800, fontSize: 14, color: "var(--forest)", marginBottom: 4 } },
         "Mes donn\xE9es",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "p",
         { style: { marginBottom: 12 } },
         "Vous gardez la main sur vos informations personnelles.",
       ),
-      a.default.createElement(a9, { moi: t, d: e }),
+      React.default.createElement(ParticipationRoue, { moi: moi, d: e }),
       s
-        ? a.default.createElement(
-            a.default.Fragment,
+        ? React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "donnees" },
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 null,
-                a.default.createElement("span", null, "Nom"),
-                a.default.createElement("b", null, s.fiche.nom),
+                React.default.createElement("span", null, "Nom"),
+                React.default.createElement("b", null, s.fiche.nom),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 null,
-                a.default.createElement("span", null, "T\xE9l\xE9phone"),
-                a.default.createElement("b", null, s.fiche.telephone || "\u2014"),
+                React.default.createElement("span", null, "T\xE9l\xE9phone"),
+                React.default.createElement("b", null, s.fiche.telephone || "\u2014"),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 null,
-                a.default.createElement("span", null, "E-mail"),
-                a.default.createElement(
+                React.default.createElement("span", null, "E-mail"),
+                React.default.createElement(
                   "b",
                   { style: { wordBreak: "break-all" } },
                   s.fiche.email || "\u2014",
                 ),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 null,
-                a.default.createElement("span", null, "Anniversaire"),
-                a.default.createElement("b", null, u9(s.fiche.anniv) || "\u2014"),
+                React.default.createElement("span", null, "Anniversaire"),
+                React.default.createElement("b", null, u9(s.fiche.anniv) || "\u2014"),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 null,
-                a.default.createElement("span", null, "Code carte"),
-                a.default.createElement("b", null, s.fiche.code),
+                React.default.createElement("span", null, "Code carte"),
+                React.default.createElement("b", null, s.fiche.code),
               ),
               fc(e.fidelite)
-                ? a.default.createElement(
+                ? React.default.createElement(
                     "div",
                     null,
-                    a.default.createElement("span", null, "Tampons"),
-                    a.default.createElement("b", null, s.fiche.tampons),
+                    React.default.createElement("span", null, "Tampons"),
+                    React.default.createElement("b", null, s.fiche.tampons),
                   )
-                : a.default.createElement(
+                : React.default.createElement(
                     "div",
                     null,
-                    a.default.createElement("span", null, "Points"),
-                    a.default.createElement("b", null, s.fiche.points),
+                    React.default.createElement("span", null, "Points"),
+                    React.default.createElement("b", null, s.fiche.points),
                   ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 null,
-                a.default.createElement("span", null, "Inscription"),
-                a.default.createElement("b", null, s.fiche.inscription),
+                React.default.createElement("span", null, "Inscription"),
+                React.default.createElement("b", null, s.fiche.inscription),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 null,
-                a.default.createElement("span", null, "Passages en caisse"),
-                a.default.createElement("b", null, s.historique.length),
+                React.default.createElement("span", null, "Passages en caisse"),
+                React.default.createElement("b", null, s.historique.length),
               ),
             ),
-            a.default.createElement(
+            React.default.createElement(
               "button",
               { className: "btn gh", style: { marginTop: 10 }, onClick: h },
               "T\xE9l\xE9charger mes donn\xE9es",
             ),
             E
-              ? a.default.createElement(
+              ? React.default.createElement(
                   "div",
                   { className: "modif" },
-                  a.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { display: "flex", gap: 10 } },
-                    a.default.createElement(
+                    React.default.createElement(
                       "div",
                       { style: { flex: 1, minWidth: 0 } },
-                      a.default.createElement("label", { className: "lab" }, "Pr\xE9nom"),
-                      a.default.createElement("input", {
+                      React.default.createElement("label", { className: "lab" }, "Pr\xE9nom"),
+                      React.default.createElement("input", {
                         className: "inp",
                         value: E.prenom,
                         onChange: (A) => F({ ...E, prenom: A.target.value }),
                       }),
                     ),
-                    a.default.createElement(
+                    React.default.createElement(
                       "div",
                       { style: { flex: 1, minWidth: 0 } },
-                      a.default.createElement("label", { className: "lab" }, "Nom"),
-                      a.default.createElement("input", {
+                      React.default.createElement("label", { className: "lab" }, "Nom"),
+                      React.default.createElement("input", {
                         className: "inp",
                         value: E.nomFamille,
                         onChange: (A) => F({ ...E, nomFamille: A.target.value }),
                       }),
                     ),
                   ),
-                  a.default.createElement("label", { className: "lab" }, "T\xE9l\xE9phone"),
-                  a.default.createElement("input", {
+                  React.default.createElement("label", { className: "lab" }, "T\xE9l\xE9phone"),
+                  React.default.createElement("input", {
                     className: "inp",
                     type: "tel",
                     value: E.tel,
                     onChange: (A) => F({ ...E, tel: A.target.value }),
                   }),
                   E.tel &&
-                    !R2(E.tel) &&
-                    a.default.createElement(
+                    !telValide(E.tel) &&
+                    React.default.createElement(
                       "div",
                       { className: "champ-err" },
                       "Num\xE9ro incomplet (10 chiffres).",
                     ),
-                  a.default.createElement("label", { className: "lab" }, "Adresse e-mail"),
-                  a.default.createElement("input", {
+                  React.default.createElement("label", { className: "lab" }, "Adresse e-mail"),
+                  React.default.createElement("input", {
                     className: "inp",
                     type: "email",
                     autoCapitalize: "off",
@@ -5257,40 +5370,44 @@ Merci.`,
                     onChange: (A) => F({ ...E, email: A.target.value }),
                   }),
                   E.email &&
-                    !ex(E.email) &&
-                    a.default.createElement(
+                    !emailValide(E.email) &&
+                    React.default.createElement(
                       "div",
                       { className: "champ-err" },
                       "Adresse e-mail incompl\xE8te.",
                     ),
-                  a.default.createElement("label", { className: "lab" }, "Anniversaire (facultatif)"),
-                  a.default.createElement(kT, {
+                  React.default.createElement("label", { className: "lab" }, "Anniversaire (facultatif)"),
+                  React.default.createElement(ChoixAnniversaire, {
                     j: E.aj,
                     m: E.am,
                     setJ: (A) => F((S) => ({ ...S, aj: A })),
                     setM: (A) => F((S) => ({ ...S, am: A })),
                   }),
-                  a.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { display: "flex", gap: 8, marginTop: 10 } },
-                    a.default.createElement(
+                    React.default.createElement(
                       "button",
                       { className: "btn gh", style: { flex: 1 }, onClick: () => F(null) },
                       "Annuler",
                     ),
-                    a.default.createElement(
+                    React.default.createElement(
                       "button",
                       {
                         className: "btn",
                         style: { flex: 2 },
-                        disabled: !E.prenom.trim() || !E.nomFamille.trim() || !R2(E.tel) || !ex(E.email),
+                        disabled:
+                          !E.prenom.trim() ||
+                          !E.nomFamille.trim() ||
+                          !telValide(E.tel) ||
+                          !emailValide(E.email),
                         onClick: D,
                       },
                       "Enregistrer",
                     ),
                   ),
                 )
-              : a.default.createElement(
+              : React.default.createElement(
                   "button",
                   {
                     className: "btn gh",
@@ -5308,17 +5425,21 @@ Merci.`,
                   "\u270F\uFE0F Modifier mes infos",
                 ),
           )
-        : a.default.createElement("button", { className: "btn gh", onClick: d }, "Consulter mes donn\xE9es"),
+        : React.default.createElement(
+            "button",
+            { className: "btn gh", onClick: d },
+            "Consulter mes donn\xE9es",
+          ),
       f
-        ? a.default.createElement(
+        ? React.default.createElement(
             "div",
             { className: "rgpd-info", style: { marginTop: 10 } },
             "Pour prot\xE9ger votre carte, la suppression est faite par l'\xE9picerie. Demandez-la en un geste, elle sera faite rapidement :",
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { style: { display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" } },
               u &&
-                a.default.createElement(
+                React.default.createElement(
                   "a",
                   {
                     className: "btn gh",
@@ -5328,7 +5449,7 @@ Merci.`,
                   "Appeler",
                 ),
               M &&
-                a.default.createElement(
+                React.default.createElement(
                   "a",
                   {
                     className: "btn gh",
@@ -5344,15 +5465,15 @@ Merci.`,
                   "Envoyer un e-mail",
                 ),
             ),
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { style: { marginTop: 8 } },
               "Ou simplement en boutique, en donnant votre code ",
-              a.default.createElement("b", null, t.code),
+              React.default.createElement("b", null, moi.code),
               ".",
             ),
           )
-        : a.default.createElement(
+        : React.default.createElement(
             "button",
             {
               className: "btn gh",
@@ -5361,16 +5482,17 @@ Merci.`,
             },
             "Supprimer ma carte et mes donn\xE9es",
           ),
-      i && a.default.createElement("p", { style: { fontSize: 12, marginTop: 8, color: "var(--ink2)" } }, i),
-      a.default.createElement(
+      i &&
+        React.default.createElement("p", { style: { fontSize: 12, marginTop: 8, color: "var(--ink2)" } }, i),
+      React.default.createElement(
         "button",
-        { className: "lienleg", onClick: () => r("confidentialite") },
+        { className: "lienleg", onClick: () => ouvrirLegal("confidentialite") },
         "Politique de confidentialit\xE9",
       ),
     ),
   );
 }
-var __nomP = (t) => {
+var nomPropre = (t) => {
     let x = String(t || "")
       .normalize("NFC")
       .trim()
@@ -5388,16 +5510,16 @@ var __nomP = (t) => {
       )
       .join("");
   },
-  __telF = (t) => {
+  telFormate = (t) => {
     let x = String(t || "").trim(),
       d = x.replace(/\D/g, "");
     if (d.length === 11 && d.startsWith("33")) d = "0" + d.slice(2);
     return d.length === 10 && d[0] === "0" ? d.replace(/(\d{2})(?=\d)/g, "$1 ") : x.slice(0, 20);
   };
-var R2 = (t) =>
+var telValide = (t) =>
     /^(\+33\s?|0)[1-9](\s?\.?-?\d{2}){4}$/.test(String(t || "").trim()) ||
     String(t || "").replace(/\D/g, "").length === 10,
-  ex = (t) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(String(t || "").trim()),
+  emailValide = (t) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(String(t || "").trim()),
   AT = [
     "janvier",
     "f\xE9vrier",
@@ -5420,45 +5542,45 @@ var R2 = (t) =>
       o = new Date(e.getFullYear(), 1, 29).getMonth() === 1;
     return !!t && (t === i || (t === "02-29" && i === "02-28" && !o));
   };
-function kT({ j: t, m: e, setJ: n, setM: r }) {
-  let i = e ? new Date(2024, +e, 0).getDate() : 31;
-  return a.default.createElement(
+function ChoixAnniversaire({ j: j, m: m, setJ: setJ, setM: setM }) {
+  let i = m ? new Date(2024, +m, 0).getDate() : 31;
+  return React.default.createElement(
     "div",
     { style: { display: "flex", gap: 10 } },
-    a.default.createElement(
+    React.default.createElement(
       "select",
       {
         className: "inp",
         style: { flex: 1, minWidth: 0 },
-        value: t,
-        onChange: (o) => n(o.target.value),
+        value: j,
+        onChange: (o) => setJ(o.target.value),
         "aria-label": "Jour",
       },
-      a.default.createElement("option", { value: "" }, "Jour"),
+      React.default.createElement("option", { value: "" }, "Jour"),
       Array.from({ length: i }, (o, s) =>
-        a.default.createElement("option", { key: s, value: String(s + 1) }, s + 1),
+        React.default.createElement("option", { key: s, value: String(s + 1) }, s + 1),
       ),
     ),
-    a.default.createElement(
+    React.default.createElement(
       "select",
       {
         className: "inp",
         style: { flex: 2, minWidth: 0 },
-        value: e,
+        value: m,
         onChange: (o) => {
-          (r(o.target.value), t && +t > new Date(2024, +o.target.value, 0).getDate() && n(""));
+          setM(o.target.value), j && +j > new Date(2024, +o.target.value, 0).getDate() && setJ("");
         },
         "aria-label": "Mois",
       },
-      a.default.createElement("option", { value: "" }, "Mois"),
-      AT.map((o, s) => a.default.createElement("option", { key: s, value: String(s + 1) }, o)),
+      React.default.createElement("option", { value: "" }, "Mois"),
+      AT.map((o, s) => React.default.createElement("option", { key: s, value: String(s + 1) }, o)),
     ),
   );
 }
-function d9({ liste: t }) {
-  let [e, n] = (0, a.useState)(null);
-  if (!t.length) return null;
-  let r = t[0],
+function RecetteSemaine({ liste: liste }) {
+  let [e, n] = (0, React.useState)(null);
+  if (!liste.length) return null;
+  let r = liste[0],
     i = (o) =>
       String(o || "")
         .split(
@@ -5467,24 +5589,24 @@ function d9({ liste: t }) {
         )
         .map((s) => s.trim())
         .filter(Boolean);
-  return a.default.createElement(
-    a.default.Fragment,
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    a.default.createElement(
+    React.default.createElement(
       "h3",
       { className: "h2" },
-      a.default.createElement("i", null),
+      React.default.createElement("i", null),
       "La recette de la semaine",
     ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card recette", onClick: () => n(r), role: "button" },
-      r.photo && a.default.createElement("img", { src: r.photo, alt: "", className: "recette-img" }),
-      a.default.createElement(
+      r.photo && React.default.createElement("img", { src: r.photo, alt: "", className: "recette-img" }),
+      React.default.createElement(
         "div",
         { className: "b" },
-        a.default.createElement("div", { className: "recette-t" }, "\u{1F4D6} ", r.titre),
-        a.default.createElement(
+        React.default.createElement("div", { className: "recette-t" }, "\u{1F4D6} ", r.titre),
+        React.default.createElement(
           "div",
           { className: "recette-s" },
           [r.duree, r.personnes ? r.personnes + " pers." : ""].filter(Boolean).join(" \xB7 ") ||
@@ -5493,71 +5615,71 @@ function d9({ liste: t }) {
         ),
       ),
     ),
-    t.length > 1 &&
-      a.default.createElement(
+    liste.length > 1 &&
+      React.default.createElement(
         "div",
         { className: "recette-autres" },
-        t
+        liste
           .slice(1, 6)
           .map((o) =>
-            a.default.createElement("button", { key: o.id, onClick: () => n(o) }, "\u{1F4D6} ", o.titre),
+            React.default.createElement("button", { key: o.id, onClick: () => n(o) }, "\u{1F4D6} ", o.titre),
           ),
       ),
     e &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "legal", style: { zIndex: 9e3 } },
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "legal-top" },
-          a.default.createElement(
+          React.default.createElement(
             "button",
             { onClick: () => n(null), "aria-label": "Retour" },
             "\u2190 Retour",
           ),
         ),
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "legal-in" },
           e.photo &&
-            a.default.createElement("img", {
+            React.default.createElement("img", {
               src: e.photo,
               alt: "",
               style: { width: "100%", borderRadius: 18, marginBottom: 12 },
             }),
-          a.default.createElement("h2", null, e.titre),
+          React.default.createElement("h2", null, e.titre),
           (e.duree || e.personnes) &&
-            a.default.createElement(
+            React.default.createElement(
               "p",
               { className: "chapo" },
               [e.duree, e.personnes ? "pour " + e.personnes + " personnes" : ""]
                 .filter(Boolean)
                 .join(" \xB7 "),
             ),
-          e.intro && a.default.createElement("p", null, e.intro),
+          e.intro && React.default.createElement("p", null, e.intro),
           i(e.ingredients).length > 0 &&
-            a.default.createElement(
-              a.default.Fragment,
+            React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement("h4", null, "Ingr\xE9dients"),
-              a.default.createElement(
+              React.default.createElement("h4", null, "Ingr\xE9dients"),
+              React.default.createElement(
                 "ul",
                 null,
-                i(e.ingredients).map((o, s) => a.default.createElement("li", { key: s }, o)),
+                i(e.ingredients).map((o, s) => React.default.createElement("li", { key: s }, o)),
               ),
             ),
           i(e.etapes).length > 0 &&
-            a.default.createElement(
-              a.default.Fragment,
+            React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement("h4", null, "Pr\xE9paration"),
-              a.default.createElement(
+              React.default.createElement("h4", null, "Pr\xE9paration"),
+              React.default.createElement(
                 "ol",
                 null,
-                i(e.etapes).map((o, s) => a.default.createElement("li", { key: s }, o)),
+                i(e.etapes).map((o, s) => React.default.createElement("li", { key: s }, o)),
               ),
             ),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "recette-rayon" },
             "\u{1F6D2} Les ingr\xE9dients sont en rayon \xE0 l'\xE9picerie !",
@@ -5575,33 +5697,33 @@ var K2 = "epicerie-raddonnaise-sondages",
       let t = localStorage.getItem("epicerie-raddonnaise-idtel");
       if (!t) {
         let e = new Uint32Array(16);
-        (crypto.getRandomValues(e),
+        crypto.getRandomValues(e),
           (t = [...e].map((n) => "abcdefghijkmnpqrstuvwxyz23456789"[n % 32]).join("")),
-          localStorage.setItem("epicerie-raddonnaise-idtel", t));
+          localStorage.setItem("epicerie-raddonnaise-idtel", t);
       }
       return t;
     } catch {
       return h9;
     }
   };
-function f9({ d: t, moi: e }) {
+function Sondage({ d: t, moi: moi }) {
   let n = t.sondage,
-    [r, i] = (0, a.useState)(() => {
+    [r, i] = (0, React.useState)(() => {
       try {
         return JSON.parse(localStorage.getItem(K2) || "[]");
       } catch {
         return [];
       }
     }),
-    [o, s] = (0, a.useState)(""),
-    [l, u] = (0, a.useState)(!1),
-    [d, h] = (0, a.useState)("");
+    [o, s] = (0, React.useState)(""),
+    [l, u] = (0, React.useState)(!1),
+    [d, h] = (0, React.useState)("");
   if (!n?.active || !n.id || !n.question) return null;
   let f = r.includes(n.id),
     m = async (E, F) => {
-      (u(!0), h(""));
+      u(!0), h("");
       try {
-        await Sn(we(ce, "reponses", n.id + "_" + p9()), {
+        await setDoc(doc2(db2, "reponses", n.id + "_" + p9()), {
           s: n.id,
           o: E,
           r: String(F || "")
@@ -5625,33 +5747,33 @@ function f9({ d: t, moi: e }) {
       }
       u(!1);
     };
-  return a.default.createElement(
-    a.default.Fragment,
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    a.default.createElement(
+    React.default.createElement(
       "h3",
       { className: "h2" },
-      a.default.createElement("i", null),
+      React.default.createElement("i", null),
       n.mode === "libre" ? "La bo\xEEte \xE0 id\xE9es" : "Votre avis compte",
     ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card sondage" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "b" },
-        a.default.createElement("div", { className: "sondage-q" }, "\u{1F4A1} ", n.question),
+        React.default.createElement("div", { className: "sondage-q" }, "\u{1F4A1} ", n.question),
         f
-          ? a.default.createElement(
+          ? React.default.createElement(
               "div",
               { className: "sondage-merci" },
               "Merci pour votre r\xE9ponse ! \u{1F34F}",
             )
           : n.mode === "libre"
-            ? a.default.createElement(
-                a.default.Fragment,
+            ? React.default.createElement(
+                React.default.Fragment,
                 null,
-                a.default.createElement("textarea", {
+                React.default.createElement("textarea", {
                   className: "inp",
                   value: o,
                   maxLength: 500,
@@ -5659,24 +5781,24 @@ function f9({ d: t, moi: e }) {
                   placeholder: "Votre id\xE9e\u2026",
                   style: { minHeight: 80 },
                 }),
-                a.default.createElement(
+                React.default.createElement(
                   "button",
                   { className: "btn", disabled: !o.trim() || l, onClick: () => m(-1, o) },
                   "Envoyer mon id\xE9e",
                 ),
               )
-            : a.default.createElement(
+            : React.default.createElement(
                 "div",
                 { className: "sondage-o" },
                 (n.options || [])
                   .filter(Boolean)
                   .map((E, F) =>
-                    a.default.createElement("button", { key: F, disabled: l, onClick: () => m(F, E) }, E),
+                    React.default.createElement("button", { key: F, disabled: l, onClick: () => m(F, E) }, E),
                   ),
               ),
-        d && a.default.createElement("div", { className: "champ-err" }, d),
+        d && React.default.createElement("div", { className: "champ-err" }, d),
         !f &&
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { style: { fontSize: 11, color: "var(--ink3)", marginTop: 8 } },
             "R\xE9ponse anonyme.",
@@ -5699,12 +5821,12 @@ try {
     (localStorage.setItem(tx, t[1].toUpperCase()),
     history.replaceState(null, "", location.pathname + location.search));
 } catch {}
-function g9({ moi: t }) {
-  let [e, n] = (0, a.useState)(""),
-    r = location.origin + location.pathname + "#parrain=" + t.code,
+function Parrainage({ moi: moi }) {
+  let [e, n] = (0, React.useState)(""),
+    r = location.origin + location.pathname + "#parrain=" + moi.code,
     i =
       "Je te conseille l'appli de l'\xC9picerie Raddonnaise (promos, plateaux, carte \xE0 tampons\u2026). Cr\xE9e ta carte avec mon code " +
-      t.code +
+      moi.code +
       " : \xE0 ton premier passage, on gagne chacun un tampon \u{1F34F}",
     o = async () => {
       n("");
@@ -5717,49 +5839,53 @@ function g9({ moi: t }) {
         if (s?.name === "AbortError") return;
       }
       try {
-        (await navigator.clipboard.writeText(i + " " + r),
-          n("\u2713 Message copi\xE9 : collez-le dans un SMS ou sur WhatsApp."));
+        await navigator.clipboard.writeText(i + " " + r),
+          n("\u2713 Message copi\xE9 : collez-le dans un SMS ou sur WhatsApp.");
       } catch {
-        n("Donnez simplement votre code \xE0 votre voisin : " + t.code);
+        n("Donnez simplement votre code \xE0 votre voisin : " + moi.code);
       }
     };
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "card parr", style: { marginTop: 14 } },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "b" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { fontWeight: 800, fontSize: 15, color: "var(--forest)" } },
         "\u{1F91D} Parrainez un voisin",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "p",
         { style: { margin: "6px 0 10px", fontSize: 13, lineHeight: 1.45 } },
         "Il cr\xE9e sa carte avec votre code ",
-        a.default.createElement("b", null, t.code),
+        React.default.createElement("b", null, moi.code),
         ". \xC0 son premier passage en caisse, ",
-        a.default.createElement("b", null, "vous gagnez chacun 1 tampon"),
+        React.default.createElement("b", null, "vous gagnez chacun 1 tampon"),
         " !",
       ),
-      a.default.createElement("button", { className: "btn", onClick: o }, "Partager mon code"),
+      React.default.createElement("button", { className: "btn", onClick: o }, "Partager mon code"),
       e &&
-        a.default.createElement("div", { style: { fontSize: 12.5, marginTop: 8, color: "var(--ink2)" } }, e),
+        React.default.createElement(
+          "div",
+          { style: { fontSize: 12.5, marginTop: 8, color: "var(--ink2)" } },
+          e,
+        ),
     ),
   );
 }
-function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
-  let [__q, __sq] = (0, a.useState)(!1),
-    [__c, __sc] = (0, a.useState)(!1),
-    [r, i] = (0, a.useState)(""),
-    [o, s] = (0, a.useState)(""),
-    [l, u] = (0, a.useState)(""),
-    [d, h] = (0, a.useState)(""),
-    [f, m] = (0, a.useState)(!1),
-    [E, F] = (0, a.useState)(""),
-    [D, M] = (0, a.useState)(!1),
-    [C, A] = (0, a.useState)(() => {
+function FormulaireCarte({ onDone: onDone, onCancel: onCancel, ouvrirLegal: ouvrirLegal }) {
+  let [__q, __sq] = (0, React.useState)(!1),
+    [__c, __sc] = (0, React.useState)(!1),
+    [r, i] = (0, React.useState)(""),
+    [o, s] = (0, React.useState)(""),
+    [l, u] = (0, React.useState)(""),
+    [d, h] = (0, React.useState)(""),
+    [f, m] = (0, React.useState)(!1),
+    [E, F] = (0, React.useState)(""),
+    [D, M] = (0, React.useState)(!1),
+    [C, A] = (0, React.useState)(() => {
       try {
         return localStorage.getItem(tx) || "";
       } catch {
@@ -5767,17 +5893,17 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
       }
     }),
     S = m9(C),
-    [P, z] = (0, a.useState)(""),
-    [j, b] = (0, a.useState)(""),
+    [P, z] = (0, React.useState)(""),
+    [j, b] = (0, React.useState)(""),
     y = P && j ? String(j).padStart(2, "0") + "-" + String(P).padStart(2, "0") : "",
-    v = R2(l),
-    w = ex(d),
+    v = telValide(l),
+    w = emailValide(d),
     k = r.trim() && o.trim() && v && w;
-  let __p = fO(),
+  let __p = plateforme(),
     __ni = !(window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === !0);
   if (__p.inApp || (__p.ios && __ni && !__q)) {
     let __e = (x, y) =>
-      a.default.createElement(
+      React.default.createElement(
         "div",
         {
           style: {
@@ -5790,7 +5916,7 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
             color: "var(--ink)",
           },
         },
-        a.default.createElement(
+        React.default.createElement(
           "span",
           {
             style: {
@@ -5809,25 +5935,25 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
           },
           x,
         ),
-        a.default.createElement("div", null, y),
+        React.default.createElement("div", null, y),
       );
-    return a.default.createElement(
+    return React.default.createElement(
       "div",
       { className: "wrap", style: { paddingTop: 28 } },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { textAlign: "center", marginBottom: 18 } },
-        a.default.createElement("img", {
-          src: rs,
+        React.default.createElement("img", {
+          src: LOGO,
           alt: "",
           style: { width: 86, height: 86, borderRadius: "50%", border: "3px solid var(--apple-soft)" },
         }),
-        a.default.createElement(
+        React.default.createElement(
           "h2",
           { style: { fontFamily: "var(--script)", fontSize: 33, color: "var(--forest)", marginTop: 12 } },
           "Ma carte de fid\xE9lit\xE9",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "p",
           { style: { fontSize: 13.5, color: "var(--ink2)", lineHeight: 1.5, marginTop: 6 } },
           __p.inApp
@@ -5837,7 +5963,7 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
             : "Installez d'abord l'appli sur votre \xE9cran d'accueil, puis cr\xE9ez votre carte dedans. Sinon, elle resterait dans Safari et vous ne la retrouveriez pas dans l'appli.",
         ),
       ),
-      a.default.createElement(
+      React.default.createElement(
         "div",
         {
           style: {
@@ -5865,7 +5991,7 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
         __e(__p.inApp ? "3" : "2", "Ouvrez l'appli depuis votre \xE9cran d'accueil et cr\xE9ez votre carte"),
       ),
       __p.inApp
-        ? a.default.createElement(
+        ? React.default.createElement(
             "button",
             {
               className: "btn",
@@ -5880,48 +6006,48 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
             },
             __c ? "Lien copi\xE9 \u2713" : "Copier le lien de l'appli",
           )
-        : a.default.createElement(
+        : React.default.createElement(
             "button",
             { className: "btn gh", onClick: () => __sq(!0) },
             "Cr\xE9er quand m\xEAme ici",
           ),
-      a.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn gh", style: { marginTop: 8 }, onClick: e },
+        { className: "btn gh", style: { marginTop: 8 }, onClick: onCancel },
         "Plus tard",
       ),
     );
   }
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap", style: { paddingTop: 28 } },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { style: { textAlign: "center", marginBottom: 22 } },
-      a.default.createElement("img", {
-        src: rs,
+      React.default.createElement("img", {
+        src: LOGO,
         alt: "",
         style: { width: 86, height: 86, borderRadius: "50%", border: "3px solid var(--apple-soft)" },
       }),
-      a.default.createElement(
+      React.default.createElement(
         "h2",
         { style: { fontFamily: "var(--script)", fontSize: 33, color: "var(--forest)", marginTop: 12 } },
         "Ma carte de fid\xE9lit\xE9",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "p",
         { style: { fontSize: 13, color: "var(--ink2)", lineHeight: 1.5, marginTop: 6 } },
         "Un code personnel vous est attribu\xE9. Pr\xE9sentez-le en caisse \xE0 chaque passage pour gagner vos tampons.",
       ),
     ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 10 } },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { flex: 1, minWidth: 0 } },
-        a.default.createElement("label", { className: "lab" }, "Pr\xE9nom"),
-        a.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Pr\xE9nom"),
+        React.default.createElement("input", {
           className: "inp",
           value: r,
           onChange: (T) => i(T.target.value),
@@ -5930,11 +6056,11 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
           autoFocus: !0,
         }),
       ),
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { flex: 1, minWidth: 0 } },
-        a.default.createElement("label", { className: "lab" }, "Nom"),
-        a.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Nom"),
+        React.default.createElement("input", {
           className: "inp",
           value: o,
           onChange: (T) => s(T.target.value),
@@ -5943,8 +6069,8 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
         }),
       ),
     ),
-    a.default.createElement("label", { className: "lab", style: { marginTop: 12 } }, "T\xE9l\xE9phone"),
-    a.default.createElement("input", {
+    React.default.createElement("label", { className: "lab", style: { marginTop: 12 } }, "T\xE9l\xE9phone"),
+    React.default.createElement("input", {
       className: "inp",
       type: "tel",
       inputMode: "tel",
@@ -5955,9 +6081,9 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
     }),
     l &&
       !v &&
-      a.default.createElement("div", { className: "champ-err" }, "Num\xE9ro incomplet (10 chiffres)."),
-    a.default.createElement("label", { className: "lab", style: { marginTop: 12 } }, "Adresse e-mail"),
-    a.default.createElement("input", {
+      React.default.createElement("div", { className: "champ-err" }, "Num\xE9ro incomplet (10 chiffres)."),
+    React.default.createElement("label", { className: "lab", style: { marginTop: 12 } }, "Adresse e-mail"),
+    React.default.createElement("input", {
       className: "inp",
       type: "email",
       inputMode: "email",
@@ -5967,25 +6093,31 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
       autoComplete: "email",
       autoCapitalize: "off",
     }),
-    d && !w && a.default.createElement("div", { className: "champ-err" }, "Adresse e-mail incompl\xE8te."),
-    a.default.createElement(
+    d &&
+      !w &&
+      React.default.createElement("div", { className: "champ-err" }, "Adresse e-mail incompl\xE8te."),
+    React.default.createElement(
       "label",
       { className: "lab", style: { marginTop: 12 } },
       "Votre anniversaire ",
-      a.default.createElement(
+      React.default.createElement(
         "span",
         { style: { fontWeight: 600, color: "var(--ink3)" } },
         "(facultatif : un tampon offert ce jour-l\xE0 \u{1F382})",
       ),
     ),
-    a.default.createElement(kT, { j: P, m: j, setJ: z, setM: b }),
-    a.default.createElement(
+    React.default.createElement(ChoixAnniversaire, { j: P, m: j, setJ: z, setM: b }),
+    React.default.createElement(
       "label",
       { className: "lab", style: { marginTop: 12 } },
       "Code de parrainage ",
-      a.default.createElement("span", { style: { fontWeight: 600, color: "var(--ink3)" } }, "(facultatif)"),
+      React.default.createElement(
+        "span",
+        { style: { fontWeight: 600, color: "var(--ink3)" } },
+        "(facultatif)",
+      ),
     ),
-    a.default.createElement("input", {
+    React.default.createElement("input", {
       className: "inp",
       value: C,
       onChange: (T) => A(T.target.value.toUpperCase()),
@@ -5995,47 +6127,47 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
     }),
     C &&
       !S &&
-      a.default.createElement("div", { className: "champ-err" }, "Code incomplet (exemple : RAD-AB2CD)."),
+      React.default.createElement("div", { className: "champ-err" }, "Code incomplet (exemple : RAD-AB2CD)."),
     S &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { fontSize: 12, color: "var(--apple)", fontWeight: 700, marginTop: 4 } },
         "\u{1F91D} \xC0 votre premier passage en caisse, vous et votre parrain gagnez chacun 1 tampon !",
       ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "rgpd-info" },
       "Vos nom, pr\xE9nom, t\xE9l\xE9phone et e-mail servent ",
-      a.default.createElement("b", null, "uniquement"),
+      React.default.createElement("b", null, "uniquement"),
       " \xE0 g\xE9rer votre carte de fid\xE9lit\xE9 (vous retrouver en caisse, vous joindre au sujet de votre carte). Ils ne sont ni revendus, ni utilis\xE9s pour de la publicit\xE9. Vous pouvez les consulter \xE0 tout moment depuis l'onglet Fid\xE9lit\xE9, et en demander la suppression \xE0 l'\xE9picerie.",
     ),
-    a.default.createElement(
+    React.default.createElement(
       "label",
       { className: "accord" },
-      a.default.createElement("input", {
+      React.default.createElement("input", {
         type: "checkbox",
         checked: D,
         onChange: (T) => M(T.target.checked),
       }),
-      a.default.createElement(
+      React.default.createElement(
         "span",
         null,
         "J'ai lu la ",
-        a.default.createElement(
+        React.default.createElement(
           "button",
-          { type: "button", onClick: () => n("confidentialite") },
+          { type: "button", onClick: () => ouvrirLegal("confidentialite") },
           "politique de confidentialit\xE9",
         ),
         " et j'accepte l'utilisation de mes donn\xE9es pour ma carte de fid\xE9lit\xE9.",
       ),
     ),
     E &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { color: "#C86B5C", fontSize: 12.5, fontWeight: 700, marginTop: 12 } },
         E,
       ),
-    a.default.createElement(
+    React.default.createElement(
       "button",
       {
         className: "btn",
@@ -6043,16 +6175,16 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
         disabled: !k || !D || f,
         onClick: async () => {
           if (!k || !D || f) return;
-          (m(!0), F(""));
+          m(!0), F("");
           let T = new Date().toLocaleDateString("sv-SE"),
-            X = __nomP(r).slice(0, 40),
-            le = __nomP(o).slice(0, 40),
+            X = nomPropre(r).slice(0, 40),
+            le = nomPropre(o).slice(0, 40),
             se = {
               code: qy(),
               prenom: X,
               nomFamille: le,
               nom: (X + " " + le).slice(0, 60),
-              tel: __telF(l),
+              tel: telFormate(l),
               email: d.trim().toLowerCase().slice(0, 100),
               points: 0,
               depuis: T,
@@ -6064,9 +6196,9 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
             let R,
               fe = 0;
             for (;;) {
-              R = we(Qn(ce, "clients"));
-              let Q = Ma(ce);
-              (Q.set(R, se), Q.set(we(ce, "codes", se.code), { c: R.id }));
+              R = doc2(collection(db2, "clients"));
+              let Q = writeBatch(db2);
+              Q.set(R, se), Q.set(doc2(db2, "codes", se.code), { c: R.id });
               try {
                 await Q.commit();
                 break;
@@ -6078,46 +6210,58 @@ function v9({ onDone: t, onCancel: e, ouvrirLegal: n }) {
             try {
               localStorage.removeItem(tx);
             } catch {}
-            t({ ref: R.id, code: se.code, nom: se.nom, points: 0, tampons: 0 });
+            onDone({ ref: R.id, code: se.code, nom: se.nom, points: 0, tampons: 0 });
           } catch {
-            (F(
+            F(
               "La carte n'a pas pu \xEAtre cr\xE9\xE9e. V\xE9rifiez votre connexion internet et r\xE9essayez.",
             ),
-              m(!1));
+              m(!1);
           }
         },
       },
       f ? "Cr\xE9ation\u2026" : "Cr\xE9er ma carte",
     ),
     !k &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { fontSize: 11.5, color: "var(--ink3)", textAlign: "center", marginTop: 6 } },
         "Tous les champs sont n\xE9cessaires pour cr\xE9er la carte.",
       ),
-    a.default.createElement(
+    React.default.createElement(
       "button",
-      { className: "btn gh", style: { marginTop: 8 }, onClick: e },
+      { className: "btn gh", style: { marginTop: 8 }, onClick: onCancel },
       "Plus tard",
     ),
   );
 }
-function y9({ d: t, inst: e, ouvrirLegal: n, pr: r = {}, setPrenom: i, notifs: o }) {
+function Infos({
+  d: d,
+  inst: inst,
+  ouvrirLegal: ouvrirLegal,
+  pr: r = {},
+  setPrenom: setPrenom,
+  notifs: notifs,
+}) {
   let s = (new Date().getDay() + 6) % 7;
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    a.default.createElement(ox, { inst: e, compact: !0 }),
-    a.default.createElement("h3", { className: "h2" }, a.default.createElement("i", null), "L'\xE9picerie"),
-    a.default.createElement("div", { className: "sub" }),
-    a.default.createElement(
+    React.default.createElement(Installer, { inst: inst, compact: !0 }),
+    React.default.createElement(
+      "h3",
+      { className: "h2" },
+      React.default.createElement("i", null),
+      "L'\xE9picerie",
+    ),
+    React.default.createElement("div", { className: "sub" }),
+    React.default.createElement(
       "div",
       { className: "card" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "b" },
-        a.default.createElement("h3", null, t.store.name),
-        a.default.createElement(
+        React.default.createElement("h3", null, d.store.name),
+        React.default.createElement(
           "div",
           {
             style: {
@@ -6129,14 +6273,14 @@ function y9({ d: t, inst: e, ouvrirLegal: n, pr: r = {}, setPrenom: i, notifs: o
               color: "var(--ink2)",
             },
           },
-          Yn.pin(16, "#6E9B3A"),
-          a.default.createElement("span", null, t.store.address),
+          Ic2.pin(16, "#6E9B3A"),
+          React.default.createElement("span", null, d.store.address),
         ),
-        t.store.phone &&
-          a.default.createElement(
+        d.store.phone &&
+          React.default.createElement(
             "a",
             {
-              href: "tel:" + t.store.phone.replace(/\s/g, ""),
+              href: "tel:" + d.store.phone.replace(/\s/g, ""),
               style: {
                 display: "flex",
                 gap: 8,
@@ -6148,22 +6292,22 @@ function y9({ d: t, inst: e, ouvrirLegal: n, pr: r = {}, setPrenom: i, notifs: o
                 textDecoration: "none",
               },
             },
-            Yn.phone(16, "#6E9B3A"),
-            t.store.phone,
+            Ic2.phone(16, "#6E9B3A"),
+            d.store.phone,
           ),
-        t.store.email &&
-          a.default.createElement(
+        d.store.email &&
+          React.default.createElement(
             "div",
             { style: { fontSize: 12.5, color: "var(--ink3)", marginTop: 8, wordBreak: "break-all" } },
-            t.store.email,
+            d.store.email,
           ),
-        Y2(t) &&
-          a.default.createElement(
+        Y2(d) &&
+          React.default.createElement(
             "a",
             {
               className: "btn gh",
               style: { marginTop: 12, display: "block", textAlign: "center", textDecoration: "none" },
-              href: Y2(t),
+              href: Y2(d),
               target: "_blank",
               rel: "noopener noreferrer",
               onClick: () => tn("avis"),
@@ -6172,50 +6316,55 @@ function y9({ d: t, inst: e, ouvrirLegal: n, pr: r = {}, setPrenom: i, notifs: o
           ),
       ),
     ),
-    a.default.createElement(Xn, null),
-    a.default.createElement("h3", { className: "h2" }, a.default.createElement("i", null), "Horaires"),
-    a.default.createElement("div", { className: "sub" }),
-    a.default.createElement(
+    React.default.createElement(Deco, null),
+    React.default.createElement(
+      "h3",
+      { className: "h2" },
+      React.default.createElement("i", null),
+      "Horaires",
+    ),
+    React.default.createElement("div", { className: "sub" }),
+    React.default.createElement(
       "div",
       { className: "card" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "b", style: { paddingTop: 4, paddingBottom: 4 } },
-        a.default.createElement(
+        React.default.createElement(
           "table",
           { className: "tbl" },
-          a.default.createElement(
+          React.default.createElement(
             "tbody",
             null,
-            t.hours.map((l, u) =>
-              a.default.createElement(
+            d.hours.map((l, u) =>
+              React.default.createElement(
                 "tr",
                 { key: u, className: u === s ? "now" : "" },
-                a.default.createElement("td", null, l.day),
-                a.default.createElement("td", null, l.am || "Ferm\xE9"),
-                a.default.createElement("td", { style: { textAlign: "right" } }, l.pm),
+                React.default.createElement("td", null, l.day),
+                React.default.createElement("td", null, l.am || "Ferm\xE9"),
+                React.default.createElement("td", { style: { textAlign: "right" } }, l.pm),
               ),
             ),
           ),
         ),
       ),
     ),
-    !!t.services.filter((l) => l.active !== !1).length &&
-      a.default.createElement(
-        a.default.Fragment,
+    !!d.services.filter((l) => l.active !== !1).length &&
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement(Xn, { a: "left" }),
-        a.default.createElement(
+        React.default.createElement(Deco, { a: "left" }),
+        React.default.createElement(
           "h3",
           { className: "h2" },
-          a.default.createElement("i", null),
+          React.default.createElement("i", null),
           "Nos services",
         ),
-        a.default.createElement("div", { className: "sub" }),
-        t.services
+        React.default.createElement("div", { className: "sub" }),
+        d.services
           .filter((l) => l.active !== !1)
           .map((l) =>
-            a.default.createElement(
+            React.default.createElement(
               "div",
               {
                 className: "ji",
@@ -6227,7 +6376,7 @@ function y9({ d: t, inst: e, ouvrirLegal: n, pr: r = {}, setPrenom: i, notifs: o
                   marginBottom: 8,
                 },
               },
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 {
                   style: {
@@ -6241,37 +6390,41 @@ function y9({ d: t, inst: e, ouvrirLegal: n, pr: r = {}, setPrenom: i, notifs: o
                     flexShrink: 0,
                   },
                 },
-                Yn.leaf(20, "#8AAD3B"),
+                Ic2.leaf(20, "#8AAD3B"),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "div",
                 null,
-                a.default.createElement("div", { className: "nm", style: { fontSize: 13.5 } }, l.label),
-                l.desc && a.default.createElement("div", { className: "no" }, l.desc),
+                React.default.createElement("div", { className: "nm", style: { fontSize: 13.5 } }, l.label),
+                l.desc && React.default.createElement("div", { className: "no" }, l.desc),
               ),
             ),
           ),
       ),
-    a.default.createElement(yx, { n: o }),
-    a.default.createElement(K9, { d: t }),
-    a.default.createElement(B9, { prenom: r.prenom || "", onChange: i }),
-    a.default.createElement(V9, null),
-    a.default.createElement(
+    React.default.createElement(BlocNotifications, { n: notifs }),
+    React.default.createElement(PartagerAppli, { d: d }),
+    React.default.createElement(MonPrenom, { prenom: r.prenom || "", onChange: setPrenom }),
+    React.default.createElement(ChangerTelephone, null),
+    React.default.createElement(
       "div",
       { className: "liens-leg" },
-      a.default.createElement(
+      React.default.createElement(
         "button",
-        { onClick: () => n("confidentialite") },
+        { onClick: () => ouvrirLegal("confidentialite") },
         "Confidentialit\xE9 & donn\xE9es personnelles",
       ),
-      a.default.createElement("button", { onClick: () => n("mentions") }, "Mentions l\xE9gales"),
+      React.default.createElement(
+        "button",
+        { onClick: () => ouvrirLegal("mentions") },
+        "Mentions l\xE9gales",
+      ),
     ),
-    a.default.createElement(oI, { style: { marginTop: 18 } }),
-    t.store.facebook &&
-      a.default.createElement(
+    React.default.createElement(BoutonMaj, { style: { marginTop: 18 } }),
+    d.store.facebook &&
+      React.default.createElement(
         "a",
-        { href: t.store.facebook, target: "_blank", rel: "noreferrer", style: { textDecoration: "none" } },
-        a.default.createElement(
+        { href: d.store.facebook, target: "_blank", rel: "noreferrer", style: { textDecoration: "none" } },
+        React.default.createElement(
           "button",
           { className: "btn gh", style: { marginTop: 10 } },
           "Voir la page Facebook",
@@ -6279,9 +6432,9 @@ function y9({ d: t, inst: e, ouvrirLegal: n, pr: r = {}, setPrenom: i, notifs: o
       ),
   );
 }
-var px = "epicerie-raddonnaise-bienvenue-vue",
-  Ac = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
-  x9 = [
+var BIENVENUE_KEY = "epicerie-raddonnaise-bienvenue-vue",
+  mouvementReduit = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+  FEUILLES = [
     { l: 8, t: 3.6, d: 0, s: 26, c: "#A9C75A", r: 220, x: 30 },
     { l: 22, t: 4.2, d: 0.5, s: 18, c: "#C9D6AE", r: -160, x: -20, erable: !0 },
     { l: 41, t: 3.9, d: 0.2, s: 22, c: "#8AAD3B", r: 260, x: 25 },
@@ -6290,37 +6443,37 @@ var px = "epicerie-raddonnaise-bienvenue-vue",
     { l: 90, t: 4.6, d: 1.1, s: 18, c: "#8AAD3B", r: -240, x: 15 },
     { l: 52, t: 5, d: 1.4, s: 14, c: "#A9C75A", r: 300, x: 20 },
   ],
-  b9 = ({ f: t }) =>
-    a.default.createElement(
+  Feuille = ({ f: f }) =>
+    React.default.createElement(
       "svg",
       {
         className: "feuille",
-        width: t.s,
-        height: t.s,
+        width: f.s,
+        height: f.s,
         viewBox: "0 0 24 24",
         style: {
-          left: t.l + "%",
-          animationDuration: t.t + "s",
-          animationDelay: t.d + "s",
-          "--r": t.r + "deg",
-          "--x": t.x + "px",
+          left: f.l + "%",
+          animationDuration: f.t + "s",
+          animationDelay: f.d + "s",
+          "--r": f.r + "deg",
+          "--x": f.x + "px",
         },
       },
-      t.erable
-        ? a.default.createElement("path", {
-            fill: t.c,
+      f.erable
+        ? React.default.createElement("path", {
+            fill: f.c,
             d: "M12 2c-1 3-3 5-5 6 1 1 1 3 0 5 2-1 4 0 5 2 1-2 3-3 5-2-1-2-1-4 0-5-2-1-4-3-5-6zM12 15v7",
-            stroke: t.c,
+            stroke: f.c,
             strokeWidth: "1.2",
           })
-        : a.default.createElement(
-            a.default.Fragment,
+        : React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement("path", {
-              fill: t.c,
+            React.default.createElement("path", {
+              fill: f.c,
               d: "M12 2C6 6 4.5 11 6.5 16c1.3 3 3.6 4.7 5.5 6 1.9-1.3 4.2-3 5.5-6C19.5 11 18 6 12 2z",
             }),
-            a.default.createElement("path", {
+            React.default.createElement("path", {
               d: "M12 5v16M12 10l-3-2M12 13l3-2M12 16l-3-2",
               stroke: "rgba(0,0,0,.18)",
               strokeWidth: "1",
@@ -6338,73 +6491,81 @@ var px = "epicerie-raddonnaise-bienvenue-vue",
           : Re(t) === "halloween"
             ? "logo-halloween.png"
             : "logo-intro.png";
-function E9({ moi: t, prenom: e, onEnd: n, onSortie: r, theme: i, tampons: o, actif: s = !0 }) {
-  let l = (e || (t?.nom ? t.nom.trim().split(/\s+/)[0] : "")).trim(),
+function Intro({
+  moi: moi,
+  prenom: prenom,
+  onEnd: onEnd,
+  onSortie: onSortie,
+  theme: theme,
+  tampons: tampons,
+  actif: actif = !0,
+}) {
+  let l = (prenom || (moi?.nom ? moi.nom.trim().split(/\s+/)[0] : "")).trim(),
     u = !!l,
-    d = Ac() ? 900 : u ? 3e3 : 4200,
-    [h, f] = (0, a.useState)(!1),
-    m = (0, a.useRef)(!1),
+    d = mouvementReduit() ? 900 : u ? 3e3 : 4200,
+    [out, setOut] = (0, React.useState)(!1),
+    m = (0, React.useRef)(!1),
     E = () => {
-      m.current || ((m.current = !0), f(!0), r?.(), setTimeout(n, 550));
+      m.current || ((m.current = !0), setOut(!0), onSortie?.(), setTimeout(onEnd, 550));
     };
-  (0, a.useEffect)(() => {
-    if (!s) return;
+  (0, React.useEffect)(() => {
+    if (!actif) return;
     let D = setTimeout(E, d);
     return () => clearTimeout(D);
-  }, [s]);
-  let F = t?.points || 0;
-  return a.default.createElement(
+  }, [actif]);
+  let F = moi?.points || 0;
+  return React.default.createElement(
     "div",
     {
-      className: "intro" + (h ? " out" : ""),
+      className: "intro" + (out ? " out" : ""),
       onClick: E,
       role: "presentation",
-      style: i ? { background: MI(i) } : void 0,
+      style: theme ? { background: MI(theme) } : void 0,
     },
-    i?.magie && a.default.createElement(VI, null),
-    Re(i) === "halloween" && a.default.createElement(cI, null),
-    Re(i) === "octobrerose" && a.default.createElement(mI, null),
-    hc.includes(Re(i)) && a.default.createElement(II, { id: Re(i) }),
-    a.default.createElement("div", { className: "halo" }),
-    i
-      ? a.default.createElement(r2, { theme: i, nb: 18 })
-      : x9.map((D, M) => a.default.createElement(b9, { key: M, f: D })),
-    a.default.createElement("img", {
+    theme?.magie && React.default.createElement(CielEtoile, null),
+    Re(theme) === "halloween" && React.default.createElement(cI, null),
+    Re(theme) === "octobrerose" && React.default.createElement(mI, null),
+    hc.includes(Re(theme)) && React.default.createElement(II, { id: Re(theme) }),
+    React.default.createElement("div", { className: "halo" }),
+    theme
+      ? React.default.createElement(Particules, { theme: theme, nb: 18 })
+      : FEUILLES.map((D, M) => React.default.createElement(Feuille, { key: M, f: D })),
+    React.default.createElement("img", {
       className: "logo",
-      src: w9(i),
+      src: w9(theme),
       alt: "\xC9picerie Raddonnaise",
       onError: (D) => {
         D.target.src.endsWith("logo-intro.png") || (D.target.src = "logo-intro.png");
       },
     }),
     u
-      ? a.default.createElement(
+      ? React.default.createElement(
           "div",
           { className: "accueil-perso" },
-          a.default.createElement("div", { className: "bonjour" }, "Bonjour ", l, " !"),
-          a.default.createElement(
+          React.default.createElement("div", { className: "bonjour" }, "Bonjour ", l, " !"),
+          React.default.createElement(
             "div",
             { className: "bienv-txt" },
             "Bienvenue sur l'application de l'\xE9picerie",
           ),
-          i
-            ? a.default.createElement(
+          theme
+            ? React.default.createElement(
                 "div",
                 { className: "slogan", style: { fontSize: 24 } },
-                i.phrase || i.titre,
+                theme.phrase || theme.titre,
               )
-            : t &&
-                (o
-                  ? a.default.createElement(
+            : moi &&
+                (tampons
+                  ? React.default.createElement(
                       "div",
                       { className: "pts-chip" },
                       "\u{1F34F} ",
-                      t.tampons || 0,
+                      moi.tampons || 0,
                       " tampon",
-                      (t.tampons || 0) > 1 ? "s" : "",
+                      (moi.tampons || 0) > 1 ? "s" : "",
                       " sur votre carte",
                     )
-                  : a.default.createElement(
+                  : React.default.createElement(
                       "div",
                       { className: "pts-chip" },
                       F,
@@ -6413,32 +6574,36 @@ function E9({ moi: t, prenom: e, onEnd: n, onSortie: r, theme: i, tampons: o, ac
                       " sur votre carte",
                     )),
         )
-      : a.default.createElement(
-          a.default.Fragment,
+      : React.default.createElement(
+          React.default.Fragment,
           null,
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "slogan" },
-            i ? i.phrase || i.titre : "Votre \xE9picerie, tout pr\xE8s de chez vous",
+            theme ? theme.phrase || theme.titre : "Votre \xE9picerie, tout pr\xE8s de chez vous",
           ),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "bienv-txt", style: { position: "relative" } },
             "Bienvenue sur l'application de l'\xE9picerie",
           ),
         ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       {
         className: "lieu",
-        style: i?.magie ? { color: "#3B4F6B", zIndex: 2 } : Re(i) ? { color: "#FFB547", zIndex: 2 } : void 0,
+        style: theme?.magie
+          ? { color: "#3B4F6B", zIndex: 2 }
+          : Re(theme)
+            ? { color: "#FFB547", zIndex: 2 }
+            : void 0,
       },
       "Raddon-et-Chapendu",
     ),
   );
 }
-var _9 = {
-  jour: a.default.createElement(
+var Illu = {
+  jour: React.default.createElement(
     "svg",
     {
       viewBox: "0 0 120 120",
@@ -6448,21 +6613,25 @@ var _9 = {
       strokeLinecap: "round",
       strokeLinejoin: "round",
     },
-    a.default.createElement("path", {
+    React.default.createElement("path", {
       d: "M22 50h76l-8 46a6 6 0 0 1-6 5H36a6 6 0 0 1-6-5z",
       fill: "#fff",
       stroke: "#1C433B",
       strokeWidth: "3.5",
     }),
-    a.default.createElement("path", { d: "M40 50 54 24M80 50 66 24", stroke: "#1C433B", strokeWidth: "3.5" }),
-    a.default.createElement("circle", { cx: "48", cy: "44", r: "11", fill: "#E05A47" }),
-    a.default.createElement("path", { d: "M48 33c1-4 4-5 6-5", stroke: "#6E9B3A", strokeWidth: "3" }),
-    a.default.createElement("circle", { cx: "70", cy: "42", r: "12", fill: "#A9C75A" }),
-    a.default.createElement("path", { d: "M70 30v-4", stroke: "#5C3D2E", strokeWidth: "3" }),
-    a.default.createElement("path", { d: "M86 46c2-10 8-14 14-14-1 8-6 13-14 14z", fill: "#6E9B3A" }),
-    a.default.createElement("path", { d: "M44 70h32M44 82h22", stroke: "#C9D6AE", strokeWidth: "4" }),
+    React.default.createElement("path", {
+      d: "M40 50 54 24M80 50 66 24",
+      stroke: "#1C433B",
+      strokeWidth: "3.5",
+    }),
+    React.default.createElement("circle", { cx: "48", cy: "44", r: "11", fill: "#E05A47" }),
+    React.default.createElement("path", { d: "M48 33c1-4 4-5 6-5", stroke: "#6E9B3A", strokeWidth: "3" }),
+    React.default.createElement("circle", { cx: "70", cy: "42", r: "12", fill: "#A9C75A" }),
+    React.default.createElement("path", { d: "M70 30v-4", stroke: "#5C3D2E", strokeWidth: "3" }),
+    React.default.createElement("path", { d: "M86 46c2-10 8-14 14-14-1 8-6 13-14 14z", fill: "#6E9B3A" }),
+    React.default.createElement("path", { d: "M44 70h32M44 82h22", stroke: "#C9D6AE", strokeWidth: "4" }),
   ),
-  plateau: a.default.createElement(
+  plateau: React.default.createElement(
     "svg",
     {
       viewBox: "0 0 120 120",
@@ -6472,7 +6641,7 @@ var _9 = {
       strokeLinecap: "round",
       strokeLinejoin: "round",
     },
-    a.default.createElement("ellipse", {
+    React.default.createElement("ellipse", {
       cx: "60",
       cy: "78",
       rx: "46",
@@ -6481,29 +6650,29 @@ var _9 = {
       stroke: "#1C433B",
       strokeWidth: "3.5",
     }),
-    a.default.createElement("path", {
+    React.default.createElement("path", {
       d: "M30 74c4-10 14-12 20-6M52 70c6-12 18-12 24-2",
       stroke: "#C27B42",
       strokeWidth: "6",
     }),
-    a.default.createElement("circle", { cx: "80", cy: "70", r: "6", fill: "#E05A47" }),
-    a.default.createElement("circle", { cx: "90", cy: "74", r: "5", fill: "#E05A47" }),
-    a.default.createElement("path", {
+    React.default.createElement("circle", { cx: "80", cy: "70", r: "6", fill: "#E05A47" }),
+    React.default.createElement("circle", { cx: "90", cy: "74", r: "5", fill: "#E05A47" }),
+    React.default.createElement("path", {
       d: "M38 64l10-10 8 8-10 6z",
       fill: "#F2C94C",
       stroke: "#C69A3C",
       strokeWidth: "2",
     }),
-    a.default.createElement("circle", { cx: "66", cy: "60", r: "4", fill: "#8AAD3B" }),
-    a.default.createElement("circle", { cx: "72", cy: "57", r: "4", fill: "#8AAD3B" }),
-    a.default.createElement("circle", { cx: "69", cy: "52", r: "4", fill: "#8AAD3B" }),
-    a.default.createElement("path", {
+    React.default.createElement("circle", { cx: "66", cy: "60", r: "4", fill: "#8AAD3B" }),
+    React.default.createElement("circle", { cx: "72", cy: "57", r: "4", fill: "#8AAD3B" }),
+    React.default.createElement("circle", { cx: "69", cy: "52", r: "4", fill: "#8AAD3B" }),
+    React.default.createElement("path", {
       d: "M60 30v8M48 34l3 6M72 34l-3 6",
       stroke: "#C69A3C",
       strokeWidth: "3",
     }),
   ),
-  carte: a.default.createElement(
+  carte: React.default.createElement(
     "svg",
     {
       viewBox: "0 0 120 120",
@@ -6513,7 +6682,7 @@ var _9 = {
       strokeLinecap: "round",
       strokeLinejoin: "round",
     },
-    a.default.createElement("rect", {
+    React.default.createElement("rect", {
       x: "16",
       y: "30",
       width: "88",
@@ -6522,7 +6691,7 @@ var _9 = {
       fill: "#1C433B",
     }),
     [0, 1, 2, 3, 4].map((t) =>
-      a.default.createElement("circle", {
+      React.default.createElement("circle", {
         key: t,
         cx: 32 + t * 14,
         cy: "66",
@@ -6532,21 +6701,32 @@ var _9 = {
         strokeWidth: "2",
       }),
     ),
-    a.default.createElement("path", { d: "M28 46h34", stroke: "rgba(255,255,255,.85)", strokeWidth: "4" }),
-    a.default.createElement("path", {
+    React.default.createElement("path", {
+      d: "M28 46h34",
+      stroke: "rgba(255,255,255,.85)",
+      strokeWidth: "4",
+    }),
+    React.default.createElement("path", {
       d: "m92 22 3.5 7 7.5 1-5.5 5.3 1.3 7.7L92 39.4 85.2 43l1.3-7.7L81 30l7.5-1z",
       fill: "#F0C860",
       stroke: "#C69A3C",
       strokeWidth: "1.5",
     }),
-    a.default.createElement("rect", { x: "70", y: "40", width: "24", height: "24", rx: "3", fill: "#fff" }),
-    a.default.createElement("path", {
+    React.default.createElement("rect", {
+      x: "70",
+      y: "40",
+      width: "24",
+      height: "24",
+      rx: "3",
+      fill: "#fff",
+    }),
+    React.default.createElement("path", {
       d: "M74 44h6v6h-6zM84 44h6v6h-6zM74 54h6v6h-6zM86 56h2v2h-2z",
       fill: "#1C433B",
     }),
   ),
 };
-function A9({ d: t, onFin: e }) {
+function Bienvenue({ d: t, onFin: onFin }) {
   let n = [
       {
         id: "jour",
@@ -6568,236 +6748,246 @@ function A9({ d: t, onFin: e }) {
             "Des points \xE0 chaque passage en caisse, des r\xE9compenses \xE0 la cl\xE9. Votre carte tient dans votre t\xE9l\xE9phone.",
         },
     ].filter(Boolean),
-    r = (0, a.useRef)(null),
-    [i, o] = (0, a.useState)(0),
+    r = (0, React.useRef)(null),
+    [i, setI] = (0, React.useState)(0),
     s = i === n.length - 1,
-    l = (h) => r.current?.scrollTo({ left: h * r.current.clientWidth, behavior: Ac() ? "auto" : "smooth" }),
+    l = (h) =>
+      r.current?.scrollTo({
+        left: h * r.current.clientWidth,
+        behavior: mouvementReduit() ? "auto" : "smooth",
+      }),
     u = (h) => {
       try {
-        localStorage.setItem(px, "1");
+        localStorage.setItem(BIENVENUE_KEY, "1");
       } catch {}
-      e(h);
+      onFin(h);
     },
     d = n[n.length - 1]?.id === "carte";
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "bienv" },
-    a.default.createElement("button", { className: "passer", onClick: () => u() }, "Passer"),
-    a.default.createElement(
+    React.default.createElement("button", { className: "passer", onClick: () => u() }, "Passer"),
+    React.default.createElement(
       "div",
       {
         className: "rail",
         ref: r,
-        onScroll: (h) => o(Math.round(h.currentTarget.scrollLeft / h.currentTarget.clientWidth)),
+        onScroll: (h) => setI(Math.round(h.currentTarget.scrollLeft / h.currentTarget.clientWidth)),
       },
       n.map((h, f) =>
-        a.default.createElement(
+        React.default.createElement(
           "section",
           { className: "ecran" + (f === i ? " vu" : ""), key: h.id },
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "illu" },
-            a.default.createElement("span", { className: "rond" }),
-            _9[h.id],
+            React.default.createElement("span", { className: "rond" }),
+            Illu[h.id],
           ),
-          a.default.createElement("h2", null, h.titre),
-          a.default.createElement("p", null, h.texte),
+          React.default.createElement("h2", null, h.titre),
+          React.default.createElement("p", null, h.texte),
         ),
       ),
     ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "bas" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "pastilles" },
         n.map((h, f) =>
-          a.default.createElement("i", { key: h.id, className: f === i ? "on" : "", onClick: () => l(f) }),
+          React.default.createElement("i", {
+            key: h.id,
+            className: f === i ? "on" : "",
+            onClick: () => l(f),
+          }),
         ),
       ),
       s
         ? d
-          ? a.default.createElement(
-              a.default.Fragment,
+          ? React.default.createElement(
+              React.default.Fragment,
               null,
-              a.default.createElement(
+              React.default.createElement(
                 "button",
                 { className: "btn", onClick: () => u("carte") },
                 "Cr\xE9er ma carte de fid\xE9lit\xE9",
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "button",
                 { className: "btn gh", style: { marginTop: 8 }, onClick: () => u() },
                 "D\xE9couvrir l'\xE9picerie",
               ),
             )
-          : a.default.createElement("button", { className: "btn", onClick: () => u() }, "C'est parti")
-        : a.default.createElement("button", { className: "btn", onClick: () => l(i + 1) }, "Suivant"),
+          : React.default.createElement("button", { className: "btn", onClick: () => u() }, "C'est parti")
+        : React.default.createElement("button", { className: "btn", onClick: () => l(i + 1) }, "Suivant"),
     ),
   );
 }
 var pT = "epicerie-raddonnaise-conv-adoptees",
   fx = () => {
     try {
-      return JSON.parse(localStorage.getItem(kf) || "null");
+      return JSON.parse(localStorage.getItem(CHAT_KEY) || "null");
     } catch {
       return null;
     }
   },
   Tf = (t) => {
     try {
-      t ? localStorage.setItem(kf, JSON.stringify(t)) : localStorage.removeItem(kf);
+      t ? localStorage.setItem(CHAT_KEY, JSON.stringify(t)) : localStorage.removeItem(CHAT_KEY);
     } catch {}
   };
-function k9() {
-  let [t, e] = (0, a.useState)(fx),
-    [n, r] = (0, a.useState)([]);
-  (0, a.useEffect)(() => {
-    if (!t?.ref) {
-      r([]);
+function useChat() {
+  let [moiChat, setMoiChat] = (0, React.useState)(fx),
+    [msgs, setMsgs] = (0, React.useState)([]);
+  (0, React.useEffect)(() => {
+    if (!moiChat?.ref) {
+      setMsgs([]);
       return;
     }
-    let l = Or(
-        Qn(ce, "conversations", t.ref, "messages"),
+    let l = onSnapshot(
+        collection(db2, "conversations", moiChat.ref, "messages"),
         (d) =>
-          r(d.docs.map((h) => ({ ...h.data(), id: h.id })).sort((h, f) => (h.date || 0) - (f.date || 0))),
+          setMsgs(
+            d.docs.map((h) => ({ ...h.data(), id: h.id })).sort((h, f) => (h.date || 0) - (f.date || 0)),
+          ),
         () => {},
       ),
-      u = Or(
-        we(ce, "conversations", t.ref),
+      u = onSnapshot(
+        doc2(db2, "conversations", moiChat.ref),
         (d) => {
-          !d.exists() && !d.metadata?.fromCache && (Tf(null), e(null));
+          !d.exists() && !d.metadata?.fromCache && (Tf(null), setMoiChat(null));
         },
         () => {},
       );
     return () => {
-      (l(), u());
+      l(), u();
     };
-  }, [t?.ref]);
-  let i = n.filter((l) => l.de === "epicerie" && (l.date || 0) > (t?.vu || 0)).length;
+  }, [moiChat?.ref]);
+  let i = msgs.filter((l) => l.de === "epicerie" && (l.date || 0) > (moiChat?.vu || 0)).length;
   return {
-    moiChat: t,
-    msgs: n,
+    moiChat: moiChat,
+    msgs: msgs,
     nonLus: i,
     marquerVu: () => {
-      if (!t) return;
-      let l = { ...t, vu: Date.now() };
-      (Tf(l), e(l));
+      if (!moiChat) return;
+      let l = { ...moiChat, vu: Date.now() };
+      Tf(l), setMoiChat(l);
     },
     enregistrer: (l) => {
-      (Tf(l), e(l));
+      Tf(l), setMoiChat(l);
     },
   };
 }
-function I9({ prenom: t, onFin: e, amb: n }) {
-  let [r, i] = (0, a.useState)(!1),
-    o = (0, a.useRef)(!1),
+function Salutation({ prenom: prenom, onFin: onFin, amb: amb }) {
+  let [r, i] = (0, React.useState)(!1),
+    o = (0, React.useRef)(!1),
     s = () => {
-      o.current || ((o.current = !0), i(!0), setTimeout(e, 420));
+      o.current || ((o.current = !0), i(!0), setTimeout(onFin, 420));
     };
-  (0, a.useEffect)(() => {
-    let h = setTimeout(s, Ac() ? 2200 : 4800);
+  (0, React.useEffect)(() => {
+    let h = setTimeout(s, mouvementReduit() ? 2200 : 4800);
     return () => clearTimeout(h);
   }, []);
   let l = new Date().getHours(),
     u = l >= 18 || l < 5 ? "Bonsoir" : "Bonjour",
     d =
-      n === "halloween"
-        ? a.default.createElement(
-            a.default.Fragment,
+      amb === "halloween"
+        ? React.default.createElement(
+            React.default.Fragment,
             null,
             "Joyeux",
-            a.default.createElement("br", null),
+            React.default.createElement("br", null),
             "Halloween",
           )
-        : n === "octobrerose"
-          ? a.default.createElement(
-              a.default.Fragment,
+        : amb === "octobrerose"
+          ? React.default.createElement(
+              React.default.Fragment,
               null,
               "Octobre",
-              a.default.createElement("br", null),
+              React.default.createElement("br", null),
               "rose \u{1F380}",
             )
-          : nn[n]
-            ? nn[n].pastille
-            : n === "noel"
-              ? a.default.createElement(
-                  a.default.Fragment,
+          : nn[amb]
+            ? nn[amb].pastille
+            : amb === "noel"
+              ? React.default.createElement(
+                  React.default.Fragment,
                   null,
                   "Joyeux",
-                  a.default.createElement("br", null),
+                  React.default.createElement("br", null),
                   "No\xEBl",
                 )
               : u === "Bonsoir"
-                ? a.default.createElement(
-                    a.default.Fragment,
+                ? React.default.createElement(
+                    React.default.Fragment,
                     null,
                     "Belle",
-                    a.default.createElement("br", null),
+                    React.default.createElement("br", null),
                     "soir\xE9e !",
                   )
-                : a.default.createElement(
-                    a.default.Fragment,
+                : React.default.createElement(
+                    React.default.Fragment,
                     null,
                     "Belle",
-                    a.default.createElement("br", null),
+                    React.default.createElement("br", null),
                     "journ\xE9e !",
                   );
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     {
-      className: "etq-fond" + (r ? " out" : "") + (n ? " etq-" + n : ""),
+      className: "etq-fond" + (r ? " out" : "") + (amb ? " etq-" + amb : ""),
       onClick: s,
       role: "dialog",
-      "aria-label": u + " " + t,
+      "aria-label": u + " " + prenom,
     },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "etq-pend" },
-      a.default.createElement("div", { className: "etq-fil" }),
-      n === "halloween" && a.default.createElement(Hy, null),
-      a.default.createElement(
+      React.default.createElement("div", { className: "etq-fil" }),
+      amb === "halloween" && React.default.createElement(SvgAraignee, null),
+      React.default.createElement(
         "div",
         { className: "etq" },
-        a.default.createElement("div", { className: "etq-trou" }),
-        a.default.createElement("div", { className: "etq-bande" }, "\xC9picerie Raddonnaise"),
-        a.default.createElement("div", { className: "etq-salut" }, u),
-        a.default.createElement("div", { className: "etq-nom" }, t, " !"),
-        a.default.createElement("div", { className: "etq-sep" }),
-        a.default.createElement(
+        React.default.createElement("div", { className: "etq-trou" }),
+        React.default.createElement("div", { className: "etq-bande" }, "\xC9picerie Raddonnaise"),
+        React.default.createElement("div", { className: "etq-salut" }, u),
+        React.default.createElement("div", { className: "etq-nom" }, prenom, " !"),
+        React.default.createElement("div", { className: "etq-sep" }),
+        React.default.createElement(
           "div",
           { className: "etq-bas" },
-          a.default.createElement("div", { className: "etq-code", "aria-hidden": "true" }),
-          a.default.createElement("div", { className: "etq-local" }, "Content de vous revoir"),
+          React.default.createElement("div", { className: "etq-code", "aria-hidden": "true" }),
+          React.default.createElement("div", { className: "etq-local" }, "Content de vous revoir"),
         ),
       ),
-      a.default.createElement("div", { className: "etq-pastille" }, d),
+      React.default.createElement("div", { className: "etq-pastille" }, d),
     ),
   );
 }
-function T9({ nonLus: t, haut: e, onClick: n }) {
-  let [r, i] = (0, a.useState)(!1);
+function BulleChat({ nonLus: nonLus, haut: haut, onClick: onClick }) {
+  let [petit, setPetit] = (0, React.useState)(!1);
   return (
-    (0, a.useEffect)(() => {
-      let o = setTimeout(() => i(!0), 5e3),
+    (0, React.useEffect)(() => {
+      let o = setTimeout(() => setPetit(!0), 5e3),
         s = () => {
-          window.scrollY > 30 && i(!0);
+          window.scrollY > 30 && setPetit(!0);
         };
       return (
         window.addEventListener("scroll", s, { passive: !0 }),
         () => {
-          (clearTimeout(o), window.removeEventListener("scroll", s));
+          clearTimeout(o), window.removeEventListener("scroll", s);
         }
       );
     }, []),
-    a.default.createElement(
+    React.default.createElement(
       "button",
       {
-        className: "bulle-chat" + (e ? " haut" : "") + (r && !t ? " petit" : ""),
-        onClick: n,
+        className: "bulle-chat" + (haut ? " haut" : "") + (petit && !nonLus ? " petit" : ""),
+        onClick: onClick,
         "aria-label": "Parlez avec nous",
       },
-      a.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: "24",
@@ -6808,177 +6998,188 @@ function T9({ nonLus: t, haut: e, onClick: n }) {
           strokeWidth: "2",
           strokeLinejoin: "round",
         },
-        a.default.createElement("path", { d: "M4 5h16v11H9l-5 4z" }),
-        a.default.createElement("path", { d: "M8 9.5h8M8 12.5h5", strokeLinecap: "round" }),
+        React.default.createElement("path", { d: "M4 5h16v11H9l-5 4z" }),
+        React.default.createElement("path", { d: "M8 9.5h8M8 12.5h5", strokeLinecap: "round" }),
       ),
-      a.default.createElement("span", { className: "bc-txt" }, "Parlez avec nous"),
-      t > 0 && a.default.createElement("b", null, t),
+      React.default.createElement("span", { className: "bc-txt" }, "Parlez avec nous"),
+      nonLus > 0 && React.default.createElement("b", null, nonLus),
     )
   );
 }
-function C9({ d: t, moi: e, chat: n, onClose: r, ouvrirLegal: i, notifs: o, inst: s }) {
-  let { moiChat: l, msgs: u, marquerVu: d, enregistrer: h } = n,
-    [f, m] = (0, a.useState)(Sf().prenom || e?.nom || ""),
-    [E, F] = (0, a.useState)(""),
-    [D, M] = (0, a.useState)(""),
-    [C, A] = (0, a.useState)(!1),
-    [S, P] = (0, a.useState)(""),
-    z = (0, a.useRef)(null);
-  (0, a.useEffect)(() => {
-    (d(), z.current?.scrollIntoView({ block: "end" }));
+function Messagerie({
+  d: t,
+  moi: moi,
+  chat: chat,
+  onClose: onClose,
+  ouvrirLegal: ouvrirLegal,
+  notifs: notifs,
+  inst: inst,
+}) {
+  let { moiChat: l, msgs: u, marquerVu: d, enregistrer: h } = chat,
+    [nom, setNom] = (0, React.useState)(Sf().prenom || moi?.nom || ""),
+    [tel, setTel] = (0, React.useState)(""),
+    [texte, setTexte] = (0, React.useState)(""),
+    [envoi, setEnvoi] = (0, React.useState)(!1),
+    [err, setErr] = (0, React.useState)(""),
+    z = (0, React.useRef)(null);
+  (0, React.useEffect)(() => {
+    d(), z.current?.scrollIntoView({ block: "end" });
   }, [u.length]);
   let j = async () => {
-      let y = D.trim().slice(0, 1e3);
-      if (!(!y || C)) {
-        if (!l && !f.trim()) return P("Indiquez votre pr\xE9nom pour que l'\xE9picerie sache qui \xE9crit.");
-        (A(!0), P(""));
+      let y = texte.trim().slice(0, 1e3);
+      if (!(!y || envoi)) {
+        if (!l && !nom.trim())
+          return setErr("Indiquez votre pr\xE9nom pour que l'\xE9picerie sache qui \xE9crit.");
+        setEnvoi(!0), setErr("");
         try {
           let v = Date.now(),
-            w = Ma(ce),
+            w = writeBatch(db2),
             k = l?.ref,
             N = !k;
-          if (k) w.update(we(ce, "conversations", k), { maj: v, dernier: U2(y), attente: !0 });
+          if (k) w.update(doc2(db2, "conversations", k), { maj: v, dernier: U2(y), attente: !0 });
           else {
-            let le = we(Qn(ce, "conversations"));
-            ((k = q2(le)),
+            let le = doc2(collection(db2, "conversations"));
+            (k = q2(le)),
               w.set(le, {
-                nom: f.trim().slice(0, 40),
-                tel: E.trim().slice(0, 20),
+                nom: nom.trim().slice(0, 40),
+                tel: tel.trim().slice(0, 20),
                 cree: v,
                 maj: v,
                 dernier: U2(y),
                 attente: !0,
-              }));
+              });
           }
-          (w.set(we(Qn(ce, "conversations", k, "messages")), { de: "client", texte: y, date: v }),
-            N && h({ ref: k, nom: f.trim(), vu: v }),
-            ux("msg", k));
+          w.set(doc2(collection(db2, "conversations", k, "messages")), { de: "client", texte: y, date: v }),
+            N && h({ ref: k, nom: nom.trim(), vu: v }),
+            ux("msg", k);
           let T = w.commit(),
             X = await sx(T);
           if (X === "erreur") throw (N && h(null), Cf(k), new Error("refus"));
-          (N && setTimeout(_c, 300),
-            M(""),
+          N && setTimeout(_c, 300),
+            setTexte(""),
             X === "ok"
               ? setTimeout(() => ns(t.cmd, "msg", k), 1500)
-              : (P("\u{1F4F6} Connexion faible : votre message partira d\xE8s que le r\xE9seau revient."),
+              : (setErr(
+                  "\u{1F4F6} Connexion faible : votre message partira d\xE8s que le r\xE9seau revient.",
+                ),
                 T.then(
                   () => {
-                    (P(""), ns(t.cmd, "msg", k));
+                    setErr(""), ns(t.cmd, "msg", k);
                   },
                   () => {},
-                )));
+                ));
         } catch {
-          P("Message non envoy\xE9. V\xE9rifiez votre connexion et r\xE9essayez.");
+          setErr("Message non envoy\xE9. V\xE9rifiez votre connexion et r\xE9essayez.");
         }
-        A(!1);
+        setEnvoi(!1);
       }
     },
     b = "";
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "legal chat-page" },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "legal-top chat-top" },
-      a.default.createElement("button", { onClick: r, "aria-label": "Retour" }, "\u2190"),
-      a.default.createElement("img", { src: rs, alt: "" }),
-      a.default.createElement(
+      React.default.createElement("button", { onClick: onClose, "aria-label": "Retour" }, "\u2190"),
+      React.default.createElement("img", { src: LOGO, alt: "" }),
+      React.default.createElement(
         "div",
         null,
-        a.default.createElement("b", null, t.store.name),
-        a.default.createElement("small", null, "R\xE9pond en g\xE9n\xE9ral dans la journ\xE9e"),
+        React.default.createElement("b", null, t.store.name),
+        React.default.createElement("small", null, "R\xE9pond en g\xE9n\xE9ral dans la journ\xE9e"),
       ),
     ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "chat-fil" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "msg epicerie premier" },
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "txt" },
           "Bonjour \u{1F44B} Une question sur un produit, un plateau, nos horaires ? \xC9crivez-nous ici, on vous r\xE9pond d\xE8s que possible.",
         ),
       ),
       u.map((y) => {
-        let v = J5(y.date),
+        let v = jourMsg(y.date),
           w = v !== b;
         return (
           (b = v),
-          a.default.createElement(
-            a.default.Fragment,
+          React.default.createElement(
+            React.default.Fragment,
             { key: y.id },
-            w && a.default.createElement("div", { className: "chat-jour" }, v),
-            a.default.createElement(
+            w && React.default.createElement("div", { className: "chat-jour" }, v),
+            React.default.createElement(
               "div",
               { className: "msg " + (y.de === "epicerie" ? "epicerie" : "client") },
-              a.default.createElement("div", { className: "txt" }, y.texte),
-              a.default.createElement("div", { className: "h" }, Q5(y.date)),
+              React.default.createElement("div", { className: "txt" }, y.texte),
+              React.default.createElement("div", { className: "h" }, heureMsg(y.date)),
             ),
           )
         );
       }),
       l &&
-        o &&
-        a.default.createElement(
+        notifs &&
+        React.default.createElement(
           "div",
           { style: { margin: "8px 0" } },
-          a.default.createElement(yx, { n: o, compact: !0 }),
+          React.default.createElement(BlocNotifications, { n: notifs, compact: !0 }),
         ),
-      a.default.createElement("div", { ref: z }),
+      React.default.createElement("div", { ref: z }),
     ),
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "chat-saisie" },
-      !l && a.default.createElement(cx, { inst: s, quoi: "votre conversation" }),
+      !l && React.default.createElement(ConseilInstallCommande, { inst: inst, quoi: "votre conversation" }),
       !l &&
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "chat-ident" },
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { style: { display: "flex", gap: 8 } },
-            a.default.createElement("input", {
+            React.default.createElement("input", {
               className: "inp",
-              value: f,
+              value: nom,
               maxLength: 40,
               placeholder: "Votre pr\xE9nom",
-              onChange: (y) => m(y.target.value),
+              onChange: (y) => setNom(y.target.value),
               autoComplete: "given-name",
             }),
-            a.default.createElement("input", {
+            React.default.createElement("input", {
               className: "inp",
               type: "tel",
-              value: E,
+              value: tel,
               maxLength: 20,
               placeholder: "T\xE9l\xE9phone (facultatif)",
-              onChange: (y) => F(y.target.value),
+              onChange: (y) => setTel(y.target.value),
               autoComplete: "tel",
             }),
           ),
-          a.default.createElement(
+          React.default.createElement(
             "div",
             { className: "chat-rgpd" },
             "Vos messages servent uniquement \xE0 \xE9changer avec l'\xE9picerie. ",
-            a.default.createElement(
+            React.default.createElement(
               "button",
-              { className: "lien", onClick: () => i("confidentialite") },
+              { className: "lien", onClick: () => ouvrirLegal("confidentialite") },
               "En savoir plus",
             ),
           ),
         ),
-      S && a.default.createElement("div", { className: "manque", style: { margin: "0 0 6px" } }, S),
-      a.default.createElement(
+      err && React.default.createElement("div", { className: "manque", style: { margin: "0 0 6px" } }, err),
+      React.default.createElement(
         "div",
         { className: "chat-ligne" },
-        a.default.createElement("textarea", {
+        React.default.createElement("textarea", {
           className: "inp",
           rows: 1,
-          value: D,
+          value: texte,
           maxLength: 1e3,
           placeholder: "Votre message\u2026",
-          onChange: (y) => M(y.target.value),
+          onChange: (y) => setTexte(y.target.value),
           onKeyDown: (y) => {
             y.key === "Enter" &&
               !y.shiftKey &&
@@ -6986,29 +7187,29 @@ function C9({ d: t, moi: e, chat: n, onClose: r, ouvrirLegal: i, notifs: o, inst
               (y.preventDefault(), j());
           },
         }),
-        a.default.createElement(
+        React.default.createElement(
           "button",
-          { className: "chat-env", disabled: !D.trim() || C, onClick: j, "aria-label": "Envoyer" },
-          a.default.createElement(
+          { className: "chat-env", disabled: !texte.trim() || envoi, onClick: j, "aria-label": "Envoyer" },
+          React.default.createElement(
             "svg",
             { width: "22", height: "22", viewBox: "0 0 24 24", fill: "currentColor" },
-            a.default.createElement("path", { d: "M3 20.5 21 12 3 3.5l2.5 7.2L14 12l-8.5 1.3z" }),
+            React.default.createElement("path", { d: "M3 20.5 21 12 3 3.5l2.5 7.2L14 12l-8.5 1.3z" }),
           ),
         ),
       ),
     ),
   );
 }
-var mx = "epicerie-raddonnaise-prenom",
+var PRENOM_KEY = "epicerie-raddonnaise-prenom",
   Sf = () => {
     try {
-      return JSON.parse(localStorage.getItem(mx) || "null") || {};
+      return JSON.parse(localStorage.getItem(PRENOM_KEY) || "null") || {};
     } catch {
       return {};
     }
   };
 function S9() {
-  let [t, e] = (0, a.useState)(Sf);
+  let [t, e] = (0, React.useState)(Sf);
   return [
     t,
     (r) => {
@@ -7019,47 +7220,47 @@ function S9() {
         demande: !0,
       };
       try {
-        localStorage.setItem(mx, JSON.stringify(i));
+        localStorage.setItem(PRENOM_KEY, JSON.stringify(i));
       } catch {}
       e(i);
     },
   ];
 }
-function IT({ initial: t, onFin: e }) {
-  let [n, r] = (0, a.useState)(t || "");
-  return a.default.createElement(
+function DemandePrenom({ initial: initial, onFin: onFin }) {
+  let [p, setP] = (0, React.useState)(initial || "");
+  return React.default.createElement(
     "div",
     { className: "sheet-fond" },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "sheet", role: "dialog", "aria-label": "Votre pr\xE9nom" },
-      a.default.createElement("div", { className: "pr-main" }, "\u{1F44B}"),
-      a.default.createElement("h3", { className: "alerte-t" }, "On fait connaissance ?"),
-      a.default.createElement(
+      React.default.createElement("div", { className: "pr-main" }, "\u{1F44B}"),
+      React.default.createElement("h3", { className: "alerte-t" }, "On fait connaissance ?"),
+      React.default.createElement(
         "p",
         { className: "tr-txt" },
         "Comment vous appelez-vous ? L'application vous dira bonjour \xE0 chaque visite.",
-        a.default.createElement("br", null),
-        a.default.createElement("small", null, "Votre pr\xE9nom reste sur votre t\xE9l\xE9phone."),
+        React.default.createElement("br", null),
+        React.default.createElement("small", null, "Votre pr\xE9nom reste sur votre t\xE9l\xE9phone."),
       ),
-      a.default.createElement("input", {
+      React.default.createElement("input", {
         className: "inp",
-        value: n,
+        value: p,
         maxLength: 30,
         placeholder: "Votre pr\xE9nom",
         autoComplete: "given-name",
-        onChange: (i) => r(i.target.value),
-        onKeyDown: (i) => i.key === "Enter" && n.trim() && e(n),
+        onChange: (i) => setP(i.target.value),
+        onKeyDown: (i) => i.key === "Enter" && p.trim() && onFin(p),
         style: { textAlign: "center", fontSize: 18, fontWeight: 800 },
       }),
-      a.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn", style: { marginTop: 12 }, disabled: !n.trim(), onClick: () => e(n) },
+        { className: "btn", style: { marginTop: 12 }, disabled: !p.trim(), onClick: () => onFin(p) },
         "C'est not\xE9 !",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn gh", style: { marginTop: 8 }, onClick: () => e("") },
+        { className: "btn gh", style: { marginTop: 8 }, onClick: () => onFin("") },
         "Plus tard",
       ),
     ),
@@ -7077,7 +7278,7 @@ var nx = "ERT1.",
 function P9() {
   let t = null;
   try {
-    t = JSON.parse(localStorage.getItem(qa) || "null");
+    t = JSON.parse(localStorage.getItem(USER_KEY) || "null");
   } catch {}
   let e = {};
   t?.ref && (e.c = t.ref);
@@ -7118,14 +7319,14 @@ function M9(t) {
     return null;
   }
 }
-async function O9(t) {
+async function importerTransfert(t) {
   let e = { carte: !1, cmds: 0, chat: !1 };
   if (t.c) {
-    let s = await Bo(we(ce, "clients", t.c));
+    let s = await getDoc(doc2(db2, "clients", t.c));
     if (s.exists()) {
       let l = s.data();
-      (localStorage.setItem(
-        qa,
+      localStorage.setItem(
+        USER_KEY,
         JSON.stringify({
           ref: t.c,
           code: l.code,
@@ -7134,14 +7335,14 @@ async function O9(t) {
           tampons: l.tampons || 0,
         }),
       ),
-        (e.carte = !0));
+        (e.carte = !0);
     }
   }
   let n = Dn(),
     r = [];
   for (let s of t.o) {
     if (n.some((d) => d.ref === s)) continue;
-    let l = await Bo(we(ce, "commandes", s));
+    let l = await getDoc(doc2(db2, "commandes", s));
     if (!l.exists()) continue;
     let u = l.data();
     r.push({
@@ -7164,7 +7365,7 @@ async function O9(t) {
     o = [];
   for (let s of t.r || []) {
     if (i.some((d) => d.ref === s)) continue;
-    let l = await Bo(we(ce, "resas", s));
+    let l = await getDoc(doc2(db2, "resas", s));
     if (!l.exists()) continue;
     let u = l.data();
     o.push({
@@ -7181,49 +7382,49 @@ async function O9(t) {
     });
   }
   if ((o.length && (rx([...o, ...i]), (e.cmds += o.length)), t.m)) {
-    let s = await Bo(we(ce, "conversations", t.m));
+    let s = await getDoc(doc2(db2, "conversations", t.m));
     s.exists() && (Tf({ ref: t.m, nom: s.data().nom, vu: Date.now() }), (e.chat = !0));
   }
   try {
-    (localStorage.setItem(px, "1"),
-      t.p && localStorage.setItem(mx, JSON.stringify({ prenom: t.p, demande: !0 })));
+    localStorage.setItem(BIENVENUE_KEY, "1"),
+      t.p && localStorage.setItem(PRENOM_KEY, JSON.stringify({ prenom: t.p, demande: !0 }));
   } catch {}
   return e;
 }
-function L9({ onClose: t }) {
-  let e = (0, a.useMemo)(P9, []),
+function FenetreEnvoi({ onClose: onClose }) {
+  let e = (0, React.useMemo)(P9, []),
     n = location.origin + location.pathname + "#transfert=" + e,
-    [r, i] = (0, a.useState)(!1);
-  return a.default.createElement(
+    [copie, setCopie] = (0, React.useState)(!1);
+  return React.default.createElement(
     "div",
-    { className: "sheet-fond", onClick: t },
-    a.default.createElement(
+    { className: "sheet-fond", onClick: onClose },
+    React.default.createElement(
       "div",
       { className: "sheet", onClick: (s) => s.stopPropagation() },
-      a.default.createElement("h3", { className: "alerte-t" }, "Changer de t\xE9l\xE9phone"),
+      React.default.createElement("h3", { className: "alerte-t" }, "Changer de t\xE9l\xE9phone"),
       e
-        ? a.default.createElement(
-            a.default.Fragment,
+        ? React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement(
+            React.default.createElement(
               "p",
               { className: "tr-txt" },
               "Sur le ",
-              a.default.createElement("b", null, "nouveau t\xE9l\xE9phone"),
+              React.default.createElement("b", null, "nouveau t\xE9l\xE9phone"),
               ", ouvrez l'appareil photo et scannez ce code : votre carte, vos commandes et vos messages seront r\xE9cup\xE9r\xE9s.",
             ),
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "tr-qr" },
-              a.default.createElement(Wa, { texte: n, taille: 230 }),
+              React.default.createElement(QR, { texte: n, taille: 230 }),
             ),
-            a.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "btn gh",
                 onClick: async () => {
                   try {
-                    (await navigator.clipboard.writeText(n), i(!0));
+                    await navigator.clipboard.writeText(n), setCopie(!0);
                   } catch {
                     h0(
                       `Copiez ce lien (appui long dessus) et envoyez-le-vous par SMS ou e-mail :
@@ -7233,111 +7434,117 @@ function L9({ onClose: t }) {
                   }
                 },
               },
-              r ? "\u2713 Lien copi\xE9" : "Copier le lien (\xE0 s'envoyer par SMS ou e-mail)",
+              copie ? "\u2713 Lien copi\xE9" : "Copier le lien (\xE0 s'envoyer par SMS ou e-mail)",
             ),
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "tr-alerte" },
               "\u{1F512} Ce code donne acc\xE8s \xE0 votre carte, vos commandes et vos messages : ne le montrez \xE0 personne d'autre.",
             ),
           )
-        : a.default.createElement(
+        : React.default.createElement(
             "p",
             { className: "tr-txt" },
             "Il n'y a rien \xE0 transf\xE9rer : pas encore de carte, de commande ni de message sur ce t\xE9l\xE9phone.",
           ),
-      a.default.createElement("button", { className: "btn", style: { marginTop: 10 }, onClick: t }, "Fermer"),
+      React.default.createElement(
+        "button",
+        { className: "btn", style: { marginTop: 10 }, onClick: onClose },
+        "Fermer",
+      ),
     ),
   );
 }
-function TT({ code0: t, onClose: e }) {
-  let [n, r] = (0, a.useState)(t || ""),
-    [i, o] = (0, a.useState)(""),
-    s = M9(n),
+function FenetreReception({ code0: code0, onClose: onClose }) {
+  let [txt, setTxt] = (0, React.useState)(code0 || ""),
+    [etat, setEtat] = (0, React.useState)(""),
+    s = M9(txt),
     l = async () => {
       if (s) {
-        o("\u2026");
+        setEtat("\u2026");
         try {
-          let u = await O9(s);
+          let u = await importerTransfert(s);
           if (!u.carte && !u.cmds && !u.chat)
-            return o(
+            return setEtat(
               "Rien n'a \xE9t\xE9 trouv\xE9 : le code est peut-\xEAtre trop ancien (donn\xE9es supprim\xE9es par l'\xE9picerie).",
             );
-          (location.hash && history.replaceState(null, "", location.pathname), location.reload());
+          location.hash && history.replaceState(null, "", location.pathname), location.reload();
         } catch {
-          o("R\xE9cup\xE9ration impossible : v\xE9rifiez votre connexion et r\xE9essayez.");
+          setEtat("R\xE9cup\xE9ration impossible : v\xE9rifiez votre connexion et r\xE9essayez.");
         }
       }
     };
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
-    { className: "sheet-fond", onClick: e },
-    a.default.createElement(
+    { className: "sheet-fond", onClick: onClose },
+    React.default.createElement(
       "div",
       { className: "sheet", onClick: (u) => u.stopPropagation() },
-      a.default.createElement("h3", { className: "alerte-t" }, "R\xE9cup\xE9rer mes donn\xE9es"),
-      t && s
-        ? a.default.createElement(
+      React.default.createElement("h3", { className: "alerte-t" }, "R\xE9cup\xE9rer mes donn\xE9es"),
+      code0 && s
+        ? React.default.createElement(
             "p",
             { className: "tr-txt" },
             "Ce lien vient de votre ancien t\xE9l\xE9phone. On r\xE9cup\xE8re :",
             s.c &&
-              a.default.createElement(
-                a.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
-                a.default.createElement("br", null),
+                React.default.createElement("br", null),
                 "\u2713 votre carte de fid\xE9lit\xE9",
               ),
             !!s.o.length &&
-              a.default.createElement(
-                a.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
-                a.default.createElement("br", null),
+                React.default.createElement("br", null),
                 "\u2713 ",
                 s.o.length,
                 " commande",
                 s.o.length > 1 ? "s" : "",
               ),
             s.m &&
-              a.default.createElement(
-                a.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
-                a.default.createElement("br", null),
+                React.default.createElement("br", null),
                 "\u2713 vos messages avec l'\xE9picerie",
               ),
           )
-        : a.default.createElement(
-            a.default.Fragment,
+        : React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement(
+            React.default.createElement(
               "p",
               { className: "tr-txt" },
               "Sur l'",
-              a.default.createElement("b", null, "ancien t\xE9l\xE9phone"),
+              React.default.createElement("b", null, "ancien t\xE9l\xE9phone"),
               " : onglet Infos \u2192 \xAB Changer de t\xE9l\xE9phone \xBB \u2192 scannez le code avec l'appareil photo de celui-ci. Ou collez ici le lien que vous vous \xEAtes envoy\xE9 :",
             ),
-            a.default.createElement("textarea", {
+            React.default.createElement("textarea", {
               className: "inp",
               rows: 3,
-              value: n,
-              onChange: (u) => r(u.target.value),
+              value: txt,
+              onChange: (u) => setTxt(u.target.value),
               placeholder: "Collez le lien ou le code de transfert",
             }),
-            n && !s && a.default.createElement("p", { className: "manque" }, "Ce code n'est pas reconnu."),
+            txt &&
+              !s &&
+              React.default.createElement("p", { className: "manque" }, "Ce code n'est pas reconnu."),
           ),
-      i && i !== "\u2026" && a.default.createElement("p", { className: "manque" }, i),
-      a.default.createElement(
+      etat && etat !== "\u2026" && React.default.createElement("p", { className: "manque" }, etat),
+      React.default.createElement(
         "button",
-        { className: "btn", style: { marginTop: 10 }, disabled: !s || i === "\u2026", onClick: l },
-        i === "\u2026" ? "R\xE9cup\xE9ration\u2026" : "R\xE9cup\xE9rer",
+        { className: "btn", style: { marginTop: 10 }, disabled: !s || etat === "\u2026", onClick: l },
+        etat === "\u2026" ? "R\xE9cup\xE9ration\u2026" : "R\xE9cup\xE9rer",
       ),
-      a.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "btn gh",
           style: { marginTop: 8 },
           onClick: () => {
-            (location.hash && history.replaceState(null, "", location.pathname), e());
+            location.hash && history.replaceState(null, "", location.pathname), onClose();
           },
         },
         "Annuler",
@@ -7345,107 +7552,115 @@ function TT({ code0: t, onClose: e }) {
     ),
   );
 }
-function B9({ prenom: t, onChange: e }) {
-  let [n, r] = (0, a.useState)(!1);
-  return a.default.createElement(
+function MonPrenom({ prenom: prenom, onChange: onChange }) {
+  let [ed, setEd] = (0, React.useState)(!1);
+  return React.default.createElement(
     "div",
     { className: "card", style: { marginTop: 14 } },
-    a.default.createElement(
+    React.default.createElement(
       "div",
       { className: "b", style: { display: "flex", alignItems: "center", gap: 10 } },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { flex: 1 } },
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { style: { fontSize: 12, color: "var(--ink3)", fontWeight: 700 } },
           "Votre pr\xE9nom",
         ),
-        a.default.createElement("div", { style: { fontWeight: 800, fontSize: 15 } }, t || "Non renseign\xE9"),
+        React.default.createElement(
+          "div",
+          { style: { fontWeight: 800, fontSize: 15 } },
+          prenom || "Non renseign\xE9",
+        ),
       ),
-      a.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn gh", style: { width: "auto", padding: "9px 16px" }, onClick: () => r(!0) },
-        t ? "Modifier" : "Ajouter",
+        { className: "btn gh", style: { width: "auto", padding: "9px 16px" }, onClick: () => setEd(!0) },
+        prenom ? "Modifier" : "Ajouter",
       ),
-      n &&
-        a.default.createElement(IT, {
-          initial: t,
+      ed &&
+        React.default.createElement(DemandePrenom, {
+          initial: prenom,
           onFin: (i) => {
-            ((i || t) && e(i || t), r(!1));
+            (i || prenom) && onChange(i || prenom), setEd(!1);
           },
         }),
     ),
   );
 }
-function V9() {
-  let [t, e] = (0, a.useState)(null);
-  return a.default.createElement(
-    a.default.Fragment,
+function ChangerTelephone() {
+  let [vue, setVue] = (0, React.useState)(null);
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    a.default.createElement(
+    React.default.createElement(
       "h3",
       { className: "h2", style: { marginTop: 18 } },
-      a.default.createElement("i", null),
+      React.default.createElement("i", null),
       "Changer de t\xE9l\xE9phone",
     ),
-    a.default.createElement("div", { className: "sub" }, "Gardez votre carte, vos commandes et vos messages"),
-    a.default.createElement(
+    React.default.createElement(
+      "div",
+      { className: "sub" },
+      "Gardez votre carte, vos commandes et vos messages",
+    ),
+    React.default.createElement(
       "div",
       { className: "card" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "b", style: { display: "flex", flexDirection: "column", gap: 8 } },
-        a.default.createElement(
+        React.default.createElement(
           "button",
-          { className: "btn gh", onClick: () => e("envoi") },
+          { className: "btn gh", onClick: () => setVue("envoi") },
           "\u{1F4E4} Transf\xE9rer vers un autre t\xE9l\xE9phone",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "button",
-          { className: "btn gh", onClick: () => e("reception") },
+          { className: "btn gh", onClick: () => setVue("reception") },
           "\u{1F4E5} R\xE9cup\xE9rer depuis mon ancien t\xE9l\xE9phone",
         ),
       ),
     ),
-    t === "envoi" && a.default.createElement(L9, { onClose: () => e(null) }),
-    t === "reception" && a.default.createElement(TT, { onClose: () => e(null) }),
+    vue === "envoi" && React.default.createElement(FenetreEnvoi, { onClose: () => setVue(null) }),
+    vue === "reception" && React.default.createElement(FenetreReception, { onClose: () => setVue(null) }),
   );
 }
-var CT = "epicerie-raddonnaise-resas",
+var RESA_KEY = "epicerie-raddonnaise-resas",
   ts = () => {
     try {
-      return JSON.parse(localStorage.getItem(CT) || "[]");
+      return JSON.parse(localStorage.getItem(RESA_KEY) || "[]");
     } catch {
       return [];
     }
   },
   rx = (t) => {
     try {
-      localStorage.setItem(CT, JSON.stringify(t.slice(0, 15)));
+      localStorage.setItem(RESA_KEY, JSON.stringify(t.slice(0, 15)));
     } catch {}
   },
   fT = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789",
   z9 = () => {
     let t = new Uint32Array(5);
-    return (crypto.getRandomValues(t), "R-" + [...t].map((e) => fT[e % fT.length]).join(""));
+    return crypto.getRandomValues(t), "R-" + [...t].map((e) => fT[e % fT.length]).join("");
   },
   Ro = (t) => Math.max(0, (parseInt(t.stock) || 0) - (parseInt(t.reserves) || 0)),
   j9 = (t) => (parseInt(t.stock) || 0) > 0;
-function U9(t) {
-  let [e, n] = (0, a.useState)(ts),
-    [r, i] = (0, a.useState)({});
-  (0, a.useEffect)(() => {
-    n(ts());
+function useMesResas(t) {
+  let [liste, setListe] = (0, React.useState)(ts),
+    [live, setLive] = (0, React.useState)({});
+  (0, React.useEffect)(() => {
+    setListe(ts());
   }, [t]);
-  let o = e.filter((s) => s.ref && Date.now() - (s.cree || 0) < 4 * 864e5).map((s) => s.ref);
+  let o = liste.filter((s) => s.ref && Date.now() - (s.cree || 0) < 4 * 864e5).map((s) => s.ref);
   return (
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       let s = o.map((l) =>
-        Or(
-          we(ce, "resas", l),
+        onSnapshot(
+          doc2(db2, "resas", l),
           (u) =>
-            i((d) => ({
+            setLive((d) => ({
               ...d,
               [l]: u.exists() ? u.data() : u.metadata?.fromCache ? d[l] : { statut: "annulee" },
             })),
@@ -7454,24 +7669,24 @@ function U9(t) {
       );
       return () => s.forEach((l) => l());
     }, [o.join()]),
-    e
+    liste
       .filter((s) => o.includes(s.ref))
-      .map((s) => (r[s.ref] ? { ...s, statut: r[s.ref].statut, conv: r[s.ref].conv || "" } : s))
+      .map((s) => (live[s.ref] ? { ...s, statut: live[s.ref].statut, conv: live[s.ref].conv || "" } : s))
   );
 }
-function q9({ resas: t }) {
-  let e = t.filter((n) => n.statut === "reservee");
+function MesResas({ resas: resas }) {
+  let e = resas.filter((n) => n.statut === "reservee");
   return e.length
     ? e.map((n) =>
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { className: "resa-suivi", key: n.numero },
-          a.default.createElement("div", { className: "rs-ic" }, "\u{1F9FA}"),
-          a.default.createElement(
+          React.default.createElement("div", { className: "rs-ic" }, "\u{1F9FA}"),
+          React.default.createElement(
             "div",
             { style: { minWidth: 0 } },
-            a.default.createElement("b", null, "R\xE9serv\xE9 : ", n.qte, " \xD7 ", n.titre),
-            a.default.createElement(
+            React.default.createElement("b", null, "R\xE9serv\xE9 : ", n.qte, " \xD7 ", n.titre),
+            React.default.createElement(
               "div",
               null,
               "\xC0 retirer ",
@@ -7485,51 +7700,51 @@ function q9({ resas: t }) {
       )
     : null;
 }
-function $9({ i: t, d: e, prenom: n, onClose: r, onFait: i, inst: o }) {
+function Reserver({ i: t, d: e, prenom: prenom, onClose: onClose, onFait: onFait, inst: inst }) {
   let s = Math.min(10, Ro(t)),
-    [l, u] = (0, a.useState)(1),
+    [qte, setQte] = (0, React.useState)(1),
     d = ts()[0] || {},
-    [h, f] = (0, a.useState)(n || d.nom || ""),
-    [m, E] = (0, a.useState)(d.tel || ""),
-    [F, D] = (0, a.useState)(""),
-    [M, C] = (0, a.useState)(null),
+    [nom, setNom] = (0, React.useState)(prenom || d.nom || ""),
+    [tel, setTel] = (0, React.useState)(d.tel || ""),
+    [etat, setEtat] = (0, React.useState)(""),
+    [fini, setFini] = (0, React.useState)(null),
     A = Number(t.prix) || 0;
-  (0, a.useEffect)(() => {
-    s > 0 && l > s && (u(s), D("Il n'en reste plus que " + s + " : quantit\xE9 ajust\xE9e."));
+  (0, React.useEffect)(() => {
+    s > 0 && qte > s && (setQte(s), setEtat("Il n'en reste plus que " + s + " : quantit\xE9 ajust\xE9e."));
   }, [s]);
   let S = async () => {
-    if (!h.trim() || l < 1 || F === "envoi") return;
-    if (l > s) {
-      (u(Math.max(1, s)), D("Il n'en reste plus que " + s + " : quantit\xE9 ajust\xE9e."));
+    if (!nom.trim() || qte < 1 || etat === "envoi") return;
+    if (qte > s) {
+      setQte(Math.max(1, s)), setEtat("Il n'en reste plus que " + s + " : quantit\xE9 ajust\xE9e.");
       return;
     }
-    D("envoi");
+    setEtat("envoi");
     let P = {
         numero: z9(),
         cree: Date.now(),
         statut: "reservee",
         item: String(t.id),
         titre: String(t.titre).slice(0, 80),
-        qte: l,
+        qte: qte,
         prix: A,
-        total: Math.round(A * l * 100) / 100,
-        nom: h.trim().slice(0, 40),
-        tel: m.trim().slice(0, 20),
+        total: Math.round(A * qte * 100) / 100,
+        nom: nom.trim().slice(0, 40),
+        tel: tel.trim().slice(0, 20),
         retrait: String(t.retrait || "").slice(0, 60),
       },
-      z = Ma(ce),
-      j = we(Qn(ce, "resas")),
+      z = writeBatch(db2),
+      j = doc2(collection(db2, "resas")),
       b = q2(j);
-    (z.set(j, P), z.update(we(ce, "jour", String(t.id)), { reserves: Gu(l), derniereResa: b }));
+    z.set(j, P), z.update(doc2(db2, "jour", String(t.id)), { reserves: increment2(qte), derniereResa: b });
     let y = () => {
-      (rx(ts().filter((N) => N.ref !== b)), Cf(b));
+      rx(ts().filter((N) => N.ref !== b)), Cf(b);
     };
-    (rx([
+    rx([
       {
         ref: b,
         numero: P.numero,
         titre: P.titre,
-        qte: l,
+        qte: qte,
         total: P.total,
         retrait: P.retrait,
         nom: P.nom,
@@ -7539,32 +7754,32 @@ function $9({ i: t, d: e, prenom: n, onClose: r, onFait: i, inst: o }) {
       },
       ...ts(),
     ]),
-      ux("resa", b));
+      ux("resa", b);
     let v = null,
       w = z.commit().catch((N) => {
         throw ((v = N), N);
       }),
       k = await sx(w);
     if (k === "erreur") {
-      (y(),
-        D(
+      y(),
+        setEtat(
           v?.code === "permission-denied"
             ? "D\xE9sol\xE9, il n'en reste plus assez : quelqu'un a \xE9t\xE9 plus rapide !"
             : "R\xE9servation impossible. V\xE9rifiez votre connexion et r\xE9essayez.",
-        ));
+        );
       return;
     }
-    (k === "ok" ? setTimeout(() => ns(e.cmd, "resa", b), 1200) : w.then(() => ns(e.cmd, "resa", b), y),
-      C({ ...P, attente: k === "lent" }),
-      i?.(),
+    k === "ok" ? setTimeout(() => ns(e.cmd, "resa", b), 1200) : w.then(() => ns(e.cmd, "resa", b), y),
+      setFini({ ...P, attente: k === "lent" }),
+      onFait?.(),
       setTimeout(_c, 300),
       tn("reservations"),
-      D(""));
+      setEtat("");
   };
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
-    { className: "sheet-fond", onClick: r },
-    a.default.createElement(
+    { className: "sheet-fond", onClick: onClose },
+    React.default.createElement(
       "div",
       {
         className: "sheet",
@@ -7572,51 +7787,51 @@ function $9({ i: t, d: e, prenom: n, onClose: r, onFait: i, inst: o }) {
         role: "dialog",
         "aria-label": "R\xE9server " + t.titre,
       },
-      M
-        ? a.default.createElement(
-            a.default.Fragment,
+      fini
+        ? React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement("div", { className: "ok-rond" }, "\u2713"),
-            a.default.createElement("h3", { className: "alerte-t" }, "C'est r\xE9serv\xE9 !"),
-            a.default.createElement(
+            React.default.createElement("div", { className: "ok-rond" }, "\u2713"),
+            React.default.createElement("h3", { className: "alerte-t" }, "C'est r\xE9serv\xE9 !"),
+            React.default.createElement(
               "p",
               { className: "tr-txt" },
-              a.default.createElement("b", null, M.qte, " \xD7 ", M.titre),
+              React.default.createElement("b", null, fini.qte, " \xD7 ", fini.titre),
               " mis de c\xF4t\xE9 pour vous.",
-              a.default.createElement("br", null),
+              React.default.createElement("br", null),
               "\xC0 retirer ",
-              a.default.createElement("b", null, M.retrait || "\xE0 l'\xE9picerie"),
-              M.total > 0 &&
-                a.default.createElement(
-                  a.default.Fragment,
+              React.default.createElement("b", null, fini.retrait || "\xE0 l'\xE9picerie"),
+              fini.total > 0 &&
+                React.default.createElement(
+                  React.default.Fragment,
                   null,
-                  a.default.createElement("br", null),
+                  React.default.createElement("br", null),
                   "\xC0 r\xE9gler sur place : ",
-                  ze(M.total),
+                  ze(fini.total),
                 ),
-              a.default.createElement("br", null),
-              a.default.createElement("small", null, "N\xB0 ", M.numero),
+              React.default.createElement("br", null),
+              React.default.createElement("small", null, "N\xB0 ", fini.numero),
             ),
-            M.attente &&
-              a.default.createElement(
+            fini.attente &&
+              React.default.createElement(
                 "div",
                 { className: "envoi-lent" },
                 "\u{1F4F6} Connexion faible : la r\xE9servation partira d\xE8s que le r\xE9seau revient. Si l'article est parti entre-temps, elle dispara\xEEtra de votre accueil.",
               ),
-            a.default.createElement("button", { className: "btn", onClick: r }, "Merci !"),
+            React.default.createElement("button", { className: "btn", onClick: onClose }, "Merci !"),
           )
-        : a.default.createElement(
-            a.default.Fragment,
+        : React.default.createElement(
+            React.default.Fragment,
             null,
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "sheet-hd" },
-              t.photo && a.default.createElement("img", { src: t.photo, alt: "" }),
-              a.default.createElement(
+              t.photo && React.default.createElement("img", { src: t.photo, alt: "" }),
+              React.default.createElement(
                 "div",
                 null,
-                a.default.createElement("h3", null, t.titre),
-                a.default.createElement(
+                React.default.createElement("h3", null, t.titre),
+                React.default.createElement(
                   "span",
                   null,
                   A > 0 ? ze(A) + (t.unite ? " / " + t.unite : "") : "",
@@ -7625,98 +7840,109 @@ function $9({ i: t, d: e, prenom: n, onClose: r, onFait: i, inst: o }) {
               ),
             ),
             t.note &&
-              a.default.createElement(
+              React.default.createElement(
                 "p",
                 { className: "tr-txt", style: { marginTop: 10, textAlign: "left" } },
                 t.note,
               ),
-            a.default.createElement(
+            React.default.createElement(
               "div",
               { className: "resa-info" },
               "\u{1F552} \xC0 retirer ",
-              a.default.createElement("b", null, t.retrait || "\xE0 l'\xE9picerie"),
+              React.default.createElement("b", null, t.retrait || "\xE0 l'\xE9picerie"),
               parseInt(t.stock) < 999 ? " \xB7 " + (s > 0 ? "plus que " + Ro(t) : "\xE9puis\xE9") : "",
             ),
             s > 0
-              ? a.default.createElement(
-                  a.default.Fragment,
+              ? React.default.createElement(
+                  React.default.Fragment,
                   null,
-                  a.default.createElement(
+                  React.default.createElement(
                     "div",
                     { className: "lab", style: { textAlign: "center", marginTop: 12 } },
                     "Quantit\xE9",
                   ),
-                  a.default.createElement(
+                  React.default.createElement(
                     "div",
                     { className: "pas" },
-                    a.default.createElement(
+                    React.default.createElement(
                       "button",
-                      { onClick: () => u(Math.max(1, l - 1)), disabled: l <= 1, "aria-label": "Un de moins" },
+                      {
+                        onClick: () => setQte(Math.max(1, qte - 1)),
+                        disabled: qte <= 1,
+                        "aria-label": "Un de moins",
+                      },
                       "\u2212",
                     ),
-                    a.default.createElement("input", {
+                    React.default.createElement("input", {
                       type: "number",
-                      value: l,
+                      value: qte,
                       readOnly: !0,
                       "aria-label": "Quantit\xE9",
                     }),
-                    a.default.createElement(
+                    React.default.createElement(
                       "button",
-                      { onClick: () => u(Math.min(s, l + 1)), disabled: l >= s, "aria-label": "Un de plus" },
+                      {
+                        onClick: () => setQte(Math.min(s, qte + 1)),
+                        disabled: qte >= s,
+                        "aria-label": "Un de plus",
+                      },
                       "+",
                     ),
                   ),
-                  a.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { display: "flex", gap: 8, marginTop: 6 } },
-                    a.default.createElement("input", {
+                    React.default.createElement("input", {
                       className: "inp",
-                      value: h,
+                      value: nom,
                       maxLength: 40,
                       placeholder: "Votre nom",
-                      onChange: (P) => f(P.target.value),
+                      onChange: (P) => setNom(P.target.value),
                     }),
-                    a.default.createElement("input", {
+                    React.default.createElement("input", {
                       className: "inp",
                       type: "tel",
-                      value: m,
+                      value: tel,
                       maxLength: 20,
                       placeholder: "T\xE9l. (facultatif)",
-                      onChange: (P) => E(P.target.value),
+                      onChange: (P) => setTel(P.target.value),
                     }),
                   ),
-                  a.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { marginTop: 10 } },
-                    a.default.createElement(cx, { inst: o, quoi: "votre r\xE9servation" }),
+                    React.default.createElement(ConseilInstallCommande, {
+                      inst: inst,
+                      quoi: "votre r\xE9servation",
+                    }),
                   ),
-                  F && F !== "envoi" && a.default.createElement("p", { className: "manque" }, F),
-                  a.default.createElement(
+                  etat && etat !== "envoi" && React.default.createElement("p", { className: "manque" }, etat),
+                  React.default.createElement(
                     "button",
                     {
                       className: "btn",
                       style: { marginTop: 12, background: "var(--terra)" },
-                      disabled: !h.trim() || F === "envoi",
+                      disabled: !nom.trim() || etat === "envoi",
                       onClick: S,
                     },
-                    F === "envoi"
+                    etat === "envoi"
                       ? "R\xE9servation\u2026"
-                      : "Je r\xE9serve" + (A > 0 ? " \u2014 " + ze(A * l) : ""),
+                      : "Je r\xE9serve" + (A > 0 ? " \u2014 " + ze(A * qte) : ""),
                   ),
-                  a.default.createElement(
+                  React.default.createElement(
                     "p",
                     { className: "cal-info", style: { textAlign: "center" } },
                     "Paiement sur place. Pas venu \xE0 temps ? L'article est remis en vente.",
                   ),
                 )
-              : a.default.createElement(
+              : React.default.createElement(
                   "p",
                   { className: "manque", style: { textAlign: "center" } },
                   "Tout est parti, d\xE9sol\xE9 ! Revenez demain \u{1F609}",
                 ),
-            a.default.createElement(
+            React.default.createElement(
               "button",
-              { className: "btn gh", style: { marginTop: 8 }, onClick: r },
+              { className: "btn gh", style: { marginTop: 8 }, onClick: onClose },
               "Fermer",
             ),
           ),
@@ -7738,7 +7964,7 @@ var gx = "epicerie-raddonnaise-appareil",
       [...t].map((e) => "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"[e % 56]).join("")
     );
   },
-  ST = () => {
+  refsSuivies = () => {
     let t = [];
     Dn().forEach((n) => n.ref && t.push(n.ref));
     let e = fx();
@@ -7749,14 +7975,14 @@ var gx = "epicerie-raddonnaise-appareil",
       );
     } catch {}
     try {
-      let n = JSON.parse(localStorage.getItem(qa) || "null");
+      let n = JSON.parse(localStorage.getItem(USER_KEY) || "null");
       n?.ref && t.unshift(n.ref);
     } catch {}
     return [...new Set(t)].slice(0, 40);
   };
 async function Q2(t, e) {
   let r = vx()?.id || W9();
-  await Sn(we(ce, "appareils", r), { token: t, refs: ST(), promo: !!e, maj: Date.now() });
+  await setDoc(doc2(db2, "appareils", r), { token: t, refs: refsSuivies(), promo: !!e, maj: Date.now() });
   let i = { id: r, token: t, promo: !!e };
   try {
     localStorage.setItem(gx, JSON.stringify(i));
@@ -7767,19 +7993,24 @@ async function _c() {
   let t = vx();
   if (!(!t?.id || !t.token))
     try {
-      await Sn(we(ce, "appareils", t.id), { token: t.token, refs: ST(), promo: !!t.promo, maj: Date.now() });
+      await setDoc(doc2(db2, "appareils", t.id), {
+        token: t.token,
+        refs: refsSuivies(),
+        promo: !!t.promo,
+        maj: Date.now(),
+      });
     } catch {}
 }
 var G9 = () =>
   /iPhone|iPad|iPod/.test(navigator.userAgent) &&
   !navigator.standalone &&
   !window.matchMedia("(display-mode: standalone)").matches;
-function H9(t) {
+function useNotifs(t) {
   let e = t.push?.vapid || "",
-    [n, r] = (0, a.useState)("\u2026"),
-    [i, o] = (0, a.useState)(vx);
+    [n, r] = (0, React.useState)("\u2026"),
+    [i, o] = (0, React.useState)(vx);
   return (
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       let d = !1;
       return (
         (async () => {
@@ -7808,9 +8039,9 @@ function H9(t) {
         try {
           let h = await j2(e);
           if (h.erreur) return r(h.erreur === "refus" ? "refus" : "indispo");
-          (o(await Q2(h.token, d)), r("on"), tn(d ? "notif_bonsplans" : "notif_on"));
+          o(await Q2(h.token, d)), r("on"), tn(d ? "notif_bonsplans" : "notif_on");
         } catch {
-          (r("off"), h0("Activation impossible pour le moment. R\xE9essayez plus tard."));
+          r("off"), h0("Activation impossible pour le moment. R\xE9essayez plus tard.");
         }
       },
       bonsPlans: async (d) => {
@@ -7821,139 +8052,139 @@ function H9(t) {
       },
       desactiver: async () => {
         try {
-          i?.id && (await hy(we(ce, "appareils", i.id)));
+          i?.id && (await deleteDoc(doc2(db2, "appareils", i.id)));
         } catch {}
         try {
           localStorage.removeItem(gx);
         } catch {}
-        (o(null), r("off"));
+        o(null), r("off");
       },
       dispo: !!e,
     }
   );
 }
-function yx({ n: t, compact: e }) {
-  let [n, r] = (0, a.useState)(!1);
-  return !t.dispo || t.etat === "indispo" || t.etat === "\u2026" || (e && t.etat !== "off")
+function BlocNotifications({ n: t, compact: compact }) {
+  let [n, r] = (0, React.useState)(!1);
+  return !t.dispo || t.etat === "indispo" || t.etat === "\u2026" || (compact && t.etat !== "off")
     ? null
     : t.etat === "ios"
-      ? e
+      ? compact
         ? null
-        : a.default.createElement(
+        : React.default.createElement(
             "div",
             { className: "notif-bloc" },
-            a.default.createElement("b", null, "\u{1F514} Notifications"),
-            a.default.createElement(
+            React.default.createElement("b", null, "\u{1F514} Notifications"),
+            React.default.createElement(
               "p",
               null,
               "Sur iPhone, installez d'abord l'application sur votre \xE9cran d'accueil (bouton \xAB Installer \xBB), puis revenez ici pour activer les notifications.",
             ),
           )
       : t.etat === "refus"
-        ? e
+        ? compact
           ? null
-          : a.default.createElement(
+          : React.default.createElement(
               "div",
               { className: "notif-bloc" },
-              a.default.createElement("b", null, "\u{1F514} Notifications bloqu\xE9es"),
-              a.default.createElement(
+              React.default.createElement("b", null, "\u{1F514} Notifications bloqu\xE9es"),
+              React.default.createElement(
                 "p",
                 null,
                 "Vous les avez refus\xE9es. Pour les recevoir, autorisez les notifications pour ce site dans les r\xE9glages de votre t\xE9l\xE9phone.",
               ),
             )
         : t.etat === "on"
-          ? a.default.createElement(
+          ? React.default.createElement(
               "div",
               { className: "notif-bloc on" },
-              a.default.createElement("b", null, "\u{1F514} Notifications activ\xE9es"),
-              a.default.createElement(
+              React.default.createElement("b", null, "\u{1F514} Notifications activ\xE9es"),
+              React.default.createElement(
                 "p",
                 null,
                 "Vous \xEAtes pr\xE9venu quand votre commande est valid\xE9e ou pr\xEAte, et quand l'\xE9picerie vous r\xE9pond.",
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "label",
                 { className: "accord", style: { marginTop: 6 } },
-                a.default.createElement("input", {
+                React.default.createElement("input", {
                   type: "checkbox",
                   checked: !!t.app?.promo,
                   onChange: (i) => t.bonsPlans(i.target.checked),
                 }),
-                a.default.createElement(
+                React.default.createElement(
                   "span",
                   null,
                   "Recevoir aussi les bons plans de l'\xE9picerie (arrivages, promos\u2026)",
                 ),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "button",
                 { className: "lien", style: { marginTop: 8 }, onClick: t.desactiver },
                 "D\xE9sactiver les notifications",
               ),
             )
-          : a.default.createElement(
+          : React.default.createElement(
               "div",
-              { className: "notif-bloc" + (e ? " compact" : "") },
-              a.default.createElement("b", null, "\u{1F514} \xCAtre pr\xE9venu sur mon t\xE9l\xE9phone"),
-              !e &&
-                a.default.createElement(
+              { className: "notif-bloc" + (compact ? " compact" : "") },
+              React.default.createElement("b", null, "\u{1F514} \xCAtre pr\xE9venu sur mon t\xE9l\xE9phone"),
+              !compact &&
+                React.default.createElement(
                   "p",
                   null,
                   "Commande valid\xE9e, commande pr\xEAte, r\xE9ponse de l'\xE9picerie\u2026 m\xEAme quand l'application est ferm\xE9e.",
                 ),
-              a.default.createElement(
+              React.default.createElement(
                 "label",
                 { className: "accord", style: { marginTop: 6 } },
-                a.default.createElement("input", {
+                React.default.createElement("input", {
                   type: "checkbox",
                   checked: n,
                   onChange: (i) => r(i.target.checked),
                 }),
-                a.default.createElement(
+                React.default.createElement(
                   "span",
                   null,
                   "Et les bons plans de l'\xE9picerie (arrivages, promos\u2026)",
                 ),
               ),
-              a.default.createElement(
+              React.default.createElement(
                 "button",
                 { className: "btn", style: { marginTop: 8 }, onClick: () => t.activer(n) },
                 "Activer les notifications",
               ),
             );
 }
-function K9({ d: t }) {
+function PartagerAppli({ d: d }) {
   let e = location.origin + location.pathname,
     n =
       "Je te conseille l'appli de l'" +
-      t.store.name +
+      d.store.name +
       " : le frais du jour, les promos et les plateaux \xE0 commander \u{1F34F} ",
-    [r, i] = (0, a.useState)(!1);
-  return a.default.createElement(
-    a.default.Fragment,
+    [qr, setQr] = (0, React.useState)(!1);
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    a.default.createElement(
+    React.default.createElement(
       "h3",
       { className: "h2", style: { marginTop: 18 } },
-      a.default.createElement("i", null),
+      React.default.createElement("i", null),
       "Faites d\xE9couvrir l'appli",
     ),
-    a.default.createElement("div", { className: "sub" }, "\xC0 vos voisins, \xE0 votre famille\u2026"),
-    a.default.createElement(
+    React.default.createElement("div", { className: "sub" }, "\xC0 vos voisins, \xE0 votre famille\u2026"),
+    React.default.createElement(
       "div",
       { className: "card" },
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { className: "b", style: { display: "flex", flexDirection: "column", gap: 8 } },
-        a.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn",
             onClick: async () => {
               if (navigator.share)
                 try {
-                  await navigator.share({ title: t.store.name, text: n, url: e });
+                  await navigator.share({ title: d.store.name, text: n, url: e });
                   return;
                 } catch (s) {
                   if (s?.name === "AbortError") return;
@@ -7963,7 +8194,7 @@ function K9({ d: t }) {
           },
           "\u{1F4E4} Partager l'application",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "a",
           {
             className: "btn gh",
@@ -7974,16 +8205,16 @@ function K9({ d: t }) {
           },
           "Envoyer par WhatsApp",
         ),
-        a.default.createElement(
+        React.default.createElement(
           "button",
-          { className: "btn gh", onClick: () => i(!r) },
-          r ? "Masquer le QR code" : "Montrer le QR code \xE0 quelqu'un",
+          { className: "btn gh", onClick: () => setQr(!qr) },
+          qr ? "Masquer le QR code" : "Montrer le QR code \xE0 quelqu'un",
         ),
-        r &&
-          a.default.createElement(
+        qr &&
+          React.default.createElement(
             "div",
             { className: "tr-qr" },
-            a.default.createElement(Wa, { texte: e, taille: 200 }),
+            React.default.createElement(QR, { texte: e, taille: 200 }),
           ),
       ),
     ),
@@ -7998,40 +8229,40 @@ var ix = "epicerie-raddonnaise-panier",
       return [];
     }
   };
-function J9() {
-  let t = hO(),
-    [e, n] = pO(),
-    [r, i] = (0, a.useState)(!1),
-    [o, s] = (0, a.useState)(!1),
-    l = (0, a.useRef)([]),
-    [u, d] = (0, a.useState)("");
-  ((Z2 = Nn(t.cmd).script || ""),
-    (0, a.useEffect)(() => {
+function App() {
+  let t = useShop(),
+    [e, n] = useMoi(),
+    [r, i] = (0, React.useState)(!1),
+    [o, s] = (0, React.useState)(!1),
+    l = (0, React.useRef)([]),
+    [u, d] = (0, React.useState)("");
+  (Z2 = Nn(t.cmd).script || ""),
+    (0, React.useEffect)(() => {
       e?.ref && _c();
-    }, [e?.ref]));
+    }, [e?.ref]);
   let [h, f] = NO(t.fidActive ? e : null, t.fidelite),
-    [m, E] = (0, a.useState)("accueil"),
-    [F, D] = (0, a.useState)(null),
-    [M, C] = (0, a.useState)(!0),
-    [A, S] = (0, a.useState)(!1),
-    [P, z] = (0, a.useState)(!1),
+    [m, E] = (0, React.useState)("accueil"),
+    [F, D] = (0, React.useState)(null),
+    [M, C] = (0, React.useState)(!0),
+    [A, S] = (0, React.useState)(!1),
+    [P, z] = (0, React.useState)(!1),
     [j, b] = S9(),
     y = j.prenom || (e?.nom ? e.nom.trim().split(/\s+/)[0] : ""),
     v = P && !!y,
-    [w, k] = (0, a.useState)(() => !!window.__ouvFinie || !document.getElementById("ouverture"));
-  ((0, a.useEffect)(() => {
+    [w, k] = (0, React.useState)(() => !!window.__ouvFinie || !document.getElementById("ouverture"));
+  (0, React.useEffect)(() => {
     if (w) return;
     let K = () => k(!0);
-    return (addEventListener("ouverture-fin", K), () => removeEventListener("ouverture-fin", K));
+    return addEventListener("ouverture-fin", K), () => removeEventListener("ouverture-fin", K);
   }, []),
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       if (t.pret) window.__appPret?.();
       else {
         let K = setTimeout(() => window.__appPret?.(), 2500);
         return () => clearTimeout(K);
       }
     }, [t.pret]),
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       h ||
         M ||
         v ||
@@ -8053,8 +8284,8 @@ function J9() {
       (e?.roueAJouer || []).length,
       (e?.roueAJouer || []).slice(-1)[0]?.t,
     ]),
-    (0, a.useEffect)(() => {
-      let K = Ho(t.fidelite);
+    (0, React.useEffect)(() => {
+      let K = MENTION_EXCLUSIONS(t.fidelite);
       !h &&
         !M &&
         !v &&
@@ -8065,33 +8296,33 @@ function J9() {
         (e.tampons || 0) === K.palier &&
         !X2(e) &&
         s(!0);
-    }, [h, M, v, t.fidActive, e?.tampons, e?.choixLe, e?.dernierTampon, r]));
-  let [N, T] = (0, a.useState)(() => {
+    }, [h, M, v, t.fidActive, e?.tampons, e?.choixLe, e?.dernierTampon, r]);
+  let [N, T] = (0, React.useState)(() => {
       try {
-        return !location.hash.includes("transfert=") && localStorage.getItem(px) !== "1";
+        return !location.hash.includes("transfert=") && localStorage.getItem(BIENVENUE_KEY) !== "1";
       } catch {
         return !1;
       }
     }),
-    [X, le] = (0, a.useState)(() => {
+    [X, le] = (0, React.useState)(() => {
       try {
         return location.hash.includes("transfert=") ? location.hash : null;
       } catch {
         return null;
       }
     }),
-    se = mO(),
-    [R, fe] = (0, a.useState)(!1),
-    [Q, Ae] = (0, a.useState)(null),
-    [ot, et] = (0, a.useState)(Q9);
-  ((0, a.useEffect)(() => {
+    se = useInstall(),
+    [R, fe] = (0, React.useState)(!1),
+    [Q, Ae] = (0, React.useState)(null),
+    [ot, et] = (0, React.useState)(Q9);
+  (0, React.useEffect)(() => {
     try {
       ot.length
         ? localStorage.setItem(ix, JSON.stringify({ t: Date.now(), l: ot }))
         : localStorage.removeItem(ix);
     } catch {}
   }, [ot]),
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       let K = 0,
         ge = () => {
           document.visibilityState === "hidden"
@@ -8105,30 +8336,30 @@ function J9() {
         document.addEventListener("visibilitychange", ge),
         addEventListener("pageshow", Je),
         () => {
-          (document.removeEventListener("visibilitychange", ge), removeEventListener("pageshow", Je));
+          document.removeEventListener("visibilitychange", ge), removeEventListener("pageshow", Je);
         }
       );
-    }, []));
-  let [de, Ht] = (0, a.useState)(null),
-    [st, is] = (0, a.useState)(0),
-    yn = k9(),
-    os = H9(t),
-    [Nf, ss] = (0, a.useState)(0),
-    Wi = U9(Nf),
-    [Gi, as] = (0, a.useState)(null),
-    [Ga, ls] = (0, a.useState)(!1),
-    [kc, Ic] = (0, a.useState)(0),
-    [Hi, Tc, Cc] = BO(st),
+    }, []);
+  let [de, Ht] = (0, React.useState)(null),
+    [st, is] = (0, React.useState)(0),
+    yn = useChat(),
+    os = useNotifs(t),
+    [Nf, ss] = (0, React.useState)(0),
+    Wi = useMesResas(Nf),
+    [Gi, as] = (0, React.useState)(null),
+    [Ga, ls] = (0, React.useState)(!1),
+    [kc, Ic] = (0, React.useState)(0),
+    [Hi, Tc, Cc] = useMesCommandes(st),
     Zn = Hi.find(cT),
     us = (yn.nonLus || 0) + Hi.filter(cT).length;
-  (0, a.useEffect)(() => {
+  (0, React.useEffect)(() => {
     try {
       us && navigator.setAppBadge
         ? navigator.setAppBadge(us).catch(() => {})
         : navigator.clearAppBadge && navigator.clearAppBadge().catch(() => {});
     } catch {}
   }, [us]);
-  let Ff = rI(),
+  let Ff = useMiseAJour(),
     qr = ot
       .map((K) => {
         let ge = t.plateaux.find((Pn) => Pn.id === K.id && vn(Pn));
@@ -8147,16 +8378,16 @@ function J9() {
       })
       .filter(Boolean),
     Ha = (K) => {
-      (Ht(K), K?.id && tn("pl_" + K.id));
+      Ht(K), K?.id && tn("pl_" + K.id);
     };
-  ((0, a.useEffect)(() => {
+  (0, React.useEffect)(() => {
     tI();
   }, []),
-    (0, a.useEffect)(() => {
+    (0, React.useEffect)(() => {
       tn("v_" + m);
-    }, [m]));
+    }, [m]);
   let Rn = [...Hi, ...Wi].map((K) => K.conv).find((K) => K && /^[A-Za-z0-9]{15,40}$/.test(K));
-  (0, a.useEffect)(() => {
+  (0, React.useEffect)(() => {
     if (!Rn || Rn === yn.moiChat?.ref) return;
     let K = [];
     try {
@@ -8166,21 +8397,21 @@ function J9() {
       try {
         localStorage.setItem(pT, JSON.stringify([...K, Rn].slice(-20)));
       } catch {}
-      (yn.enregistrer({ ref: Rn, nom: y || yn.moiChat?.nom || "", vu: 0 }), setTimeout(_c, 300));
+      yn.enregistrer({ ref: Rn, nom: y || yn.moiChat?.nom || "", vu: 0 }), setTimeout(_c, 300);
     }
   }, [Rn]);
   let at = wO(),
-    tt = (0, a.useMemo)(() => bO(t.hours, t.fermetures), [t.hours, t.fermetures, at]),
+    tt = (0, React.useMemo)(() => texteOuverture(t.hours, t.fermetures), [t.hours, t.fermetures, at]),
     $r = tt ? tt.ouvert : null,
-    Ka = (0, a.useRef)(!1);
-  (0, a.useEffect)(() => {
+    Ka = (0, React.useRef)(!1);
+  (0, React.useEffect)(() => {
     Ka.current || !t.cmd?.script || ((Ka.current = !0), xO(t.cmd));
   }, [t.cmd?.script]);
-  let xe = (0, a.useMemo)(() => n2(t.themes), [t.themes]);
-  zI(!!xe?.magie && xe.anim !== !1);
+  let xe = (0, React.useMemo)(() => n2(t.themes), [t.themes]);
+  PoudreMagique(!!xe?.magie && xe.anim !== !1);
   let Qe = Re(xe);
-  (dI(Qe && xe.anim !== !1 ? Qe : null),
-    (0, a.useEffect)(() => {
+  dI(Qe && xe.anim !== !1 ? Qe : null),
+    (0, React.useEffect)(() => {
       if (!t.pret) return;
       let K = "";
       try {
@@ -8193,14 +8424,14 @@ function J9() {
           }
         }
       } catch {}
-      (t.themes?.mode === "force" && (K = ""), aI(xe, K));
-    }, [t.pret, xe?.id, xe?.magie, Qe]));
+      t.themes?.mode === "force" && (K = ""), aI(xe, K);
+    }, [t.pret, xe?.id, xe?.magie, Qe]);
   let Wr = () => D(e ? "qr" : "inscription"),
     cs = (K) => {
-      (E(K), window.scrollTo(0, 0));
+      E(K), window.scrollTo(0, 0);
     };
   if (
-    ((0, a.useEffect)(() => {
+    ((0, React.useEffect)(() => {
       es.set(
         M && w
           ? {
@@ -8210,7 +8441,7 @@ function J9() {
               theme: xe,
               onSortie: () => S(!0),
               onEnd: () => {
-                (z(!!y), C(!1));
+                z(!!y), C(!1);
               },
             }
           : null,
@@ -8220,48 +8451,48 @@ function J9() {
   )
     return null;
   if (N && !e)
-    return a.default.createElement(
-      a.default.Fragment,
+    return React.default.createElement(
+      React.default.Fragment,
       null,
-      a.default.createElement("style", null, Zo),
-      a.default.createElement(A9, {
+      React.default.createElement("style", null, CSS_APPLI),
+      React.default.createElement(Bienvenue, {
         d: t,
         onFin: (K) => {
-          (T(!1), K === "carte" && D("inscription"));
+          T(!1), K === "carte" && D("inscription");
         },
       }),
     );
   let Qa =
       Q &&
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { position: "relative", zIndex: 500 } },
-        a.default.createElement(H2, { type: Q, d: t, onClose: () => Ae(null) }),
+        React.default.createElement(PageLegale, { type: Q, d: t, onClose: () => Ae(null) }),
       ),
     ds =
       de &&
-      a.default.createElement($O, {
+      React.default.createElement(ChoixPlateau, {
         p: de,
         actuel: ot.find((K) => K.id === de.id),
         onClose: () => Ht(null),
         onRetirer: () => {
-          (et((K) => K.filter((ge) => ge.id !== de.id)), Ht(null));
+          et((K) => K.filter((ge) => ge.id !== de.id)), Ht(null);
         },
         onValider: (K, ge) => {
-          (et((Je) =>
+          et((Je) =>
             Je.some((ft) => ft.id === de.id)
               ? Je.map((ft) => (ft.id === de.id ? { ...ft, personnes: K, choix: ge } : ft))
               : [...Je, { id: de.id, personnes: K, choix: ge }],
           ),
-            Ht(null));
+            Ht(null);
         },
       });
   if (Ga)
-    return a.default.createElement(
-      a.default.Fragment,
+    return React.default.createElement(
+      React.default.Fragment,
       null,
-      a.default.createElement("style", null, Zo),
-      a.default.createElement(C9, {
+      React.default.createElement("style", null, CSS_APPLI),
+      React.default.createElement(Messagerie, {
         d: t,
         moi: e,
         chat: yn,
@@ -8271,18 +8502,18 @@ function J9() {
         onClose: () => ls(!1),
       }),
       Q &&
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { style: { position: "relative", zIndex: 500 } },
-          a.default.createElement(H2, { type: Q, d: t, onClose: () => Ae(null) }),
+          React.default.createElement(PageLegale, { type: Q, d: t, onClose: () => Ae(null) }),
         ),
     );
   if (F === "commande")
-    return a.default.createElement(
-      a.default.Fragment,
+    return React.default.createElement(
+      React.default.Fragment,
       null,
-      a.default.createElement("style", null, Zo),
-      a.default.createElement(JO, {
+      React.default.createElement("style", null, CSS_APPLI),
+      React.default.createElement(Commande, {
         d: t,
         moi: e,
         lignes: qr,
@@ -8290,140 +8521,145 @@ function J9() {
         notifs: os,
         inst: se,
         onEnvoyee: () => {
-          (is((K) => K + 1), tn("commandes"));
+          is((K) => K + 1), tn("commandes");
         },
         modifier: (K) => Ht(t.plateaux.find((ge) => ge.id === K)),
         vider: () => et([]),
         onClose: () => {
-          (D(null), E("carte"), window.scrollTo(0, 0));
+          D(null), E("carte"), window.scrollTo(0, 0);
         },
       }),
       ds,
       Q &&
-        a.default.createElement(
+        React.default.createElement(
           "div",
           { style: { position: "relative", zIndex: 500 } },
-          a.default.createElement(H2, { type: Q, d: t, onClose: () => Ae(null) }),
+          React.default.createElement(PageLegale, { type: Q, d: t, onClose: () => Ae(null) }),
         ),
     );
   if (F === "qr" && e)
-    return a.default.createElement(
+    return React.default.createElement(
       "div",
       { className: "full", onClick: () => D(null) },
-      a.default.createElement("style", null, Zo),
-      a.default.createElement(
+      React.default.createElement("style", null, CSS_APPLI),
+      React.default.createElement(
         "div",
         { style: { fontSize: 13, fontWeight: 700, color: "#666" } },
         "\xC0 pr\xE9senter en caisse",
       ),
-      a.default.createElement(Wa, {
+      React.default.createElement(QR, {
         texte: e.code,
         couleur: "#000",
         taille: "min(78vw,330px)",
         style: { width: "min(78vw,330px)", height: "min(78vw,330px)" },
       }),
-      a.default.createElement("div", { style: { fontSize: 30, fontWeight: 800, letterSpacing: 5 } }, e.code),
-      a.default.createElement(
+      React.default.createElement(
+        "div",
+        { style: { fontSize: 30, fontWeight: 800, letterSpacing: 5 } },
+        e.code,
+      ),
+      React.default.createElement(
         "div",
         { style: { fontFamily: "'Sacramento',cursive", fontSize: 26, color: "#444" } },
         e.nom,
       ),
-      a.default.createElement(
+      React.default.createElement(
         "div",
         { style: { fontSize: 11, color: "#999" } },
         "Touchez l'\xE9cran pour fermer",
       ),
     );
   if (F === "inscription")
-    return a.default.createElement(
+    return React.default.createElement(
       "div",
       { className: "app" },
-      a.default.createElement("style", null, Zo),
-      a.default.createElement(v9, {
+      React.default.createElement("style", null, CSS_APPLI),
+      React.default.createElement(FormulaireCarte, {
         ouvrirLegal: Ae,
         onCancel: () => D(null),
         onDone: (K) => {
-          (n(K), D(null), E("fidelite"), se.possible && fe(!0));
+          n(K), D(null), E("fidelite"), se.possible && fe(!0);
         },
       }),
       Qa,
     );
   let Df = [
-    { id: "accueil", label: "Accueil", ic: Yn.home, on: !0 },
-    { id: "carte", label: "La carte", ic: Yn.basket, on: t.onglets?.carte !== !1 },
-    { id: "fidelite", label: "Fid\xE9lit\xE9", ic: Yn.star, on: t.onglets?.fidelite !== !1 },
-    { id: "actus", label: "Actus", ic: Yn.news, on: t.actus.some(vn) },
-    { id: "infos", label: "Infos", ic: Yn.info, on: !0 },
+    { id: "accueil", label: "Accueil", ic: Ic2.home, on: !0 },
+    { id: "carte", label: "La carte", ic: Ic2.basket, on: t.onglets?.carte !== !1 },
+    { id: "fidelite", label: "Fid\xE9lit\xE9", ic: Ic2.star, on: t.onglets?.fidelite !== !1 },
+    { id: "actus", label: "Actus", ic: Ic2.news, on: t.actus.some(vn) },
+    { id: "infos", label: "Infos", ic: Ic2.info, on: !0 },
   ].filter((K) => K.on);
-  return a.default.createElement(
+  return React.default.createElement(
     "div",
     {
       className:
         "app" + (qr.length ? " avec-panier" : "") + (xe?.magie ? " magie" : "") + (Qe ? " " + Qe : ""),
       style: xe ? { "--top": xe.top } : void 0,
     },
-    a.default.createElement("style", null, Zo),
-    xe?.anim && m === "accueil" && a.default.createElement(r2, { theme: xe }),
-    xe?.magie && xe.anim && a.default.createElement(i2, { nb: m === "accueil" ? 40 : 22 }),
-    xe?.magie && xe.anim && m === "accueil" && a.default.createElement(o2, { boucle: !0 }),
+    React.default.createElement("style", null, CSS_APPLI),
+    xe?.anim && m === "accueil" && React.default.createElement(Particules, { theme: xe }),
+    xe?.magie && xe.anim && React.default.createElement(Neige, { nb: m === "accueil" ? 40 : 22 }),
+    xe?.magie && xe.anim && m === "accueil" && React.default.createElement(Traineau, { boucle: !0 }),
     Qe === "halloween" &&
       xe.anim &&
       m === "accueil" &&
-      a.default.createElement(
-        a.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement(Gy, null),
-        a.default.createElement(Hy, null),
+        React.default.createElement(DecorVol, null),
+        React.default.createElement(SvgAraignee, null),
       ),
-    Qe === "octobrerose" && xe.anim && m === "accueil" && a.default.createElement(Ky, null),
-    hc.includes(Qe) && xe.anim && m === "accueil" && a.default.createElement(dc, { id: Qe }),
-    a.default.createElement(
+    Qe === "octobrerose" && xe.anim && m === "accueil" && React.default.createElement(DecorBallons, null),
+    hc.includes(Qe) && xe.anim && m === "accueil" && React.default.createElement(DecorAne, { id: Qe }),
+    React.default.createElement(
       "header",
       { className: "top" },
-      a.default.createElement("img", { src: rs, alt: "" }),
-      xe?.magie && a.default.createElement(BI, { taille: 30, style: { left: 30, top: 1 } }),
-      Qe === "halloween" && a.default.createElement(lI, { taille: 30, style: { left: 28, top: 0 } }),
-      Qe === "octobrerose" && a.default.createElement(pI, { style: { left: 44, top: 28 } }),
-      hc.includes(Qe) && a.default.createElement(AI, { id: Qe }),
-      a.default.createElement(
+      React.default.createElement("img", { src: LOGO, alt: "" }),
+      xe?.magie && React.default.createElement(SvgBonnet, { taille: 30, style: { left: 30, top: 1 } }),
+      Qe === "halloween" &&
+        React.default.createElement(SvgChapeauSorciere, { taille: 30, style: { left: 28, top: 0 } }),
+      Qe === "octobrerose" && React.default.createElement(pI, { style: { left: 44, top: 28 } }),
+      hc.includes(Qe) && React.default.createElement(AI, { id: Qe }),
+      React.default.createElement(
         "div",
         null,
-        a.default.createElement("h1", null, t.store.name),
-        a.default.createElement(
+        React.default.createElement("h1", null, t.store.name),
+        React.default.createElement(
           "small",
           null,
           "Raddon-et-Chapendu ",
-          a.default.createElement("span", { className: "vers" }, "v", yi),
+          React.default.createElement("span", { className: "vers" }, "v", VERSION),
         ),
       ),
       $r !== null &&
-        a.default.createElement(
+        React.default.createElement(
           "span",
           { className: "state" + ($r ? "" : " off") },
-          a.default.createElement("span", { className: "dot" }),
+          React.default.createElement("span", { className: "dot" }),
           $r ? "Ouvert" : "Ferm\xE9",
         ),
     ),
     xe &&
       (xe.magie
-        ? a.default.createElement(LI, null)
+        ? React.default.createElement(GuirlandeNoel, null)
         : Qe === "halloween"
-          ? a.default.createElement(uI, null)
+          ? React.default.createElement(uI, null)
           : Qe === "octobrerose"
-            ? a.default.createElement(fI, null)
+            ? React.default.createElement(fI, null)
             : hc.includes(Qe)
-              ? a.default.createElement(kI, { id: Qe })
-              : a.default.createElement("div", {
+              ? React.default.createElement(kI, { id: Qe })
+              : React.default.createElement("div", {
                   className: "frise-theme",
                   style: { background: xe.frise },
                 })),
     m === "accueil" &&
-      a.default.createElement(CO, {
+      React.default.createElement(Accueil, {
         d: t,
         theme: xe,
         prenom: y,
         onReserver: (K) => {
-          (as(K), K?.id && tn("resa_" + K.id));
+          as(K), K?.id && tn("resa_" + K.id);
         },
         mesResas: Wi,
         moi: e,
@@ -8436,16 +8672,16 @@ function J9() {
         ouverture: tt,
         notifs: os,
       }),
-    m === "actus" && a.default.createElement(LO, { d: t }),
+    m === "actus" && React.default.createElement(Actus, { d: t }),
     m === "carte" &&
-      a.default.createElement(qO, {
+      React.default.createElement(Carte, {
         d: t,
         panier: ot,
         choisir: Ha,
         mesCmds: Hi,
         oublier: Cc,
         recommander: (K) => {
-          (et(
+          et(
             K.filter((ge) => t.plateaux.some((Je) => String(Je.id) === String(ge.id) && vn(Je))).map(
               (ge) => ({
                 id: t.plateaux.find((Je) => String(Je.id) === String(ge.id)).id,
@@ -8455,11 +8691,11 @@ function J9() {
             ),
           ),
             D("commande"),
-            window.scrollTo(0, 0));
+            window.scrollTo(0, 0);
         },
       }),
     Gi &&
-      a.default.createElement($9, {
+      React.default.createElement(Reserver, {
         i: (t.jour?.items || []).find((K) => K.id === Gi.id) || Gi,
         d: t,
         prenom: y,
@@ -8467,33 +8703,43 @@ function J9() {
         onClose: () => as(null),
         onFait: () => ss((K) => K + 1),
       }),
-    X && a.default.createElement(TT, { code0: X, onClose: () => le(null) }),
-    !X && !M && !y && !j.demande && !Zn && a.default.createElement(IT, { onFin: b }),
-    v && !X && a.default.createElement(I9, { prenom: y, amb: xe?.magie ? "noel" : Qe, onFin: () => z(!1) }),
+    X && React.default.createElement(FenetreReception, { code0: X, onClose: () => le(null) }),
+    !X && !M && !y && !j.demande && !Zn && React.default.createElement(DemandePrenom, { onFin: b }),
+    v &&
+      !X &&
+      React.default.createElement(Salutation, {
+        prenom: y,
+        amb: xe?.magie ? "noel" : Qe,
+        onFin: () => z(!1),
+      }),
     Zn &&
       !de &&
       !X &&
       !M &&
       !v &&
-      a.default.createElement(UO, { c: Zn, store: t.store, onClose: () => Tc(Zn.ref, Zn.statut) }),
-    !Zn && !X && (y || j.demande) && !h && !M && !v && a.default.createElement(PO, { d: t }),
-    h && !M && !v && a.default.createElement(FO, { key: h.cle, fete: h, f: t.fidelite, onFin: f }),
+      React.default.createElement(AlerteCommande, {
+        c: Zn,
+        store: t.store,
+        onClose: () => Tc(Zn.ref, Zn.statut),
+      }),
+    !Zn && !X && (y || j.demande) && !h && !M && !v && React.default.createElement(PopupMessage, { d: t }),
+    h && !M && !v && React.default.createElement(PopupFete, { key: h.cle, fete: h, f: t.fidelite, onFin: f }),
     o &&
       e &&
-      a.default.createElement(RO, {
+      React.default.createElement(FenetreChoix, {
         moi: e,
         f: t.fidelite,
         onClose: () => {
-          (s(!1), i(!0));
+          s(!1), i(!0);
         },
       }),
     u &&
       e &&
-      a.default.createElement(
-        a.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement("style", null, JI),
-        a.default.createElement(YI, {
+        React.default.createElement("style", null, JI),
+        React.default.createElement(RoueNoel, {
           key: u,
           tours: u === "x" ? [] : l.current,
           tickets: KI(e, t.roue),
@@ -8505,37 +8751,52 @@ function J9() {
             } catch {}
             let K = u === "x" ? [] : l.current;
             try {
-              K.length && (await Sn(we(ce, "clients", e.ref), { roueAJouer: fy(...K) }, { merge: !0 }));
+              K.length &&
+                (await setDoc(doc2(db2, "clients", e.ref), { roueAJouer: arrayUnion(...K) }, { merge: !0 }));
             } catch {}
           },
           onRefus: async () => {
             d("");
             try {
-              await Sn(we(ce, "clients", e.ref), { roueNon: !0, roueAJouer: [] }, { merge: !0 });
+              await setDoc(doc2(db2, "clients", e.ref), { roueNon: !0, roueAJouer: [] }, { merge: !0 });
             } catch {}
           },
         }),
       ),
     ds,
-    a.default.createElement(WO, {
+    React.default.createElement(BarrePanier, {
       lignes: qr,
       onOuvrir: () => {
-        (D("commande"), window.scrollTo(0, 0));
+        D("commande"), window.scrollTo(0, 0);
       },
     }),
     t.chat?.active !== !1 &&
-      a.default.createElement(T9, {
+      React.default.createElement(BulleChat, {
         nonLus: yn.nonLus,
         haut: qr.length > 0,
         onClick: () => {
-          (ls(!0), tn("chat"));
+          ls(!0), tn("chat");
         },
       }),
     m === "fidelite" &&
-      a.default.createElement(o9, { d: t, moi: e, setMoi: n, onFid: Wr, inst: se, ouvrirLegal: Ae }),
+      React.default.createElement(Fidelite, {
+        d: t,
+        moi: e,
+        setMoi: n,
+        onFid: Wr,
+        inst: se,
+        ouvrirLegal: Ae,
+      }),
     m === "infos" &&
-      a.default.createElement(y9, { d: t, inst: se, ouvrirLegal: Ae, pr: j, setPrenom: b, notifs: os }),
-    a.default.createElement(
+      React.default.createElement(Infos, {
+        d: t,
+        inst: se,
+        ouvrirLegal: Ae,
+        pr: j,
+        setPrenom: b,
+        notifs: os,
+      }),
+    React.default.createElement(
       "div",
       {
         className: "signature",
@@ -8548,45 +8809,45 @@ function J9() {
         },
       },
       "Conception et r\xE9alisation Eric Tisserand",
-      a.default.createElement("br", null),
+      React.default.createElement("br", null),
       "Reproduction interdite",
     ),
-    a.default.createElement(iI, { dispo: Ff }),
-    R && a.default.createElement(yO, { inst: se, onClose: () => fe(!1) }),
-    se.ouvert && a.default.createElement(vO, { inst: se }),
+    React.default.createElement(BandeauMaj, { dispo: Ff }),
+    R && React.default.createElement(ProposeInstall, { inst: se, onClose: () => fe(!1) }),
+    se.ouvert && React.default.createElement(AssistantInstall, { inst: se }),
     Qa,
-    a.default.createElement(
+    React.default.createElement(
       "nav",
       { className: "tabs" },
       Df.map((K) =>
-        a.default.createElement(
+        React.default.createElement(
           "button",
           {
             key: K.id + (m === K.id ? "-" + kc : ""),
             className: "tab" + (m === K.id ? " on" : ""),
             "aria-current": m === K.id ? "page" : void 0,
             onClick: () => {
-              (E(K.id), Ic((ge) => ge + 1));
+              E(K.id), Ic((ge) => ge + 1);
               try {
                 navigator.vibrate?.(8);
               } catch {}
               window.scrollTo(0, 0);
             },
           },
-          a.default.createElement(
+          React.default.createElement(
             "span",
             { className: "pastille" },
             K.ic(21, "currentColor"),
             m === K.id &&
               [0, 60, 120, 180, 240, 300].map((ge) =>
-                a.default.createElement("i", {
+                React.default.createElement("i", {
                   key: ge,
                   className: "etincelle",
                   style: { "--a": ge + "deg" },
                 }),
               ),
           ),
-          a.default.createElement("span", { className: "tab-l" }, K.label),
+          React.default.createElement("span", { className: "tab-l" }, K.label),
         ),
       ),
     ),
@@ -8596,25 +8857,25 @@ var es = {
   v: null,
   l: new Set(),
   set(t) {
-    ((this.v = t), this.l.forEach((e) => e()));
+    (this.v = t), this.l.forEach((e) => e());
   },
   sub(t) {
-    return (es.l.add(t), () => es.l.delete(t));
+    return es.l.add(t), () => es.l.delete(t);
   },
 };
 function Y9() {
-  let t = (0, a.useSyncExternalStore)(es.sub, () => es.v),
-    [e, n] = (0, a.useState)(null);
-  (0, a.useEffect)(() => {
-    (t && !e && n(t), !t && e && n(null));
+  let t = (0, React.useSyncExternalStore)(es.sub, () => es.v),
+    [e, n] = (0, React.useState)(null);
+  (0, React.useEffect)(() => {
+    t && !e && n(t), !t && e && n(null);
   }, [t]);
   let r = e || t;
   return r
-    ? a.default.createElement(
-        a.default.Fragment,
+    ? React.default.createElement(
+        React.default.Fragment,
         null,
-        a.default.createElement("style", null, Zo),
-        a.default.createElement(E9, {
+        React.default.createElement("style", null, CSS_APPLI),
+        React.default.createElement(Intro, {
           moi: r.moi,
           tampons: r.tampons,
           prenom: r.prenom,
@@ -8625,12 +8886,12 @@ function Y9() {
       )
     : null;
 }
-(0, mT.createRoot)(document.getElementById("root")).render(
-  a.default.createElement(
-    a.default.Fragment,
+(0, ReactDOMClient.createRoot)(document.getElementById("root")).render(
+  React.default.createElement(
+    React.default.Fragment,
     null,
-    a.default.createElement(Y9, null),
-    a.default.createElement(J9, null),
+    React.default.createElement(Y9, null),
+    React.default.createElement(App, null),
   ),
 );
 /*! Bundled license information:

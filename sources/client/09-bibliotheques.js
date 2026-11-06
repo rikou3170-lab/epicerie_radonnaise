@@ -67,4 +67,4 @@ var iM=`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBo
 .amb-bokeh-r{position:absolute;inset:0 0 30% 0;background:radial-gradient(circle,rgba(255,255,255,.55) 2px,transparent 3px) 0 0/46px 46px,radial-gradient(circle,rgba(255,214,230,.5) 1.4px,transparent 2.4px) 23px 17px/52px 52px;animation:scintille 3s ease-in-out infinite alternate;opacity:.7}
 @media (prefers-reduced-motion: reduce){.amb-ballons{display:none}}
 @media (prefers-reduced-motion: reduce){.amb-vol,.amb-araignee,.amb-passe,.poudre{display:none}.amb-lanterne,.amb-lueur,.amb-fenetre,.amb-brume,.amb-aile{animation:none}}
-`;var L=On(Ln());
+`;var ReactDecors=On(Ln());

@@ -31,22 +31,29 @@ var B9 = () =>
       }),
     ),
   );
-function GS({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: s }) {
+function RoueNoel({
+  tours: tours,
+  tickets: tickets,
+  onFini: onFini,
+  onRefus: onRefus,
+  demo: demo,
+  premiere: premiere,
+}) {
   let [o, a] = (0, K.useState)(0),
-    [u, d] = (0, K.useState)(s ? "intro" : "pret"),
+    [u, d] = (0, K.useState)(premiere ? "intro" : "pret"),
     [h, p] = L9(),
-    m = t[o],
+    m = tours[o],
     w = () => {
-      (zS(),
+      zS(),
         d("tourne"),
         p(!!m?.g, () => {
-          (US(!!m?.g), d("res"));
-        }));
+          US(!!m?.g), d("res");
+        });
     },
     E = () => {
-      o + 1 < t.length ? (a(o + 1), d("pret")) : n?.();
+      o + 1 < tours.length ? (a(o + 1), d("pret")) : onFini?.();
     },
-    A = t.length - o - 1;
+    A = tours.length - o - 1;
   return u === "regl"
     ? K.default.createElement(
         "div",
@@ -54,7 +61,9 @@ function GS({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: s 
         K.default.createElement(
           "div",
           { className: "roue-in" },
-          K.default.createElement(O9, { onClose: () => d(s && o === 0 ? "intro" : "pret") }),
+          K.default.createElement(ReglementRoue, {
+            onClose: () => d(premiere && o === 0 ? "intro" : "pret"),
+          }),
         ),
       )
     : u === "refus"
@@ -70,7 +79,11 @@ function GS({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: s 
               null,
               "La roue de No\xEBl ne s'affichera plus. Si vous changez d'avis, vous pourrez la r\xE9activer dans l'onglet Fid\xE9lit\xE9, rubrique \xAB Mes donn\xE9es \xBB.",
             ),
-            K.default.createElement("button", { className: "roue-b", onClick: () => r?.() }, "D'accord"),
+            K.default.createElement(
+              "button",
+              { className: "roue-b", onClick: () => onRefus?.() },
+              "D'accord",
+            ),
           ),
         )
       : K.default.createElement(
@@ -93,7 +106,7 @@ function GS({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: s 
                     K.default.createElement("b", null, "Chaque tampon en caisse vous offre un tour de roue."),
                     " Une part \xAB Gagn\xE9 \xBB ? Vous recevez un ticket pour le tirage au sort de No\xEBl. Plus vous gagnez, plus vous avez de chances !",
                   ),
-                  K.default.createElement(OS, { angle: h, taille: 250 }),
+                  K.default.createElement(RoueSvg, { angle: h, taille: 250 }),
                   K.default.createElement(
                     "button",
                     { className: "roue-b", onClick: () => d("pret") },
@@ -116,14 +129,14 @@ function GS({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: s 
                   K.default.createElement(
                     "p",
                     null,
-                    t.length > 1
+                    tours.length > 1
                       ? K.default.createElement(
                           K.default.Fragment,
                           null,
                           "Tour ",
                           o + 1,
                           " sur ",
-                          t.length,
+                          tours.length,
                           " : merci pour votre passage !",
                         )
                       : K.default.createElement(
@@ -132,7 +145,7 @@ function GS({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: s 
                           "Merci pour votre passage : un tour de roue pour vous !",
                         ),
                   ),
-                  K.default.createElement(OS, { angle: h, taille: 290, tourne: u === "tourne" }),
+                  K.default.createElement(RoueSvg, { angle: h, taille: 290, tourne: u === "tourne" }),
                   u === "pret" &&
                     K.default.createElement(
                       "button",
@@ -158,17 +171,17 @@ function GS({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: s 
                           : "Revenez vite : chaque tampon vous offre un nouveau tour.",
                       ),
                       A === 0 &&
-                        e != null &&
+                        tickets != null &&
                         K.default.createElement(
                           "div",
                           { className: "roue-cpt" },
                           "Vos tickets pour le prochain tirage : ",
-                          K.default.createElement("b", null, e),
+                          K.default.createElement("b", null, tickets),
                         ),
                       K.default.createElement(
                         "button",
                         { className: "roue-b", onClick: E },
-                        A > 0 ? "Tour suivant \u279C" : i ? "Fermer la d\xE9mo" : "Fermer",
+                        A > 0 ? "Tour suivant \u279C" : demo ? "Fermer la d\xE9mo" : "Fermer",
                       ),
                     ),
                   u !== "tourne" &&
@@ -181,7 +194,7 @@ function GS({ tours: t, tickets: e, onFini: n, onRefus: r, demo: i, premiere: s 
                         { className: "roue-lien", onClick: () => d("regl") },
                         "R\xE8glement du jeu",
                       ),
-                      !i &&
+                      !demo &&
                         K.default.createElement(
                           "button",
                           { className: "roue-lien", onClick: () => d("refus") },
@@ -201,14 +214,14 @@ var iw = (t) => String(t?.nom || t?.prenom || "").trim() || "Client",
     }
     return e;
   };
-function HS({ participants: t, gagnant: e, onFin: n }) {
+function TirageAuSort({ participants: participants, gagnant: gagnant, onFin: onFin }) {
   let [i, s] = (0, K.useState)(0),
     [o, a] = (0, K.useState)(!1),
     u = (0, K.useRef)(null);
   if (!u.current) {
     let d = [];
-    for (let m = 0; m < 3 || d.length < 40; m++) d.push(...V9(t).map(iw));
-    let h = iw(e),
+    for (let m = 0; m < 3 || d.length < 40; m++) d.push(...V9(participants).map(iw));
+    let h = iw(gagnant),
       p = d.length - 1;
     if (d[p] === h) {
       let m = d
@@ -218,7 +231,7 @@ function HS({ participants: t, gagnant: e, onFin: n }) {
         .pop();
       m != null && m >= 0 && ([d[p], d[m]] = [d[m], d[p]]);
     }
-    (d.push(h, "", ""), (u.current = d));
+    d.push(h, "", ""), (u.current = d);
   }
   return (
     (0, K.useEffect)(() => {
@@ -235,9 +248,9 @@ function HS({ participants: t, gagnant: e, onFin: n }) {
             T = h * I;
           s(T);
           let M = Math.floor(T / 70);
-          (M !== w && ((w = M), jS(0.8)), _ < 1 ? (E = requestAnimationFrame(A)) : (a(!0), US(!0), n?.()));
+          M !== w && ((w = M), jS(0.8)), _ < 1 ? (E = requestAnimationFrame(A)) : (a(!0), US(!0), onFin?.());
         };
-      return ((E = requestAnimationFrame(A)), () => cancelAnimationFrame(E));
+      return (E = requestAnimationFrame(A)), () => cancelAnimationFrame(E);
     }, []),
     K.default.createElement(
       "div",
@@ -255,11 +268,11 @@ function HS({ participants: t, gagnant: e, onFin: n }) {
           ),
         ),
       ),
-      o && K.default.createElement("div", { className: "tir-gagnant" }, "Bravo ", iw(e), " !"),
+      o && K.default.createElement("div", { className: "tir-gagnant" }, "Bravo ", iw(gagnant), " !"),
     )
   );
 }
-var KS = {
+var CMD_DEF = {
     active: !0,
     delaiMin: 2,
     horizon: 60,
@@ -270,7 +283,7 @@ var KS = {
     heureDefaut: "17:00",
     script: "",
   },
-  Er = (t) => ({ ...KS, ...(t || {}) }),
+  Er = (t) => ({ ...CMD_DEF, ...(t || {}) }),
   lw = (t) => /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(t || ""),
   ac = lw,
   QS = [
@@ -282,14 +295,14 @@ var KS = {
     [6, "Sam"],
     [0, "Dim"],
   ],
-  uw = { retrait: "Retrait \xE0 l'\xE9picerie", livraison: "Livraison" },
+  MODES = { retrait: "Retrait \xE0 l'\xE9picerie", livraison: "Livraison" },
   An = (t) => (Math.round((Number(t) || 0) * 100) / 100).toFixed(2).replace(".", ",") + " \u20AC",
   ow = (t) => t.toLocaleDateString("sv-SE"),
   aw = (t) => {
     let e = new Date();
-    return (e.setHours(12, 0, 0, 0), e.setDate(e.getDate() + t), e);
+    return e.setHours(12, 0, 0, 0), e.setDate(e.getDate() + t), e;
   },
-  Yi = (t) =>
+  dateCourte = (t) =>
     t
       ? new Date(t + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
       : "";
@@ -297,7 +310,7 @@ function YS(t, e = []) {
   let n = Er(t),
     r = ow(aw(Math.max(0, Number(n.delaiMin) || 0))),
     i = ow(aw(Math.max(1, Number(n.horizon) || 60))),
-    s = Array.isArray(n.jours) && n.jours.length ? n.jours : KS.jours,
+    s = Array.isArray(n.jours) && n.jours.length ? n.jours : CMD_DEF.jours,
     o = (d) => [...(n.fermes || []), ...(e || [])].some((h) => h && h.du && d >= h.du && d <= (h.au || h.du)),
     a = (d) => d >= r && d <= i && s.includes(new Date(d + "T12:00").getDay()) && !o(d),
     u = "";
@@ -317,7 +330,7 @@ var Ji = (t) => Number(String(t?.prixPersonne ?? "").replace(",", ".")) || 0,
       n = Math.max(e, parseInt(t?.partsMax) || 50);
     return [e, n];
   };
-async function Pa(t, e, n) {
+async function avertirMessage(t, e, n) {
   let r = Er(t).script;
   if (!(!lw(r) || !n || !["cmd", "msg", "diff"].includes(e)))
     try {
@@ -348,7 +361,7 @@ var XS = (t, e = []) => {
     let n = kf(t);
     return Ji(t) + (n ? n.options.filter((r) => e.includes(r.nom)).reduce((r, i) => r + i.supp, 0) : 0);
   },
-  ZS = {
+  LISTE_RACLETTE = {
     titre: "Vos fromages \xE0 raclette",
     min: 1,
     max: 3,
@@ -365,9 +378,9 @@ var XS = (t, e = []) => {
       "Bargkass au serpolet",
     ].map((t) => ({ nom: t, supp: 0 })),
   };
-var yw =
+var LOGO =
     "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCABoAHgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5wOO9Bx3oOKDitTxQ4zRxmjjNHGaADjNHGaD1rQh0PV7jQrjW4tOnbTrcgS3W3CAkgAZ7nJHSplJR3YGfxmjjNX9P0+O9chpyG2u4jjXc5CKWYnJAAAB5z+FTXmkQx+GrbXrG6aa1luGtJElTY8MqqHwcEgqVbIPsQQO9BYyuM0cZqa1tp729jtbWMySyHCjIHbJOT0AGTmmPFIkskbId0ZIfHOMHH86AGcZo4zRxmjjNIA4zRxmjjNHGaAAY7UUDFFAAaDig0HFMA71oaVoer65cSQ6Tp0920SGSTylyEUDOWPQdDVOOGaZisMMkhA3EIpbA9eK7TwJ4k8Tabp9/oWiJAlvqJCzXEiZaLjaWTkbiASdvJ44FY13UUP3Su/MaOOs7Sa/vI7a2UM7sFyxwq5OMsegGSOTxXpdlJ4rvvhu3gy+EFvpdo8olWMATMyeXKI93IJPm7gAMtsIrIvr7SPDdu1gIbO6uDaJbTQW5KvDMpyzmZcq/8QBGSQ+DggGuPvtTv9RKC+upJlTIRGOVQE5wP89hVTpQqW51ezuvUext+F57fQ/F8t3cxW91ZRW9xbzeaRj54HTgZ5OWxxmtVUmbR7DVI9Lb+wDazvCtrAZYrK92hZDJk8kbVI3H7pTHSuDJVVycADv6VoaJY3uu30emaXIXFwdzAOdmB/E2OwqpTjBOUtEgvZHb6be+Df7Sf7Df29k17G8ZuLuBleCSS4AzxlQiw9ADyS2cCopdET/hDlt9H/cfapS1y8kouGY72EcYKD5m2xs5xwu4+vF/UvAGh6D4Lvr+6lkubuOElZC21Q54GFHue9ebWt9e2KSpZXk9uJhiQROV3geuPqfzrmwmNp4pN09loJSTC6s7qykRLu3eEuu5N4xuXJGR7ZBqDjNdjpviKx1iS0sPE8IljiJSHDiOMZARAf7iJySRnOTxk5FS48Fah/wkkGk2c1u8lxdC1jV5RujLcqJMfKG24JAJIzziumTUU23oFuxzPejvXR+NfCj+C/Ey6LNfR3cwt0lkeNdoDNn5Rnnt+tc53qadSNSKnB6MQDFFAxRVgBoJoNBxTA6PwsNMvbg6NqEF8z3EySQmyZQ0jKGxC2SOGJABHIOODmtXwjrM2i2F5/aEMttpk1yEjdh81rcbWKvGWB+ZNqbiBnHXtXEBirBlJDA5BBwQavaprmta5PHNrWrXuoyRLsja6maQovoMnigaZVuUjivJoo5xOiuQso/jGfvfjUtlp2o6nMYtN0+6vHHVbeFpCPyBrqvhf4Cn+IPj6HSN0kdlEPOu5UHzLGDjav8AtMSAPz7V9q6d4XsvB9hHoun6SmlwxqCIVXBI/vE9WJ9TXhZrnccC+SMeaX4L1LhTctT4CvtE1ayUpqOkX9sCMHzrd0/mK2PgreW2lXuqwXUdxJNEfJhSGFpXYbs4AUH2r7ivhbt8sqF3I471zGjeE4dD8R65rNqHH9rzRTyRbAqxskYT5ceuAa+fr8SrEUZU6lO3o/NeRsqa5JRb3seQ6h4A8bePLdIZY4vD+kgh8XZ3TzHsSi/dHsTXL+I/gD4p0ewa90m7t9ZVBl4YlMcuPZSSG+gOa+rraG2kQt5RyOPmNLNZRshMQ2sOw6GvOoZ9iqFlSso9rfrv+JPsVY/Pl1ZJGjkQo6kqysMEHuCK7bwjqUmszW+g6hPDvRwYJpZPLlZeSYlk2nbk87spwOWwMV6B8ffAkFusfjTTYFjLyCG/RBgMT92T69j+FeExztBcJJDKY5VOVIOCDX6Bl+OhjaCrR67rszFpxdjR16C+h16d9RljlnlJkLxymVSMkcM3JAxgZ7Dv1rM71JNcS3MokmYMwGBhQvH0AqPvXalbREgMUUDFFAATignFBOKCcUwDPNV576C3uord93mSEBQB61YzzWZqunvdTQXUTvvtzuCA43DOT+NTK9tDSkouVpvQ+vP2RoLeys9R1xrdppW1COEqi5YqqZAH4vmvoPxPqq6v4he4SF4kRREFkGG465Hbk18zfsj+LorWTWLG2eN54ZY72ON+pBGxwR7fL+dfQ15dSXuoTXkwUPK5dgvQZr88z2tKNWrRb3kna3Sytr+h0w0hYgIBOSATS1yGq/EvwtpHitvD08moXF3E6R3DWdjLcRWrPjYJXRSEJyDz61154BJ4A714Eqc4JOStcpprcKK5fxHqHj1dWhsPBXhWx1FfJM897qN2YIF5wIl2hmLnrkjAHrXRWb3UmnwSX1sttdNGplgV94jfHKhuM4PGaudCcYKo9mNwaSk9mcR8TbGK/wDhp4ktZANps5HHsyjeD+YFfBxiuP8AhMfMjQGHywz89MjGfrxX3L8XdWOlfCXxJdpgySW7W8Sk4yzkIP518W2lu0Ks0r75ZDudsY/Ae1fZ8Jxl7Cb6c36GLnyXfdWLA9KM80Z5xRnmvrTlAHNFAOaKAAnFBOKCcUE4pgGeaD6UZ5ozzQBv+A/Ez+B/iNY+J7eHeYiY7hF4MsLcOv8AUe4FfdGlapYa3ottq2l3KXFncxiSKVTwQf69iPWvz4PXFekfCz4t6l8Pr02N2kl9ocz7pLYH5oSf4489D6joa+bz/J3i4qtSXvr8V/mawqW0Z9o2z2lvbzKLRPMlO5nAA3HGMn14FcX4i+GvhLxdr39q+I7S8vmFt9mW2+3TRQAZJ3bEYAtzjJ9q0fDvjHw54q0tb/Q9TiuYiOVB+dD6MvUH61D4m8aaF4V077brGow2kXQGTJZz6Ko5P4V8UsRiYzjCOko6JJanb9Ylo09jodNjTSNOgsLAeXbwRLDGh+baqjAHPsKbczbI2kJyx/U1xmkfFLwdrFi1za+JNNKr94TyiBl+qtg1578RvjtpenWUlh4UuotS1KQFRdR/NBbj1B6O3pjj19KqnhMZiZLDqL073su/oZyrPls3oct+0H4xju7618HWMoZbZvtF4VOf3mPlT8AST9RXhw64qSaee6upLm5leWaVi8kjnLMx5JJqPPNfpOX4KODoRox6b+bOKTu7hnmjPNGeaM812iAHNFANFAATQTQaCaYBnmjPNHejvQAZ5oJ5o70GgDPgvtbi1vy4DLZxhwwuLeUoSo5xkHucVrXV5d39x517dz3Mn9+aQufzJquYwTzmjYBwCahQV+a2pc581rKwrKrAq6gg9jWbbWeoQ6mB9qAsYwQkY6nPY/StEoDwSaAgDcEiqauEZuKaXUdnnFGeaM80Z5pkBnmjPNHejvSAAaKAaKAA0HNFFMA70d6KKQB3o5zRRQAc5o5zRRTAO9HOaKKADnNHOaKKADvR3oopAAzRRRQB/9k=",
-  Ma = {
+  EMPTY2 = {
     store: {
       name: "\xC9picerie Raddonnaise",
       slogan: "\xC9picerie locale & familiale",
@@ -425,75 +438,76 @@ var yw =
     clients: [],
     onglets: { carte: !0, fidelite: !0 },
   },
-  Cf = [
+  TYPES = [
     { id: "frais", label: "Frais du jour", c: "#6E9B3A" },
     { id: "plat", label: "Fait maison", c: "#1C433B" },
     { id: "promo", label: "Promo", c: "#C27B42" },
     { id: "gaspi", label: "Date courte", c: "#B08A2E" },
     { id: "panier", label: "Panier anti-gaspi", c: "#2E7D32" },
   ],
-  Nf = () => new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }),
+  aujourdhui2 = () =>
+    new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }),
   Bn = () => new Date().toLocaleDateString("sv-SE");
-var cc = (t) =>
+var jourFr = (t) =>
     t ? new Date(t + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) : "",
-  pN = (t, e) => {
+  statut2 = (t, e) => {
     let n = e ? "e" : "";
     if (t.active === !1) return ["off", "Masqu\xE9" + n];
     let r = Bn();
     return t.debut && t.debut > r
-      ? ["promo", "Programm\xE9" + n + " \u2014 d\xE8s le " + cc(t.debut)]
+      ? ["promo", "Programm\xE9" + n + " \u2014 d\xE8s le " + jourFr(t.debut)]
       : t.fin && t.fin < r
         ? ["off", "Termin\xE9" + n + " \u2014 masqu\xE9" + n]
-        : ["on", t.fin ? "En ligne jusqu'au " + cc(t.fin) : "En ligne"];
+        : ["on", t.fin ? "En ligne jusqu'au " + jourFr(t.fin) : "En ligne"];
   },
-  io = ({ x: t, fem: e, style: n }) => {
-    let [r, i] = pN(t, e);
-    return l.default.createElement(
+  Pastille = ({ x: x, fem: fem, style: style }) => {
+    let [r, i] = statut2(x, fem);
+    return React.default.createElement(
       "span",
-      { className: "pill " + r, style: { display: "inline-block", ...n } },
+      { className: "pill " + r, style: { display: "inline-block", ...style } },
       i,
     );
   };
-function Zi({ v: t, onChange: e }) {
-  return l.default.createElement(
-    l.default.Fragment,
+function Periode({ v: v, onChange: onChange }) {
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 10 } },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { flex: 1, minWidth: 0 } },
-        l.default.createElement("label", { className: "lab" }, "Para\xEEt \xE0 partir du"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Para\xEEt \xE0 partir du"),
+        React.default.createElement("input", {
           className: "inp",
           type: "date",
-          value: t.debut || "",
-          onChange: (n) => e({ ...t, debut: n.target.value }),
+          value: v.debut || "",
+          onChange: (n) => onChange({ ...v, debut: n.target.value }),
         }),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { flex: 1, minWidth: 0 } },
-        l.default.createElement("label", { className: "lab" }, "Jusqu'au"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Jusqu'au"),
+        React.default.createElement("input", {
           className: "inp",
           type: "date",
-          min: t.debut || void 0,
-          value: t.fin || "",
-          onChange: (n) => e({ ...t, fin: n.target.value }),
+          min: v.debut || void 0,
+          value: v.fin || "",
+          onChange: (n) => onChange({ ...v, fin: n.target.value }),
         }),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { fontSize: 11, color: "var(--ink3)", margin: "5px 2px 0" } },
       "Vide = publi\xE9 tout de suite, sans date de fin.",
-      (t.debut || t.fin) &&
-        l.default.createElement(
+      (v.debut || v.fin) &&
+        React.default.createElement(
           "button",
           {
-            onClick: () => e({ ...t, debut: "", fin: "" }),
+            onClick: () => onChange({ ...v, debut: "", fin: "" }),
             style: {
               marginLeft: 6,
               border: "none",
@@ -515,12 +529,12 @@ var Wr = () => Date.now() + Math.floor(Math.random() * 999),
   z9 = () => {
     let t = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
       e = new Uint8Array(20);
-    return (crypto.getRandomValues(e), Array.from(e, (n) => t[n % 62]).join(""));
+    return crypto.getRandomValues(e), Array.from(e, (n) => t[n % 62]).join("");
   },
   j9 = (t) => /^\d+$/.test(String(t)),
   U9 = ak,
   RS = ["accueil", "jour", "commandes", "messages"],
-  fN = [
+  CONFIG_KEYS = [
     "store",
     "hours",
     "services",
@@ -538,7 +552,7 @@ var Wr = () => Date.now() + Math.floor(Math.random() * 999),
     "sondage",
     "menu",
   ],
-  eN = [
+  COLS = [
     "offres",
     "actus",
     "jour",
@@ -553,20 +567,20 @@ var Wr = () => Date.now() + Math.floor(Math.random() * 999),
     "reponses",
   ],
   cw = (t, e) => [...t].sort((n, r) => (e ? (r.cree || 0) - (n.cree || 0) : (n.cree || 0) - (r.cree || 0))),
-  tN = () => Object.fromEntries(fN.filter((t) => Ma[t] !== void 0).map((t) => [t, Ma[t]]));
+  tN = () => Object.fromEntries(CONFIG_KEYS.filter((t) => EMPTY2[t] !== void 0).map((t) => [t, EMPTY2[t]]));
 async function Pf(t) {
   for (let e = 0; e < t.length; e += 400) {
-    let n = _n(de);
-    (t.slice(e, e + 400).forEach((r) => n.delete(r)), await n.commit());
+    let n = writeBatch(db2);
+    t.slice(e, e + 400).forEach((r) => n.delete(r)), await n.commit();
   }
 }
 async function nN(t) {
-  let e = await Oi(Ge(de, "conversations", t, "messages")),
+  let e = await getDocs(collection(db2, "conversations", t, "messages")),
     n = [];
-  (e.forEach((r) => n.push(r.ref)), await Pf(n), await Pf([xe(de, "conversations", t)]));
+  e.forEach((r) => n.push(r.ref)), await Pf(n), await Pf([doc2(db2, "conversations", t)]);
 }
-async function dw(t, e = [], n = []) {
-  let r = _n(de),
+async function syncCol(t, e = [], n = []) {
+  let r = writeBatch(db2),
     i = new Map(e.map((u) => [String(u.id), u])),
     s = new Set(),
     o = 0;
@@ -574,30 +588,30 @@ async function dw(t, e = [], n = []) {
     let d = u.id != null ? String(u.id) : "",
       h = i.get(d),
       { id: p, ...m } = u;
-    if (!h) (r.set(xe(Ge(de, t)), { cree: Date.now(), ...m }), o++);
+    if (!h) r.set(doc2(collection(db2, t)), { cree: Date.now(), ...m }), o++;
     else {
       s.add(d);
       let { id: w, ...E } = h;
       if (t === "jour") {
         let { reserves: A, ...S } = m,
           { reserves: _, ...I } = E;
-        JSON.stringify(I) !== JSON.stringify(S) && (r.set(xe(de, t, d), S, { merge: !0 }), o++);
-      } else JSON.stringify(E) !== JSON.stringify(m) && (r.set(xe(de, t, d), m), o++);
+        JSON.stringify(I) !== JSON.stringify(S) && (r.set(doc2(db2, t, d), S, { merge: !0 }), o++);
+      } else JSON.stringify(E) !== JSON.stringify(m) && (r.set(doc2(db2, t, d), m), o++);
     }
   });
   let a = e.filter((u) => !s.has(String(u.id)) && n.every((d) => String(d.id) !== String(u.id)));
   if (
     (a.forEach((u) => {
-      (r.delete(xe(de, t, String(u.id))), o++);
+      r.delete(doc2(db2, t, String(u.id))), o++;
     }),
     o && (await r.commit()),
     t === "clients")
   )
     for (let u of a) {
-      let d = await Oi(Ge(de, "clients", String(u.id), "historique"));
+      let d = await getDocs(collection(db2, "clients", String(u.id), "historique"));
       if (!d.empty) {
         let h = [];
-        (d.forEach((p) => h.push(p.ref)), await Pf(h));
+        d.forEach((p) => h.push(p.ref)), await Pf(h);
       }
     }
 }
@@ -626,9 +640,9 @@ var Xi = (t) => (typeof t == "string" ? t : t == null ? "" : String(t)).slice(0,
         choix: Array.isArray(e.choix) ? e.choix.map(Xi) : [],
       })),
   }),
-  vw = class extends l.default.Component {
+  SecoursEcran = class extends React.default.Component {
     constructor(e) {
-      (super(e), (this.state = { err: null }));
+      super(e), (this.state = { err: null });
     }
     static getDerivedStateFromError(e) {
       return { err: e };
@@ -638,19 +652,19 @@ var Xi = (t) => (typeof t == "string" ? t : t == null ? "" : String(t)).slice(0,
     }
     render() {
       return this.state.err
-        ? l.default.createElement(
+        ? React.default.createElement(
             "div",
             { className: "wrap" },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "card" },
-              l.default.createElement("div", { className: "nm" }, "Cet \xE9cran n'a pas pu s'afficher"),
-              l.default.createElement(
+              React.default.createElement("div", { className: "nm" }, "Cet \xE9cran n'a pas pu s'afficher"),
+              React.default.createElement(
                 "div",
                 { className: "de", style: { margin: "6px 0 10px" } },
                 "Les autres onglets fonctionnent. Si le probl\xE8me revient, pr\xE9venez Eric.",
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "button",
                 { className: "btn", onClick: () => this.setState({ err: null }) },
                 "R\xE9essayer",
@@ -660,9 +674,9 @@ var Xi = (t) => (typeof t == "string" ? t : t == null ? "" : String(t)).slice(0,
         : this.props.children;
     }
   };
-function W9(t) {
-  let [e, n] = (0, l.useState)(null),
-    [r, i] = (0, l.useState)({
+function useShop(t) {
+  let [e, n] = (0, React.useState)(null),
+    [r, i] = (0, React.useState)({
       offres: [],
       actus: [],
       jour: [],
@@ -676,31 +690,31 @@ function W9(t) {
       recettes: [],
       reponses: [],
     }),
-    [s, o] = (0, l.useState)(""),
-    [a, u] = (0, l.useState)(!1),
-    [d, h] = (0, l.useState)({}),
-    p = (0, l.useRef)({});
-  (0, l.useEffect)(() => {
+    [s, o] = (0, React.useState)(""),
+    [a, u] = (0, React.useState)(!1),
+    [d, h] = (0, React.useState)({}),
+    p = (0, React.useRef)({});
+  (0, React.useEffect)(() => {
     if (!t) return;
     let _ = (T) => o(T?.code || "erreur"),
       I = [
-        fr(
-          Sa,
+        onSnapshot(
+          CONFIG_REF,
           { includeMetadataChanges: !0 },
           (T) => {
-            (T.metadata.fromCache || u(!0),
+            T.metadata.fromCache || u(!0),
               T.exists()
                 ? n(T.data())
-                : (n({}), T.metadata.fromCache || ln(Sa, tN(), { merge: !0 }).catch(_)));
+                : (n({}), T.metadata.fromCache || setDoc(CONFIG_REF, tN(), { merge: !0 }).catch(_));
           },
           _,
         ),
       ];
     return (
-      eN.forEach((T) =>
+      COLS.forEach((T) =>
         I.push(
-          fr(
-            Ge(de, T),
+          onSnapshot(
+            collection(db2, T),
             (M) => {
               i((V) => ({ ...V, [T]: M.docs.map((O) => ({ ...O.data(), id: O.id })) }));
             },
@@ -722,8 +736,8 @@ function W9(t) {
       () => I.forEach((T) => T())
     );
   }, [t]);
-  let m = (0, l.useMemo)(() => {
-      let _ = { ...Ma, ...(e || {}), ...d };
+  let m = (0, React.useMemo)(() => {
+      let _ = { ...EMPTY2, ...(e || {}), ...d };
       return {
         ..._,
         offres: cw(r.offres),
@@ -743,15 +757,15 @@ function W9(t) {
         clients: [...r.clients].sort((I, T) => (I.nom || "").localeCompare(T.nom || "", "fr")),
       };
     }, [e, r, d]),
-    w = (0, l.useRef)(m);
+    w = (0, React.useRef)(m);
   w.current = m;
   let E = (_) => {
-    (console.error(_),
+    console.error(_),
       ft(
         _?.code === "permission-denied"
           ? "Enregistrement refus\xE9 : votre session a peut-\xEAtre expir\xE9. Reconnectez-vous."
           : "Enregistrement impossible. V\xE9rifiez la connexion internet et r\xE9essayez.",
-      ));
+      );
   };
   return [
     m,
@@ -760,13 +774,13 @@ function W9(t) {
         M = typeof I == "function" ? I(T) : I;
       try {
         return (
-          fN.includes(_)
+          CONFIG_KEYS.includes(_)
             ? ((w.current = { ...w.current, [_]: M }),
               h((V) => ({ ...V, [_]: M })),
               clearTimeout(p.current[_]),
               (p.current[_] = setTimeout(async () => {
                 try {
-                  await ln(Sa, { [_]: M }, { merge: !0 });
+                  await setDoc(CONFIG_REF, { [_]: M }, { merge: !0 });
                 } catch (V) {
                   E(V);
                 }
@@ -777,23 +791,23 @@ function W9(t) {
                 });
               }, 500)))
             : _ === "jour"
-              ? (await dw("jour", T.items, M.items),
-                M.maj !== T.maj && (await ln(Sa, { jourMaj: M.maj }, { merge: !0 })))
-              : eN.includes(_) && (await dw(_, T, M)),
+              ? (await syncCol("jour", T.items, M.items),
+                M.maj !== T.maj && (await setDoc(CONFIG_REF, { jourMaj: M.maj }, { merge: !0 })))
+              : COLS.includes(_) && (await syncCol(_, T, M)),
           !0
         );
       } catch (V) {
-        return (E(V), !1);
+        return E(V), !1;
       }
     },
     async () => {
       try {
         for (let I of ["offres", "actus", "jour", "pubs", "plateaux"])
-          await dw(I, w.current[I === "jour" ? "jour" : I].items || w.current[I], []);
-        (Object.values(p.current).forEach(clearTimeout), (p.current = {}), h({}));
+          await syncCol(I, w.current[I === "jour" ? "jour" : I].items || w.current[I], []);
+        Object.values(p.current).forEach(clearTimeout), (p.current = {}), h({});
         let _ = tN();
-        await ln(
-          Sa,
+        await setDoc(
+          CONFIG_REF,
           {
             store: _.store,
             hours: _.hours,
@@ -811,68 +825,72 @@ function W9(t) {
     { pret: e !== null, erreur: s, serveur: a },
   ];
 }
-async function $9(t, e, n, r) {
-  let i = _n(de),
+async function ajouterRecompense(t, e, n, r) {
+  let i = writeBatch(db2),
     s = Date.now(),
     o = n === "recompense" || n === "recompense1",
     a = (o && Number(t.bonusAttente)) || 0,
     u = r ? Math.min(a, (r.palier || r.nb) - 1) : 0;
-  (i.update(xe(de, "clients", String(t.id)), {
-    tampons: Bi(e + u),
+  i.update(doc2(db2, "clients", String(t.id)), {
+    tampons: increment2(e + u),
     ...(n === "tampon" ? { dernierTampon: s } : {}),
-    ...(o ? { cadeaux: Bi(1) } : {}),
+    ...(o ? { cadeaux: increment2(1) } : {}),
     ...(u ? { bonusAttente: a - u } : {}),
     derniere: new Date().toLocaleDateString("sv-SE"),
   }),
-    i.set(xe(Ge(de, "clients", String(t.id), "historique")), {
+    i.set(doc2(collection(db2, "clients", String(t.id), "historique")), {
       date: s,
       points: e,
       type: n,
       source: "admin",
     }),
     u &&
-      i.set(xe(Ge(de, "clients", String(t.id), "historique")), {
+      i.set(doc2(collection(db2, "clients", String(t.id), "historique")), {
         date: s - 1,
         points: u,
         type: "bonus",
         source: "admin",
       }),
-    await i.commit());
+    await i.commit();
 }
-async function hw(t, e, n) {
+async function ajouterPoints(t, e, n) {
   let r = Math.max(-(t.points || 0), e),
-    i = _n(de),
-    s = xe(de, "clients", String(t.id));
-  (i.update(s, {
-    points: Bi(r),
-    ...(n.montant ? { depense: Bi(n.montant) } : {}),
+    i = writeBatch(db2),
+    s = doc2(db2, "clients", String(t.id));
+  i.update(s, {
+    points: increment2(r),
+    ...(n.montant ? { depense: increment2(n.montant) } : {}),
     derniere: new Date().toLocaleDateString("sv-SE"),
   }),
-    i.set(xe(Ge(de, "clients", String(t.id), "historique")), { date: Date.now(), points: r, ...n }),
-    await i.commit());
+    i.set(doc2(collection(db2, "clients", String(t.id), "historique")), {
+      date: Date.now(),
+      points: r,
+      ...n,
+    }),
+    await i.commit();
 }
-function G9(t, e, n = 800) {
+function lirePhoto(t, e, n = 800) {
   let r = new FileReader();
-  ((r.onload = () => {
+  (r.onload = () => {
     let i = new Image();
-    ((i.onload = () => {
+    (i.onload = () => {
       let s = Math.min(1, n / Math.max(i.width, i.height)),
         o = document.createElement("canvas");
-      ((o.width = Math.round(i.width * s)),
+      (o.width = Math.round(i.width * s)),
         (o.height = Math.round(i.height * s)),
-        o.getContext("2d").drawImage(i, 0, 0, o.width, o.height));
+        o.getContext("2d").drawImage(i, 0, 0, o.width, o.height);
       let a = 0.72,
         u = o.toDataURL("image/jpeg", a);
-      for (; u.length > 6e5 && a > 0.35;) ((a -= 0.1), (u = o.toDataURL("image/jpeg", a)));
+      for (; u.length > 6e5 && a > 0.35; ) (a -= 0.1), (u = o.toDataURL("image/jpeg", a));
       e(u);
     }),
-      (i.src = r.result));
+      (i.src = r.result);
   }),
-    r.readAsDataURL(t));
+    r.readAsDataURL(t);
 }
-var he = {
+var I10 = {
     home: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -883,12 +901,12 @@ var he = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        l.default.createElement("path", {
+        React.default.createElement("path", {
           d: "M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z",
         }),
       ),
     shop: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -899,11 +917,11 @@ var he = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        l.default.createElement("path", { d: "M4 8h16l-1 12H5z" }),
-        l.default.createElement("path", { d: "M9 8V6a3 3 0 0 1 6 0v2" }),
+        React.default.createElement("path", { d: "M4 8h16l-1 12H5z" }),
+        React.default.createElement("path", { d: "M9 8V6a3 3 0 0 1 6 0v2" }),
       ),
     ferme: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -915,12 +933,12 @@ var he = {
           strokeLinejoin: "round",
           strokeLinecap: "round",
         },
-        l.default.createElement("path", { d: "M3 21V10l9-6 9 6v11z" }),
-        l.default.createElement("path", { d: "M9 21v-6h6v6M3 13h18" }),
-        l.default.createElement("path", { d: "M9 15l6 6M15 15l-6 6" }),
+        React.default.createElement("path", { d: "M3 21V10l9-6 9 6v11z" }),
+        React.default.createElement("path", { d: "M9 21v-6h6v6M3 13h18" }),
+        React.default.createElement("path", { d: "M9 15l6 6M15 15l-6 6" }),
       ),
     basket: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -931,11 +949,11 @@ var he = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        l.default.createElement("path", { d: "M3 9h18l-2 11H5z" }),
-        l.default.createElement("path", { d: "M8 9 12 3l4 6" }),
+        React.default.createElement("path", { d: "M3 9h18l-2 11H5z" }),
+        React.default.createElement("path", { d: "M8 9 12 3l4 6" }),
       ),
     news: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -946,11 +964,11 @@ var he = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        l.default.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
-        l.default.createElement("path", { d: "M7 9h6M7 13h10M7 17h10" }),
+        React.default.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
+        React.default.createElement("path", { d: "M7 9h6M7 13h10M7 17h10" }),
       ),
     img: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -961,12 +979,12 @@ var he = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        l.default.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
-        l.default.createElement("circle", { cx: "9", cy: "10", r: "2" }),
-        l.default.createElement("path", { d: "m21 16-5-5-9 9" }),
+        React.default.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }),
+        React.default.createElement("circle", { cx: "9", cy: "10", r: "2" }),
+        React.default.createElement("path", { d: "m21 16-5-5-9 9" }),
       ),
     star: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -977,21 +995,21 @@ var he = {
           strokeWidth: "1.7",
           strokeLinejoin: "round",
         },
-        l.default.createElement("path", {
+        React.default.createElement("path", {
           d: "m12 3 2.7 5.6 6.3.9-4.5 4.3 1 6.2-5.5-3-5.5 3 1-6.2L3 9.5l6.3-.9z",
         }),
       ),
     gear: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         { width: t, height: t, viewBox: "0 0 24 24", fill: "none", stroke: e, strokeWidth: "1.7" },
-        l.default.createElement("circle", { cx: "12", cy: "12", r: "3.2" }),
-        l.default.createElement("path", {
+        React.default.createElement("circle", { cx: "12", cy: "12", r: "3.2" }),
+        React.default.createElement("path", {
           d: "M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6M18.7 18.7l-1.6-1.6M6.9 6.9 5.3 5.3",
         }),
       ),
     plus: (t = 16, e = "#fff") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1002,10 +1020,10 @@ var he = {
           strokeWidth: "2.6",
           strokeLinecap: "round",
         },
-        l.default.createElement("path", { d: "M12 5v14M5 12h14" }),
+        React.default.createElement("path", { d: "M12 5v14M5 12h14" }),
       ),
     pen: (t = 16, e = "#5C6A62") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1016,11 +1034,13 @@ var he = {
           strokeWidth: "1.8",
           strokeLinecap: "round",
         },
-        l.default.createElement("path", { d: "M11 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6" }),
-        l.default.createElement("path", { d: "M18.4 2.6a2 2 0 0 1 2.8 2.8L12 14.6 8 15.6l1-4z" }),
+        React.default.createElement("path", {
+          d: "M11 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6",
+        }),
+        React.default.createElement("path", { d: "M18.4 2.6a2 2 0 0 1 2.8 2.8L12 14.6 8 15.6l1-4z" }),
       ),
     porteVoix: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1032,12 +1052,12 @@ var he = {
           strokeLinecap: "round",
           strokeLinejoin: "round",
         },
-        l.default.createElement("path", { d: "M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z" }),
-        l.default.createElement("path", { d: "M15 9a4 4 0 0 1 0 6" }),
-        l.default.createElement("path", { d: "M18 6a8 8 0 0 1 0 12" }),
+        React.default.createElement("path", { d: "M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z" }),
+        React.default.createElement("path", { d: "M15 9a4 4 0 0 1 0 6" }),
+        React.default.createElement("path", { d: "M18 6a8 8 0 0 1 0 12" }),
       ),
     graph: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1048,10 +1068,10 @@ var he = {
           strokeWidth: "1.8",
           strokeLinecap: "round",
         },
-        l.default.createElement("path", { d: "M4 20V10M10 20V4M16 20v-7M22 20H2" }),
+        React.default.createElement("path", { d: "M4 20V10M10 20V4M16 20v-7M22 20H2" }),
       ),
     plusMenu: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1062,13 +1082,13 @@ var he = {
           strokeWidth: "1.8",
           strokeLinecap: "round",
         },
-        l.default.createElement("rect", { x: "3.5", y: "3.5", width: "7", height: "7", rx: "2" }),
-        l.default.createElement("rect", { x: "13.5", y: "3.5", width: "7", height: "7", rx: "2" }),
-        l.default.createElement("rect", { x: "3.5", y: "13.5", width: "7", height: "7", rx: "2" }),
-        l.default.createElement("rect", { x: "13.5", y: "13.5", width: "7", height: "7", rx: "2" }),
+        React.default.createElement("rect", { x: "3.5", y: "3.5", width: "7", height: "7", rx: "2" }),
+        React.default.createElement("rect", { x: "13.5", y: "3.5", width: "7", height: "7", rx: "2" }),
+        React.default.createElement("rect", { x: "3.5", y: "13.5", width: "7", height: "7", rx: "2" }),
+        React.default.createElement("rect", { x: "13.5", y: "13.5", width: "7", height: "7", rx: "2" }),
       ),
     bin: (t = 16, e = "#C86B5C") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1079,21 +1099,21 @@ var he = {
           strokeWidth: "1.8",
           strokeLinecap: "round",
         },
-        l.default.createElement("path", {
+        React.default.createElement("path", {
           d: "M3.5 6h17M8 6V4.5A1.5 1.5 0 0 1 9.5 3h5A1.5 1.5 0 0 1 16 4.5V6M6 6l1 14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-14",
         }),
       ),
     cam: (t = 18, e = "#5C6A62") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         { width: t, height: t, viewBox: "0 0 24 24", fill: "none", stroke: e, strokeWidth: "1.7" },
-        l.default.createElement("path", {
+        React.default.createElement("path", {
           d: "M3 8.5A1.5 1.5 0 0 1 4.5 7h2.2l1.3-2h7.9l1.3 2h2.3A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z",
         }),
-        l.default.createElement("circle", { cx: "12", cy: "12.8", r: "3.4" }),
+        React.default.createElement("circle", { cx: "12", cy: "12.8", r: "3.4" }),
       ),
     bulle: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1105,11 +1125,11 @@ var he = {
           strokeLinejoin: "round",
           strokeLinecap: "round",
         },
-        l.default.createElement("path", { d: "M4 5h16v11H9l-5 4z" }),
-        l.default.createElement("path", { d: "M8 9.5h8M8 12.5h5" }),
+        React.default.createElement("path", { d: "M4 5h16v11H9l-5 4z" }),
+        React.default.createElement("path", { d: "M8 9.5h8M8 12.5h5" }),
       ),
     sapin: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1121,11 +1141,11 @@ var he = {
           strokeLinejoin: "round",
           strokeLinecap: "round",
         },
-        l.default.createElement("path", { d: "M12 2.5 7 9h3l-4 6h3.5L5 20h14l-4.5-5H18l-4-6h3z" }),
-        l.default.createElement("path", { d: "M12 20v2" }),
+        React.default.createElement("path", { d: "M12 2.5 7 9h3l-4 6h3.5L5 20h14l-4.5-5H18l-4-6h3z" }),
+        React.default.createElement("path", { d: "M12 20v2" }),
       ),
     cmd: (t = 20, e = "currentColor") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1137,11 +1157,11 @@ var he = {
           strokeLinejoin: "round",
           strokeLinecap: "round",
         },
-        l.default.createElement("rect", { x: "5", y: "4", width: "14", height: "17", rx: "2" }),
-        l.default.createElement("path", { d: "M9 4V3h6v1M9 10h6M9 14h6M9 18h3" }),
+        React.default.createElement("rect", { x: "5", y: "4", width: "14", height: "17", rx: "2" }),
+        React.default.createElement("path", { d: "M9 4V3h6v1M9 10h6M9 14h6M9 18h3" }),
       ),
     qr: (t = 18, e = "#fff") =>
-      l.default.createElement(
+      React.default.createElement(
         "svg",
         {
           width: t,
@@ -1152,16 +1172,16 @@ var he = {
           strokeWidth: "1.8",
           strokeLinecap: "round",
         },
-        l.default.createElement("rect", { x: "3", y: "3", width: "7", height: "7", rx: "1" }),
-        l.default.createElement("rect", { x: "14", y: "3", width: "7", height: "7", rx: "1" }),
-        l.default.createElement("rect", { x: "3", y: "14", width: "7", height: "7", rx: "1" }),
-        l.default.createElement("path", { d: "M14 14h3v3h-3zM20 14v3M14 20h6" }),
+        React.default.createElement("rect", { x: "3", y: "3", width: "7", height: "7", rx: "1" }),
+        React.default.createElement("rect", { x: "14", y: "3", width: "7", height: "7", rx: "1" }),
+        React.default.createElement("rect", { x: "3", y: "14", width: "7", height: "7", rx: "1" }),
+        React.default.createElement("path", { d: "M14 14h3v3h-3zM20 14v3M14 20h6" }),
       ),
   },
-  ww =
+  CSS_ADMIN =
     SC +
     NS +
-    MS +
+    CSS_MENU +
     `
 :root{--bg:#F7F3EA;--card:#fff;--forest:#1C433B;--apple:#6E9B3A;--apple-soft:#EEF3E2;
  --terra:#C27B42;--gold:#C69A3C;--red:#C86B5C;--ink:#22302A;--ink2:#5C6A62;--ink3:#93A099;
@@ -1385,270 +1405,280 @@ button.carte-lien:active{transform:scale(.98)}
   .ib:hover{opacity:.65}
 }
 `,
-  ze = ({ on: t, set: e }) =>
-    l.default.createElement(
+  ze = ({ on: on, set: set }) =>
+    React.default.createElement(
       "div",
-      { className: "sw" + (t ? " on" : ""), onClick: e },
-      l.default.createElement("i", null),
+      { className: "sw" + (on ? " on" : ""), onClick: set },
+      React.default.createElement("i", null),
     ),
-  Vn = ({ t, s: e }) =>
-    l.default.createElement("div", { className: "empty" }, l.default.createElement("b", null, t), e);
-function ut({ titre: t, onClose: e, children: n }) {
-  return l.default.createElement(
+  Vn = ({ t, s: s }) =>
+    React.default.createElement("div", { className: "empty" }, React.default.createElement("b", null, t), s);
+function ut({ titre: titre, onClose: onClose, children: children }) {
+  return React.default.createElement(
     "div",
-    { className: "mdl", onClick: e },
-    l.default.createElement(
+    { className: "mdl", onClick: onClose },
+    React.default.createElement(
       "div",
       { className: "in", onClick: (r) => r.stopPropagation() },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "hd" },
-        l.default.createElement("h3", null, t),
-        l.default.createElement(
+        React.default.createElement("h3", null, titre),
+        React.default.createElement(
           "button",
-          { className: "ib", onClick: e, style: { fontSize: 26, color: "#93A099", lineHeight: 1 } },
+          { className: "ib", onClick: onClose, style: { fontSize: 26, color: "#93A099", lineHeight: 1 } },
           "\xD7",
         ),
       ),
-      n,
+      children,
     ),
   );
 }
-function Ri({ value: t, onChange: e, max: n, large: r }) {
-  let i = (0, l.useRef)();
-  return l.default.createElement(
-    l.default.Fragment,
+function PhotoField({ value: value, onChange: onChange, max: max, large: large }) {
+  let i = (0, React.useRef)();
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    l.default.createElement("input", {
+    React.default.createElement("input", {
       ref: i,
       type: "file",
       accept: "image/*",
       style: { display: "none" },
       onChange: (s) => {
         let o = s.target.files?.[0];
-        (o && G9(o, e, n), (s.target.value = ""));
+        o && lirePhoto(o, onChange, max), (s.target.value = "");
       },
     }),
-    t
-      ? l.default.createElement(
+    value
+      ? React.default.createElement(
           "div",
           { style: { position: "relative" } },
-          l.default.createElement("img", { className: "ph", src: t, alt: "" }),
-          l.default.createElement(
+          React.default.createElement("img", { className: "ph", src: value, alt: "" }),
+          React.default.createElement(
             "div",
             { style: { display: "flex", gap: 8, marginTop: 8 } },
-            l.default.createElement(
+            React.default.createElement(
               "button",
               { className: "btn gh sm", style: { flex: 1 }, onClick: () => i.current.click() },
               "Changer",
             ),
-            l.default.createElement(
+            React.default.createElement(
               "button",
-              { className: "btn gh sm", style: { flex: 1, color: "var(--red)" }, onClick: () => e("") },
+              {
+                className: "btn gh sm",
+                style: { flex: 1, color: "var(--red)" },
+                onClick: () => onChange(""),
+              },
               "Retirer",
             ),
           ),
         )
-      : l.default.createElement(
+      : React.default.createElement(
           "div",
           { className: "phbox", onClick: () => i.current.click() },
-          he.cam(22),
+          I10.cam(22),
           "Ajouter une photo",
         ),
   );
 }
-function H9({ d: t, set: e, aller: n }) {
-  let r = t.resas.filter((a) => a.statut === "reservee").length,
-    i = t.conversations.filter((a) => a.attente).length,
-    s = t.commandes.filter((a) => a.statut === "nouvelle").length,
+function TableauDeBord({ d: d, set: set, aller: aller }) {
+  let r = d.resas.filter((a) => a.statut === "reservee").length,
+    i = d.conversations.filter((a) => a.attente).length,
+    s = d.commandes.filter((a) => a.statut === "nouvelle").length,
     o = !r && !i && !s;
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Bonjour Marion"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Bonjour Marion"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Tout ce que vous modifiez ici appara\xEEt aussit\xF4t dans l'application de vos clients.",
     ),
-    l.default.createElement("div", { className: "nm", style: { margin: "4px 0 8px" } }, "\xC0 faire"),
+    React.default.createElement("div", { className: "nm", style: { margin: "4px 0 8px" } }, "\xC0 faire"),
     !!s &&
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "card carte-lien",
           style: { background: "#FBEFE4", borderColor: "#F0D7BF" },
-          onClick: () => n("commandes"),
+          onClick: () => aller("commandes"),
         },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "nm" },
           "\u{1F4CB} ",
           s,
           " commande(s) de plateaux \xE0 accepter ou refuser",
         ),
-        l.default.createElement("div", { className: "de" }, "Ouvrir les commandes \u2192"),
+        React.default.createElement("div", { className: "de" }, "Ouvrir les commandes \u2192"),
       ),
     !!i &&
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "card carte-lien",
           style: { background: "#FBEFE4", borderColor: "#F0D7BF" },
-          onClick: () => n("messages"),
+          onClick: () => aller("messages"),
         },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "nm" },
           "\u{1F4AC} ",
           i,
           " message(s) de client en attente de r\xE9ponse",
         ),
-        l.default.createElement("div", { className: "de" }, "Ouvrir les messages \u2192"),
+        React.default.createElement("div", { className: "de" }, "Ouvrir les messages \u2192"),
       ),
     !!r &&
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "card carte-lien",
           style: { background: "#E3F1E3", borderColor: "#C5E1C5" },
-          onClick: () => n("jour"),
+          onClick: () => aller("jour"),
         },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "nm" },
           "\u{1F9FA} ",
           r,
           " r\xE9servation(s) anti-gaspi \xE0 mettre de c\xF4t\xE9",
         ),
-        l.default.createElement("div", { className: "de" }, "Ouvrir Aujourd'hui \u2192"),
+        React.default.createElement("div", { className: "de" }, "Ouvrir Aujourd'hui \u2192"),
       ),
-    l.default.createElement(
+    React.default.createElement(
       "button",
       {
         className: "card carte-lien",
         style: {
-          background: t.jour?.maj === Nf() ? "#EEF3E2" : "#FDF6EE",
-          borderColor: t.jour?.maj === Nf() ? "#CFE0AE" : "#EFDCC6",
+          background: d.jour?.maj === aujourdhui2() ? "#EEF3E2" : "#FDF6EE",
+          borderColor: d.jour?.maj === aujourdhui2() ? "#CFE0AE" : "#EFDCC6",
         },
-        onClick: () => n("jour"),
+        onClick: () => aller("jour"),
       },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "nm" },
-        t.jour?.maj === Nf() ? "\u2705 Publication du jour faite" : "\u{1F955} Pensez \xE0 publier le jour",
+        d.jour?.maj === aujourdhui2()
+          ? "\u2705 Publication du jour faite"
+          : "\u{1F955} Pensez \xE0 publier le jour",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de" },
-        t.jour?.maj ? "Derni\xE8re mise \xE0 jour : " + t.jour.maj : "Aucune publication pour l'instant",
+        d.jour?.maj ? "Derni\xE8re mise \xE0 jour : " + d.jour.maj : "Aucune publication pour l'instant",
       ),
     ),
     o &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { margin: "0 2px 12px" } },
         "Rien d'autre en attente. Bonne journ\xE9e !",
       ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "nm", style: { margin: "14px 0 8px" } },
       "En ligne en ce moment",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grid2", style: { marginBottom: 10 } },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "stat" },
-        l.default.createElement("b", null, (t.jour?.items || []).filter((a) => a.active !== !1).length),
-        l.default.createElement("span", null, "articles du jour"),
+        React.default.createElement("b", null, (d.jour?.items || []).filter((a) => a.active !== !1).length),
+        React.default.createElement("span", null, "articles du jour"),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "stat" },
-        l.default.createElement(
+        React.default.createElement(
           "b",
           null,
-          t.plateaux.filter((a) => a.active !== !1).length + t.offres.filter((a) => a.active !== !1).length,
+          d.plateaux.filter((a) => a.active !== !1).length + d.offres.filter((a) => a.active !== !1).length,
         ),
-        l.default.createElement("span", null, "plateaux & paniers"),
+        React.default.createElement("span", null, "plateaux & paniers"),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "stat" },
-        l.default.createElement("b", null, t.actus.filter((a) => a.active !== !1).length),
-        l.default.createElement("span", null, "actualit\xE9s"),
+        React.default.createElement("b", null, d.actus.filter((a) => a.active !== !1).length),
+        React.default.createElement("span", null, "actualit\xE9s"),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "stat" },
-        l.default.createElement("b", null, t.pubs.filter((a) => a.active !== !1).length),
-        l.default.createElement("span", null, "banni\xE8res"),
+        React.default.createElement("b", null, d.pubs.filter((a) => a.active !== !1).length),
+        React.default.createElement("span", null, "banni\xE8res"),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grid2" },
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "card carte-lien", onClick: () => n("com") },
-        l.default.createElement("div", { className: "nm" }, "\u{1F4E3} Communication"),
-        l.default.createElement("div", { className: "de" }, "Notifications, message d'accueil \u2192"),
+        { className: "card carte-lien", onClick: () => aller("com") },
+        React.default.createElement("div", { className: "nm" }, "\u{1F4E3} Communication"),
+        React.default.createElement("div", { className: "de" }, "Notifications, message d'accueil \u2192"),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "card carte-lien", onClick: () => n("stats") },
-        l.default.createElement("div", { className: "nm" }, "\u{1F4CA} Statistiques"),
-        l.default.createElement("div", { className: "de" }, "Ventes, fr\xE9quentation, connexions \u2192"),
+        { className: "card carte-lien", onClick: () => aller("stats") },
+        React.default.createElement("div", { className: "nm" }, "\u{1F4CA} Statistiques"),
+        React.default.createElement(
+          "div",
+          { className: "de" },
+          "Ventes, fr\xE9quentation, connexions \u2192",
+        ),
       ),
     ),
   );
 }
-function K9({ d: t }) {
-  return l.default.createElement(
+function EcranStatistiques({ d: d }) {
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Statistiques"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Statistiques"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Vos ventes dans l'appli et ce que regardent vos clients, pour choisir quoi mettre en avant.",
     ),
-    l.default.createElement(i7, { d: t }),
-    l.default.createElement(Kk, { d: t }),
+    React.default.createElement(Statistiques, { d: d }),
+    React.default.createElement(Statistiques2, { d: d }),
   );
 }
-function Q9({ d: t, set: e }) {
-  let n = { emoji: "\u{1F4E2}", titre: "", texte: "", photo: "", frequence: "une", ...(t.popup || {}) },
-    r = (o) => e("popup", (a) => ({ emoji: "\u{1F4E2}", frequence: "une", ...(a || {}), ...o })),
-    [i, s] = (0, l.useState)(!1);
-  return l.default.createElement(
+function MessageOuverture({ d: d, set: set }) {
+  let n = { emoji: "\u{1F4E2}", titre: "", texte: "", photo: "", frequence: "une", ...(d.popup || {}) },
+    r = (o) => set("popup", (a) => ({ emoji: "\u{1F4E2}", frequence: "une", ...(a || {}), ...o })),
+    [i, s] = (0, React.useState)(!1);
+  return React.default.createElement(
     "div",
     { className: "card" },
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "row", style: { marginBottom: 10 } },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         null,
-        l.default.createElement("div", { className: "nm" }, "\u{1F4AC} Message \xE0 l'ouverture"),
-        l.default.createElement(
+        React.default.createElement("div", { className: "nm" }, "\u{1F4AC} Message \xE0 l'ouverture"),
+        React.default.createElement(
           "div",
           { className: "de" },
           "Une fen\xEAtre qui s'affiche quand le client ouvre l'appli",
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "rt" },
-        l.default.createElement(ze, { on: !!n.active, set: () => r({ active: !n.active }) }),
+        React.default.createElement(ze, { on: !!n.active, set: () => r({ active: !n.active }) }),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 8 } },
-      l.default.createElement("input", {
+      React.default.createElement("input", {
         className: "inp",
         value: n.emoji,
         maxLength: 4,
@@ -1656,7 +1686,7 @@ function Q9({ d: t, set: e }) {
         style: { width: 64, textAlign: "center", fontSize: 22 },
         "aria-label": "\xC9moji",
       }),
-      l.default.createElement("input", {
+      React.default.createElement("input", {
         className: "inp",
         style: { flex: 1 },
         value: n.titre,
@@ -1665,7 +1695,7 @@ function Q9({ d: t, set: e }) {
         onChange: (o) => r({ titre: o.target.value }),
       }),
     ),
-    l.default.createElement("textarea", {
+    React.default.createElement("textarea", {
       className: "inp",
       style: { marginTop: 8 },
       value: n.texte,
@@ -1674,29 +1704,29 @@ function Q9({ d: t, set: e }) {
         "Ex : L'\xE9picerie sera exceptionnellement ferm\xE9e lundi. Pensez \xE0 commander vos plateaux avant samedi !",
       onChange: (o) => r({ texte: o.target.value }),
     }),
-    l.default.createElement(Ri, { value: n.photo, onChange: (o) => r({ photo: o }) }),
-    l.default.createElement("label", { className: "lab" }, "Combien de fois ?"),
-    l.default.createElement(
+    React.default.createElement(PhotoField, { value: n.photo, onChange: (o) => r({ photo: o }) }),
+    React.default.createElement("label", { className: "lab" }, "Combien de fois ?"),
+    React.default.createElement(
       "div",
       { className: "seg" },
       [
         ["une", "Une seule fois par client"],
         ["chaque", "\xC0 chaque ouverture"],
       ].map(([o, a]) =>
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { key: o, className: n.frequence === o ? "on" : "", onClick: () => r({ frequence: o }) },
           a,
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { marginTop: 8 } },
-      l.default.createElement(Zi, { v: n, onChange: (o) => r(o) }),
+      React.default.createElement(Periode, { v: n, onChange: (o) => r(o) }),
     ),
-    n.active && l.default.createElement(io, { x: n, style: { marginTop: 8 } }),
-    l.default.createElement(
+    n.active && React.default.createElement(Pastille, { x: n, style: { marginTop: 8 } }),
+    React.default.createElement(
       "button",
       {
         className: "btn gh sm",
@@ -1706,23 +1736,23 @@ function Q9({ d: t, set: e }) {
       },
       "Aper\xE7u",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "de", style: { marginTop: 6 } },
       "Si vous modifiez le titre ou le texte, la fen\xEAtre s'affiche \xE0 nouveau \xE0 tous les clients.",
     ),
     i &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "pop-fond", onClick: () => s(!1) },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "pop", onClick: (o) => o.stopPropagation() },
-          n.photo && l.default.createElement("img", { src: n.photo, alt: "", className: "pop-ph" }),
-          n.emoji && l.default.createElement("div", { className: "pop-em" }, n.emoji),
-          n.titre && l.default.createElement("div", { className: "pop-t" }, n.titre),
-          n.texte && l.default.createElement("div", { className: "pop-x" }, n.texte),
-          l.default.createElement(
+          n.photo && React.default.createElement("img", { src: n.photo, alt: "", className: "pop-ph" }),
+          n.emoji && React.default.createElement("div", { className: "pop-em" }, n.emoji),
+          n.titre && React.default.createElement("div", { className: "pop-t" }, n.titre),
+          n.texte && React.default.createElement("div", { className: "pop-x" }, n.texte),
+          React.default.createElement(
             "button",
             { className: "btn", style: { marginTop: 14 }, onClick: () => s(!1) },
             "J'en prends note",
@@ -1731,64 +1761,64 @@ function Q9({ d: t, set: e }) {
       ),
   );
 }
-function Y9({ d: t, set: e }) {
-  return l.default.createElement(
+function Communication({ d: d, set: set }) {
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Communication"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Communication"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Pr\xE9venez vos clients : une notification sur leur t\xE9l\xE9phone, ou un bandeau en haut de l'appli.",
     ),
-    bw(t)
-      ? l.default.createElement(r7, { d: t })
-      : l.default.createElement(
+    bw(d)
+      ? React.default.createElement(PrevenirClients, { d: d })
+      : React.default.createElement(
           "div",
           { className: "card" },
-          l.default.createElement("div", { className: "nm" }, "\u{1F4E3} Notifications"),
-          l.default.createElement(
+          React.default.createElement("div", { className: "nm" }, "\u{1F4E3} Notifications"),
+          React.default.createElement(
             "div",
             { className: "de" },
             "Pas encore activ\xE9es (r\xE9glage technique d'Eric).",
           ),
         ),
-    l.default.createElement(Q9, { d: t, set: e }),
-    l.default.createElement(
+    React.default.createElement(MessageOuverture, { d: d, set: set }),
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "row", style: { marginBottom: 10 } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           null,
-          l.default.createElement("div", { className: "nm" }, "Message d'accueil"),
-          l.default.createElement("div", { className: "de" }, "Bandeau en haut de l'application"),
+          React.default.createElement("div", { className: "nm" }, "Message d'accueil"),
+          React.default.createElement("div", { className: "de" }, "Bandeau en haut de l'application"),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "rt" },
-          l.default.createElement(ze, {
-            on: t.annonce.active,
-            set: () => e("annonce", (n) => ({ ...n, active: !n.active })),
+          React.default.createElement(ze, {
+            on: d.annonce.active,
+            set: () => set("annonce", (n) => ({ ...n, active: !n.active })),
           }),
         ),
       ),
-      l.default.createElement("textarea", {
+      React.default.createElement("textarea", {
         className: "inp",
         placeholder:
           "Ex : Fermeture exceptionnelle jeudi 14 \u2014 commandes de plateaux jusqu'\xE0 mercredi soir",
-        value: t.annonce.text,
-        onChange: (n) => e("annonce", (r) => ({ ...r, text: n.target.value })),
+        value: d.annonce.text,
+        onChange: (n) => set("annonce", (r) => ({ ...r, text: n.target.value })),
       }),
-      t.annonce.active && l.default.createElement(io, { x: t.annonce, style: { marginTop: 8 } }),
-      l.default.createElement(
+      d.annonce.active && React.default.createElement(Pastille, { x: d.annonce, style: { marginTop: 8 } }),
+      React.default.createElement(
         "div",
         { style: { marginTop: 8 } },
-        l.default.createElement(Zi, { v: t.annonce, onChange: (n) => e("annonce", n) }),
+        React.default.createElement(Periode, { v: d.annonce, onChange: (n) => set("annonce", n) }),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: 7, marginTop: 9 } },
         [
@@ -1796,11 +1826,11 @@ function Y9({ d: t, set: e }) {
           ["terra", "#C27B42", "Orange"],
           ["forest", "#1C433B", "Fonc\xE9"],
         ].map(([n, r, i]) =>
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               key: n,
-              onClick: () => e("annonce", (s) => ({ ...s, couleur: n })),
+              onClick: () => set("annonce", (s) => ({ ...s, couleur: n })),
               style: {
                 flex: 1,
                 padding: "8px 0",
@@ -1811,7 +1841,7 @@ function Y9({ d: t, set: e }) {
                 fontWeight: 800,
                 color: "#fff",
                 background: r,
-                border: t.annonce.couleur === n ? "2px solid #22302A" : "2px solid transparent",
+                border: d.annonce.couleur === n ? "2px solid #22302A" : "2px solid transparent",
               },
             },
             i,
@@ -1821,18 +1851,18 @@ function Y9({ d: t, set: e }) {
     ),
   );
 }
-async function J9(t, e, n, r) {
+async function envoyerMessageClient(t, e, n, r) {
   let i = n.conv;
   if (!i) {
     let a = String(n.tel || "").replace(/\D/g, "");
     i = a.length >= 10 ? t.conversations.find((u) => String(u.tel || "").replace(/\D/g, "") === a)?.id : null;
   }
   let s = Date.now(),
-    o = _n(de);
-  if (i) o.update(xe(de, "conversations", i), { maj: s, dernier: "Vous : " + uf(r), attente: !1 });
+    o = writeBatch(db2);
+  if (i) o.update(doc2(db2, "conversations", i), { maj: s, dernier: "Vous : " + uf(r), attente: !1 });
   else {
-    let a = xe(Ge(de, "conversations"));
-    ((i = a.id),
+    let a = doc2(collection(db2, "conversations"));
+    (i = a.id),
       o.set(a, {
         nom: String(n.nom || "Client").slice(0, 40),
         tel: String(n.tel || "").slice(0, 20),
@@ -1841,14 +1871,14 @@ async function J9(t, e, n, r) {
         dernier: "Vous : " + uf(r),
         attente: !1,
         via: n.id,
-      }));
+      });
   }
-  (o.set(xe(Ge(de, "conversations", i, "messages")), { de: "epicerie", texte: r, date: s }),
-    n.conv !== i && o.update(xe(de, e, n.id), { conv: i }),
+  o.set(doc2(collection(db2, "conversations", i, "messages")), { de: "epicerie", texte: r, date: s }),
+    n.conv !== i && o.update(doc2(db2, e, n.id), { conv: i }),
     await o.commit(),
-    Pa(t.cmd, "msg", i));
+    avertirMessage(t.cmd, "msg", i);
 }
-var X9 = {
+var MESSAGES_PRETS = {
   commandes: [
     "Nous vous confirmons la bonne prise en compte de votre commande \u{1F601}",
     "Votre commande est pr\xEAte, \xE0 tout \xE0 l'heure !",
@@ -1862,42 +1892,42 @@ var X9 = {
     "N'oubliez pas de passer les chercher avant la fermeture \u{1F60A}",
   ],
 };
-function mN({ d: t, cible: e, x: n, onClose: r }) {
-  let [i, s] = (0, l.useState)(""),
-    [o, a] = (0, l.useState)(!1),
+function EcrireAuClient({ d: t, cible: cible, x: x, onClose: onClose }) {
+  let [i, s] = (0, React.useState)(""),
+    [o, a] = (0, React.useState)(!1),
     u = async () => {
       let d = i.trim().slice(0, 1e3);
       if (!(!d || o)) {
         a(!0);
         try {
-          (await J9(t, e, n, d), r(!0));
+          await envoyerMessageClient(t, cible, x, d), onClose(!0);
         } catch {
-          (ft("Message non envoy\xE9. V\xE9rifiez la connexion et r\xE9essayez."), a(!1));
+          ft("Message non envoy\xE9. V\xE9rifiez la connexion et r\xE9essayez."), a(!1);
         }
       }
     };
-  return l.default.createElement(
+  return React.default.createElement(
     ut,
-    { titre: "\u{1F4AC} \xC9crire \xE0 " + (n.nom || "ce client"), onClose: () => r(!1) },
-    l.default.createElement(
+    { titre: "\u{1F4AC} \xC9crire \xE0 " + (x.nom || "ce client"), onClose: () => onClose(!1) },
+    React.default.createElement(
       "div",
       { className: "de", style: { marginBottom: 8 } },
       "Le message arrive dans l'application du client",
-      n.tel ? " (" + n.tel + ")" : "",
+      x.tel ? " (" + x.tel + ")" : "",
       ". Vous verrez sa r\xE9ponse dans l'onglet Messages.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "motifs", style: { margin: "0 0 8px" } },
-      (X9[e] || []).map((d) =>
-        l.default.createElement(
+      (MESSAGES_PRETS[cible] || []).map((d) =>
+        React.default.createElement(
           "button",
           { key: d, onClick: () => s(d) },
           d.length > 40 ? d.slice(0, 38) + "\u2026" : d,
         ),
       ),
     ),
-    l.default.createElement("textarea", {
+    React.default.createElement("textarea", {
       className: "inp",
       rows: 4,
       autoFocus: !0,
@@ -1906,73 +1936,73 @@ function mN({ d: t, cible: e, x: n, onClose: r }) {
       placeholder: "Votre message\u2026",
       onChange: (d) => s(d.target.value),
     }),
-    l.default.createElement(
+    React.default.createElement(
       "button",
       { className: "btn", style: { marginTop: 10 }, disabled: !i.trim() || o, onClick: u },
       o ? "Envoi\u2026" : "Envoyer le message",
     ),
   );
 }
-function Z9({ d: t }) {
-  let [e, n] = (0, l.useState)(!1),
-    [r, i] = (0, l.useState)(null),
+function Reservations({ d: t }) {
+  let [e, n] = (0, React.useState)(!1),
+    [r, i] = (0, React.useState)(null),
     s = [...t.resas].sort((h, p) => (p.cree || 0) - (h.cree || 0)),
     o = s.filter((h) => h.statut === "reservee"),
     a = s.filter((h) => h.statut !== "reservee").slice(0, e ? 50 : 5),
     u = async (h, p) => {
       try {
-        let m = _n(de);
-        m.update(xe(de, "resas", h.id), { statut: p });
+        let m = writeBatch(db2);
+        m.update(doc2(db2, "resas", h.id), { statut: p });
         let w = t.jour.items.find((E) => String(E.id) === String(h.item));
-        (p !== "retiree" &&
+        p !== "retiree" &&
           w &&
-          m.update(xe(de, "jour", String(h.item)), {
-            reserves: (parseInt(w.reserves) || 0) >= (h.qte || 0) ? Bi(-(h.qte || 0)) : 0,
+          m.update(doc2(db2, "jour", String(h.item)), {
+            reserves: (parseInt(w.reserves) || 0) >= (h.qte || 0) ? increment2(-(h.qte || 0)) : 0,
           }),
-          await m.commit());
+          await m.commit();
       } catch {
         ft("Modification impossible. V\xE9rifiez la connexion.");
       }
     };
   if (!s.length) return null;
   let d = ({ r: h }) =>
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card resa-adm " + h.statut, key: h.id },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "row", style: { alignItems: "flex-start" } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { minWidth: 0, flex: 1 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "nm" },
             h.qte,
             " \xD7 ",
             h.titre,
             h.total > 0 &&
-              l.default.createElement(
+              React.default.createElement(
                 "span",
                 { style: { color: "var(--apple)", marginLeft: 6 } },
                 An(h.total),
               ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "de" },
-            l.default.createElement("b", { style: { color: "var(--ink)" } }, h.nom),
+            React.default.createElement("b", { style: { color: "var(--ink)" } }, h.nom),
             h.tel &&
-              l.default.createElement(
-                l.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
                 " \xB7 ",
-                l.default.createElement("a", { href: "tel:" + h.tel.replace(/\s/g, "") }, h.tel),
+                React.default.createElement("a", { href: "tel:" + h.tel.replace(/\s/g, "") }, h.tel),
               ),
             " \xB7 ",
             h.retrait || "retrait \xE0 l'\xE9picerie",
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "de" },
             "N\xB0 ",
@@ -1987,15 +2017,15 @@ function Z9({ d: t }) {
         ),
       ),
       h.statut === "reservee" &&
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 6, marginTop: 8 } },
-          l.default.createElement(
+          React.default.createElement(
             "button",
             { className: "btn sm", style: { flex: 2 }, onClick: () => u(h, "retiree") },
             "\u2713 Retir\xE9",
           ),
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               className: "btn gh sm",
@@ -2005,7 +2035,7 @@ function Z9({ d: t }) {
             },
             "Pas venu",
           ),
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               className: "btn gh sm",
@@ -2017,145 +2047,149 @@ function Z9({ d: t }) {
             "Annuler",
           ),
         ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
         { className: "btn gh sm", style: { marginTop: 8, width: "auto" }, onClick: () => i(h) },
         "\u{1F4AC} \xC9crire au client",
         h.conv ? " (conversation en cours)" : "",
       ),
     );
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { style: { marginBottom: 16 } },
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "nm", style: { marginBottom: 6 } },
       "\u{1F9FA} R\xE9servations ",
       o.length ? "\u2014 " + o.length + " \xE0 retirer" : "",
     ),
     !o.length &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { marginBottom: 8 } },
         "Aucune r\xE9servation en attente.",
       ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
-      o.map((h) => l.default.createElement(d, { r: h, key: h.id })),
+      o.map((h) => React.default.createElement(d, { r: h, key: h.id })),
     ),
     !!a.length &&
-      l.default.createElement(
+      React.default.createElement(
         "details",
         { style: { marginTop: 6 } },
-        l.default.createElement(
+        React.default.createElement(
           "summary",
           { className: "de", style: { cursor: "pointer" } },
           "Historique r\xE9cent",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "grille", style: { marginTop: 6 } },
-          a.map((h) => l.default.createElement(d, { r: h, key: h.id })),
+          a.map((h) => React.default.createElement(d, { r: h, key: h.id })),
         ),
         !e &&
-          l.default.createElement("button", { className: "btn gh sm", onClick: () => n(!0) }, "Voir plus"),
+          React.default.createElement(
+            "button",
+            { className: "btn gh sm", onClick: () => n(!0) },
+            "Voir plus",
+          ),
       ),
-    r && l.default.createElement(mN, { d: t, cible: "resas", x: r, onClose: () => i(null) }),
+    r && React.default.createElement(EcrireAuClient, { d: t, cible: "resas", x: r, onClose: () => i(null) }),
   );
 }
-function rN({ v: t, onChange: e }) {
-  let n = (parseInt(t.stock) || 0) > 0 || t.resaOn,
-    r = parseInt(t.stock) >= 999;
-  return l.default.createElement(
+function ChampsResa({ v: v, onChange: onChange }) {
+  let n = (parseInt(v.stock) || 0) > 0 || v.resaOn,
+    r = parseInt(v.stock) >= 999;
+  return React.default.createElement(
     "div",
     { className: "choix-bloc", style: { background: "#F3F8EC", borderColor: "#D6E6C2" } },
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "tog", style: { borderTop: "none", paddingTop: 0 } },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         null,
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { fontSize: 13, fontWeight: 800 } },
           "\u{1F9FA} R\xE9servable dans l'application",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de" },
           "Les clients r\xE9servent, vous mettez de c\xF4t\xE9 (fa\xE7on Too Good To Go)",
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "rt" },
-        l.default.createElement(ze, {
+        React.default.createElement(ze, {
           on: !!n,
           set: () =>
-            e(
+            onChange(
               n
-                ? { ...t, stock: 0, resaOn: !1 }
-                : { ...t, stock: "", resaOn: !0, retrait: t.retrait || "aujourd'hui avant la fermeture" },
+                ? { ...v, stock: 0, resaOn: !1 }
+                : { ...v, stock: "", resaOn: !0, retrait: v.retrait || "aujourd'hui avant la fermeture" },
             ),
         }),
       ),
     ),
     n &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: 8, marginTop: 6 } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { width: 110, flexShrink: 0 } },
-          l.default.createElement("label", { className: "lab" }, "Quantit\xE9 dispo."),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Quantit\xE9 dispo."),
+          React.default.createElement("input", {
             className: "inp",
             type: "number",
             inputMode: "numeric",
             min: "1",
             max: "998",
-            value: r ? "" : t.stock || "",
+            value: r ? "" : v.stock || "",
             placeholder: "Sans limite",
-            onChange: (i) => e({ ...t, stock: i.target.value, resaOn: i.target.value.trim() !== "0" }),
+            onChange: (i) => onChange({ ...v, stock: i.target.value, resaOn: i.target.value.trim() !== "0" }),
           }),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: 1, minWidth: 0 } },
-          l.default.createElement("label", { className: "lab" }, "\xC0 retirer\u2026"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "\xC0 retirer\u2026"),
+          React.default.createElement("input", {
             className: "inp",
-            value: t.retrait || "",
+            value: v.retrait || "",
             maxLength: 60,
             placeholder: "aujourd'hui entre 17h et 19h",
-            onChange: (i) => e({ ...t, retrait: i.target.value }),
+            onChange: (i) => onChange({ ...v, retrait: i.target.value }),
           }),
         ),
       ),
     n &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { marginTop: 4 } },
         "Laissez la quantit\xE9 vide si vous en avez beaucoup (sans limite). Tapez 0 pour arr\xEAter les r\xE9servations.",
       ),
     n &&
-      (parseInt(t.reserves) || 0) > 0 &&
-      l.default.createElement(
+      (parseInt(v.reserves) || 0) > 0 &&
+      React.default.createElement(
         "div",
         { className: "de", style: { marginTop: 6 } },
         "D\xE9j\xE0 r\xE9serv\xE9s : ",
-        l.default.createElement("b", null, t.reserves),
-        r ? "" : " / " + t.stock,
-        l.default.createElement(
+        React.default.createElement("b", null, v.reserves),
+        r ? "" : " / " + v.stock,
+        React.default.createElement(
           "button",
           {
             className: "lienadm",
             style: { display: "inline", marginLeft: 8 },
             onClick: async () => {
               (await De("Remettre le compteur de r\xE9servations \xE0 0 ?")) &&
-                (await R9(t.id)) &&
-                e({ ...t, reserves: 0 });
+                (await R9(v.id)) &&
+                onChange({ ...v, reserves: 0 });
             },
           },
           "remettre \xE0 0",
@@ -2177,15 +2211,15 @@ var iN = (t) => {
 async function R9(t) {
   if (!t) return !0;
   try {
-    let e = _n(de);
-    return (e.update(xe(de, "jour", String(t)), { reserves: 0 }), await e.commit(), !0);
+    let e = writeBatch(db2);
+    return e.update(doc2(db2, "jour", String(t)), { reserves: 0 }), await e.commit(), !0;
   } catch {
-    return (ft("Impossible de remettre le compteur \xE0 0. V\xE9rifiez la connexion."), !1);
+    return ft("Impossible de remettre le compteur \xE0 0. V\xE9rifiez la connexion."), !1;
   }
 }
-var lt = (t) =>
+var esc = (t) =>
   String(t ?? "").replace(/[&<>"]/g, (e) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[e]);
-function e7(t, e) {
+function imprimerPreparation(t, e) {
   let n = t.commandes
       .filter((p) => (er(p) || "") === e && !["refusee", "annulee", "remise"].includes(p.statut))
       .sort((p, m) => (p.heure || "99").localeCompare(m.heure || "99")),
@@ -2215,14 +2249,14 @@ function e7(t, e) {
 `,
         )
         .filter(Boolean);
-      return `<div class="c"><div class="h"><span class="box"></span><b>${lt(p.heure ? lc(p.heure) : "\u2014")}</b> \xB7 ${lt(p.nom)} \xB7 ${lt(p.tel)}
-      <span class="st">${p.statut === "nouvelle" ? "\u26A0 \xC0 VALIDER" : lt(uw[p.mode] || p.mode)}</span></div>
-      ${p.adresse ? `<div class="ad">\u{1F4CD} ${lt(p.adresse)}</div>` : ""}
-      <ul>${(p.lignes || []).map((w) => `<li><b>${lt(w.personnes)} pers.</b> \u2014 ${lt(w.nom)}</li>`).join("")}</ul>
-      ${m.map((w) => (w.startsWith("\u26A0\uFE0F") ? `<div class="al">${lt(w)}</div>` : `<div class="rq">\xAB ${lt(w)} \xBB</div>`)).join("")}
-      <div class="t">N\xB0 ${lt(p.numero)} \xB7 ${An(p.total)}</div></div>`;
+      return `<div class="c"><div class="h"><span class="box"></span><b>${esc(p.heure ? lc(p.heure) : "\u2014")}</b> \xB7 ${esc(p.nom)} \xB7 ${esc(p.tel)}
+      <span class="st">${p.statut === "nouvelle" ? "\u26A0 \xC0 VALIDER" : esc(MODES[p.mode] || p.mode)}</span></div>
+      ${p.adresse ? `<div class="ad">\u{1F4CD} ${esc(p.adresse)}</div>` : ""}
+      <ul>${(p.lignes || []).map((w) => `<li><b>${esc(w.personnes)} pers.</b> \u2014 ${esc(w.nom)}</li>`).join("")}</ul>
+      ${m.map((w) => (w.startsWith("\u26A0\uFE0F") ? `<div class="al">${esc(w)}</div>` : `<div class="rq">\xAB ${esc(w)} \xBB</div>`)).join("")}
+      <div class="t">N\xB0 ${esc(p.numero)} \xB7 ${An(p.total)}</div></div>`;
     },
-    d = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Pr\xE9paration du ${lt(a)}</title><style>
+    d = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Pr\xE9paration du ${esc(a)}</title><style>
     body{font-family:Arial,sans-serif;color:#222;margin:24px;font-size:13px}h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:22px 0 8px;border-bottom:2px solid #1C433B;padding-bottom:4px}
     .sub{color:#666;margin-bottom:10px}.c{border:1px solid #bbb;border-radius:8px;padding:10px 12px;margin-bottom:10px;page-break-inside:avoid}
     .h{font-size:14px}.box{display:inline-block;width:14px;height:14px;border:2px solid #222;border-radius:3px;vertical-align:-2px;margin-right:6px}
@@ -2231,61 +2265,61 @@ function e7(t, e) {
     table{border-collapse:collapse}td{padding:3px 12px 3px 0}.vide{color:#888;font-style:italic}@media print{button{display:none}}
   </style></head><body>
   <button onclick="print()" style="float:right;padding:8px 16px;font-size:14px">\u{1F5A8}\uFE0F Imprimer</button>
-  <h1>Pr\xE9paration \u2014 ${lt(a)}</h1><div class="sub">${lt(t.store.name)} \xB7 \xE9dit\xE9e le ${new Date().toLocaleString("fr-FR")}</div>
+  <h1>Pr\xE9paration \u2014 ${esc(a)}</h1><div class="sub">${esc(t.store.name)} \xB7 \xE9dit\xE9e le ${new Date().toLocaleString("fr-FR")}</div>
   <h2>Plateaux (${n.length} commande${n.length > 1 ? "s" : ""})</h2>
   ${
     Object.keys(o).length
       ? `<table>${Object.entries(o)
-          .map(([p, m]) => `<tr><td><b>${lt(p)}</b></td><td>${m} personnes au total</td></tr>`)
+          .map(([p, m]) => `<tr><td><b>${esc(p)}</b></td><td>${m} personnes au total</td></tr>`)
           .join("")}</table><br>`
       : ""
   }
   ${n.length ? n.map(u).join("") : '<p class="vide">Aucun plateau \xE0 pr\xE9parer ce jour-l\xE0.</p>'}
   <h2>R\xE9servations anti-gaspi \xE0 mettre de c\xF4t\xE9 (${s.length})</h2>
-  ${s.length ? s.map((p) => `<div class="c"><span class="box"></span><b>${lt(p.qte)} \xD7 ${lt(p.titre)}</b> \u2014 ${lt(p.nom)} ${lt(p.tel)} \xB7 \xE0 retirer ${lt(p.retrait || "\xE0 l'\xE9picerie")} <span class="st">${lt(p.numero)}</span></div>`).join("") : '<p class="vide">Aucune r\xE9servation en attente.</p>'}
+  ${s.length ? s.map((p) => `<div class="c"><span class="box"></span><b>${esc(p.qte)} \xD7 ${esc(p.titre)}</b> \u2014 ${esc(p.nom)} ${esc(p.tel)} \xB7 \xE0 retirer ${esc(p.retrait || "\xE0 l'\xE9picerie")} <span class="st">${esc(p.numero)}</span></div>`).join("") : '<p class="vide">Aucune r\xE9servation en attente.</p>'}
   </body></html>`,
     h = window.open("", "_blank");
   if (!h)
     return ft("La fen\xEAtre a \xE9t\xE9 bloqu\xE9e : autorisez les fen\xEAtres (pop-up) pour ce site.");
-  (h.document.open(), h.document.write(d), h.document.close());
+  h.document.open(), h.document.write(d), h.document.close();
 }
-function t7({ d: t }) {
-  let [e, n] = (0, l.useState)(Bn()),
+function BoutonPreparation({ d: d }) {
+  let [jour, setJour] = (0, React.useState)(Bn()),
     r = (() => {
       let i = new Date();
-      return (i.setDate(i.getDate() + 1), i.toLocaleDateString("sv-SE"));
+      return i.setDate(i.getDate() + 1), i.toLocaleDateString("sv-SE");
     })();
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "card prepa" },
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "nm", style: { marginBottom: 6 } },
       "\u{1F5A8}\uFE0F Feuille de pr\xE9paration",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" } },
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn sm " + (e === Bn() ? "" : "gh"), onClick: () => n(Bn()) },
+        { className: "btn sm " + (jour === Bn() ? "" : "gh"), onClick: () => setJour(Bn()) },
         "Aujourd'hui",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn sm " + (e === r ? "" : "gh"), onClick: () => n(r) },
+        { className: "btn sm " + (jour === r ? "" : "gh"), onClick: () => setJour(r) },
         "Demain",
       ),
-      l.default.createElement("input", {
+      React.default.createElement("input", {
         className: "inp",
         type: "date",
-        value: e,
-        onChange: (i) => n(i.target.value || Bn()),
+        value: jour,
+        onChange: (i) => setJour(i.target.value || Bn()),
         style: { width: "auto", flex: "1 1 140px", padding: "8px 10px" },
       }),
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn terra sm", onClick: () => e7(t, e) },
+        { className: "btn terra sm", onClick: () => imprimerPreparation(d, jour) },
         "Ouvrir / imprimer",
       ),
     ),
@@ -2297,13 +2331,13 @@ var pw = (t) => {
   },
   bw = (t) => !!t.push?.vapid && ac(Er(t.cmd).script);
 function gN(t) {
-  let [e, n] = (0, l.useState)(null);
+  let [e, n] = (0, React.useState)(null);
   return (
-    (0, l.useEffect)(
+    (0, React.useEffect)(
       () =>
         t
-          ? fr(
-              Ge(de, "appareils"),
+          ? onSnapshot(
+              collection(db2, "appareils"),
               (r) => n(r.docs.map((i) => i.data())),
               () => n([]),
             )
@@ -2313,10 +2347,17 @@ function gN(t) {
     { total: e ? e.length : null, promo: (e || []).filter((r) => r.promo).length }
   );
 }
-function vN({ d: t, abonnes: e, titre0: n = "", texte0: r = "", onFini: i, onAnnuler: s }) {
-  let [o, a] = (0, l.useState)(n.slice(0, 50)),
-    [u, d] = (0, l.useState)(r.slice(0, 160)),
-    [h, p] = (0, l.useState)(!1),
+function EnvoiNotification({
+  d: t,
+  abonnes: abonnes,
+  titre0: titre0 = "",
+  texte0: texte0 = "",
+  onFini: onFini,
+  onAnnuler: onAnnuler,
+}) {
+  let [o, a] = (0, React.useState)(titre0.slice(0, 50)),
+    [u, d] = (0, React.useState)(texte0.slice(0, 160)),
+    [h, p] = (0, React.useState)(!1),
     m = async () => {
       let w = o.trim(),
         E = u.trim();
@@ -2324,7 +2365,7 @@ function vN({ d: t, abonnes: e, titre0: n = "", texte0: r = "", onFini: i, onAnn
         !(!w || !E || h) &&
         (await De(
           "Envoyer cette notification \xE0 " +
-            e +
+            abonnes +
             ` t\xE9l\xE9phone(s) ?
 
 \xAB ` +
@@ -2336,58 +2377,67 @@ function vN({ d: t, abonnes: e, titre0: n = "", texte0: r = "", onFini: i, onAnn
       ) {
         p(!0);
         try {
-          let A = xe(Ge(de, "diffusions"));
-          (await ln(A, { titre: w.slice(0, 50), texte: E.slice(0, 160), cree: Date.now() }),
-            await Pa(t.cmd, "diff", A.id),
-            i?.());
+          let A = doc2(collection(db2, "diffusions"));
+          await setDoc(A, { titre: w.slice(0, 50), texte: E.slice(0, 160), cree: Date.now() }),
+            await avertirMessage(t.cmd, "diff", A.id),
+            onFini?.();
         } catch {
           ft("Envoi impossible. V\xE9rifiez la connexion internet et r\xE9essayez.");
         }
         p(!1);
       }
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { style: { marginTop: 10 } },
-    l.default.createElement("label", { className: "lab" }, "Titre"),
-    l.default.createElement("input", {
+    React.default.createElement("label", { className: "lab" }, "Titre"),
+    React.default.createElement("input", {
       className: "inp",
       value: o,
       maxLength: 50,
       placeholder: "Ex : Arrivage de potimarrons \u{1F383}",
       onChange: (w) => a(w.target.value),
     }),
-    l.default.createElement("label", { className: "lab" }, "Message"),
-    l.default.createElement("textarea", {
+    React.default.createElement("label", { className: "lab" }, "Message"),
+    React.default.createElement("textarea", {
       className: "inp",
       value: u,
       maxLength: 160,
       placeholder: "Ex : Tout frais du producteur, r\xE9servez-les dans l'appli !",
       onChange: (w) => d(w.target.value),
     }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "de", style: { margin: "4px 2px 8px" } },
       160 - u.length,
       " caract\xE8res restants. Envoy\xE9 seulement aux ",
-      e,
+      abonnes,
       " client(s) qui ont accept\xE9 les bons plans.",
       " ",
       "\xC9vitez d'en envoyer trop souvent, sinon les clients les d\xE9sactivent.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 8 } },
-      l.default.createElement("button", { className: "btn gh", style: { flex: 1 }, onClick: s }, "Annuler"),
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn", style: { flex: 2 }, disabled: !o.trim() || !u.trim() || h || !e, onClick: m },
+        { className: "btn gh", style: { flex: 1 }, onClick: onAnnuler },
+        "Annuler",
+      ),
+      React.default.createElement(
+        "button",
+        {
+          className: "btn",
+          style: { flex: 2 },
+          disabled: !o.trim() || !u.trim() || h || !abonnes,
+          onClick: m,
+        },
         h ? "Envoi\u2026" : "Envoyer la notification",
       ),
     ),
   );
 }
-function n7(t, e) {
+function texteGaspi(t, e) {
   let n = (o) => Number(String(o).replace(",", ".")).toFixed(2).replace(".", ",") + " \u20AC",
     r =
       (t.type === "gaspi"
@@ -2407,17 +2457,17 @@ function n7(t, e) {
         : "\xC0 d\xE9couvrir \xE0 l'\xE9picerie.";
   return { titre: r, texte: [i, t.note, s].filter(Boolean).join(" \u2014 ") };
 }
-function r7({ d: t }) {
+function PrevenirClients({ d: t }) {
   let e = bw(t),
     n = gN(e),
-    [r, i] = (0, l.useState)([]),
-    [s, o] = (0, l.useState)(!1);
+    [r, i] = (0, React.useState)([]),
+    [s, o] = (0, React.useState)(!1);
   return (
-    (0, l.useEffect)(
+    (0, React.useEffect)(
       () =>
         e
-          ? fr(
-              Ge(de, "diffusions"),
+          ? onSnapshot(
+              collection(db2, "diffusions"),
               (a) =>
                 i(
                   a.docs
@@ -2431,17 +2481,17 @@ function r7({ d: t }) {
       [e],
     ),
     e
-      ? l.default.createElement(
+      ? React.default.createElement(
           "div",
           { className: "card" },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row" },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement("div", { className: "nm" }, "\u{1F4E3} Pr\xE9venir mes clients"),
-              l.default.createElement(
+              React.default.createElement("div", { className: "nm" }, "\u{1F4E3} Pr\xE9venir mes clients"),
+              React.default.createElement(
                 "div",
                 { className: "de" },
                 n.total === null
@@ -2453,48 +2503,46 @@ function r7({ d: t }) {
               ),
             ),
             !s &&
-              l.default.createElement(
+              React.default.createElement(
                 "button",
                 { className: "btn sm", style: { width: "auto" }, disabled: !n.promo, onClick: () => o(!0) },
                 "\xC9crire",
               ),
           ),
           s &&
-            l.default.createElement(vN, {
+            React.default.createElement(EnvoiNotification, {
               d: t,
               abonnes: n.promo,
               onFini: () => o(!1),
               onAnnuler: () => o(!1),
             }),
           !!r.length &&
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { marginTop: 10 } },
-              r
-                .slice(0, 3)
-                .map((a) =>
-                  l.default.createElement(
-                    "div",
-                    {
-                      key: a.id,
-                      className: "de",
-                      style: { padding: "4px 0", borderTop: "1px solid var(--line)" },
-                    },
-                    l.default.createElement("b", null, a.titre),
-                    " \xB7 ",
-                    new Date(a.cree).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }),
-                    " \u2014 ",
-                    a.envoye == null
-                      ? "en cours d'envoi\u2026"
-                      : "re\xE7ue par " + a.envoye + " t\xE9l\xE9phone(s)",
-                  ),
+              r.slice(0, 3).map((a) =>
+                React.default.createElement(
+                  "div",
+                  {
+                    key: a.id,
+                    className: "de",
+                    style: { padding: "4px 0", borderTop: "1px solid var(--line)" },
+                  },
+                  React.default.createElement("b", null, a.titre),
+                  " \xB7 ",
+                  new Date(a.cree).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }),
+                  " \u2014 ",
+                  a.envoye == null
+                    ? "en cours d'envoi\u2026"
+                    : "re\xE7ue par " + a.envoye + " t\xE9l\xE9phone(s)",
                 ),
+              ),
             ),
         )
       : null
   );
 }
-function i7({ d: t }) {
+function Statistiques({ d: t }) {
   let e = t.commandes.filter((m) => !["refusee", "annulee"].includes(m.statut)),
     n = new Date(),
     r = Array.from({ length: 6 }, (m, w) => {
@@ -2502,7 +2550,7 @@ function i7({ d: t }) {
       return { cle: pw(E), nom: E.toLocaleDateString("fr-FR", { month: "short" }) };
     }),
     i = Object.fromEntries(r.map((m) => [m.cle, { n: 0, ca: 0, r: 0 }]));
-  (e.forEach((m) => {
+  e.forEach((m) => {
     let w = pw(m.cree || 0);
     i[w] && (i[w].n++, (i[w].ca += Number(m.total) || 0));
   }),
@@ -2511,7 +2559,7 @@ function i7({ d: t }) {
       .forEach((m) => {
         let w = pw(m.cree || 0);
         i[w] && i[w].r++;
-      }));
+      });
   let s = i[r[5].cle],
     o = i[r[4].cle],
     a = Math.max(1, ...r.map((m) => i[m.cle].ca)),
@@ -2528,85 +2576,89 @@ function i7({ d: t }) {
     h = new Set(t.commandes.map((m) => (m.tel || "").replace(/\D/g, "")).filter(Boolean)).size,
     p = (m, w) =>
       w ? (m >= w ? "\u25B2 " : "\u25BC ") + Math.abs(Math.round(((m - w) / w) * 100)) + " %" : "";
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "card stats" },
-    l.default.createElement("div", { className: "nm", style: { marginBottom: 10 } }, "\u{1F4CA} Ce mois-ci"),
-    l.default.createElement(
+    React.default.createElement(
+      "div",
+      { className: "nm", style: { marginBottom: 10 } },
+      "\u{1F4CA} Ce mois-ci",
+    ),
+    React.default.createElement(
       "div",
       { className: "grid2", style: { marginBottom: 12 } },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "stat" },
-        l.default.createElement("b", null, s.n),
-        l.default.createElement(
+        React.default.createElement("b", null, s.n),
+        React.default.createElement(
           "span",
           null,
           "commandes de plateaux ",
-          l.default.createElement("i", null, p(s.n, o.n)),
+          React.default.createElement("i", null, p(s.n, o.n)),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "stat" },
-        l.default.createElement("b", null, An(s.ca).replace(",00", "")),
-        l.default.createElement(
+        React.default.createElement("b", null, An(s.ca).replace(",00", "")),
+        React.default.createElement(
           "span",
           null,
           "de plateaux ",
-          l.default.createElement("i", null, p(s.ca, o.ca)),
+          React.default.createElement("i", null, p(s.ca, o.ca)),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "stat" },
-        l.default.createElement("b", null, s.r),
-        l.default.createElement("span", null, "r\xE9servations anti-gaspi"),
+        React.default.createElement("b", null, s.r),
+        React.default.createElement("span", null, "r\xE9servations anti-gaspi"),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "stat" },
-        l.default.createElement(
+        React.default.createElement(
           "b",
           null,
           t.conversations.filter((m) => (m.maj || 0) > Date.now() - 30 * 864e5).length,
         ),
-        l.default.createElement("span", null, "conversations (30 j)"),
+        React.default.createElement("span", null, "conversations (30 j)"),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "de", style: { marginBottom: 4 } },
       "Plateaux command\xE9s sur 6 mois (\u20AC)",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "barres" },
       r.map((m) => {
         let w = i[m.cle];
-        return l.default.createElement(
+        return React.default.createElement(
           "div",
           { className: "bcol", key: m.cle, title: w.n + " commande(s) \xB7 " + An(w.ca) },
-          l.default.createElement("span", { className: "bv" }, w.ca ? Math.round(w.ca) : ""),
-          l.default.createElement("i", { style: { height: Math.max(3, (w.ca / a) * 90) + "px" } }),
-          l.default.createElement("span", { className: "bm" }, m.nom),
+          React.default.createElement("span", { className: "bv" }, w.ca ? Math.round(w.ca) : ""),
+          React.default.createElement("i", { style: { height: Math.max(3, (w.ca / a) * 90) + "px" } }),
+          React.default.createElement("span", { className: "bm" }, m.nom),
         );
       }),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 16, flexWrap: "wrap", marginTop: 12 } },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { flex: "1 1 200px" } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { fontWeight: 800 } },
           "Plateaux les plus demand\xE9s (3 mois)",
         ),
         d.length
           ? d.map(([m, w], E) =>
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { key: m, className: "de", style: { color: "var(--ink)" } },
                 ["\u{1F947}", "\u{1F948}", "\u{1F949}"][E],
@@ -2617,17 +2669,17 @@ function i7({ d: t }) {
                 " fois",
               ),
             )
-          : l.default.createElement("div", { className: "de" }, "Pas encore de commande."),
+          : React.default.createElement("div", { className: "de" }, "Pas encore de commande."),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { flex: "1 1 200px" } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { fontWeight: 800 } },
           "Vos clients dans l'appli",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { color: "var(--ink)" } },
           h,
@@ -2643,141 +2695,141 @@ function i7({ d: t }) {
     ),
   );
 }
-function s7({ d: t, set: e }) {
+function Fermetures({ d: t, set: set }) {
   let n = Array.isArray(t.fermetures) ? t.fermetures : [],
-    [r, i] = (0, l.useState)({ du: "", au: "", motif: "" }),
+    [f, setF] = (0, React.useState)({ du: "", au: "", motif: "" }),
     s = Bn(),
     o = () => {
-      r.du &&
-        (e("fermetures", (a) =>
+      f.du &&
+        (set("fermetures", (a) =>
           [
             ...(Array.isArray(a) ? a : []),
-            { du: r.du, au: r.au && r.au >= r.du ? r.au : r.du, motif: r.motif.trim().slice(0, 40) },
+            { du: f.du, au: f.au && f.au >= f.du ? f.au : f.du, motif: f.motif.trim().slice(0, 40) },
           ].sort((u, d) => u.du.localeCompare(d.du)),
         ),
-        i({ du: "", au: "", motif: "" }));
+        setF({ du: "", au: "", motif: "" }));
     };
-  return l.default.createElement(
-    l.default.Fragment,
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { fontWeight: 800, fontSize: 14, margin: "18px 0 4px" } },
       "Fermetures exceptionnelles",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "sub", style: { margin: "0 0 8px" } },
       "Cong\xE9s, jours f\xE9ri\xE9s\u2026 Saisissez-les une fois : l'application affiche un bandeau 14 jours avant, indique \xAB Ferm\xE9 \xBB et bloque les commandes ces jours-l\xE0.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
       n
         .filter((a) => (a.au || a.du) >= s)
         .map((a, u) =>
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "tog", key: a.du + u },
-            l.default.createElement(
+            React.default.createElement(
               "span",
               { style: { fontSize: 13, fontWeight: 700 } },
-              a.du === a.au ? "Le " + Yi(a.du) : "Du " + Yi(a.du) + " au " + Yi(a.au),
+              a.du === a.au ? "Le " + dateCourte(a.du) : "Du " + dateCourte(a.du) + " au " + dateCourte(a.au),
               a.motif ? " \xB7 " + a.motif : "",
               a.du <= s &&
-                l.default.createElement(
+                React.default.createElement(
                   "span",
                   { className: "pill promo", style: { marginLeft: 6 } },
                   "En cours",
                 ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(
+              React.default.createElement(
                 "button",
                 {
                   className: "ib",
                   onClick: () =>
-                    e("fermetures", (d) =>
+                    set("fermetures", (d) =>
                       (d || []).filter((h) => !(h.du === a.du && h.au === a.au && h.motif === a.motif)),
                     ),
                 },
-                he.bin(),
+                I10.bin(),
               ),
             ),
           ),
         ),
       !n.some((a) => (a.au || a.du) >= s) &&
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { marginBottom: 8 } },
           "Aucune fermeture pr\xE9vue.",
         ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: 8, flexWrap: "wrap", marginTop: 6 } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: "1 1 130px" } },
-          l.default.createElement("label", { className: "lab" }, "Du"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Du"),
+          React.default.createElement("input", {
             className: "inp",
             type: "date",
             min: s,
-            value: r.du,
-            onChange: (a) => i({ ...r, du: a.target.value }),
+            value: f.du,
+            onChange: (a) => setF({ ...f, du: a.target.value }),
           }),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: "1 1 130px" } },
-          l.default.createElement("label", { className: "lab" }, "Au (facultatif)"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Au (facultatif)"),
+          React.default.createElement("input", {
             className: "inp",
             type: "date",
-            min: r.du || s,
-            value: r.au,
-            onChange: (a) => i({ ...r, au: a.target.value }),
+            min: f.du || s,
+            value: f.au,
+            onChange: (a) => setF({ ...f, au: a.target.value }),
           }),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: "2 1 180px" } },
-          l.default.createElement("label", { className: "lab" }, "Motif (facultatif)"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Motif (facultatif)"),
+          React.default.createElement("input", {
             className: "inp",
-            value: r.motif,
+            value: f.motif,
             maxLength: 40,
             placeholder: "Cong\xE9s d'\xE9t\xE9, 11 novembre\u2026",
-            onChange: (a) => i({ ...r, motif: a.target.value }),
+            onChange: (a) => setF({ ...f, motif: a.target.value }),
           }),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn sm", style: { marginTop: 8 }, disabled: !r.du, onClick: o },
+        { className: "btn sm", style: { marginTop: 8 }, disabled: !f.du, onClick: o },
         "Ajouter la fermeture",
       ),
     ),
   );
 }
-function o7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)(""),
-    [i, s] = (0, l.useState)(""),
-    [o, a] = (0, l.useState)(""),
-    [u, d] = (0, l.useState)("frais"),
-    [h, p] = (0, l.useState)(""),
-    [m, w] = (0, l.useState)({ debut: "", fin: "" }),
-    [E, A] = (0, l.useState)(!1),
-    [S, _] = (0, l.useState)(null),
-    [I, T] = (0, l.useState)({ stock: 0, retrait: "" }),
-    [M, V] = (0, l.useState)(null),
+function Jour({ d: t, set: set }) {
+  let [n, r] = (0, React.useState)(""),
+    [i, s] = (0, React.useState)(""),
+    [o, a] = (0, React.useState)(""),
+    [u, d] = (0, React.useState)("frais"),
+    [h, p] = (0, React.useState)(""),
+    [m, w] = (0, React.useState)({ debut: "", fin: "" }),
+    [E, A] = (0, React.useState)(!1),
+    [S, _] = (0, React.useState)(null),
+    [I, T] = (0, React.useState)({ stock: 0, retrait: "" }),
+    [M, V] = (0, React.useState)(null),
     O = bw(t),
     b = gN(O),
     v = t.jour?.items || [],
     x = (k) => k === "promo" || k === "gaspi" || k === "panier",
-    C = (k) => e("jour", ($) => ({ items: k($?.items || []), maj: Nf() })),
+    C = (k) => set("jour", ($) => ({ items: k($?.items || []), maj: aujourdhui2() })),
     F = () => {
       n.trim() &&
         (C((k) => [
@@ -2809,31 +2861,31 @@ function o7({ d: t, set: e }) {
     P = () => {
       S.titre?.trim() && (C((k) => k.map(($) => ($.id === S.id ? iN(S) : $))), _(null));
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Aujourd'hui"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Aujourd'hui"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Le c\u0153ur de l'application : ce qui change chaque jour. Un titre, un prix, c'est publi\xE9. Comptez 20 secondes.",
     ),
-    l.default.createElement(Z9, { d: t }),
-    l.default.createElement(
+    React.default.createElement(Reservations, { d: t }),
+    React.default.createElement(
       "div",
       { className: "card", style: { background: "#FBF8F1" } },
-      l.default.createElement("label", { className: "lab" }, "Quoi de neuf ?"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "Quoi de neuf ?"),
+      React.default.createElement("input", {
         className: "inp",
         value: n,
         onChange: (k) => r(k.target.value),
         onKeyDown: (k) => k.key === "Enter" && F(),
         placeholder: "Fraises de Bergerac, lasagnes maison\u2026",
       }),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: 8, marginTop: 8 } },
-        l.default.createElement("input", {
+        React.default.createElement("input", {
           className: "inp",
           style: { flex: 1 },
           type: "number",
@@ -2843,7 +2895,7 @@ function o7({ d: t, set: e }) {
           onChange: (k) => s(k.target.value),
           placeholder: "Prix (facultatif)",
         }),
-        l.default.createElement("input", {
+        React.default.createElement("input", {
           className: "inp",
           style: { width: 108 },
           value: o,
@@ -2851,11 +2903,11 @@ function o7({ d: t, set: e }) {
           placeholder: "kg, part\u2026",
         }),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: 6, marginTop: 9, flexWrap: "wrap" } },
-        Cf.map((k) =>
-          l.default.createElement(
+        TYPES.map((k) =>
+          React.default.createElement(
             "button",
             {
               key: k.id,
@@ -2878,11 +2930,11 @@ function o7({ d: t, set: e }) {
         ),
       ),
       x(u) &&
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { marginTop: 9 } },
-          l.default.createElement("label", { className: "lab" }, "Prix avant (barr\xE9)"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Prix avant (barr\xE9)"),
+          React.default.createElement("input", {
             className: "inp",
             type: "number",
             inputMode: "decimal",
@@ -2892,21 +2944,21 @@ function o7({ d: t, set: e }) {
             placeholder: "Facultatif",
           }),
         ),
-      x(u) && l.default.createElement(rN, { v: I, onChange: T }),
+      x(u) && React.default.createElement(ChampsResa, { v: I, onChange: T }),
       u === "panier" &&
         !n &&
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { marginTop: 4 } },
           "Ex : \xAB Panier surprise fruits & l\xE9gumes \xBB, prix 5 \u20AC, prix avant 15 \u20AC (valeur).",
         ),
       E || x(u)
-        ? l.default.createElement(
+        ? React.default.createElement(
             "div",
             { style: { marginTop: 9 } },
-            l.default.createElement(Zi, { v: m, onChange: w }),
+            React.default.createElement(Periode, { v: m, onChange: w }),
           )
-        : l.default.createElement(
+        : React.default.createElement(
             "button",
             {
               onClick: () => A(!0),
@@ -2924,39 +2976,39 @@ function o7({ d: t, set: e }) {
             },
             "+ Programmer des dates de parution",
           ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
         { className: "btn", style: { marginTop: 10 }, disabled: !n.trim(), onClick: F },
-        he.plus(),
+        I10.plus(),
         "Publier",
       ),
     ),
     !v.length &&
-      l.default.createElement(Vn, {
+      React.default.createElement(Vn, {
         t: "Rien pour aujourd'hui",
         s: "Ajoutez au moins un article : c'est ce que vos clients regardent en ouvrant l'application.",
       }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
       v.map((k) => {
-        let $ = Cf.find((Q) => Q.id === k.type) || Cf[0];
-        return l.default.createElement(
+        let $ = TYPES.find((Q) => Q.id === k.type) || TYPES[0];
+        return React.default.createElement(
           "div",
           { className: "card", key: k.id },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row" },
             k.photo
-              ? l.default.createElement("img", { className: "thumb", src: k.photo, alt: "" })
-              : l.default.createElement("div", {
+              ? React.default.createElement("img", { className: "thumb", src: k.photo, alt: "" })
+              : React.default.createElement("div", {
                   style: { width: 6, alignSelf: "stretch", borderRadius: 4, background: $.c, flexShrink: 0 },
                 }),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement("div", { className: "nm" }, k.titre),
-              l.default.createElement(
+              React.default.createElement("div", { className: "nm" }, k.titre),
+              React.default.createElement(
                 "div",
                 { className: "de", style: { color: $.c, fontWeight: 700 } },
                 $.label,
@@ -2964,7 +3016,7 @@ function o7({ d: t, set: e }) {
                   ? " \xB7 " + Number(k.prix).toFixed(2) + " \u20AC" + (k.unite ? " / " + k.unite : "")
                   : "",
                 !!k.ancienPrix &&
-                  l.default.createElement(
+                  React.default.createElement(
                     "span",
                     {
                       style: {
@@ -2978,9 +3030,9 @@ function o7({ d: t, set: e }) {
                     " \u20AC",
                   ),
               ),
-              k.note && l.default.createElement("div", { className: "de" }, k.note),
+              k.note && React.default.createElement("div", { className: "de" }, k.note),
               (parseInt(k.stock) || 0) > 0 &&
-                l.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "de", style: { fontWeight: 800, color: "#2E7D32" } },
                   "\u{1F9FA} R\xE9servable \xB7 ",
@@ -2992,11 +3044,11 @@ function o7({ d: t, set: e }) {
                     ? " \xB7 \xC9PUIS\xC9"
                     : "",
                 ),
-              l.default.createElement(io, { x: k, style: { marginTop: 5 } }),
+              React.default.createElement(Pastille, { x: k, style: { marginTop: 5 } }),
               O &&
                 x(k.type) &&
                 k.active !== !1 &&
-                l.default.createElement(
+                React.default.createElement(
                   "button",
                   {
                     className: "btn gh sm",
@@ -3009,18 +3061,18 @@ function o7({ d: t, set: e }) {
                   b.promo ? " (" + b.promo + ")" : "",
                 ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: k.active !== !1,
                 set: () => C((Q) => Q.map((Y) => (Y.id === k.id ? { ...Y, active: Y.active === !1 } : Y))),
               }),
-              l.default.createElement("button", { className: "ib", onClick: () => _(k) }, he.pen()),
-              l.default.createElement(
+              React.default.createElement("button", { className: "ib", onClick: () => _(k) }, I10.pen()),
+              React.default.createElement(
                 "button",
                 { className: "ib", onClick: () => C((Q) => Q.filter((Y) => Y.id !== k.id)) },
-                he.bin(),
+                I10.bin(),
               ),
             ),
           ),
@@ -3028,7 +3080,7 @@ function o7({ d: t, set: e }) {
       }),
     ),
     !!v.length &&
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "btn gh",
@@ -3038,36 +3090,39 @@ function o7({ d: t, set: e }) {
         "Vider la liste du jour",
       ),
     M &&
-      l.default.createElement(
+      React.default.createElement(
         ut,
         { titre: "\u{1F4E3} Pr\xE9venir mes clients", onClose: () => V(null) },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de" },
           "Le message est pr\xEAt, vous pouvez le modifier avant d'envoyer.",
         ),
-        l.default.createElement(vN, {
+        React.default.createElement(EnvoiNotification, {
           d: t,
           abonnes: b.promo,
-          ...(({ titre: k, texte: $ }) => ({ titre0: k, texte0: $ }))(n7(M, t)),
+          ...(({ titre: titre, texte: texte }) => ({ titre0: titre, texte0: texte }))(texteGaspi(M, t)),
           onFini: () => V(null),
           onAnnuler: () => V(null),
         }),
       ),
     S &&
-      l.default.createElement(
+      React.default.createElement(
         ut,
         { titre: "Modifier l'article", onClose: () => _(null) },
-        l.default.createElement(Ri, { value: S.photo, onChange: (k) => _(($) => ({ ...$, photo: k })) }),
-        l.default.createElement("label", { className: "lab" }, "Titre"),
-        l.default.createElement("input", {
+        React.default.createElement(PhotoField, {
+          value: S.photo,
+          onChange: (k) => _(($) => ({ ...$, photo: k })),
+        }),
+        React.default.createElement("label", { className: "lab" }, "Titre"),
+        React.default.createElement("input", {
           className: "inp",
           autoFocus: !0,
           value: S.titre,
           onChange: (k) => _({ ...S, titre: k.target.value }),
         }),
-        l.default.createElement("label", { className: "lab" }, "Pr\xE9cision (facultatif)"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Pr\xE9cision (facultatif)"),
+        React.default.createElement("input", {
           className: "inp",
           value: S.note,
           onChange: (k) => _({ ...S, note: k.target.value }),
@@ -3076,14 +3131,14 @@ function o7({ d: t, set: e }) {
               ? "Contenu : fruits, l\xE9gumes, laitages du jour\u2026"
               : "Dernier jour, quantit\xE9 limit\xE9e\u2026",
         }),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1 } },
-            l.default.createElement("label", { className: "lab" }, "Prix (\u20AC)"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Prix (\u20AC)"),
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "decimal",
@@ -3092,25 +3147,25 @@ function o7({ d: t, set: e }) {
               onChange: (k) => _({ ...S, prix: k.target.value }),
             }),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1 } },
-            l.default.createElement("label", { className: "lab" }, "Unit\xE9"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Unit\xE9"),
+            React.default.createElement("input", {
               className: "inp",
               value: S.unite,
               onChange: (k) => _({ ...S, unite: k.target.value }),
             }),
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1 } },
-            l.default.createElement("label", { className: "lab" }, "Prix avant (barr\xE9)"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Prix avant (barr\xE9)"),
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "decimal",
@@ -3121,14 +3176,14 @@ function o7({ d: t, set: e }) {
             }),
           ),
         ),
-        l.default.createElement(Zi, { v: S, onChange: _ }),
-        x(S.type) && l.default.createElement(rN, { v: S, onChange: _ }),
-        l.default.createElement("label", { className: "lab" }, "Cat\xE9gorie"),
-        l.default.createElement(
+        React.default.createElement(Periode, { v: S, onChange: _ }),
+        x(S.type) && React.default.createElement(ChampsResa, { v: S, onChange: _ }),
+        React.default.createElement("label", { className: "lab" }, "Cat\xE9gorie"),
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 6, flexWrap: "wrap" } },
-          Cf.map((k) =>
-            l.default.createElement(
+          TYPES.map((k) =>
+            React.default.createElement(
               "button",
               {
                 key: k.id,
@@ -3150,7 +3205,7 @@ function o7({ d: t, set: e }) {
             ),
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 14 }, onClick: P },
           "Enregistrer",
@@ -3158,28 +3213,28 @@ function o7({ d: t, set: e }) {
       ),
   );
 }
-function a7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)(null),
+function Offres({ d: d, set: set }) {
+  let [m, setM] = (0, React.useState)(null),
     i = () => {
-      n.titre?.trim() &&
-        (e("offres", (s) => (n.id ? s.map((o) => (o.id === n.id ? n : o)) : [...s, { ...n, id: Wr() }])),
-        r(null));
+      m.titre?.trim() &&
+        (set("offres", (s) => (m.id ? s.map((o) => (o.id === m.id ? m : o)) : [...s, { ...m, id: Wr() }])),
+        setM(null));
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Paniers & plateaux"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Paniers & plateaux"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Vos plateaux, paniers garnis et corbeilles de fruits, avec photo et prix. Regroupez-les par type.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "button",
       {
         className: "btn terra",
         onClick: () =>
-          r({
+          setM({
             titre: "",
             desc: "",
             prix: "",
@@ -3190,150 +3245,153 @@ function a7({ d: t, set: e }) {
             active: !0,
           }),
       },
-      he.plus(),
+      I10.plus(),
       "Nouvelle offre",
     ),
-    l.default.createElement("div", { style: { height: 12 } }),
-    !t.offres.length &&
-      l.default.createElement(Vn, {
+    React.default.createElement("div", { style: { height: 12 } }),
+    !d.offres.length &&
+      React.default.createElement(Vn, {
         t: "Aucune offre",
         s: "Ajoutez par exemple \xAB Plateau ap\xE9ritif 4-6 personnes \xBB avec sa photo : c'est ce que vos clients regardent en premier.",
       }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
-      t.offres.map((s) =>
-        l.default.createElement(
+      d.offres.map((s) =>
+        React.default.createElement(
           "div",
           { className: "card", key: s.id },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row" },
             s.photo
-              ? l.default.createElement("img", { className: "thumb", src: s.photo, alt: "" })
-              : l.default.createElement("div", { className: "thumb" }),
-            l.default.createElement(
+              ? React.default.createElement("img", { className: "thumb", src: s.photo, alt: "" })
+              : React.default.createElement("div", { className: "thumb" }),
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement("div", { className: "nm" }, s.titre),
-              l.default.createElement(
+              React.default.createElement("div", { className: "nm" }, s.titre),
+              React.default.createElement(
                 "div",
                 { className: "de" },
                 s.type,
                 s.portions ? " \xB7 " + s.portions : "",
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { style: { marginTop: 5 } },
-                l.default.createElement(io, { x: s, fem: !0 }),
-                l.default.createElement(
+                React.default.createElement(Pastille, { x: s, fem: !0 }),
+                React.default.createElement(
                   "span",
                   { style: { fontSize: 13, fontWeight: 800, color: "var(--apple)", marginLeft: 6 } },
                   s.prix ? Number(s.prix).toFixed(2) + " \u20AC" : "Sur devis",
                 ),
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement("button", { className: "ib", onClick: () => r(s) }, he.pen()),
-              l.default.createElement(
+              React.default.createElement("button", { className: "ib", onClick: () => setM(s) }, I10.pen()),
+              React.default.createElement(
                 "button",
                 {
                   className: "ib",
                   onClick: async () =>
                     (await De("Supprimer \xAB " + s.titre + " \xBB ?")) &&
-                    e("offres", (o) => o.filter((a) => a.id !== s.id)),
+                    set("offres", (o) => o.filter((a) => a.id !== s.id)),
                 },
-                he.bin(),
+                I10.bin(),
               ),
             ),
           ),
         ),
       ),
     ),
-    n &&
-      l.default.createElement(
+    m &&
+      React.default.createElement(
         ut,
-        { titre: n.id ? "Modifier l'offre" : "Nouvelle offre", onClose: () => r(null) },
-        l.default.createElement(Ri, { value: n.photo, onChange: (s) => r((o) => ({ ...o, photo: s })) }),
-        l.default.createElement("label", { className: "lab" }, "Titre"),
-        l.default.createElement("input", {
+        { titre: m.id ? "Modifier l'offre" : "Nouvelle offre", onClose: () => setM(null) },
+        React.default.createElement(PhotoField, {
+          value: m.photo,
+          onChange: (s) => setM((o) => ({ ...o, photo: s })),
+        }),
+        React.default.createElement("label", { className: "lab" }, "Titre"),
+        React.default.createElement("input", {
           className: "inp",
           autoFocus: !0,
-          value: n.titre,
-          onChange: (s) => r({ ...n, titre: s.target.value }),
+          value: m.titre,
+          onChange: (s) => setM({ ...m, titre: s.target.value }),
           placeholder: "Plateau charcuterie & fromages",
         }),
-        l.default.createElement("label", { className: "lab" }, "Composition"),
-        l.default.createElement("textarea", {
+        React.default.createElement("label", { className: "lab" }, "Composition"),
+        React.default.createElement("textarea", {
           className: "inp",
-          value: n.desc,
-          onChange: (s) => r({ ...n, desc: s.target.value }),
+          value: m.desc,
+          onChange: (s) => setM({ ...m, desc: s.target.value }),
           placeholder: "Comt\xE9, morbier, saucisson, jambon sec, raisins\u2026",
         }),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1 } },
-            l.default.createElement("label", { className: "lab" }, "Prix (\u20AC)"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Prix (\u20AC)"),
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "decimal",
               step: "0.01",
-              value: n.prix,
-              onChange: (s) => r({ ...n, prix: s.target.value }),
+              value: m.prix,
+              onChange: (s) => setM({ ...m, prix: s.target.value }),
               placeholder: "Laisser vide = sur devis",
             }),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1 } },
-            l.default.createElement("label", { className: "lab" }, "Pour"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Pour"),
+            React.default.createElement("input", {
               className: "inp",
-              value: n.portions,
-              onChange: (s) => r({ ...n, portions: s.target.value }),
+              value: m.portions,
+              onChange: (s) => setM({ ...m, portions: s.target.value }),
               placeholder: "4-6 pers.",
             }),
           ),
         ),
-        l.default.createElement("label", { className: "lab" }, "Type (sert de titre de section)"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Type (sert de titre de section)"),
+        React.default.createElement("input", {
           className: "inp",
-          value: n.type,
-          onChange: (s) => r({ ...n, type: s.target.value }),
+          value: m.type,
+          onChange: (s) => setM({ ...m, type: s.target.value }),
           placeholder: "Plateaux / Paniers garnis / Corbeilles",
         }),
-        l.default.createElement("label", { className: "lab" }, "Pastille (facultatif)"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Pastille (facultatif)"),
+        React.default.createElement("input", {
           className: "inp",
-          value: n.badge,
-          onChange: (s) => r({ ...n, badge: s.target.value }),
+          value: m.badge,
+          onChange: (s) => setM({ ...m, badge: s.target.value }),
           placeholder: "Nouveau, F\xEAtes\u2026",
         }),
-        l.default.createElement(Zi, { v: n, onChange: r }),
-        l.default.createElement(
+        React.default.createElement(Periode, { v: m, onChange: setM }),
+        React.default.createElement(
           "div",
           { className: "tog", style: { marginTop: 6 } },
-          l.default.createElement(
+          React.default.createElement(
             "span",
             { style: { fontSize: 13, fontWeight: 700 } },
             "Visible par les clients",
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "rt" },
-            l.default.createElement(ze, {
-              on: n.active !== !1,
-              set: () => r({ ...n, active: n.active === !1 }),
+            React.default.createElement(ze, {
+              on: m.active !== !1,
+              set: () => setM({ ...m, active: m.active === !1 }),
             }),
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 12 }, onClick: i },
           "Enregistrer",
@@ -3341,7 +3399,7 @@ function a7({ d: t, set: e }) {
       ),
   );
 }
-var fw = [
+var STATUTS_COMMANDE = [
     { id: "nouvelle", label: "\xC0 valider", c: "#C27B42", bg: "#FBEFE4" },
     { id: "acceptee", label: "Accept\xE9e", c: "#4C6B27", bg: "#EEF3E2" },
     { id: "prep", label: "En pr\xE9paration", c: "#B08A2E", bg: "#FAF2DC" },
@@ -3350,154 +3408,163 @@ var fw = [
     { id: "refusee", label: "Refus\xE9e", c: "#B2563F", bg: "#F7E4DF" },
     { id: "annulee", label: "Annul\xE9e", c: "#93A099", bg: "#F0EEE8" },
   ],
-  mw = {
+  ETAPE_SUIVANTE = {
     acceptee: ["prep", "Commencer la pr\xE9paration"],
     prep: ["prete", "Marquer pr\xEAte (le client est pr\xE9venu)"],
     prete: ["remise", "Marquer remise au client"],
   },
-  uc = (t) => !["remise", "annulee", "refusee"].includes(t.statut),
-  l7 = [
+  enCoursCmd = (t) => !["remise", "annulee", "refusee"].includes(t.statut),
+  MOTIFS_REFUS = [
     "Complet ce jour-l\xE0",
     "D\xE9lai trop court",
     "Produits indisponibles",
     "\xC9picerie ferm\xE9e ce jour-l\xE0",
   ];
-function u7({ c: t, type: e, d: n, onClose: r, onValider: i }) {
+function Decision({ c: c, type: type, d: n, onClose: onClose, onValider: onValider }) {
   let s = Er(n.cmd),
-    [o, a] = (0, l.useState)(er(t)),
-    [u, d] = (0, l.useState)(t.heure || s.heureDefaut || "17:00"),
-    [h, p] = (0, l.useState)(t.message || ""),
-    m = t.mode === "livraison";
-  return e === "refus"
-    ? l.default.createElement(
+    [date, setDate] = (0, React.useState)(er(c)),
+    [heure, setHeure] = (0, React.useState)(c.heure || s.heureDefaut || "17:00"),
+    [msg, setMsg] = (0, React.useState)(c.message || ""),
+    m = c.mode === "livraison";
+  return type === "refus"
+    ? React.default.createElement(
         ut,
-        { titre: "Refuser la commande", onClose: r },
-        l.default.createElement(
+        { titre: "Refuser la commande", onClose: onClose },
+        React.default.createElement(
           "div",
           { className: "de", style: { marginBottom: 10 } },
-          t.nom,
+          c.nom,
           " sera pr\xE9venu dans l'application. Indiquez-lui pourquoi :",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "motifs" },
-          l7.map((w) =>
-            l.default.createElement(
+          MOTIFS_REFUS.map((w) =>
+            React.default.createElement(
               "button",
-              { key: w, className: h === w ? "on" : "", onClick: () => p(w) },
+              { key: w, className: msg === w ? "on" : "", onClick: () => setMsg(w) },
               w,
             ),
           ),
         ),
-        l.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Message au client"),
-        l.default.createElement("textarea", {
+        React.default.createElement(
+          "label",
+          { className: "lab", style: { marginTop: 10 } },
+          "Message au client",
+        ),
+        React.default.createElement("textarea", {
           className: "inp",
-          value: h,
-          onChange: (w) => p(w.target.value),
+          value: msg,
+          onChange: (w) => setMsg(w.target.value),
           maxLength: 300,
           placeholder: "Ex : D\xE9sol\xE9e, nous sommes complets samedi. Appelez-nous pour une autre date !",
         }),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn",
             style: { marginTop: 12, background: "var(--red)" },
-            onClick: () => i({ statut: "refusee", message: h.trim(), decision: Date.now() }),
+            onClick: () => onValider({ statut: "refusee", message: msg.trim(), decision: Date.now() }),
           },
           "Refuser et pr\xE9venir le client",
         ),
       )
-    : l.default.createElement(
+    : React.default.createElement(
         ut,
-        { titre: t.statut === "nouvelle" ? "Accepter la commande" : "Modifier le rendez-vous", onClose: r },
-        l.default.createElement(
+        {
+          titre: c.statut === "nouvelle" ? "Accepter la commande" : "Modifier le rendez-vous",
+          onClose: onClose,
+        },
+        React.default.createElement(
           "div",
           { className: "de", style: { marginBottom: 10 } },
           "Choisissez ",
           m
             ? "l'heure de livraison"
-            : "l'heure \xE0 laquelle " + t.nom.split(" ")[0] + " peut venir la chercher",
+            : "l'heure \xE0 laquelle " + c.nom.split(" ")[0] + " peut venir la chercher",
           ". Il sera pr\xE9venu dans l'application et pourra mettre un rappel.",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, m ? "Livraison le" : "Retrait le"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, m ? "Livraison le" : "Retrait le"),
+            React.default.createElement("input", {
               className: "inp",
               type: "date",
-              value: o,
-              onChange: (w) => a(w.target.value || er(t)),
+              value: date,
+              onChange: (w) => setDate(w.target.value || er(c)),
             }),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "\xC0"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "\xC0"),
+            React.default.createElement("input", {
               className: "inp",
               type: "time",
               step: "900",
-              value: u,
-              onChange: (w) => d(w.target.value),
+              value: heure,
+              onChange: (w) => setHeure(w.target.value),
             }),
           ),
         ),
-        o !== t.date &&
-          l.default.createElement(
+        date !== c.date &&
+          React.default.createElement(
             "div",
             { className: "cmd-alerte" },
             "Le client avait demand\xE9 le ",
-            Yi(t.date),
+            dateCourte(c.date),
             ". Pensez \xE0 le lui pr\xE9ciser dans le message.",
           ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "motifs", style: { marginTop: 10 } },
           ["08:00", "10:00", "12:00", "16:00", "17:00", "18:00"].map((w) =>
-            l.default.createElement(
+            React.default.createElement(
               "button",
-              { key: w, className: u === w ? "on" : "", onClick: () => d(w) },
+              { key: w, className: heure === w ? "on" : "", onClick: () => setHeure(w) },
               lc(w),
             ),
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "label",
           { className: "lab", style: { marginTop: 10 } },
           "Petit mot au client (facultatif)",
         ),
-        l.default.createElement("textarea", {
+        React.default.createElement("textarea", {
           className: "inp",
-          value: h,
-          onChange: (w) => p(w.target.value),
+          value: msg,
+          onChange: (w) => setMsg(w.target.value),
           maxLength: 300,
           placeholder: "Ex : Merci ! Votre plateau sera pr\xEAt, \xE0 samedi.",
         }),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn",
             style: { marginTop: 12 },
-            disabled: !u || !o,
+            disabled: !heure || !date,
             onClick: () =>
-              i({
-                statut: t.statut === "nouvelle" ? "acceptee" : t.statut,
-                dateRetrait: o,
-                heure: u,
-                message: h.trim(),
-                decision: t.decision || Date.now(),
+              onValider({
+                statut: c.statut === "nouvelle" ? "acceptee" : c.statut,
+                dateRetrait: date,
+                heure: heure,
+                message: msg.trim(),
+                decision: c.decision || Date.now(),
               }),
           },
-          t.statut === "nouvelle" ? "Accepter \u2014 " + Yi(o) + " \xE0 " + lc(u) : "Enregistrer",
+          c.statut === "nouvelle"
+            ? "Accepter \u2014 " + dateCourte(date) + " \xE0 " + lc(heure)
+            : "Enregistrer",
         ),
       );
 }
 var yN = (t) => Math.round((new Date(t + "T12:00") - new Date(Bn() + "T12:00")) / 864e5),
-  c7 = (t) => {
+  quand = (t) => {
     let e = yN(t);
     return e === 0
       ? "aujourd'hui"
@@ -3507,81 +3574,81 @@ var yN = (t) => Math.round((new Date(t + "T12:00") - new Date(Bn() + "T12:00")) 
           ? "en retard de " + -e + " j"
           : "dans " + e + " jours";
   };
-function d7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)("cmd"),
-    i = t.commandes.filter((s) => s.statut === "nouvelle").length;
-  return l.default.createElement(
+function Commandes({ d: d, set: set }) {
+  let [vue, setVue] = (0, React.useState)("cmd"),
+    i = d.commandes.filter((s) => s.statut === "nouvelle").length;
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Commandes"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Commandes"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Les plateaux command\xE9s par vos clients depuis l'application.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "seg" },
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: n === "cmd" ? "on" : "", onClick: () => r("cmd") },
+        { className: vue === "cmd" ? "on" : "", onClick: () => setVue("cmd") },
         "Commandes",
         i ? " (" + i + ")" : "",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: n === "plateaux" ? "on" : "", onClick: () => r("plateaux") },
+        { className: vue === "plateaux" ? "on" : "", onClick: () => setVue("plateaux") },
         "Plateaux",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: n === "regl" ? "on" : "", onClick: () => r("regl") },
+        { className: vue === "regl" ? "on" : "", onClick: () => setVue("regl") },
         "Calendrier",
       ),
     ),
-    n === "cmd" && l.default.createElement(h7, { d: t, set: e }),
-    n === "plateaux" && l.default.createElement(p7, { d: t, set: e }),
-    n === "regl" && l.default.createElement(m7, { d: t, set: e }),
+    vue === "cmd" && React.default.createElement(ListeCommandes, { d: d, set: set }),
+    vue === "plateaux" && React.default.createElement(Plateaux, { d: d, set: set }),
+    vue === "regl" && React.default.createElement(ReglagesCmd, { d: d, set: set }),
   );
 }
-function h7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)("encours"),
-    [i, s] = (0, l.useState)(null),
-    [o, a] = (0, l.useState)(null),
+function ListeCommandes({ d: t, set: set }) {
+  let [n, r] = (0, React.useState)("encours"),
+    [i, s] = (0, React.useState)(null),
+    [o, a] = (0, React.useState)(null),
     u = (E) => (E.statut === "nouvelle" ? "0" : "1") + (er(E) || "") + (E.heure || ""),
     d = t.commandes
-      .filter((E) => (n === "encours" ? uc(E) : !uc(E)))
+      .filter((E) => (n === "encours" ? enCoursCmd(E) : !enCoursCmd(E)))
       .sort((E, A) =>
         n === "encours"
           ? u(E).localeCompare(u(A)) || (E.cree || 0) - (A.cree || 0)
           : (er(A) || "").localeCompare(er(E) || ""),
       ),
     h = async (E, A) => {
-      (await e("commandes", (S) => S.map((_) => (_.id === E.id ? { ..._, ...A } : _)))) &&
-        Pa(t.cmd, "cmd", E.id);
+      (await set("commandes", (S) => S.map((_) => (_.id === E.id ? { ..._, ...A } : _)))) &&
+        avertirMessage(t.cmd, "cmd", E.id);
     },
     p = async (E, A) => {
-      (await e("commandes", (S) => S.map((_) => (_.id === E.id ? { ..._, statut: A } : _)))) &&
+      (await set("commandes", (S) => S.map((_) => (_.id === E.id ? { ..._, statut: A } : _)))) &&
         ["acceptee", "refusee", "prete"].includes(A) &&
-        Pa(t.cmd, "cmd", E.id);
+        avertirMessage(t.cmd, "cmd", E.id);
     },
     m = (() => {
       let E = new Date();
-      return (E.setFullYear(E.getFullYear() - 1), E.toLocaleDateString("sv-SE"));
+      return E.setFullYear(E.getFullYear() - 1), E.toLocaleDateString("sv-SE");
     })(),
-    w = t.commandes.filter((E) => !uc(E) && (er(E) || "") < m);
-  return l.default.createElement(
-    l.default.Fragment,
+    w = t.commandes.filter((E) => !enCoursCmd(E) && (er(E) || "") < m);
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    l.default.createElement(t7, { d: t }),
-    l.default.createElement(
+    React.default.createElement(BoutonPreparation, { d: t }),
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 8, marginBottom: 12 } },
       [
-        ["encours", "\xC0 pr\xE9parer (" + t.commandes.filter(uc).length + ")"],
+        ["encours", "\xC0 pr\xE9parer (" + t.commandes.filter(enCoursCmd).length + ")"],
         ["terminees", "Termin\xE9es"],
       ].map(([E, A]) =>
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { key: E, className: "btn sm " + (n === E ? "" : "gh"), style: { flex: 1 }, onClick: () => r(E) },
           A,
@@ -3589,50 +3656,53 @@ function h7({ d: t, set: e }) {
       ),
     ),
     !d.length &&
-      l.default.createElement(Vn, {
+      React.default.createElement(Vn, {
         t: n === "encours" ? "Aucune commande \xE0 pr\xE9parer" : "Aucune commande termin\xE9e",
         s:
           n === "encours"
             ? "Les commandes pass\xE9es par vos clients appara\xEEtront ici, tri\xE9es par date de retrait."
             : "",
       }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
       d.map((E) => {
-        let A = fw.find((_) => _.id === E.statut) || fw[0],
+        let A = STATUTS_COMMANDE.find((_) => _.id === E.statut) || STATUTS_COMMANDE[0],
           S = (E.lignes || []).reduce((_, I) => {
             let T = t.plateaux.find((M) => String(M.id) === String(I.id));
             return _ + (T ? I.personnes * XS(T, I.choix || []) : I.montant);
           }, 0);
-        return l.default.createElement(
+        return React.default.createElement(
           "div",
           { className: "card cmd", key: E.id, style: { borderLeft: "4px solid " + A.c } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row", style: { alignItems: "flex-start" } },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "nm", style: { fontSize: 15 } },
-                Yi(er(E)),
+                dateCourte(er(E)),
                 E.heure && " \xE0 " + lc(E.heure),
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 {
                   className: "de",
-                  style: { fontWeight: 800, color: yN(er(E)) < 0 && uc(E) ? "var(--red)" : "var(--ink2)" },
+                  style: {
+                    fontWeight: 800,
+                    color: yN(er(E)) < 0 && enCoursCmd(E) ? "var(--red)" : "var(--ink2)",
+                  },
                 },
-                uw[E.mode] || E.mode,
+                MODES[E.mode] || E.mode,
                 " \xB7 ",
-                c7(er(E)),
+                quand(er(E)),
                 E.statut === "nouvelle" && " \xB7 demand\xE9e par le client",
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "span",
               {
                 className: "pill",
@@ -3641,49 +3711,49 @@ function h7({ d: t, set: e }) {
               A.label,
             ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "cmd-cli" },
-            l.default.createElement("b", null, E.nom),
-            E.carte && l.default.createElement("span", { className: "de" }, " \xB7 carte ", E.carte),
-            l.default.createElement("br", null),
-            l.default.createElement("a", { href: "tel:" + (E.tel || "").replace(/\s/g, "") }, E.tel),
+            React.default.createElement("b", null, E.nom),
+            E.carte && React.default.createElement("span", { className: "de" }, " \xB7 carte ", E.carte),
+            React.default.createElement("br", null),
+            React.default.createElement("a", { href: "tel:" + (E.tel || "").replace(/\s/g, "") }, E.tel),
             E.adresse &&
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "de", style: { marginTop: 3 } },
                 "\u{1F4CD} ",
                 E.adresse,
               ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "cmd-lignes" },
             (E.lignes || []).map((_, I) =>
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { key: I },
-                l.default.createElement(
+                React.default.createElement(
                   "span",
                   null,
                   _.nom,
                   " \u2014 ",
-                  l.default.createElement("b", null, _.personnes, " pers."),
+                  React.default.createElement("b", null, _.personnes, " pers."),
                   " \xD7 ",
                   An(_.prixPersonne),
                 ),
-                l.default.createElement("b", { style: { whiteSpace: "nowrap" } }, An(_.montant)),
+                React.default.createElement("b", { style: { whiteSpace: "nowrap" } }, An(_.montant)),
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "tot" },
-              l.default.createElement("span", null, "Total"),
-              l.default.createElement("b", null, An(E.total)),
+              React.default.createElement("span", null, "Total"),
+              React.default.createElement("b", null, An(E.total)),
             ),
           ),
           Math.abs(S - E.total) > 0.01 &&
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "cmd-alerte" },
               "Attention : avec vos prix actuels, cette commande ferait ",
@@ -3698,19 +3768,19 @@ function h7({ d: t, set: e }) {
             .filter(Boolean)
             .map((_, I) =>
               _.startsWith("\u26A0\uFE0F")
-                ? l.default.createElement("div", { key: I, className: "cmd-allerg" }, _)
-                : l.default.createElement("div", { key: I, className: "cmd-rq" }, "\xAB ", _, " \xBB"),
+                ? React.default.createElement("div", { key: I, className: "cmd-allerg" }, _)
+                : React.default.createElement("div", { key: I, className: "cmd-rq" }, "\xAB ", _, " \xBB"),
             ),
           E.message &&
             E.statut !== "nouvelle" &&
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "cmd-rq", style: { fontStyle: "normal" } },
               "Votre message : \xAB ",
               E.message,
               " \xBB",
             ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "de", style: { marginTop: 6 } },
             "N\xB0 ",
@@ -3726,15 +3796,15 @@ function h7({ d: t, set: e }) {
               : "\u2014",
           ),
           E.statut === "nouvelle" &&
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { display: "flex", gap: 8, marginTop: 10 } },
-              l.default.createElement(
+              React.default.createElement(
                 "button",
                 { className: "btn", style: { flex: 2 }, onClick: () => s({ c: E, type: "ok" }) },
                 "\u2713 Accepter",
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "button",
                 {
                   className: "btn gh",
@@ -3745,22 +3815,26 @@ function h7({ d: t, set: e }) {
               ),
             ),
           E.statut !== "nouvelle" &&
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" } },
-              mw[E.statut] &&
-                l.default.createElement(
+              ETAPE_SUIVANTE[E.statut] &&
+                React.default.createElement(
                   "button",
-                  { className: "btn sm", style: { flex: 2 }, onClick: () => p(E, mw[E.statut][0]) },
-                  mw[E.statut][1],
+                  {
+                    className: "btn sm",
+                    style: { flex: 2 },
+                    onClick: () => p(E, ETAPE_SUIVANTE[E.statut][0]),
+                  },
+                  ETAPE_SUIVANTE[E.statut][1],
                 ),
               ["acceptee", "prep", "prete"].includes(E.statut) &&
-                l.default.createElement(
+                React.default.createElement(
                   "button",
                   { className: "btn gh sm", onClick: () => s({ c: E, type: "ok" }) },
                   "Changer l'heure",
                 ),
-              l.default.createElement(
+              React.default.createElement(
                 "select",
                 {
                   className: "inp sel",
@@ -3768,19 +3842,21 @@ function h7({ d: t, set: e }) {
                   onChange: (_) => p(E, _.target.value),
                   "aria-label": "Changer le statut",
                 },
-                fw.map((_) => l.default.createElement("option", { key: _.id, value: _.id }, _.label)),
+                STATUTS_COMMANDE.map((_) =>
+                  React.default.createElement("option", { key: _.id, value: _.id }, _.label),
+                ),
               ),
             ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" } },
-            l.default.createElement(
+            React.default.createElement(
               "button",
               { className: "btn gh sm", style: { width: "auto" }, onClick: () => a(E) },
               "\u{1F4AC} \xC9crire au client",
               E.conv ? " (conversation en cours)" : "",
             ),
-            l.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "btn gh sm",
@@ -3802,74 +3878,75 @@ function h7({ d: t, set: e }) {
                       ` ?
 
 Elle dispara\xEEtra aussi de l'appli du client.`,
-                  )) && e("commandes", (_) => _.filter((I) => I.id !== E.id)),
+                  )) && set("commandes", (_) => _.filter((I) => I.id !== E.id)),
               },
-              he.bin(),
+              I10.bin(),
               "Supprimer",
             ),
           ),
         );
       }),
     ),
-    o && l.default.createElement(mN, { d: t, cible: "commandes", x: o, onClose: () => a(null) }),
+    o &&
+      React.default.createElement(EcrireAuClient, { d: t, cible: "commandes", x: o, onClose: () => a(null) }),
     i &&
-      l.default.createElement(u7, {
+      React.default.createElement(Decision, {
         c: i.c,
         type: i.type,
         d: t,
         onClose: () => s(null),
         onValider: (E) => {
-          (h(i.c, E), s(null));
+          h(i.c, E), s(null);
         },
       }),
     n === "terminees" &&
       !!w.length &&
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "btn gh",
           style: { marginTop: 10, color: "var(--red)" },
           onClick: async () =>
             (await De("Supprimer les " + w.length + " commande(s) termin\xE9e(s) depuis plus d'un an ?")) &&
-            e("commandes", (E) => E.filter((A) => !w.some((S) => S.id === A.id))),
+            set("commandes", (E) => E.filter((A) => !w.some((S) => S.id === A.id))),
         },
         "Supprimer les commandes de plus d'un an (",
         w.length,
         ")",
       ),
     n === "terminees" &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { marginTop: 8 } },
         "Donn\xE9es personnelles (RGPD) : les commandes sont gard\xE9es 1 an apr\xE8s leur date, puis \xE0 supprimer avec ce bouton.",
       ),
   );
 }
-function p7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)(null),
+function Plateaux({ d: t, set: set }) {
+  let [m, setM] = (0, React.useState)(null),
     i = () => {
-      if (!n.nom?.trim() || !(Ji(n) > 0)) return ft("Indiquez au moins le nom et le prix par personne.");
-      let [a] = If(n),
+      if (!m.nom?.trim() || !(Ji(m) > 0)) return ft("Indiquez au moins le nom et le prix par personne.");
+      let [a] = If(m),
         u = {
-          ...n,
-          nom: n.nom.trim(),
-          prixPersonne: String(n.prixPersonne).replace(",", "."),
+          ...m,
+          nom: m.nom.trim(),
+          prixPersonne: String(m.prixPersonne).replace(",", "."),
           partsMin: String(a),
-          partsMax: n.partsMax ? String(Math.max(a, parseInt(n.partsMax) || a)) : "",
+          partsMax: m.partsMax ? String(Math.max(a, parseInt(m.partsMax) || a)) : "",
         };
-      (e("plateaux", (d) => (n.id ? d.map((h) => (h.id === n.id ? u : h)) : [...d, { ...u, id: Wr() }])),
-        r(null));
+      set("plateaux", (d) => (m.id ? d.map((h) => (h.id === m.id ? u : h)) : [...d, { ...u, id: Wr() }])),
+        setM(null);
     },
-    [s, o] = n ? If(n) : [0, 0];
-  return l.default.createElement(
-    l.default.Fragment,
+    [s, o] = m ? If(m) : [0, 0];
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    l.default.createElement(
+    React.default.createElement(
       "button",
       {
         className: "btn terra",
         onClick: () =>
-          r({
+          setM({
             nom: "",
             composition: "",
             prixPersonne: "",
@@ -3879,44 +3956,44 @@ function p7({ d: t, set: e }) {
             active: !0,
           }),
       },
-      he.plus(),
+      I10.plus(),
       "Nouveau plateau",
     ),
-    l.default.createElement("div", { style: { height: 12 } }),
+    React.default.createElement("div", { style: { height: 12 } }),
     !t.plateaux.length &&
-      l.default.createElement(Vn, {
+      React.default.createElement(Vn, {
         t: "Aucun plateau",
         s: "Cr\xE9ez par exemple \xAB Plateau charcuterie \xBB \xE0 8,50 \u20AC par personne, \xE0 partir de 4 personnes. Vos clients pourront le commander directement.",
       }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
       t.plateaux.map((a) => {
         let [u, d] = If(a);
-        return l.default.createElement(
+        return React.default.createElement(
           "div",
           { className: "card", key: a.id },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row" },
             a.photo
-              ? l.default.createElement("img", { className: "thumb", src: a.photo, alt: "" })
-              : l.default.createElement("div", { className: "thumb" }),
-            l.default.createElement(
+              ? React.default.createElement("img", { className: "thumb", src: a.photo, alt: "" })
+              : React.default.createElement("div", { className: "thumb" }),
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement("div", { className: "nm" }, a.nom),
-              l.default.createElement(
+              React.default.createElement("div", { className: "nm" }, a.nom),
+              React.default.createElement(
                 "div",
                 { className: "de" },
                 a.partsMax ? u + " \xE0 " + d + " parts" : "\xC0 partir de " + u + " parts",
                 kf(a) ? " \xB7 " + kf(a).options.length + " choix" : "",
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { style: { marginTop: 5 } },
-                l.default.createElement(io, { x: a }),
-                l.default.createElement(
+                React.default.createElement(Pastille, { x: a }),
+                React.default.createElement(
                   "span",
                   { style: { fontSize: 13, fontWeight: 800, color: "var(--apple)", marginLeft: 6 } },
                   An(Ji(a)),
@@ -3924,132 +4001,135 @@ function p7({ d: t, set: e }) {
                 ),
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement("button", { className: "ib", onClick: () => r(a) }, he.pen()),
-              l.default.createElement(
+              React.default.createElement("button", { className: "ib", onClick: () => setM(a) }, I10.pen()),
+              React.default.createElement(
                 "button",
                 {
                   className: "ib",
                   onClick: async () =>
                     (await De("Supprimer \xAB " + a.nom + " \xBB ?")) &&
-                    e("plateaux", (h) => h.filter((p) => p.id !== a.id)),
+                    set("plateaux", (h) => h.filter((p) => p.id !== a.id)),
                 },
-                he.bin(),
+                I10.bin(),
               ),
             ),
           ),
         );
       }),
     ),
-    n &&
-      l.default.createElement(
+    m &&
+      React.default.createElement(
         ut,
-        { titre: n.id ? "Modifier le plateau" : "Nouveau plateau", onClose: () => r(null) },
-        l.default.createElement(Ri, { value: n.photo, onChange: (a) => r((u) => ({ ...u, photo: a })) }),
-        l.default.createElement("label", { className: "lab" }, "Nom du plateau"),
-        l.default.createElement("input", {
+        { titre: m.id ? "Modifier le plateau" : "Nouveau plateau", onClose: () => setM(null) },
+        React.default.createElement(PhotoField, {
+          value: m.photo,
+          onChange: (a) => setM((u) => ({ ...u, photo: a })),
+        }),
+        React.default.createElement("label", { className: "lab" }, "Nom du plateau"),
+        React.default.createElement("input", {
           className: "inp",
           autoFocus: !0,
-          value: n.nom,
-          onChange: (a) => r({ ...n, nom: a.target.value }),
+          value: m.nom,
+          onChange: (a) => setM({ ...m, nom: a.target.value }),
           placeholder: "Plateau charcuterie",
           maxLength: 80,
         }),
-        l.default.createElement("label", { className: "lab" }, "Ce qu'il y a dedans"),
-        l.default.createElement("textarea", {
+        React.default.createElement("label", { className: "lab" }, "Ce qu'il y a dedans"),
+        React.default.createElement("textarea", {
           className: "inp",
           rows: 4,
-          value: n.composition,
-          onChange: (a) => r({ ...n, composition: a.target.value }),
+          value: m.composition,
+          onChange: (a) => setM({ ...m, composition: a.target.value }),
           placeholder: `Jambon cru, rosette, terrine maison,
 saucisson de Franche-Comt\xE9, cornichons, pain`,
         }),
-        l.default.createElement("label", { className: "lab" }, "Prix par personne (\u20AC)"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Prix par personne (\u20AC)"),
+        React.default.createElement("input", {
           className: "inp",
           type: "number",
           inputMode: "decimal",
           step: "0.10",
           min: "0",
-          value: n.prixPersonne,
-          onChange: (a) => r({ ...n, prixPersonne: a.target.value }),
+          value: m.prixPersonne,
+          onChange: (a) => setM({ ...m, prixPersonne: a.target.value }),
           placeholder: "8.50",
         }),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Nombre de parts minimum"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Nombre de parts minimum"),
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "numeric",
               min: "1",
-              value: n.partsMin,
-              onChange: (a) => r({ ...n, partsMin: a.target.value }),
+              value: m.partsMin,
+              onChange: (a) => setM({ ...m, partsMin: a.target.value }),
               placeholder: "4",
             }),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Maximum (facultatif)"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Maximum (facultatif)"),
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "numeric",
               min: "1",
-              value: n.partsMax,
-              onChange: (a) => r({ ...n, partsMax: a.target.value }),
+              value: m.partsMax,
+              onChange: (a) => setM({ ...m, partsMax: a.target.value }),
               placeholder: "Sans limite",
             }),
           ),
         ),
-        Ji(n) > 0 &&
-          l.default.createElement(
+        Ji(m) > 0 &&
+          React.default.createElement(
             "div",
             { className: "apercu-prix" },
             "Exemple : ",
             s,
             " pers. \xD7 ",
-            An(Ji(n)),
+            An(Ji(m)),
             " = ",
-            l.default.createElement("b", null, An(s * Ji(n))),
-            n.partsMax &&
+            React.default.createElement("b", null, An(s * Ji(m))),
+            m.partsMax &&
               o > s &&
-              l.default.createElement(
-                l.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
                 " \xB7 ",
                 o,
                 " pers. = ",
-                l.default.createElement("b", null, An(o * Ji(n))),
+                React.default.createElement("b", null, An(o * Ji(m))),
               ),
           ),
-        l.default.createElement(f7, { m: n, setM: r }),
-        l.default.createElement(Zi, { v: n, onChange: r }),
-        l.default.createElement(
+        React.default.createElement(EditionChoix, { m: m, setM: setM }),
+        React.default.createElement(Periode, { v: m, onChange: setM }),
+        React.default.createElement(
           "div",
           { className: "tog", style: { marginTop: 6 } },
-          l.default.createElement(
+          React.default.createElement(
             "span",
             { style: { fontSize: 13, fontWeight: 700 } },
             "Visible par les clients",
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "rt" },
-            l.default.createElement(ze, {
-              on: n.active !== !1,
-              set: () => r({ ...n, active: n.active === !1 }),
+            React.default.createElement(ze, {
+              on: m.active !== !1,
+              set: () => setM({ ...m, active: m.active === !1 }),
             }),
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 12 }, onClick: i },
           "Enregistrer",
@@ -4057,37 +4137,37 @@ saucisson de Franche-Comt\xE9, cornichons, pain`,
       ),
   );
 }
-function f7({ m: t, setM: e }) {
-  let n = t.choix,
-    [r, i] = (0, l.useState)(""),
-    s = (u) => e({ ...t, choix: { ...n, ...u } }),
+function EditionChoix({ m: m, setM: setM }) {
+  let n = m.choix,
+    [nouveau, setNouveau] = (0, React.useState)(""),
+    s = (u) => setM({ ...m, choix: { ...n, ...u } }),
     o = n?.options || [],
     a = (u, d) => s({ options: o.map((h, p) => (p === u ? { ...h, ...d } : h)) });
   return n
-    ? l.default.createElement(
+    ? React.default.createElement(
         "div",
         { className: "choix-bloc" },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "nm", style: { fontSize: 13, marginBottom: 6 } },
           "Choix propos\xE9s au client",
         ),
-        l.default.createElement("label", { className: "lab" }, "Titre affich\xE9"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Titre affich\xE9"),
+        React.default.createElement("input", {
           className: "inp",
           value: n.titre,
           maxLength: 60,
           placeholder: "Ex : Vos fromages \xE0 raclette",
           onChange: (u) => s({ titre: u.target.value }),
         }),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10, marginTop: 8 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Minimum \xE0 cocher"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Minimum \xE0 cocher"),
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "numeric",
@@ -4096,11 +4176,11 @@ function f7({ m: t, setM: e }) {
               onChange: (u) => s({ min: u.target.value }),
             }),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Maximum"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Maximum"),
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "numeric",
@@ -4110,31 +4190,31 @@ function f7({ m: t, setM: e }) {
             }),
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "label",
           { className: "lab", style: { marginTop: 8 } },
           "Options ",
-          l.default.createElement(
+          React.default.createElement(
             "span",
             { style: { fontWeight: 600 } },
             "(suppl\xE9ment par personne, 0 = m\xEAme prix)",
           ),
         ),
         o.map((u, d) =>
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "opt-ligne", key: d },
-            l.default.createElement("input", {
+            React.default.createElement("input", {
               className: "inp",
               value: u.nom,
               maxLength: 60,
               onChange: (h) => a(d, { nom: h.target.value }),
             }),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "opt-supp" },
-              l.default.createElement("span", null, "+"),
-              l.default.createElement("input", {
+              React.default.createElement("span", null, "+"),
+              React.default.createElement("input", {
                 className: "inp",
                 type: "number",
                 inputMode: "decimal",
@@ -4143,155 +4223,160 @@ function f7({ m: t, setM: e }) {
                 value: u.supp,
                 onChange: (h) => a(d, { supp: h.target.value }),
               }),
-              l.default.createElement("span", null, "\u20AC"),
+              React.default.createElement("span", null, "\u20AC"),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "ib",
                 onClick: () => s({ options: o.filter((h, p) => p !== d) }),
                 "aria-label": "Retirer",
               },
-              he.bin(),
+              I10.bin(),
             ),
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "opt-ligne" },
-          l.default.createElement("input", {
+          React.default.createElement("input", {
             className: "inp",
-            value: r,
+            value: nouveau,
             maxLength: 60,
             placeholder: "Ajouter une option\u2026",
-            onChange: (u) => i(u.target.value),
+            onChange: (u) => setNouveau(u.target.value),
             onKeyDown: (u) => {
-              u.key === "Enter" && r.trim() && (s({ options: [...o, { nom: r.trim(), supp: 0 }] }), i(""));
+              u.key === "Enter" &&
+                nouveau.trim() &&
+                (s({ options: [...o, { nom: nouveau.trim(), supp: 0 }] }), setNouveau(""));
             },
           }),
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               className: "btn sm",
-              disabled: !r.trim(),
+              disabled: !nouveau.trim(),
               onClick: () => {
-                (s({ options: [...o, { nom: r.trim(), supp: 0 }] }), i(""));
+                s({ options: [...o, { nom: nouveau.trim(), supp: 0 }] }), setNouveau("");
               },
             },
             "Ajouter",
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn gh sm",
             style: { marginTop: 8, color: "var(--red)" },
             onClick: async () =>
-              (await De("Retirer tous les choix de ce plateau ?")) && e({ ...t, choix: null }),
+              (await De("Retirer tous les choix de ce plateau ?")) && setM({ ...m, choix: null }),
           },
           "Retirer les choix",
         ),
       )
-    : l.default.createElement(
+    : React.default.createElement(
         "div",
         { className: "choix-bloc" },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "nm", style: { fontSize: 13 } },
           "Choix propos\xE9s au client ",
-          l.default.createElement("span", { className: "de" }, "(facultatif)"),
+          React.default.createElement("span", { className: "de" }, "(facultatif)"),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { margin: "2px 0 8px" } },
           "Le client coche ce qu'il pr\xE9f\xE8re : fromages, charcuteries\u2026",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 8, flexWrap: "wrap" } },
-          l.default.createElement(
-            "button",
-            { className: "btn gh sm", onClick: () => e({ ...t, choix: JSON.parse(JSON.stringify(ZS)) }) },
-            "\u{1F9C0} Fromages \xE0 raclette",
-          ),
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               className: "btn gh sm",
-              onClick: () => e({ ...t, choix: { titre: "", min: 1, max: 1, options: [] } }),
+              onClick: () => setM({ ...m, choix: JSON.parse(JSON.stringify(LISTE_RACLETTE)) }),
+            },
+            "\u{1F9C0} Fromages \xE0 raclette",
+          ),
+          React.default.createElement(
+            "button",
+            {
+              className: "btn gh sm",
+              onClick: () => setM({ ...m, choix: { titre: "", min: 1, max: 1, options: [] } }),
             },
             "+ Liste vide",
           ),
         ),
       );
 }
-function m7({ d: t, set: e }) {
+function ReglagesCmd({ d: t, set: set }) {
   let n = Er(t.cmd),
-    r = (A, S) => e("cmd", (_) => ({ ...Er(_), [A]: S })),
+    r = (A, S) => set("cmd", (_) => ({ ...Er(_), [A]: S })),
     i = YS(n, t.fermetures),
-    [s, o] = (0, l.useState)(""),
-    [a, u] = (0, l.useState)(""),
-    [d, h] = (0, l.useState)(""),
+    [s, setDu] = (0, React.useState)(""),
+    [a, setAu] = (0, React.useState)(""),
+    [test, setTest] = (0, React.useState)(""),
     p = async () => {
       let A = JS(n);
-      if (!A) return h("Collez d'abord l'adresse du script.");
-      h("Envoi\u2026");
+      if (!A) return setTest("Collez d'abord l'adresse du script.");
+      setTest("Envoi\u2026");
       try {
-        (await fetch(A, { method: "GET", mode: "no-cors", redirect: "follow" }),
-          h(
+        await fetch(A, { method: "GET", mode: "no-cors", redirect: "follow" }),
+          setTest(
             "Demande de test envoy\xE9e. V\xE9rifiez que l'e-mail \xAB [TEST] Nouvelle commande \xBB est bien arriv\xE9 (en g\xE9n\xE9ral en moins d'une minute, regardez aussi les ind\xE9sirables). Rien re\xE7u apr\xE8s quelques minutes ? Pr\xE9venez Eric.",
-          ));
+          );
       } catch {
-        h("Envoi impossible : v\xE9rifiez la connexion internet et r\xE9essayez.");
+        setTest("Envoi impossible : v\xE9rifiez la connexion internet et r\xE9essayez.");
       }
     },
     m = ac(n.script),
-    [w, E] = (0, l.useState)(!1);
-  return l.default.createElement(
-    l.default.Fragment,
+    [ouvrirScript, setOuvrirScript] = (0, React.useState)(!1);
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "tog", style: { borderTop: "none", paddingTop: 0 } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           null,
-          l.default.createElement("div", { className: "nm" }, "Commandes en ligne"),
-          l.default.createElement(
+          React.default.createElement("div", { className: "nm" }, "Commandes en ligne"),
+          React.default.createElement(
             "div",
             { className: "de" },
             "D\xE9sactivez-les pendant vos cong\xE9s, par exemple",
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "rt" },
-          l.default.createElement(ze, { on: n.active, set: () => r("active", !n.active) }),
+          React.default.createElement(ze, { on: n.active, set: () => r("active", !n.active) }),
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "nm", style: { marginBottom: 4 } },
         "Calendrier des clients",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { marginBottom: 10 } },
         "Vous d\xE9cidez quelles dates les clients peuvent choisir.",
       ),
-      l.default.createElement("label", { className: "lab" }, "D\xE9lai minimum avant le retrait"),
-      l.default.createElement(
+      React.default.createElement("label", { className: "lab" }, "D\xE9lai minimum avant le retrait"),
+      React.default.createElement(
         "select",
         { className: "inp", value: n.delaiMin, onChange: (A) => r("delaiMin", Number(A.target.value)) },
         [0, 1, 2, 3, 4, 5, 6, 7, 10, 14].map((A) =>
-          l.default.createElement(
+          React.default.createElement(
             "option",
             { key: A, value: A },
             A === 0
@@ -4302,29 +4387,29 @@ function m7({ d: t, set: e }) {
           ),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "label",
         { className: "lab", style: { marginTop: 10 } },
         "Les clients peuvent commander jusqu'\xE0",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "select",
         { className: "inp", value: n.horizon, onChange: (A) => r("horizon", Number(A.target.value)) },
         [14, 30, 45, 60, 90, 120].map((A) =>
-          l.default.createElement("option", { key: A, value: A }, A, " jours \xE0 l'avance"),
+          React.default.createElement("option", { key: A, value: A }, A, " jours \xE0 l'avance"),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "label",
         { className: "lab", style: { marginTop: 10 } },
         "Jours o\xF9 vous acceptez les retraits / livraisons",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "jours-sem" },
         QS.map(([A, S]) => {
           let _ = (n.jours || []).includes(A);
-          return l.default.createElement(
+          return React.default.createElement(
             "button",
             {
               key: A,
@@ -4338,24 +4423,24 @@ function m7({ d: t, set: e }) {
           );
         }),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "label",
         { className: "lab", style: { marginTop: 12 } },
         "Fermetures (cong\xE9s, jours f\xE9ri\xE9s\u2026)",
       ),
       (n.fermes || []).map((A, S) =>
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "tog", key: S },
-          l.default.createElement(
+          React.default.createElement(
             "span",
             { style: { fontSize: 13, fontWeight: 700 } },
-            A.au && A.au !== A.du ? "Du " + cc(A.du) + " au " + cc(A.au) : "Le " + cc(A.du),
+            A.au && A.au !== A.du ? "Du " + jourFr(A.du) + " au " + jourFr(A.au) : "Le " + jourFr(A.du),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "rt" },
-            l.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "ib",
@@ -4365,80 +4450,84 @@ function m7({ d: t, set: e }) {
                     n.fermes.filter((_, I) => I !== S),
                   ),
               },
-              he.bin(),
+              I10.bin(),
             ),
           ),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: 8, alignItems: "flex-end", marginTop: 6 } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: 1, minWidth: 0 } },
-          l.default.createElement("label", { className: "lab" }, "Du"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Du"),
+          React.default.createElement("input", {
             className: "inp",
             type: "date",
             value: s,
-            onChange: (A) => o(A.target.value),
+            onChange: (A) => setDu(A.target.value),
           }),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: 1, minWidth: 0 } },
-          l.default.createElement("label", { className: "lab" }, "Au (facultatif)"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Au (facultatif)"),
+          React.default.createElement("input", {
             className: "inp",
             type: "date",
             min: s || void 0,
             value: a,
-            onChange: (A) => u(A.target.value),
+            onChange: (A) => setAu(A.target.value),
           }),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "btn gh sm",
           style: { marginTop: 8 },
           disabled: !s,
           onClick: () => {
-            (r(
+            r(
               "fermes",
               [...(n.fermes || []), { du: s, au: a && a >= s ? a : s }].sort((A, S) =>
                 A.du.localeCompare(S.du),
               ),
             ),
-              o(""),
-              u(""));
+              setDu(""),
+              setAu("");
           },
         },
         "Ajouter cette fermeture",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "apercu-prix", style: { marginTop: 12 } },
         i.premiere
-          ? l.default.createElement(
-              l.default.Fragment,
+          ? React.default.createElement(
+              React.default.Fragment,
               null,
               "Aujourd'hui, la premi\xE8re date propos\xE9e aux clients est le ",
-              l.default.createElement("b", null, Yi(i.premiere)),
+              React.default.createElement("b", null, dateCourte(i.premiere)),
               ".",
             )
-          : l.default.createElement(
-              l.default.Fragment,
+          : React.default.createElement(
+              React.default.Fragment,
               null,
               "Aucune date n'est propos\xE9e aux clients avec ces r\xE9glages.",
             ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement("div", { className: "nm", style: { marginBottom: 8 } }, "Retrait ou livraison"),
-      l.default.createElement(
+      React.default.createElement(
+        "div",
+        { className: "nm", style: { marginBottom: 8 } },
+        "Retrait ou livraison",
+      ),
+      React.default.createElement(
         "div",
         { className: "seg", style: { marginBottom: 10 } },
         [
@@ -4446,15 +4535,19 @@ function m7({ d: t, set: e }) {
           ["livraison", "Livraison"],
           ["choix", "Au choix"],
         ].map(([A, S]) =>
-          l.default.createElement(
+          React.default.createElement(
             "button",
             { key: A, className: n.mode === A ? "on" : "", onClick: () => r("mode", A) },
             S,
           ),
         ),
       ),
-      l.default.createElement("label", { className: "lab" }, "Heure de retrait propos\xE9e par d\xE9faut"),
-      l.default.createElement("input", {
+      React.default.createElement(
+        "label",
+        { className: "lab" },
+        "Heure de retrait propos\xE9e par d\xE9faut",
+      ),
+      React.default.createElement("input", {
         className: "inp",
         type: "time",
         step: "900",
@@ -4462,13 +4555,17 @@ function m7({ d: t, set: e }) {
         onChange: (A) => r("heureDefaut", A.target.value),
         style: { maxWidth: 200 },
       }),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { margin: "4px 2px 10px" } },
         "Vous la confirmez ou la changez pour chaque commande en l'acceptant.",
       ),
-      l.default.createElement("label", { className: "lab" }, "Message affich\xE9 aux clients (facultatif)"),
-      l.default.createElement("textarea", {
+      React.default.createElement(
+        "label",
+        { className: "lab" },
+        "Message affich\xE9 aux clients (facultatif)",
+      ),
+      React.default.createElement("textarea", {
         className: "inp",
         value: n.note,
         onChange: (A) => r("note", A.target.value),
@@ -4476,31 +4573,31 @@ function m7({ d: t, set: e }) {
         maxLength: 300,
       }),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "nm", style: { marginBottom: 4 } },
         "E-mail \xAB commande \xE0 pr\xE9parer \xBB",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { marginBottom: 10 } },
         m
           ? "\u2713 Configur\xE9 : vous recevez un e-mail \xE0 chaque nouvelle commande."
           : "Pas encore configur\xE9. Les commandes arrivent quand m\xEAme ici, dans l'onglet Commandes.",
       ),
-      !m || w
-        ? l.default.createElement(
-            l.default.Fragment,
+      !m || ouvrirScript
+        ? React.default.createElement(
+            React.default.Fragment,
             null,
-            l.default.createElement(
+            React.default.createElement(
               "label",
               { className: "lab" },
               "Adresse du script Google (r\xE9glage technique)",
             ),
-            l.default.createElement("input", {
+            React.default.createElement("input", {
               className: "inp",
               value: n.script,
               placeholder: "https://script.google.com/macros/s/\u2026/exec",
@@ -4511,61 +4608,66 @@ function m7({ d: t, set: e }) {
             }),
             n.script &&
               !m &&
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "cmd-alerte" },
                 "Cette adresse ne ressemble pas \xE0 celle d'un script d\xE9ploy\xE9 (elle doit finir par /exec).",
               ),
-            l.default.createElement(
+            React.default.createElement(
               "label",
               { className: "lab" },
               "Cl\xE9 des notifications (Firebase \u2192 Cloud Messaging \u2192 Certificats Web Push)",
             ),
-            l.default.createElement("input", {
+            React.default.createElement("input", {
               className: "inp",
               value: t.push?.vapid || "",
               placeholder: "B\u2026",
               autoCapitalize: "off",
               autoCorrect: "off",
               spellCheck: !1,
-              onChange: (A) => e("push", (S) => ({ ...(S || {}), vapid: A.target.value.trim() })),
+              onChange: (A) => set("push", (S) => ({ ...(S || {}), vapid: A.target.value.trim() })),
             }),
             t.push?.vapid &&
               !/^[A-Za-z0-9_-]{80,100}$/.test(t.push.vapid) &&
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "cmd-alerte" },
                 "Cette cl\xE9 ne ressemble pas \xE0 une cl\xE9 \xAB Web Push \xBB (environ 87 caract\xE8res).",
               ),
             m &&
-              l.default.createElement(
+              React.default.createElement(
                 "button",
-                { className: "btn gh sm", style: { marginTop: 8 }, onClick: () => E(!1) },
+                { className: "btn gh sm", style: { marginTop: 8 }, onClick: () => setOuvrirScript(!1) },
                 "Masquer",
               ),
           )
-        : l.default.createElement(
+        : React.default.createElement(
             "button",
             {
               className: "lienadm",
               onClick: async () =>
                 (await De(`R\xE9glage technique : ne modifiez cette adresse que si Eric vous le demande.
 
-Afficher quand m\xEAme ?`)) && E(!0),
+Afficher quand m\xEAme ?`)) && setOuvrirScript(!0),
             },
             "R\xE9glage technique (r\xE9serv\xE9 \xE0 Eric)",
           ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
         { className: "btn gh sm", style: { marginTop: 10 }, onClick: p },
         "Envoyer un e-mail de test",
       ),
-      d && l.default.createElement("div", { className: "de", style: { marginTop: 6, fontWeight: 700 } }, d),
+      test &&
+        React.default.createElement(
+          "div",
+          { className: "de", style: { marginTop: 6, fontWeight: 700 } },
+          test,
+        ),
     ),
   );
 }
 var sN = { mode: "auto", force: "", animations: !0, items: {}, perso: [] },
-  qr = (t) =>
+  dateLongue = (t) =>
     t
       ? new Date(t + "T12:00")
           .toLocaleDateString("fr-FR", { day: "numeric", month: "long" })
@@ -4587,216 +4689,241 @@ var sN = { mode: "auto", force: "", animations: !0, items: {}, perso: [] },
             ? "logo-halloween.png"
             : "logo-intro.png";
   };
-function y7({ theme: t }) {
-  let [e, n] = (0, l.useState)(0),
-    r = Zn(t);
-  return l.default.createElement(
+function ApercuIntro({ theme: theme }) {
+  let [e, n] = (0, React.useState)(0),
+    r = Zn(theme);
+  return React.default.createElement(
     "div",
     {
       className: "intro-tel",
       key: e,
       onClick: () => n(e + 1),
       title: "Toucher pour rejouer",
-      style: { background: O2(t) },
+      style: { background: O2(theme) },
     },
-    t.magie && l.default.createElement(CC, { apercu: !0 }),
-    r === "halloween" && l.default.createElement(rC, { apercu: !0 }),
-    r === "octobrerose" && l.default.createElement(aC, null),
-    pf.includes(r) && l.default.createElement(yC, { id: r }),
-    t.anim !== !1 && l.default.createElement(z2, { theme: t, nb: 14, dans: !0 }),
-    l.default.createElement("img", {
+    theme.magie && React.default.createElement(CielEtoile, { apercu: !0 }),
+    r === "halloween" && React.default.createElement(rC, { apercu: !0 }),
+    r === "octobrerose" && React.default.createElement(aC, null),
+    pf.includes(r) && React.default.createElement(yC, { id: r }),
+    theme.anim !== !1 && React.default.createElement(Particules, { theme: theme, nb: 14, dans: !0 }),
+    React.default.createElement("img", {
       className: "it-logo",
-      src: v7(t),
+      src: v7(theme),
       alt: "",
       onError: (i) => {
         i.target.src.endsWith("logo-intro.png") || (i.target.src = "logo-intro.png");
       },
     }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "it-txt" },
-      l.default.createElement("div", { className: "it-bonjour" }, "Bonjour Marion !"),
-      l.default.createElement(
+      React.default.createElement("div", { className: "it-bonjour" }, "Bonjour Marion !"),
+      React.default.createElement(
         "div",
         { className: "it-bienv" },
         "Bienvenue sur l'application de l'\xE9picerie",
       ),
-      (t.phrase || t.titre) && l.default.createElement("div", { className: "it-titre" }, t.phrase || t.titre),
+      (theme.phrase || theme.titre) &&
+        React.default.createElement("div", { className: "it-titre" }, theme.phrase || theme.titre),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       {
         className: "it-lieu",
-        style: t.magie ? { color: "#3B4F6B", zIndex: 2 } : r ? { color: "#FFB547", zIndex: 2 } : void 0,
+        style: theme.magie ? { color: "#3B4F6B", zIndex: 2 } : r ? { color: "#FFB547", zIndex: 2 } : void 0,
       },
       "Raddon-et-Chapendu",
     ),
   );
 }
-function Ff({ theme: t, du: e, vue0: n }) {
-  let [r, i] = (0, l.useState)(n || "accueil"),
-    s = Zn(t);
-  return l.default.createElement(
-    l.default.Fragment,
+function ApercuTheme({ theme: theme, du: e, vue0: vue0 }) {
+  let [r, i] = (0, React.useState)(vue0 || "accueil"),
+    s = Zn(theme);
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "seg", style: { maxWidth: 360, margin: "0 auto 10px" } },
       [
         ["accueil", "Accueil de l'appli"],
         ["intro", "\xC9cran d'ouverture"],
       ].map(([o, a]) =>
-        l.default.createElement("button", { key: o, className: r === o ? "on" : "", onClick: () => i(o) }, a),
+        React.default.createElement(
+          "button",
+          { key: o, className: r === o ? "on" : "", onClick: () => i(o) },
+          a,
+        ),
       ),
     ),
     r === "intro"
-      ? l.default.createElement(y7, { theme: t })
-      : l.default.createElement(
+      ? React.default.createElement(ApercuIntro, { theme: theme })
+      : React.default.createElement(
           "div",
           { className: "apercu-tel" },
-          l.default.createElement(
+          React.default.createElement(
             "div",
-            { className: t.magie ? "magie" : s || "" },
-            l.default.createElement(
+            { className: theme.magie ? "magie" : s || "" },
+            React.default.createElement(
               "div",
-              { className: "at-top", style: { background: t.top, position: "relative" } },
-              l.default.createElement("img", { src: yw, alt: "" }),
-              t.magie && l.default.createElement(kC, { taille: 24, style: { left: 18, top: 0 } }),
+              { className: "at-top", style: { background: theme.top, position: "relative" } },
+              React.default.createElement("img", { src: LOGO, alt: "" }),
+              theme.magie &&
+                React.default.createElement(SvgBonnet, { taille: 24, style: { left: 18, top: 0 } }),
               s &&
-                l.default.createElement(
+                React.default.createElement(
                   "span",
                   { className: "at-acc" },
                   s === "halloween"
-                    ? l.default.createElement(tC, { taille: 30, style: { left: 28, top: 0 } })
+                    ? React.default.createElement(SvgChapeauSorciere, {
+                        taille: 30,
+                        style: { left: 28, top: 0 },
+                      })
                     : s === "octobrerose"
-                      ? l.default.createElement(sC, { style: { left: 44, top: 28 } })
-                      : l.default.createElement(gC, { id: s }),
+                      ? React.default.createElement(sC, { style: { left: 44, top: 28 } })
+                      : React.default.createElement(gC, { id: s }),
                 ),
-              l.default.createElement("span", null, "\xC9picerie Raddonnaise"),
+              React.default.createElement("span", null, "\xC9picerie Raddonnaise"),
             ),
-            t.magie
-              ? l.default.createElement(IC, { n: 12, apercu: !0 })
+            theme.magie
+              ? React.default.createElement(GuirlandeNoel, { n: 12, apercu: !0 })
               : s === "halloween"
-                ? l.default.createElement(nC, { apercu: !0 })
+                ? React.default.createElement(nC, { apercu: !0 })
                 : s === "octobrerose"
-                  ? l.default.createElement(oC, { apercu: !0 })
+                  ? React.default.createElement(oC, { apercu: !0 })
                   : pf.includes(s)
-                    ? l.default.createElement(vC, { id: s, apercu: !0 })
-                    : l.default.createElement("div", {
+                    ? React.default.createElement(vC, { id: s, apercu: !0 })
+                    : React.default.createElement("div", {
                         className: "frise-theme",
-                        style: { background: t.frise, position: "relative", top: 0 },
+                        style: { background: theme.frise, position: "relative", top: 0 },
                       }),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "at-corps" },
-              pf.includes(s) && t.anim !== !1 && l.default.createElement(ec, { id: s, apercu: !0 }),
-              t.anim !== !1 && l.default.createElement(z2, { theme: t, nb: 12, dans: !0 }),
-              t.magie && t.anim !== !1 && l.default.createElement(j2, { nb: 22, dans: !0 }),
-              l.default.createElement(
+              pf.includes(s) &&
+                theme.anim !== !1 &&
+                React.default.createElement(DecorAne, { id: s, apercu: !0 }),
+              theme.anim !== !1 &&
+                React.default.createElement(Particules, { theme: theme, nb: 12, dans: !0 }),
+              theme.magie && theme.anim !== !1 && React.default.createElement(Neige, { nb: 22, dans: !0 }),
+              React.default.createElement(
                 "div",
                 { style: { position: "relative", zIndex: 2 } },
-                l.default.createElement(TC, { theme: t }),
+                React.default.createElement(CarteTheme, { theme: theme }),
               ),
-              l.default.createElement("div", { className: "at-faux" }),
-              l.default.createElement("div", { className: "at-faux court" }),
+              React.default.createElement("div", { className: "at-faux" }),
+              React.default.createElement("div", { className: "at-faux court" }),
             ),
           ),
         ),
     r === "intro" &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { textAlign: "center", marginTop: 6 } },
         "Ce que voient les clients en ouvrant l'appli (2 \xE0 4 secondes). Touchez l'image pour rejouer.",
       ),
   );
 }
-function wN({ v: t, setV: e, titreDef: n, motifsDef: r, top: i, acc: s, magieDef: o }) {
-  let a = t.magie == null ? !!o : !!t.magie,
-    u = Array.isArray(t.motifs) ? t.motifs : r || [],
-    d = (p) => e({ ...t, motifs: u.includes(p) ? u.filter((m) => m !== p) : u.length >= 6 ? u : [...u, p] }),
-    h = _7;
-  return l.default.createElement(
+function ReglageMagieNoel({
+  v: v,
+  setV: setV,
+  titreDef: titreDef,
+  motifsDef: motifsDef,
+  top: top,
+  acc: acc,
+  magieDef: magieDef,
+}) {
+  let a = v.magie == null ? !!magieDef : !!v.magie,
+    u = Array.isArray(v.motifs) ? v.motifs : motifsDef || [],
+    d = (p) =>
+      setV({ ...v, motifs: u.includes(p) ? u.filter((m) => m !== p) : u.length >= 6 ? u : [...u, p] }),
+    h = EMOJIS_THEME;
+  return React.default.createElement(
     "div",
     { className: "ri" },
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "tog ri-magie" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         null,
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { fontSize: 14, fontWeight: 800 } },
           "\u2728 Magie de No\xEBl",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de" },
           "Neige qui tombe et pos\xE9e sur les menus, guirlande lumineuse, bonnet sur le logo, tra\xEEneau du P\xE8re No\xEBl, village enneig\xE9 \xE0 l'ouverture, poussi\xE8re d'\xE9toiles quand on touche l'\xE9cran, compte \xE0 rebours.",
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "rt" },
-        l.default.createElement(ze, { on: a, set: () => e({ ...t, magie: !a }) }),
+        React.default.createElement(ze, { on: a, set: () => setV({ ...v, magie: !a }) }),
       ),
     ),
-    l.default.createElement("div", { className: "ri-t" }, "\xC9cran d'ouverture"),
-    l.default.createElement("label", { className: "lab" }, "Logo"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "ri-t" }, "\xC9cran d'ouverture"),
+    React.default.createElement("label", { className: "lab" }, "Logo"),
+    React.default.createElement(
       "div",
       { className: "ri-logos" },
       g7.map(([p, m, w]) =>
-        l.default.createElement(
+        React.default.createElement(
           "button",
-          { key: p, className: (t.logo || "normal") === p ? "on" : "", onClick: () => e({ ...t, logo: p }) },
-          l.default.createElement("img", { src: w, alt: "" }),
+          {
+            key: p,
+            className: (v.logo || "normal") === p ? "on" : "",
+            onClick: () => setV({ ...v, logo: p }),
+          },
+          React.default.createElement("img", { src: w, alt: "" }),
           m,
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "label",
       { className: "lab", style: { marginTop: 10 } },
       "Phrase sous \xAB Bonjour \u2026 ! \xBB",
     ),
-    l.default.createElement("input", {
+    React.default.createElement("input", {
       className: "inp",
-      value: t.phrase || "",
+      value: v.phrase || "",
       maxLength: 40,
-      placeholder: n || "Ex : Bonne rentr\xE9e !",
-      onChange: (p) => e({ ...t, phrase: p.target.value }),
+      placeholder: titreDef || "Ex : Bonne rentr\xE9e !",
+      onChange: (p) => setV({ ...v, phrase: p.target.value }),
     }),
-    l.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Fond"),
-    l.default.createElement(
+    React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Fond"),
+    React.default.createElement(
       "div",
       { className: "ri-fonds" },
       L2.map((p) =>
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             key: p.id,
-            className: (t.fond || "degrade") === p.id ? "on" : "",
-            onClick: () => e({ ...t, fond: p.id }),
+            className: (v.fond || "degrade") === p.id ? "on" : "",
+            onClick: () => setV({ ...v, fond: p.id }),
           },
-          l.default.createElement("span", {
-            style: { background: O2({ top: i || "#1C433B", accent: s || "#6E9B3A", fond: p.id }) },
+          React.default.createElement("span", {
+            style: { background: O2({ top: top || "#1C433B", accent: acc || "#6E9B3A", fond: p.id }) },
           }),
           p.nom,
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "ri-t", style: { marginTop: 16 } },
       "Petits dessins qui tombent ",
-      l.default.createElement("span", { className: "de" }, "(", u.length, "/6)"),
+      React.default.createElement("span", { className: "de" }, "(", u.length, "/6)"),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "ri-motifs" },
-      yf.map((p) =>
-        l.default.createElement(
+      FORMES_NEIGE.map((p) =>
+        React.default.createElement(
           "button",
           {
             key: p.id,
@@ -4805,26 +4932,26 @@ function wN({ v: t, setV: e, titreDef: n, motifsDef: r, top: i, acc: s, magieDef
             title: p.nom,
             "aria-label": p.nom,
           },
-          l.default.createElement(AC, { id: p.id, taille: 26 }),
+          React.default.createElement(AC, { id: p.id, taille: 26 }),
         ),
       ),
       h.map((p) =>
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { key: p, className: u.includes(p) ? "on" : "", onClick: () => d(p) },
-          l.default.createElement("span", { style: { fontSize: 21 } }, p),
+          React.default.createElement("span", { style: { fontSize: 21 } }, p),
         ),
       ),
     ),
-    r &&
-      Array.isArray(t.motifs) &&
-      l.default.createElement(
+    motifsDef &&
+      Array.isArray(v.motifs) &&
+      React.default.createElement(
         "button",
-        { className: "lienadm", onClick: () => e({ ...t, motifs: null }) },
+        { className: "lienadm", onClick: () => setV({ ...v, motifs: null }) },
         "Remettre les dessins d'origine",
       ),
-    l.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Quantit\xE9"),
-    l.default.createElement(
+    React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Quantit\xE9"),
+    React.default.createElement(
       "div",
       { className: "seg" },
       [
@@ -4832,19 +4959,19 @@ function wN({ v: t, setV: e, titreDef: n, motifsDef: r, top: i, acc: s, magieDef
         ["normal", "Normal"],
         ["beaucoup", "Beaucoup"],
       ].map(([p, m]) =>
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             key: p,
-            className: (t.densite || "normal") === p ? "on" : "",
-            onClick: () => e({ ...t, densite: p }),
+            className: (v.densite || "normal") === p ? "on" : "",
+            onClick: () => setV({ ...v, densite: p }),
           },
           m,
         ),
       ),
     ),
-    l.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Sens"),
-    l.default.createElement(
+    React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Sens"),
+    React.default.createElement(
       "div",
       { className: "seg" },
       [
@@ -4852,9 +4979,13 @@ function wN({ v: t, setV: e, titreDef: n, motifsDef: r, top: i, acc: s, magieDef
         ["tombe", "Ils tombent"],
         ["monte", "Ils montent"],
       ].map(([p, m]) =>
-        l.default.createElement(
+        React.default.createElement(
           "button",
-          { key: p || "o", className: (t.sens || "") === p ? "on" : "", onClick: () => e({ ...t, sens: p }) },
+          {
+            key: p || "o",
+            className: (v.sens || "") === p ? "on" : "",
+            onClick: () => setV({ ...v, sens: p }),
+          },
           m,
         ),
       ),
@@ -4866,8 +4997,8 @@ var w7 = ["logo", "phrase", "fond", "motifs", "densite", "sens", "magie"],
     Object.fromEntries(w7.map((e) => [e, e === "phrase" ? String(t[e] || "").trim() : (t[e] ?? null)])),
   b7 = (t) =>
     (t.parts || []).flatMap(([e, n]) => (e === "emoji" ? n : [e])).filter((e, n, r) => r.indexOf(e) === n);
-function E7({ c: t, setVoir: e }) {
-  let n = { ...t, mode: "auto" },
+function CalendrierThemes({ c: c, setVoir: setVoir }) {
+  let n = { ...c, mode: "auto" },
     r = [],
     i = new Date(Bn() + "T12:00");
   for (let o = 0; o < 120; o++) {
@@ -4878,52 +5009,57 @@ function E7({ c: t, setVoir: e }) {
       h = r[r.length - 1];
     h && (h.t?.id || "") === (d?.id || "") ? (h.au = u) : r.push({ t: d, du: u, au: u });
   }
-  let s = (o) => (o.du === o.au ? "Le " + qr(o.du) : "Du " + qr(o.du) + " au " + qr(o.au));
-  return l.default.createElement(
+  let s = (o) =>
+    o.du === o.au ? "Le " + dateLongue(o.du) : "Du " + dateLongue(o.du) + " au " + dateLongue(o.au);
+  return React.default.createElement(
     "div",
     { className: "card" },
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "nm", style: { marginBottom: 4 } },
       "\u{1F4C5} \xC0 venir (4 prochains mois)",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "de", style: { marginBottom: 10 } },
-      t.mode === "force"
+      c.mode === "force"
         ? "Un th\xE8me est choisi \xE0 la main en ce moment : ce planning s'appliquera d\xE8s que vous repasserez sur \xAB Selon le calendrier \xBB."
-        : t.mode === "off"
+        : c.mode === "off"
           ? "\xAB Aucun th\xE8me \xBB est choisi : ce planning s'appliquera si vous repassez sur \xAB Selon le calendrier \xBB."
           : "Ce qui s'affichera tout seul sur l'appli. Pour changer, modifiez les dates d'une f\xEAte ou cr\xE9ez votre th\xE8me ci-dessous.",
     ),
     r.map((o, a) =>
-      l.default.createElement(
+      React.default.createElement(
         "div",
         {
           key: a,
           className: "plan-l",
-          onClick: o.t ? () => e({ ...o.t, du: o.du }) : void 0,
+          onClick: o.t ? () => setVoir({ ...o.t, du: o.du }) : void 0,
           style: { cursor: o.t ? "pointer" : "default" },
         },
-        l.default.createElement("span", {
+        React.default.createElement("span", {
           className: "plan-pt",
           style: { background: o.t ? o.t.top : "#D8D2C2" },
         }),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { minWidth: 0, flex: 1 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { fontWeight: 800, fontSize: 13.5 } },
             o.t ? o.t.nom || o.t.titre : "Couleurs habituelles",
             a === 0 &&
-              t.mode === "auto" &&
-              l.default.createElement("span", { className: "pill on", style: { marginLeft: 6 } }, "En cours"),
+              c.mode === "auto" &&
+              React.default.createElement(
+                "span",
+                { className: "pill on", style: { marginLeft: 6 } },
+                "En cours",
+              ),
           ),
-          l.default.createElement("div", { className: "de" }, s(o)),
+          React.default.createElement("div", { className: "de" }, s(o)),
         ),
         o.t &&
-          l.default.createElement(
+          React.default.createElement(
             "span",
             { className: "de", style: { fontWeight: 700 } },
             "Aper\xE7u \u203A",
@@ -4932,7 +5068,7 @@ function E7({ c: t, setVoir: e }) {
     ),
   );
 }
-var x7 = [
+var COULEURS_THEME = [
     "#A4161A",
     "#C2577E",
     "#E05A73",
@@ -4946,7 +5082,7 @@ var x7 = [
     "#4F3A8C",
     "#2B1B3D",
   ],
-  _7 =
+  EMOJIS_THEME =
     "\u{1F423} \u{1F430} \u{1F95A} \u{1F337} \u{1F338} \u{1F33C} \u{1F33B} \u{1F490} \u{1F36B} \u{1F353} \u{1F352} \u{1F34E} \u{1F350} \u{1F347} \u{1F34B} \u{1F9C0} \u{1F956} \u{1F950} \u{1F377} \u{1F37E} \u{1F942} \u{1F382} \u{1F389} \u{1F388} \u{1F381} \u2B50 \u2728 \u2764\uFE0F \u2600\uFE0F \u{1F342} \u{1F341} \u{1F344} \u2744\uFE0F \u26C4 \u{1F384} \u{1F514} \u{1F383} \u{1F47B} \u26BD \u{1F3C6} \u{1F3B6} \u{1F41F}".split(
       " ",
     ),
@@ -4966,28 +5102,28 @@ var x7 = [
       active: !0,
     };
   };
-function T7({ p0: t, onClose: e, onSave: n, onDelete: r }) {
-  let [i, s] = (0, l.useState)({ ...t, motifs: Array.isArray(t.motifs) ? t.motifs : mf(t.emojis) }),
-    o = { ...gf({ ...i, titre: i.titre || i.nom || "Mon th\xE8me" }), anim: !0 },
+function EditionPerso({ p0: p0, onClose: onClose, onSave: onSave, onDelete: onDelete }) {
+  let [i, s] = (0, React.useState)({ ...p0, motifs: Array.isArray(p0.motifs) ? p0.motifs : mf(p0.emojis) }),
+    o = { ...persoVersTheme({ ...i, titre: i.titre || i.nom || "Mon th\xE8me" }), anim: !0 },
     a = i.nom.trim() && i.du && i.au && i.au >= i.du;
-  return l.default.createElement(
+  return React.default.createElement(
     ut,
-    { titre: t.nom ? "Modifier \xAB " + t.nom + " \xBB" : "Cr\xE9er mon th\xE8me", onClose: e },
-    l.default.createElement(Ff, { theme: o }),
-    l.default.createElement("label", { className: "lab", style: { marginTop: 12 } }, "Nom du th\xE8me"),
-    l.default.createElement("input", {
+    { titre: p0.nom ? "Modifier \xAB " + p0.nom + " \xBB" : "Cr\xE9er mon th\xE8me", onClose: onClose },
+    React.default.createElement(ApercuTheme, { theme: o }),
+    React.default.createElement("label", { className: "lab", style: { marginTop: 12 } }, "Nom du th\xE8me"),
+    React.default.createElement("input", {
       className: "inp",
       value: i.nom,
       maxLength: 40,
       placeholder: "Ex : F\xEAte du village, Anniversaire de l'\xE9picerie\u2026",
       onChange: (u) => s({ ...i, nom: u.target.value }),
     }),
-    l.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Couleur"),
-    l.default.createElement(
+    React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Couleur"),
+    React.default.createElement(
       "div",
       { className: "couleurs" },
-      x7.map((u) =>
-        l.default.createElement("button", {
+      COULEURS_THEME.map((u) =>
+        React.default.createElement("button", {
           key: u,
           className: i.couleur === u ? "on" : "",
           style: { background: u },
@@ -4995,10 +5131,10 @@ function T7({ p0: t, onClose: e, onSave: n, onDelete: r }) {
           "aria-label": "Couleur " + u,
         }),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "label",
         { className: "perso-coul", title: "Autre couleur" },
-        l.default.createElement("input", {
+        React.default.createElement("input", {
           type: "color",
           value: i.couleur,
           onChange: (u) => s({ ...i, couleur: u.target.value }),
@@ -5006,12 +5142,12 @@ function T7({ p0: t, onClose: e, onSave: n, onDelete: r }) {
         "+",
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "label",
       { className: "lab", style: { marginTop: 10 } },
       "Grand dessin de la carte (facultatif)",
     ),
-    l.default.createElement("input", {
+    React.default.createElement("input", {
       className: "inp",
       value: i.illu,
       maxLength: 8,
@@ -5019,41 +5155,41 @@ function T7({ p0: t, onClose: e, onSave: n, onDelete: r }) {
       onChange: (u) => s({ ...i, illu: u.target.value }),
       style: { maxWidth: 200 },
     }),
-    l.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Titre de la carte"),
-    l.default.createElement("input", {
+    React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Titre de la carte"),
+    React.default.createElement("input", {
       className: "inp",
       value: i.titre,
       maxLength: 50,
       placeholder: i.nom || "Ex : Joyeux anniversaire !",
       onChange: (u) => s({ ...i, titre: u.target.value }),
     }),
-    l.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Message"),
-    l.default.createElement("textarea", {
+    React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Message"),
+    React.default.createElement("textarea", {
       className: "inp",
       value: i.message,
       maxLength: 200,
       placeholder: "Ex : Venez f\xEAter les 3 ans de l'\xE9picerie samedi, caf\xE9 offert !",
       onChange: (u) => s({ ...i, message: u.target.value }),
     }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 10, marginTop: 10 } },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { flex: 1, minWidth: 0 } },
-        l.default.createElement("label", { className: "lab" }, "Du"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Du"),
+        React.default.createElement("input", {
           className: "inp",
           type: "date",
           value: i.du,
           onChange: (u) => s({ ...i, du: u.target.value, au: i.au < u.target.value ? u.target.value : i.au }),
         }),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { flex: 1, minWidth: 0 } },
-        l.default.createElement("label", { className: "lab" }, "Au"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Au"),
+        React.default.createElement("input", {
           className: "inp",
           type: "date",
           min: i.du,
@@ -5062,132 +5198,140 @@ function T7({ p0: t, onClose: e, onSave: n, onDelete: r }) {
         }),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "tog", style: { marginTop: 6 } },
-      l.default.createElement(
+      React.default.createElement(
         "span",
         { style: { fontSize: 13, fontWeight: 700 } },
         "Revient tous les ans aux m\xEAmes dates",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "rt" },
-        l.default.createElement(ze, {
+        React.default.createElement(ze, {
           on: i.chaqueAnnee,
           set: () => s({ ...i, chaqueAnnee: !i.chaqueAnnee }),
         }),
       ),
     ),
-    l.default.createElement(wN, { v: i, setV: s, titreDef: i.titre || i.nom, top: o.top, acc: o.accent }),
-    l.default.createElement(
+    React.default.createElement(ReglageMagieNoel, {
+      v: i,
+      setV: s,
+      titreDef: i.titre || i.nom,
+      top: o.top,
+      acc: o.accent,
+    }),
+    React.default.createElement(
       "button",
       {
         className: "btn",
         style: { marginTop: 12 },
         disabled: !a,
         onClick: () =>
-          n({
+          onSave({
             ...i,
             nom: i.nom.trim(),
             titre: i.titre.trim(),
             message: i.message.trim(),
             phrase: String(i.phrase || "").trim(),
-            emojis: (i.motifs || []).filter((u) => !yf.some((d) => d.id === u)).join(""),
+            emojis: (i.motifs || []).filter((u) => !FORMES_NEIGE.some((d) => d.id === u)).join(""),
           }),
       },
       "Enregistrer",
     ),
-    r &&
-      l.default.createElement(
+    onDelete &&
+      React.default.createElement(
         "button",
         {
           className: "btn gh",
           style: { marginTop: 8, color: "var(--red)" },
-          onClick: async () => (await De("Supprimer le th\xE8me \xAB " + t.nom + " \xBB ?")) && r(),
+          onClick: async () => (await De("Supprimer le th\xE8me \xAB " + p0.nom + " \xBB ?")) && onDelete(),
         },
         "Supprimer ce th\xE8me",
       ),
   );
 }
-function I7({ c: t, maj: e, setVoir: n }) {
-  let [r, i] = (0, l.useState)(null),
-    s = t.perso || [],
+function MesThemes({ c: c, maj: maj, setVoir: setVoir }) {
+  let [ed, setEd] = (0, React.useState)(null),
+    s = c.perso || [],
     o = (a) => {
-      (e({ perso: s.some((u) => u.id === a.id) ? s.map((u) => (u.id === a.id ? a : u)) : [...s, a] }),
-        i(null));
+      maj({ perso: s.some((u) => u.id === a.id) ? s.map((u) => (u.id === a.id ? a : u)) : [...s, a] }),
+        setEd(null);
     };
-  return l.default.createElement(
-    l.default.Fragment,
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    l.default.createElement("div", { className: "nm", style: { margin: "16px 0 4px" } }, "Mes th\xE8mes"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "nm", style: { margin: "16px 0 4px" } }, "Mes th\xE8mes"),
+    React.default.createElement(
       "div",
       { className: "de", style: { marginBottom: 8 } },
       "Cr\xE9ez vos propres th\xE8mes : f\xEAte du village, anniversaire de l'\xE9picerie, foire, march\xE9 de No\xEBl\u2026 Ils passent avant les f\xEAtes pr\xE9vues.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "button",
-      { className: "btn terra", onClick: () => i(A7()) },
-      he.plus(),
+      { className: "btn terra", onClick: () => setEd(A7()) },
+      I10.plus(),
       "Cr\xE9er mon th\xE8me",
     ),
-    l.default.createElement("div", { style: { height: 10 } }),
-    l.default.createElement(
+    React.default.createElement("div", { style: { height: 10 } }),
+    React.default.createElement(
       "div",
       { className: "grille" },
       s.map((a) => {
-        let u = gf(a),
+        let u = persoVersTheme(a),
           d = a.active !== !1;
-        return l.default.createElement(
+        return React.default.createElement(
           "div",
           {
             className: "card theme-ligne",
             key: a.id,
             style: { opacity: d ? 1 : 0.55, borderLeft: "4px solid " + u.top },
           },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row" },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "th-illu", style: { background: u.soft } },
-              l.default.createElement(wf, { theme: u, taille: 46 }),
+              React.default.createElement(IllustrationTheme, { theme: u, taille: 46 }),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement("div", { className: "nm" }, a.nom),
-              l.default.createElement(
+              React.default.createElement("div", { className: "nm" }, a.nom),
+              React.default.createElement(
                 "div",
                 { className: "de" },
-                a.du === a.au ? "Le " + qr(a.du) : "Du " + qr(a.du) + " au " + qr(a.au),
+                a.du === a.au
+                  ? "Le " + dateLongue(a.du)
+                  : "Du " + dateLongue(a.du) + " au " + dateLongue(a.au),
                 a.chaqueAnnee ? " \xB7 tous les ans" : " " + a.du.slice(0, 4),
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: d,
-                set: () => e({ perso: s.map((h) => (h.id === a.id ? { ...h, active: !d } : h)) }),
+                set: () => maj({ perso: s.map((h) => (h.id === a.id ? { ...h, active: !d } : h)) }),
               }),
             ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { display: "flex", gap: 8, marginTop: 10 } },
-            l.default.createElement(
+            React.default.createElement(
               "button",
-              { className: "btn gh sm", style: { flex: 1 }, onClick: () => i(a) },
+              { className: "btn gh sm", style: { flex: 1 }, onClick: () => setEd(a) },
               "Modifier",
             ),
-            l.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "btn gh sm",
                 style: { flex: 1 },
-                onClick: () => n({ ...u, anim: t.animations !== !1, du: a.du }),
+                onClick: () => setVoir({ ...u, anim: c.animations !== !1, du: a.du }),
               },
               "Aper\xE7u",
             ),
@@ -5195,31 +5339,31 @@ function I7({ c: t, maj: e, setVoir: n }) {
         );
       }),
     ),
-    r &&
-      l.default.createElement(T7, {
-        p0: r,
-        onClose: () => i(null),
+    ed &&
+      React.default.createElement(EditionPerso, {
+        p0: ed,
+        onClose: () => setEd(null),
         onSave: o,
-        onDelete: s.some((a) => a.id === r.id)
+        onDelete: s.some((a) => a.id === ed.id)
           ? () => {
-              (e({ perso: s.filter((a) => a.id !== r.id), ...(t.force === r.id ? { mode: "auto" } : {}) }),
-                i(null));
+              maj({ perso: s.filter((a) => a.id !== ed.id), ...(c.force === ed.id ? { mode: "auto" } : {}) }),
+                setEd(null);
             }
           : null,
       }),
   );
 }
-function k7({ d: t, set: e }) {
+function Themes({ d: t, set: set }) {
   let n = { ...sN, ...(t.themes || {}), items: { ...((t.themes || {}).items || {}) } },
     r = (S) => ({ ...sN, ...(S || {}), items: { ...((S || {}).items || {}) } }),
-    i = (S) => e("themes", (_) => ({ ...r(_), ...S })),
+    i = (S) => set("themes", (_) => ({ ...r(_), ...S })),
     s = (S, _) =>
-      e("themes", (I) => {
+      set("themes", (I) => {
         let T = r(I);
         return { ...T, items: { ...T.items, [S]: { ...(T.items[S] || {}), ..._ } } };
       }),
-    [o, a] = (0, l.useState)(null),
-    [u, d] = (0, l.useState)(null),
+    [edit, setEdit] = (0, React.useState)(null),
+    [voir, setVoir] = (0, React.useState)(null),
     h = Bn(),
     p = Number(h.slice(0, 4)),
     m = V2(n),
@@ -5230,43 +5374,43 @@ function k7({ d: t, set: e }) {
       }
       return vf(S, n.items[S.id], p + 1);
     },
-    E = [...P2].map((S) => ({ t: S, p: w(S) })).sort((S, _) => S.p[0].localeCompare(_.p[0])),
+    E = [...THEMES].map((S) => ({ t: S, p: w(S) })).sort((S, _) => S.p[0].localeCompare(_.p[0])),
     A = (S) => {
       let [_, I] = w(S);
       return _ <= h && h <= I;
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Th\xE8mes"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Th\xE8mes"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "L'application s'habille pour les f\xEAtes : couleurs, petite animation et carte de v\u0153ux sur l'accueil. Activez les f\xEAtes que vous voulez et ajustez les dates.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "nm", style: { marginBottom: 8 } },
         "Affich\xE9 en ce moment",
       ),
       m
-        ? l.default.createElement(Ff, { theme: m, du: Bn() })
-        : l.default.createElement(
+        ? React.default.createElement(ApercuTheme, { theme: m, du: Bn() })
+        : React.default.createElement(
             "div",
             { className: "de", style: { marginBottom: 6 } },
             "Aucun th\xE8me : l'application garde ses couleurs habituelles.",
           ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "seg", style: { margin: "12px 0 8px" } },
         [
           ["auto", "Selon le calendrier"],
           ["off", "Aucun th\xE8me"],
         ].map(([S, _]) =>
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               key: S,
@@ -5282,94 +5426,98 @@ function k7({ d: t, set: e }) {
           ),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "tog", style: { marginTop: 6 } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           null,
-          l.default.createElement("div", { style: { fontSize: 13, fontWeight: 700 } }, "Petite animation"),
-          l.default.createElement(
+          React.default.createElement(
+            "div",
+            { style: { fontSize: 13, fontWeight: 700 } },
+            "Petite animation",
+          ),
+          React.default.createElement(
             "div",
             { className: "de" },
             "Flocons, c\u0153urs, citrouilles\u2026 qui tombent doucement",
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "rt" },
-          l.default.createElement(ze, {
+          React.default.createElement(ze, {
             on: n.animations !== !1,
             set: () => i({ animations: n.animations === !1 }),
           }),
         ),
       ),
     ),
-    l.default.createElement(E7, { c: n, setVoir: d }),
-    B2 && l.default.createElement(I7, { c: n, maj: i, setVoir: d }),
-    l.default.createElement(
+    React.default.createElement(CalendrierThemes, { c: n, setVoir: setVoir }),
+    B2 && React.default.createElement(MesThemes, { c: n, maj: i, setVoir: setVoir }),
+    React.default.createElement(
       "div",
       { className: "nm", style: { margin: "16px 0 8px" } },
       "Les f\xEAtes de l'ann\xE9e",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
       E.map(({ t: S, p: [_, I, T] }) => {
         let M = n.items[S.id]?.active !== !1;
-        return l.default.createElement(
+        return React.default.createElement(
           "div",
           {
             className: "card theme-ligne",
             key: S.id,
             style: { opacity: M ? 1 : 0.55, borderLeft: "4px solid " + S.top },
           },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row" },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "th-illu", style: { background: S.soft } },
-              l.default.createElement(wf, { theme: S, taille: 46 }),
+              React.default.createElement(IllustrationTheme, { theme: S, taille: 46 }),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "nm" },
                 S.nom,
                 A(S) &&
                   M &&
-                  l.default.createElement(
+                  React.default.createElement(
                     "span",
                     { className: "pill on", style: { marginLeft: 6 } },
                     "En cours",
                   ),
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "de" },
-                _ === I ? "Le " + qr(_) : "Du " + qr(_) + " au " + qr(I),
+                _ === I ? "Le " + dateLongue(_) : "Du " + dateLongue(_) + " au " + dateLongue(I),
                 T ? " \xB7 dates modifi\xE9es" : "",
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(ze, { on: M, set: () => s(S.id, { active: !M }) }),
+              React.default.createElement(ze, { on: M, set: () => s(S.id, { active: !M }) }),
             ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { display: "flex", gap: 8, marginTop: 10 } },
-            l.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "btn gh sm",
                 style: { flex: 1 },
                 onClick: () =>
-                  a({
+                  setEdit({
                     t: S,
                     du: _,
                     au: I,
@@ -5379,14 +5527,14 @@ function k7({ d: t, set: e }) {
               },
               "Dates & message",
             ),
-            l.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "btn gh sm",
                 style: { flex: 1 },
                 onClick: () =>
-                  d({
-                    ...tc(S, n.items[S.id]),
+                  setVoir({
+                    ...ParticulesMontantes(S, n.items[S.id]),
                     message: n.items[S.id]?.message || S.message,
                     anim: n.animations !== !1,
                     du: _,
@@ -5398,113 +5546,122 @@ function k7({ d: t, set: e }) {
         );
       }),
     ),
-    u &&
-      l.default.createElement(
+    voir &&
+      React.default.createElement(
         ut,
-        { titre: "Aper\xE7u \u2014 " + u.nom, onClose: () => d(null) },
-        l.default.createElement(Ff, { theme: u, du: u.du }),
-        l.default.createElement(
+        { titre: "Aper\xE7u \u2014 " + voir.nom, onClose: () => setVoir(null) },
+        React.default.createElement(ApercuTheme, { theme: voir, du: voir.du }),
+        React.default.createElement(
           "div",
           { className: "de", style: { marginTop: 10, textAlign: "center" } },
           "Ce th\xE8me s'affichera tout seul dans l'application \xE0 ses dates, selon le calendrier.",
         ),
       ),
-    o &&
-      l.default.createElement(
+    edit &&
+      React.default.createElement(
         ut,
-        { titre: o.t.nom, onClose: () => a(null) },
-        l.default.createElement(Ff, {
-          theme: { ...tc(o.t, o), message: o.message.trim() || o.t.message, anim: !0 },
+        { titre: edit.t.nom, onClose: () => setEdit(null) },
+        React.default.createElement(ApercuTheme, {
+          theme: {
+            ...ParticulesMontantes(edit.t, edit),
+            message: edit.message.trim() || edit.t.message,
+            anim: !0,
+          },
           vue0: "intro",
         }),
-        l.default.createElement("div", { style: { height: 12 } }),
-        l.default.createElement(
+        React.default.createElement("div", { style: { height: 12 } }),
+        React.default.createElement(
           "div",
           { className: "de", style: { marginBottom: 10 } },
           "P\xE9riode d'affichage ",
-          o.du.slice(0, 4) !== o.au.slice(0, 4)
-            ? o.du.slice(0, 4) + "-" + o.au.slice(0, 4)
-            : o.du.slice(0, 4),
+          edit.du.slice(0, 4) !== edit.au.slice(0, 4)
+            ? edit.du.slice(0, 4) + "-" + edit.au.slice(0, 4)
+            : edit.du.slice(0, 4),
           ". L'ann\xE9e suivante, les dates habituelles reviennent toutes seules.",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Du"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Du"),
+            React.default.createElement("input", {
               className: "inp",
               type: "date",
-              value: o.du,
-              onChange: (S) => a({ ...o, du: S.target.value }),
+              value: edit.du,
+              onChange: (S) => setEdit({ ...edit, du: S.target.value }),
             }),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Au"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Au"),
+            React.default.createElement("input", {
               className: "inp",
               type: "date",
-              min: o.du,
-              value: o.au,
-              onChange: (S) => a({ ...o, au: S.target.value }),
+              min: edit.du,
+              value: edit.au,
+              onChange: (S) => setEdit({ ...edit, au: S.target.value }),
             }),
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "label",
           { className: "lab", style: { marginTop: 10 } },
           "Message de la carte de v\u0153ux",
         ),
-        l.default.createElement("textarea", {
+        React.default.createElement("textarea", {
           className: "inp",
-          value: o.message,
+          value: edit.message,
           maxLength: 200,
-          placeholder: o.t.message,
-          onChange: (S) => a({ ...o, message: S.target.value }),
+          placeholder: edit.t.message,
+          onChange: (S) => setEdit({ ...edit, message: S.target.value }),
         }),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { marginTop: 4 } },
           "Vide = message propos\xE9 : \xAB ",
-          o.t.message,
+          edit.t.message,
           " \xBB",
         ),
         M2 &&
-          l.default.createElement(wN, {
-            v: o,
-            setV: (S) => a({ ...o, ...S }),
-            titreDef: o.t.titre,
-            motifsDef: b7(o.t),
-            top: o.t.top,
-            acc: o.t.accent,
-            magieDef: o.t.id === "noel",
+          React.default.createElement(ReglageMagieNoel, {
+            v: edit,
+            setV: (S) => setEdit({ ...edit, ...S }),
+            titreDef: edit.t.titre,
+            motifsDef: b7(edit.t),
+            top: edit.t.top,
+            acc: edit.t.accent,
+            magieDef: edit.t.id === "noel",
           }),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn",
             style: { marginTop: 12 },
-            disabled: !o.du || !o.au || o.au < o.du,
+            disabled: !edit.du || !edit.au || edit.au < edit.du,
             onClick: () => {
-              let [S, _] = o.t.dates(Number(o.du.slice(0, 4))),
-                I = S === o.du && _ === o.au;
-              (s(o.t.id, { du: I ? "" : o.du, au: I ? "" : o.au, message: o.message.trim(), ...oN(o) }),
-                a(null));
+              let [S, _] = edit.t.dates(Number(edit.du.slice(0, 4))),
+                I = S === edit.du && _ === edit.au;
+              s(edit.t.id, {
+                du: I ? "" : edit.du,
+                au: I ? "" : edit.au,
+                message: edit.message.trim(),
+                ...oN(edit),
+              }),
+                setEdit(null);
             },
           },
           "Enregistrer",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn gh",
             style: { marginTop: 8 },
             onClick: () => {
-              (s(o.t.id, { du: "", au: "" }), a(null));
+              s(edit.t.id, { du: "", au: "" }), setEdit(null);
             },
           },
           "Remettre les dates habituelles",
@@ -5512,124 +5669,135 @@ function k7({ d: t, set: e }) {
       ),
   );
 }
-var C7 = [
+var REPONSES = [
   "Bonjour ! Oui, c'est possible \u{1F60A}",
   "Merci pour votre message, je regarde et je vous r\xE9ponds vite.",
   "C'est not\xE9, \xE0 bient\xF4t \xE0 l'\xE9picerie !",
   "D\xE9sol\xE9e, ce n'est plus disponible pour le moment.",
 ];
-function S7({ conv: t, onRetour: e, cmd: n }) {
-  let [r, i] = (0, l.useState)([]),
-    [s, o] = (0, l.useState)(""),
-    [a, u] = (0, l.useState)(!1),
-    d = (0, l.useRef)(null);
-  ((0, l.useEffect)(
+function Fil({ conv: conv, onRetour: onRetour, cmd: cmd }) {
+  let [msgs, setMsgs] = (0, React.useState)([]),
+    [texte, setTexte] = (0, React.useState)(""),
+    [envoi, setEnvoi] = (0, React.useState)(!1),
+    d = (0, React.useRef)(null);
+  (0, React.useEffect)(
     () =>
-      fr(
-        Ge(de, "conversations", t.id, "messages"),
+      onSnapshot(
+        collection(db2, "conversations", conv.id, "messages"),
         (m) =>
-          i(m.docs.map((w) => ({ ...w.data(), id: w.id })).sort((w, E) => (w.date || 0) - (E.date || 0))),
+          setMsgs(
+            m.docs.map((w) => ({ ...w.data(), id: w.id })).sort((w, E) => (w.date || 0) - (E.date || 0)),
+          ),
         () => {},
       ),
-    [t.id],
+    [conv.id],
   ),
-    (0, l.useEffect)(() => {
-      t.attente && ln(xe(de, "conversations", t.id), { attente: !1 }, { merge: !0 }).catch(() => {});
-    }, [t.id, t.attente]),
-    (0, l.useEffect)(() => {
+    (0, React.useEffect)(() => {
+      conv.attente &&
+        setDoc(doc2(db2, "conversations", conv.id), { attente: !1 }, { merge: !0 }).catch(() => {});
+    }, [conv.id, conv.attente]),
+    (0, React.useEffect)(() => {
       d.current?.scrollIntoView({ block: "end" });
-    }, [r.length]));
+    }, [msgs.length]);
   let h = async () => {
-      let m = s.trim().slice(0, 1e3);
-      if (!(!m || a)) {
-        u(!0);
+      let m = texte.trim().slice(0, 1e3);
+      if (!(!m || envoi)) {
+        setEnvoi(!0);
         try {
           let w = Date.now(),
-            E = _n(de);
-          (E.set(xe(Ge(de, "conversations", t.id, "messages")), { de: "epicerie", texte: m, date: w }),
-            E.update(xe(de, "conversations", t.id), { maj: w, dernier: "Vous : " + uf(m), attente: !1 }),
+            E = writeBatch(db2);
+          E.set(doc2(collection(db2, "conversations", conv.id, "messages")), {
+            de: "epicerie",
+            texte: m,
+            date: w,
+          }),
+            E.update(doc2(db2, "conversations", conv.id), {
+              maj: w,
+              dernier: "Vous : " + uf(m),
+              attente: !1,
+            }),
             await E.commit(),
-            o(""),
-            Pa(n, "msg", t.id));
+            setTexte(""),
+            avertirMessage(cmd, "msg", conv.id);
         } catch {
           ft("Message non envoy\xE9. V\xE9rifiez la connexion et r\xE9essayez.");
         }
-        u(!1);
+        setEnvoi(!1);
       }
     },
     p = "";
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "fil-adm" },
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "fil-hd" },
-      l.default.createElement("button", { className: "btn gh sm", onClick: e }, "\u2190"),
-      l.default.createElement(
+      React.default.createElement("button", { className: "btn gh sm", onClick: onRetour }, "\u2190"),
+      React.default.createElement(
         "div",
         { style: { minWidth: 0 } },
-        l.default.createElement("div", { className: "nm" }, t.nom),
-        l.default.createElement(
+        React.default.createElement("div", { className: "nm" }, conv.nom),
+        React.default.createElement(
           "div",
           { className: "de" },
-          t.tel
-            ? l.default.createElement("a", { href: "tel:" + t.tel.replace(/\s/g, "") }, t.tel)
+          conv.tel
+            ? React.default.createElement("a", { href: "tel:" + conv.tel.replace(/\s/g, "") }, conv.tel)
             : "Pas de t\xE9l\xE9phone",
           " \xB7 depuis le ",
-          new Date(t.cree || Date.now()).toLocaleDateString("fr-FR"),
+          new Date(conv.cree || Date.now()).toLocaleDateString("fr-FR"),
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "fil-corps" },
-      !r.length &&
-        l.default.createElement(
+      !msgs.length &&
+        React.default.createElement(
           "div",
           { className: "de", style: { textAlign: "center", padding: 20 } },
           "Chargement\u2026",
         ),
-      r.map((m) => {
-        let w = Zk(m.date),
+      msgs.map((m) => {
+        let w = jourMsg(m.date),
           E = w !== p;
         return (
           (p = w),
-          l.default.createElement(
-            l.default.Fragment,
+          React.default.createElement(
+            React.default.Fragment,
             { key: m.id },
-            E && l.default.createElement("div", { className: "fil-jour" }, w),
-            l.default.createElement(
+            E && React.default.createElement("div", { className: "fil-jour" }, w),
+            React.default.createElement(
               "div",
               { className: "fmsg " + (m.de === "epicerie" ? "moi" : "lui") },
-              l.default.createElement("div", null, m.texte),
-              l.default.createElement("small", null, E2(m.date)),
+              React.default.createElement("div", null, m.texte),
+              React.default.createElement("small", null, heureMsg(m.date)),
             ),
           )
         );
       }),
-      l.default.createElement("div", { ref: d }),
+      React.default.createElement("div", { ref: d }),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "motifs", style: { margin: "8px 0" } },
-      C7.map((m) =>
-        l.default.createElement(
+      REPONSES.map((m) =>
+        React.default.createElement(
           "button",
-          { key: m, onClick: () => o(m) },
+          { key: m, onClick: () => setTexte(m) },
           m.length > 34 ? m.slice(0, 32) + "\u2026" : m,
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "fil-saisie" },
-      l.default.createElement("textarea", {
+      React.default.createElement("textarea", {
         className: "inp",
         rows: 2,
-        value: s,
+        value: texte,
         maxLength: 1e3,
-        placeholder: "R\xE9pondre \xE0 " + t.nom + "\u2026",
-        onChange: (m) => o(m.target.value),
+        placeholder: "R\xE9pondre \xE0 " + conv.nom + "\u2026",
+        onChange: (m) => setTexte(m.target.value),
         onKeyDown: (m) => {
           m.key === "Enter" &&
             !m.shiftKey &&
@@ -5637,12 +5805,12 @@ function S7({ conv: t, onRetour: e, cmd: n }) {
             (m.preventDefault(), h());
         },
       }),
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "btn",
           style: { width: "auto", padding: "0 20px" },
-          disabled: !s.trim() || a,
+          disabled: !texte.trim() || envoi,
           onClick: h,
         },
         "Envoyer",
@@ -5650,10 +5818,10 @@ function S7({ conv: t, onRetour: e, cmd: n }) {
     ),
   );
 }
-function N7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)(null),
+function Messages({ d: t, set: set }) {
+  let [ouvert, setOuvert] = (0, React.useState)(null),
     i = [...t.conversations].sort((d, h) => (h.maj || 0) - (d.maj || 0)),
-    s = n && i.find((d) => d.id === n),
+    s = ouvert && i.find((d) => d.id === ouvert),
     o = Date.now() - 365 * 864e5,
     a = i.filter((d) => (d.maj || 0) < o),
     u = async (d) => {
@@ -5667,107 +5835,111 @@ Le client ne verra plus ses messages.`,
         )
       )
         try {
-          (await nN(d.id), r(null));
+          await nN(d.id), setOuvert(null);
         } catch {
           ft("Suppression impossible. V\xE9rifiez la connexion.");
         }
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Messages"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Messages"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Les questions de vos clients, envoy\xE9es depuis l'application.",
     ),
     s
-      ? l.default.createElement(
-          l.default.Fragment,
+      ? React.default.createElement(
+          React.default.Fragment,
           null,
-          l.default.createElement(S7, { conv: s, cmd: t.cmd, onRetour: () => r(null) }),
-          l.default.createElement(
+          React.default.createElement(Fil, { conv: s, cmd: t.cmd, onRetour: () => setOuvert(null) }),
+          React.default.createElement(
             "button",
             { className: "btn gh sm", style: { marginTop: 12, color: "var(--red)" }, onClick: () => u(s) },
             "Supprimer cette conversation",
           ),
         )
-      : l.default.createElement(
-          l.default.Fragment,
+      : React.default.createElement(
+          React.default.Fragment,
           null,
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "tog card", style: { marginBottom: 12 } },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               null,
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { style: { fontSize: 13, fontWeight: 800 } },
                 "Bouton \xAB Une question ? \xBB sur l'application",
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "de" },
                 "D\xE9sactivez-le si vous ne voulez plus recevoir de messages",
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: t.chat?.active !== !1,
-                set: () => e("chat", (d) => ({ ...(d || {}), active: d?.active === !1 })),
+                set: () => set("chat", (d) => ({ ...(d || {}), active: d?.active === !1 })),
               }),
             ),
           ),
           !i.length &&
-            l.default.createElement(Vn, {
+            React.default.createElement(Vn, {
               t: "Aucun message pour l'instant",
               s: "Quand un client vous \xE9crit depuis l'application, sa conversation appara\xEEt ici.",
             }),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "grille" },
             i.map((d) =>
-              l.default.createElement(
+              React.default.createElement(
                 "div",
-                { className: "card conv" + (d.attente ? " attente" : ""), key: d.id, onClick: () => r(d.id) },
-                l.default.createElement(
+                {
+                  className: "card conv" + (d.attente ? " attente" : ""),
+                  key: d.id,
+                  onClick: () => setOuvert(d.id),
+                },
+                React.default.createElement(
                   "div",
                   { className: "row" },
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { className: "av-conv" },
                     (d.nom || "?").trim()[0]?.toUpperCase(),
                   ),
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { minWidth: 0, flex: 1 } },
-                    l.default.createElement(
+                    React.default.createElement(
                       "div",
                       { className: "nm" },
                       d.nom,
                       d.attente &&
-                        l.default.createElement(
+                        React.default.createElement(
                           "span",
                           { className: "pill promo", style: { marginLeft: 6 } },
                           "Nouveau",
                         ),
                     ),
-                    l.default.createElement("div", { className: "de conv-der" }, d.dernier),
+                    React.default.createElement("div", { className: "de conv-der" }, d.dernier),
                   ),
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { className: "de", style: { flexShrink: 0 } },
-                    d.maj ? E2(d.maj) : "",
+                    d.maj ? heureMsg(d.maj) : "",
                   ),
                 ),
               ),
             ),
           ),
           !!a.length &&
-            l.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "btn gh",
@@ -5789,7 +5961,7 @@ Le client ne verra plus ses messages.`,
               a.length,
               ")",
             ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "de", style: { marginTop: 8 } },
             "Donn\xE9es personnelles (RGPD) : les conversations sont \xE0 supprimer au plus tard 1 an apr\xE8s le dernier message.",
@@ -5797,48 +5969,48 @@ Le client ne verra plus ses messages.`,
         ),
   );
 }
-var aN = [
+var ACTIONS = [
   { id: "aucune", label: "Aucune" },
   { id: "carte", label: "Voir la carte" },
   { id: "appeler", label: "Appeler l'\xE9picerie" },
 ];
-function F7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)(null),
+function Pubs({ d: t, set: set }) {
+  let [n, setM] = (0, React.useState)(null),
     i = t.pubs || [],
     s = () => {
       if (!n.photo) return ft("Ajoutez une image : c'est l'essentiel d'une banni\xE8re.");
-      (e("pubs", (u) =>
+      set("pubs", (u) =>
         n.id ? u.map((d) => (d.id === n.id ? n : d)) : [...u, { ...n, id: Wr(), ordre: u.length }],
       ),
-        r(null));
+        setM(null);
     },
     o = (u, d) => {
       let h = u + d;
       if (h < 0 || h >= i.length) return;
       let p = [...i];
-      (([p[u], p[h]] = [p[h], p[u]]),
-        e("pubs", (m) => m.map((w) => ({ ...w, ordre: p.findIndex((E) => E.id === w.id) }))));
+      ([p[u], p[h]] = [p[h], p[u]]),
+        set("pubs", (m) => m.map((w) => ({ ...w, ordre: p.findIndex((E) => E.id === w.id) })));
     },
-    a = i.filter((u) => pN(u)[0] === "on").length;
-  return l.default.createElement(
+    a = i.filter((u) => statut2(u)[0] === "on").length;
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Banni\xE8res"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Banni\xE8res"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Les grandes images en haut de l'application : plateaux de f\xEAtes, nouveaut\xE9s, \xE9v\xE9nements. Elles d\xE9filent toutes seules. Format conseill\xE9 : photo horizontale.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "button",
       {
         className: "btn terra",
-        onClick: () => r({ photo: "", titre: "", texte: "", action: "carte", fin: "", active: !0 }),
+        onClick: () => setM({ photo: "", titre: "", texte: "", action: "carte", fin: "", active: !0 }),
       },
-      he.plus(),
+      I10.plus(),
       "Nouvelle banni\xE8re",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { fontSize: 12, color: "var(--ink3)", margin: "10px 0 12px" } },
       a,
@@ -5849,49 +6021,53 @@ function F7({ d: t, set: e }) {
       " par les clients",
     ),
     !i.length &&
-      l.default.createElement(Vn, {
+      React.default.createElement(Vn, {
         t: "Aucune banni\xE8re",
         s: "Une belle photo de plateau et deux mots suffisent : \xAB Plateaux de No\xEBl \u2014 commandez avant le 20 \xBB.",
       }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
       i.map((u, d) =>
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "card", key: u.id, style: { padding: 0, overflow: "hidden" } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { position: "relative" } },
             u.photo
-              ? l.default.createElement("img", {
+              ? React.default.createElement("img", {
                   src: u.photo,
                   alt: "",
                   style: { width: "100%", aspectRatio: "16/9", objectFit: "cover", display: "block" },
                 })
-              : l.default.createElement("div", {
+              : React.default.createElement("div", {
                   style: { aspectRatio: "16/9", background: "var(--apple-soft)" },
                 }),
-            l.default.createElement(io, { x: u, fem: !0, style: { position: "absolute", top: 9, left: 9 } }),
+            React.default.createElement(Pastille, {
+              x: u,
+              fem: !0,
+              style: { position: "absolute", top: 9, left: 9 },
+            }),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row", style: { padding: "11px 13px" } },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement("div", { className: "nm" }, u.titre || "Sans titre"),
-              l.default.createElement(
+              React.default.createElement("div", { className: "nm" }, u.titre || "Sans titre"),
+              React.default.createElement(
                 "div",
                 { className: "de" },
                 "Action : ",
-                aN.find((h) => h.id === u.action)?.label || "Aucune",
+                ACTIONS.find((h) => h.id === u.action)?.label || "Aucune",
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(
+              React.default.createElement(
                 "button",
                 {
                   className: "ib",
@@ -5902,7 +6078,7 @@ function F7({ d: t, set: e }) {
                 },
                 "\u2191",
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "button",
                 {
                   className: "ib",
@@ -5913,21 +6089,21 @@ function F7({ d: t, set: e }) {
                 },
                 "\u2193",
               ),
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: u.active !== !1,
                 set: () =>
-                  e("pubs", (h) => h.map((p) => (p.id === u.id ? { ...p, active: p.active === !1 } : p))),
+                  set("pubs", (h) => h.map((p) => (p.id === u.id ? { ...p, active: p.active === !1 } : p))),
               }),
-              l.default.createElement("button", { className: "ib", onClick: () => r(u) }, he.pen()),
-              l.default.createElement(
+              React.default.createElement("button", { className: "ib", onClick: () => setM(u) }, I10.pen()),
+              React.default.createElement(
                 "button",
                 {
                   className: "ib",
                   onClick: async () =>
                     (await De("Supprimer cette banni\xE8re ?")) &&
-                    e("pubs", (h) => h.filter((p) => p.id !== u.id)),
+                    set("pubs", (h) => h.filter((p) => p.id !== u.id)),
                 },
-                he.bin(),
+                I10.bin(),
               ),
             ),
           ),
@@ -5935,63 +6111,63 @@ function F7({ d: t, set: e }) {
       ),
     ),
     n &&
-      l.default.createElement(
+      React.default.createElement(
         ut,
-        { titre: n.id ? "Modifier la banni\xE8re" : "Nouvelle banni\xE8re", onClose: () => r(null) },
-        l.default.createElement(Ri, {
+        { titre: n.id ? "Modifier la banni\xE8re" : "Nouvelle banni\xE8re", onClose: () => setM(null) },
+        React.default.createElement(PhotoField, {
           value: n.photo,
           max: 1400,
-          onChange: (u) => r((d) => ({ ...d, photo: u })),
+          onChange: (u) => setM((d) => ({ ...d, photo: u })),
         }),
-        l.default.createElement("label", { className: "lab" }, "Titre (facultatif)"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Titre (facultatif)"),
+        React.default.createElement("input", {
           className: "inp",
           value: n.titre,
-          onChange: (u) => r({ ...n, titre: u.target.value }),
+          onChange: (u) => setM({ ...n, titre: u.target.value }),
           placeholder: "Plateaux de No\xEBl",
         }),
-        l.default.createElement("label", { className: "lab" }, "Petit texte (facultatif)"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Petit texte (facultatif)"),
+        React.default.createElement("input", {
           className: "inp",
           value: n.texte,
-          onChange: (u) => r({ ...n, texte: u.target.value }),
+          onChange: (u) => setM({ ...n, texte: u.target.value }),
           placeholder: "Commandez avant le 20 d\xE9cembre",
         }),
-        l.default.createElement("label", { className: "lab" }, "Quand le client touche la banni\xE8re"),
-        l.default.createElement(
+        React.default.createElement("label", { className: "lab" }, "Quand le client touche la banni\xE8re"),
+        React.default.createElement(
           "div",
           { className: "seg", style: { marginBottom: 0 } },
-          aN.map((u) =>
-            l.default.createElement(
+          ACTIONS.map((u) =>
+            React.default.createElement(
               "button",
               {
                 key: u.id,
                 className: n.action === u.id ? "on" : "",
-                onClick: () => r({ ...n, action: u.id }),
+                onClick: () => setM({ ...n, action: u.id }),
               },
               u.label,
             ),
           ),
         ),
-        l.default.createElement(Zi, { v: n, onChange: r }),
-        l.default.createElement(
+        React.default.createElement(Periode, { v: n, onChange: setM }),
+        React.default.createElement(
           "div",
           { className: "tog", style: { marginTop: 6 } },
-          l.default.createElement(
+          React.default.createElement(
             "span",
             { style: { fontSize: 13, fontWeight: 700 } },
             "Visible par les clients",
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "rt" },
-            l.default.createElement(ze, {
+            React.default.createElement(ze, {
               on: n.active !== !1,
-              set: () => r({ ...n, active: n.active === !1 }),
+              set: () => setM({ ...n, active: n.active === !1 }),
             }),
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 12 }, onClick: s },
           "Enregistrer",
@@ -5999,109 +6175,112 @@ function F7({ d: t, set: e }) {
       ),
   );
 }
-function D7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)(null),
+function Actus({ d: d, set: set }) {
+  let [m, setM] = (0, React.useState)(null),
     i = () => {
-      n.titre?.trim() &&
-        (e("actus", (s) => (n.id ? s.map((o) => (o.id === n.id ? n : o)) : [{ ...n, id: Wr() }, ...s])),
-        r(null));
+      m.titre?.trim() &&
+        (set("actus", (s) => (m.id ? s.map((o) => (o.id === m.id ? m : o)) : [{ ...m, id: Wr() }, ...s])),
+        setM(null));
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Actualit\xE9s"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Actualit\xE9s"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Vos publications : cr\xE9ations maison, arrivages, menu du jour, fermeture exceptionnelle\u2026",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "button",
       {
         className: "btn dark",
         onClick: () =>
-          r({ titre: "", texte: "", photo: "", date: new Date().toLocaleDateString("fr-FR"), active: !0 }),
+          setM({ titre: "", texte: "", photo: "", date: new Date().toLocaleDateString("fr-FR"), active: !0 }),
       },
-      he.plus(),
+      I10.plus(),
       "Nouvelle publication",
     ),
-    l.default.createElement("div", { style: { height: 12 } }),
-    !t.actus.length &&
-      l.default.createElement(Vn, {
+    React.default.createElement("div", { style: { height: 12 } }),
+    !d.actus.length &&
+      React.default.createElement(Vn, {
         t: "Aucune publication",
         s: "Une photo et deux lignes suffisent : vos clients voient la nouveaut\xE9 d\xE8s l'ouverture de l'application.",
       }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
-      t.actus.map((s) =>
-        l.default.createElement(
+      d.actus.map((s) =>
+        React.default.createElement(
           "div",
           { className: "card", key: s.id },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row" },
             s.photo
-              ? l.default.createElement("img", { className: "thumb", src: s.photo, alt: "" })
-              : l.default.createElement("div", { className: "thumb" }),
-            l.default.createElement(
+              ? React.default.createElement("img", { className: "thumb", src: s.photo, alt: "" })
+              : React.default.createElement("div", { className: "thumb" }),
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement("div", { className: "nm" }, s.titre),
-              l.default.createElement("div", { className: "de" }, s.date),
-              l.default.createElement(io, { x: s, fem: !0, style: { marginTop: 5 } }),
+              React.default.createElement("div", { className: "nm" }, s.titre),
+              React.default.createElement("div", { className: "de" }, s.date),
+              React.default.createElement(Pastille, { x: s, fem: !0, style: { marginTop: 5 } }),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: s.active !== !1,
                 set: () =>
-                  e("actus", (o) => o.map((a) => (a.id === s.id ? { ...a, active: a.active === !1 } : a))),
+                  set("actus", (o) => o.map((a) => (a.id === s.id ? { ...a, active: a.active === !1 } : a))),
               }),
-              l.default.createElement("button", { className: "ib", onClick: () => r(s) }, he.pen()),
-              l.default.createElement(
+              React.default.createElement("button", { className: "ib", onClick: () => setM(s) }, I10.pen()),
+              React.default.createElement(
                 "button",
                 {
                   className: "ib",
                   onClick: async () =>
                     (await De("Supprimer cette publication ?")) &&
-                    e("actus", (o) => o.filter((a) => a.id !== s.id)),
+                    set("actus", (o) => o.filter((a) => a.id !== s.id)),
                 },
-                he.bin(),
+                I10.bin(),
               ),
             ),
           ),
         ),
       ),
     ),
-    n &&
-      l.default.createElement(
+    m &&
+      React.default.createElement(
         ut,
-        { titre: n.id ? "Modifier" : "Nouvelle publication", onClose: () => r(null) },
-        l.default.createElement(Ri, { value: n.photo, onChange: (s) => r((o) => ({ ...o, photo: s })) }),
-        l.default.createElement("label", { className: "lab" }, "Titre"),
-        l.default.createElement("input", {
+        { titre: m.id ? "Modifier" : "Nouvelle publication", onClose: () => setM(null) },
+        React.default.createElement(PhotoField, {
+          value: m.photo,
+          onChange: (s) => setM((o) => ({ ...o, photo: s })),
+        }),
+        React.default.createElement("label", { className: "lab" }, "Titre"),
+        React.default.createElement("input", {
           className: "inp",
           autoFocus: !0,
-          value: n.titre,
-          onChange: (s) => r({ ...n, titre: s.target.value }),
+          value: m.titre,
+          onChange: (s) => setM({ ...m, titre: s.target.value }),
           placeholder: "Nos tartes maison sont arriv\xE9es",
         }),
-        l.default.createElement("label", { className: "lab" }, "Texte"),
-        l.default.createElement("textarea", {
+        React.default.createElement("label", { className: "lab" }, "Texte"),
+        React.default.createElement("textarea", {
           className: "inp",
-          value: n.texte,
-          onChange: (s) => r({ ...n, texte: s.target.value }),
+          value: m.texte,
+          onChange: (s) => setM({ ...m, texte: s.target.value }),
         }),
-        l.default.createElement("label", { className: "lab" }, "Date affich\xE9e"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Date affich\xE9e"),
+        React.default.createElement("input", {
           className: "inp",
-          value: n.date,
-          onChange: (s) => r({ ...n, date: s.target.value }),
+          value: m.date,
+          onChange: (s) => setM({ ...m, date: s.target.value }),
         }),
-        l.default.createElement(Zi, { v: n, onChange: r }),
-        l.default.createElement(
+        React.default.createElement(Periode, { v: m, onChange: setM }),
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 14 }, onClick: i },
           "Publier",
@@ -6109,8 +6288,8 @@ function D7({ d: t, set: e }) {
       ),
   );
 }
-function P7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)(null),
+function Producteurs({ d: t, set: set }) {
+  let [n, r] = (0, React.useState)(null),
     i = t.producteurs || [],
     s = () => {
       if (!n.nom?.trim()) return;
@@ -6123,60 +6302,60 @@ function P7({ d: t, set: e }) {
         produits: (n.produits || "").trim().slice(0, 200),
         lien: /^https?:\/\//.test((n.lien || "").trim()) ? n.lien.trim().slice(0, 300) : "",
       };
-      (e("producteurs", (u) =>
+      set("producteurs", (u) =>
         n.id
           ? u.map((d) => (d.id === n.id ? a : d))
           : [...u, { ...a, id: Wr(), ordre: u.length, active: !0 }],
       ),
-        r(null));
+        r(null);
     },
     o = (a, u) => {
       let d = [...i];
-      (([d[a], d[u]] = [d[u], d[a]]),
-        e("producteurs", (h) => h.map((p) => ({ ...p, ordre: d.findIndex((m) => m.id === p.id) }))));
+      ([d[a], d[u]] = [d[u], d[a]]),
+        set("producteurs", (h) => h.map((p) => ({ ...p, ordre: d.findIndex((m) => m.id === p.id) })));
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Nos producteurs"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Nos producteurs"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Pr\xE9sentez les producteurs dont vous vendez les produits : une photo, quelques mots. Ils apparaissent sur l'accueil de l'appli.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "button",
       {
         className: "btn dark",
         onClick: () => r({ nom: "", metier: "", lieu: "", texte: "", produits: "", lien: "", photo: "" }),
       },
-      he.plus(),
+      I10.plus(),
       "Ajouter un producteur",
     ),
-    l.default.createElement("div", { style: { height: 12 } }),
+    React.default.createElement("div", { style: { height: 12 } }),
     !i.length &&
-      l.default.createElement(Vn, {
+      React.default.createElement(Vn, {
         t: "Aucun producteur",
         s: "Exemple : la fromagerie du village, le mara\xEEcher d'\xE0 c\xF4t\xE9, l'apiculteur\u2026",
       }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
       i.map((a, u) =>
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "card", key: a.id, style: { opacity: a.active === !1 ? 0.55 : 1 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row" },
             a.photo
-              ? l.default.createElement("img", {
+              ? React.default.createElement("img", {
                   className: "thumb",
                   src: a.photo,
                   alt: "",
                   style: { borderRadius: "50%" },
                 })
-              : l.default.createElement(
+              : React.default.createElement(
                   "div",
                   {
                     className: "thumb",
@@ -6190,42 +6369,42 @@ function P7({ d: t, set: e }) {
                   },
                   "\u{1F9D1}\u200D\u{1F33E}",
                 ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { minWidth: 0 } },
-              l.default.createElement("div", { className: "nm" }, a.nom),
-              l.default.createElement(
+              React.default.createElement("div", { className: "nm" }, a.nom),
+              React.default.createElement(
                 "div",
                 { className: "de" },
                 [a.metier, a.lieu].filter(Boolean).join(" \xB7 "),
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
               u > 0 &&
-                l.default.createElement(
+                React.default.createElement(
                   "button",
                   { className: "ib", onClick: () => o(u, u - 1), "aria-label": "Monter" },
                   "\u2191",
                 ),
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: a.active !== !1,
                 set: () =>
-                  e("producteurs", (d) =>
+                  set("producteurs", (d) =>
                     d.map((h) => (h.id === a.id ? { ...h, active: h.active === !1 } : h)),
                   ),
               }),
-              l.default.createElement("button", { className: "ib", onClick: () => r(a) }, he.pen()),
-              l.default.createElement(
+              React.default.createElement("button", { className: "ib", onClick: () => r(a) }, I10.pen()),
+              React.default.createElement(
                 "button",
                 {
                   className: "ib",
                   onClick: async () =>
                     (await De("Supprimer " + a.nom + " ?")) &&
-                    e("producteurs", (d) => d.filter((h) => h.id !== a.id)),
+                    set("producteurs", (d) => d.filter((h) => h.id !== a.id)),
                 },
-                he.bin(),
+                I10.bin(),
               ),
             ),
           ),
@@ -6233,12 +6412,15 @@ function P7({ d: t, set: e }) {
       ),
     ),
     n &&
-      l.default.createElement(
+      React.default.createElement(
         ut,
         { titre: n.id ? "Modifier" : "Nouveau producteur", onClose: () => r(null) },
-        l.default.createElement(Ri, { value: n.photo, onChange: (a) => r((u) => ({ ...u, photo: a })) }),
-        l.default.createElement("label", { className: "lab" }, "Nom"),
-        l.default.createElement("input", {
+        React.default.createElement(PhotoField, {
+          value: n.photo,
+          onChange: (a) => r((u) => ({ ...u, photo: a })),
+        }),
+        React.default.createElement("label", { className: "lab" }, "Nom"),
+        React.default.createElement("input", {
           className: "inp",
           autoFocus: !0,
           value: n.nom,
@@ -6246,52 +6428,52 @@ function P7({ d: t, set: e }) {
           onChange: (a) => r({ ...n, nom: a.target.value }),
           placeholder: "Ex : Fromagerie de la Vall\xE9e",
         }),
-        l.default.createElement("label", { className: "lab" }, "Ce qu'il fait"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Ce qu'il fait"),
+        React.default.createElement("input", {
           className: "inp",
           value: n.metier,
           maxLength: 60,
           onChange: (a) => r({ ...n, metier: a.target.value }),
           placeholder: "Ex : Fromager, mara\xEEcher, apiculteur\u2026",
         }),
-        l.default.createElement("label", { className: "lab" }, "Village"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Village"),
+        React.default.createElement("input", {
           className: "inp",
           value: n.lieu,
           maxLength: 60,
           onChange: (a) => r({ ...n, lieu: a.target.value }),
           placeholder: "Ex : Faucogney-et-la-Mer",
         }),
-        l.default.createElement("label", { className: "lab" }, "Quelques mots"),
-        l.default.createElement("textarea", {
+        React.default.createElement("label", { className: "lab" }, "Quelques mots"),
+        React.default.createElement("textarea", {
           className: "inp",
           value: n.texte,
           maxLength: 600,
           onChange: (a) => r({ ...n, texte: a.target.value }),
           placeholder: "Son histoire, sa fa\xE7on de travailler\u2026",
         }),
-        l.default.createElement("label", { className: "lab" }, "Ses produits \xE0 l'\xE9picerie"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Ses produits \xE0 l'\xE9picerie"),
+        React.default.createElement("input", {
           className: "inp",
           value: n.produits,
           maxLength: 200,
           onChange: (a) => r({ ...n, produits: a.target.value }),
           placeholder: "Ex : comt\xE9, morbier, cancoillotte",
         }),
-        l.default.createElement("label", { className: "lab" }, "Lien vers sa page (facultatif)"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Lien vers sa page (facultatif)"),
+        React.default.createElement("input", {
           className: "inp",
           value: n.lien,
           placeholder: "https://\u2026",
           autoCapitalize: "off",
           onChange: (a) => r({ ...n, lien: a.target.value }),
         }),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { marginTop: 6 } },
           "Demandez-lui son accord avant de publier sa photo et son nom.",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 14 }, onClick: s },
           "Enregistrer",
@@ -6299,8 +6481,8 @@ function P7({ d: t, set: e }) {
       ),
   );
 }
-function M7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)(null),
+function Recettes({ d: t, set: set }) {
+  let [n, r] = (0, React.useState)(null),
     i = t.recettes || [],
     s = () => {
       if (!n.titre?.trim()) return;
@@ -6313,48 +6495,48 @@ function M7({ d: t, set: e }) {
         ingredients: (n.ingredients || "").trim().slice(0, 1500),
         etapes: (n.etapes || "").trim().slice(0, 3e3),
       };
-      (e("recettes", (a) =>
+      set("recettes", (a) =>
         n.id
           ? a.map((u) => (u.id === n.id ? o : u))
           : [{ ...o, id: Wr(), cree: Date.now(), active: !0 }, ...a],
       ),
-        r(null));
+        r(null);
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "La recette de la semaine"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "La recette de la semaine"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "La recette la plus r\xE9cente s'affiche sur l'accueil de l'appli, les pr\xE9c\xE9dentes juste en dessous. \xC9crivez un ingr\xE9dient ou une \xE9tape par ligne.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "button",
       {
         className: "btn dark",
         onClick: () =>
           r({ titre: "", duree: "", personnes: 4, intro: "", ingredients: "", etapes: "", photo: "" }),
       },
-      he.plus(),
+      I10.plus(),
       "Nouvelle recette",
     ),
-    l.default.createElement("div", { style: { height: 12 } }),
+    React.default.createElement("div", { style: { height: 12 } }),
     !i.length &&
-      l.default.createElement(Vn, {
+      React.default.createElement(Vn, {
         t: "Aucune recette",
         s: "Exemple : la tarte aux myrtilles, la cancoillotte chaude, la pot\xE9e\u2026",
       }),
     i.map((o, a) =>
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "card", key: o.id, style: { opacity: o.active === !1 ? 0.55 : 1 } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "row" },
           o.photo
-            ? l.default.createElement("img", { className: "thumb", src: o.photo, alt: "" })
-            : l.default.createElement(
+            ? React.default.createElement("img", { className: "thumb", src: o.photo, alt: "" })
+            : React.default.createElement(
                 "div",
                 {
                   className: "thumb",
@@ -6368,47 +6550,50 @@ function M7({ d: t, set: e }) {
                 },
                 "\u{1F4D6}",
               ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { minWidth: 0 } },
-            l.default.createElement("div", { className: "nm" }, o.titre),
-            l.default.createElement(
+            React.default.createElement("div", { className: "nm" }, o.titre),
+            React.default.createElement(
               "div",
               { className: "de" },
               a === 0 && o.active !== !1 ? "\u2B50 Recette de la semaine \xB7 " : "",
               new Date(o.cree || 0).toLocaleDateString("fr-FR"),
             ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "rt" },
-            l.default.createElement(ze, {
+            React.default.createElement(ze, {
               on: o.active !== !1,
               set: () =>
-                e("recettes", (u) => u.map((d) => (d.id === o.id ? { ...d, active: d.active === !1 } : d))),
+                set("recettes", (u) => u.map((d) => (d.id === o.id ? { ...d, active: d.active === !1 } : d))),
             }),
-            l.default.createElement("button", { className: "ib", onClick: () => r(o) }, he.pen()),
-            l.default.createElement(
+            React.default.createElement("button", { className: "ib", onClick: () => r(o) }, I10.pen()),
+            React.default.createElement(
               "button",
               {
                 className: "ib",
                 onClick: async () =>
                   (await De("Supprimer \xAB " + o.titre + " \xBB ?")) &&
-                  e("recettes", (u) => u.filter((d) => d.id !== o.id)),
+                  set("recettes", (u) => u.filter((d) => d.id !== o.id)),
               },
-              he.bin(),
+              I10.bin(),
             ),
           ),
         ),
       ),
     ),
     n &&
-      l.default.createElement(
+      React.default.createElement(
         ut,
         { titre: n.id ? "Modifier la recette" : "Nouvelle recette", onClose: () => r(null) },
-        l.default.createElement(Ri, { value: n.photo, onChange: (o) => r((a) => ({ ...a, photo: o })) }),
-        l.default.createElement("label", { className: "lab" }, "Titre"),
-        l.default.createElement("input", {
+        React.default.createElement(PhotoField, {
+          value: n.photo,
+          onChange: (o) => r((a) => ({ ...a, photo: o })),
+        }),
+        React.default.createElement("label", { className: "lab" }, "Titre"),
+        React.default.createElement("input", {
           className: "inp",
           autoFocus: !0,
           value: n.titre,
@@ -6416,14 +6601,14 @@ function M7({ d: t, set: e }) {
           onChange: (o) => r({ ...n, titre: o.target.value }),
           placeholder: "Ex : Tarte aux myrtilles de grand-m\xE8re",
         }),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 2, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Temps"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Temps"),
+            React.default.createElement("input", {
               className: "inp",
               value: n.duree,
               maxLength: 40,
@@ -6431,11 +6616,11 @@ function M7({ d: t, set: e }) {
               placeholder: "Ex : 45 min",
             }),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Personnes"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Personnes"),
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "numeric",
@@ -6444,16 +6629,16 @@ function M7({ d: t, set: e }) {
             }),
           ),
         ),
-        l.default.createElement("label", { className: "lab" }, "Petit mot (facultatif)"),
-        l.default.createElement("textarea", {
+        React.default.createElement("label", { className: "lab" }, "Petit mot (facultatif)"),
+        React.default.createElement("textarea", {
           className: "inp",
           value: n.intro,
           maxLength: 400,
           onChange: (o) => r({ ...n, intro: o.target.value }),
           placeholder: "Ex : La recette pr\xE9f\xE9r\xE9e de mes clients en automne\u2026",
         }),
-        l.default.createElement("label", { className: "lab" }, "Ingr\xE9dients (un par ligne)"),
-        l.default.createElement("textarea", {
+        React.default.createElement("label", { className: "lab" }, "Ingr\xE9dients (un par ligne)"),
+        React.default.createElement("textarea", {
           className: "inp",
           value: n.ingredients,
           maxLength: 1500,
@@ -6463,8 +6648,8 @@ function M7({ d: t, set: e }) {
 2 \u0153ufs`,
           style: { minHeight: 110 },
         }),
-        l.default.createElement("label", { className: "lab" }, "Pr\xE9paration (une \xE9tape par ligne)"),
-        l.default.createElement("textarea", {
+        React.default.createElement("label", { className: "lab" }, "Pr\xE9paration (une \xE9tape par ligne)"),
+        React.default.createElement("textarea", {
           className: "inp",
           value: n.etapes,
           maxLength: 3e3,
@@ -6474,7 +6659,7 @@ function M7({ d: t, set: e }) {
 \u2026`,
           style: { minHeight: 140 },
         }),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 14 }, onClick: s },
           "Enregistrer",
@@ -6482,9 +6667,9 @@ function M7({ d: t, set: e }) {
       ),
   );
 }
-function L7({ d: t, set: e }) {
+function Sondages({ d: t, set: set }) {
   let n = { active: !1, id: "", question: "", mode: "choix", options: ["", ""], ...(t.sondage || {}) },
-    r = (a) => e("sondage", (u) => ({ ...n, ...(u || {}), ...a })),
+    r = (a) => set("sondage", (u) => ({ ...n, ...(u || {}), ...a })),
     i = (t.reponses || []).filter((a) => a.s === n.id),
     s = async () => {
       (n.question &&
@@ -6492,33 +6677,33 @@ function L7({ d: t, set: e }) {
           "Commencer un nouveau sondage ? Le sondage actuel s'arr\xEAte (ses r\xE9ponses restent consultables ci-dessous jusqu'\xE0 ce que vous les effaciez).",
           { oui: "Nouveau sondage" },
         ))) ||
-        e("sondage", { active: !1, id: "s" + Date.now(), question: "", mode: "choix", options: ["", ""] });
+        set("sondage", { active: !1, id: "s" + Date.now(), question: "", mode: "choix", options: ["", ""] });
     },
     o = [...new Set((t.reponses || []).map((a) => a.s).filter((a) => a && a !== n.id))];
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Sondages et bo\xEEte \xE0 id\xE9es"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Sondages et bo\xEEte \xE0 id\xE9es"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Posez une question \xE0 vos clients : ils r\xE9pondent depuis l'accueil de l'appli, de fa\xE7on anonyme (une r\xE9ponse par t\xE9l\xE9phone).",
     ),
     n.id
-      ? l.default.createElement(
-          l.default.Fragment,
+      ? React.default.createElement(
+          React.default.Fragment,
           null,
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "card" },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "tog" },
-              l.default.createElement(
+              React.default.createElement(
                 "span",
                 { style: { fontSize: 13, fontWeight: 700 } },
                 "Visible dans l'appli",
-                l.default.createElement(
+                React.default.createElement(
                   "span",
                   { className: "de", style: { display: "block", fontWeight: 400 } },
                   n.active
@@ -6526,20 +6711,20 @@ function L7({ d: t, set: e }) {
                     : "Masqu\xE9 : les clients ne le voient pas.",
                 ),
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "rt" },
-                l.default.createElement(ze, { on: n.active, set: () => r({ active: !n.active }) }),
+                React.default.createElement(ze, { on: n.active, set: () => r({ active: !n.active }) }),
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "seg", style: { margin: "10px 0" } },
               [
                 ["choix", "Choix \xE0 cocher"],
                 ["libre", "Bo\xEEte \xE0 id\xE9es (texte libre)"],
               ].map(([a, u]) =>
-                l.default.createElement(
+                React.default.createElement(
                   "button",
                   {
                     key: a,
@@ -6551,8 +6736,8 @@ function L7({ d: t, set: e }) {
                 ),
               ),
             ),
-            l.default.createElement("label", { className: "lab" }, "Question"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Question"),
+            React.default.createElement("input", {
               className: "inp",
               value: n.question,
               maxLength: 140,
@@ -6564,15 +6749,15 @@ function L7({ d: t, set: e }) {
                   : "Ex : Plateau raclette ou fondue pour No\xEBl ?",
             }),
             n.mode === "choix" &&
-              l.default.createElement(
-                l.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
-                l.default.createElement("label", { className: "lab" }, "R\xE9ponses possibles"),
+                React.default.createElement("label", { className: "lab" }, "R\xE9ponses possibles"),
                 (n.options || []).map((a, u) =>
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { key: u, style: { display: "flex", gap: 8, marginBottom: 6 } },
-                    l.default.createElement("input", {
+                    React.default.createElement("input", {
                       className: "inp",
                       style: { margin: 0 },
                       value: a,
@@ -6584,19 +6769,19 @@ function L7({ d: t, set: e }) {
                     }),
                     n.options.length > 2 &&
                       !i.length &&
-                      l.default.createElement(
+                      React.default.createElement(
                         "button",
                         {
                           className: "ib",
                           onClick: () => r({ options: n.options.filter((d, h) => h !== u) }),
                         },
-                        he.bin(),
+                        I10.bin(),
                       ),
                   ),
                 ),
                 n.options.length < 6 &&
                   !i.length &&
-                  l.default.createElement(
+                  React.default.createElement(
                     "button",
                     {
                       className: "btn gh sm",
@@ -6607,16 +6792,16 @@ function L7({ d: t, set: e }) {
                   ),
               ),
             i.length > 0 &&
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "de", style: { marginTop: 8 } },
                 "La question ne se modifie plus une fois les premi\xE8res r\xE9ponses re\xE7ues.",
               ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "card" },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "nm", style: { marginBottom: 8 } },
               "\u{1F4CA} R\xE9sultats : ",
@@ -6628,19 +6813,19 @@ function L7({ d: t, set: e }) {
               ? (n.options || []).map((a, u) => {
                   let d = i.filter((p) => p.o === u).length,
                     h = i.length ? Math.round((d * 100) / i.length) : 0;
-                  return l.default.createElement(
+                  return React.default.createElement(
                     "div",
                     { key: u, style: { marginBottom: 8 } },
-                    l.default.createElement(
+                    React.default.createElement(
                       "div",
                       { style: { display: "flex", justifyContent: "space-between", fontSize: 13.5 } },
-                      l.default.createElement("span", null, a || "R\xE9ponse " + (u + 1)),
-                      l.default.createElement("b", null, d, " (", h, " %)"),
+                      React.default.createElement("span", null, a || "R\xE9ponse " + (u + 1)),
+                      React.default.createElement("b", null, d, " (", h, " %)"),
                     ),
-                    l.default.createElement(
+                    React.default.createElement(
                       "div",
                       { style: { height: 8, borderRadius: 4, background: "#EEF3E2", overflow: "hidden" } },
-                      l.default.createElement("div", {
+                      React.default.createElement("div", {
                         style: { width: h + "%", height: "100%", background: "var(--apple)" },
                       }),
                     ),
@@ -6648,7 +6833,7 @@ function L7({ d: t, set: e }) {
                 })
               : i.length
                 ? i.map((a) =>
-                    l.default.createElement(
+                    React.default.createElement(
                       "div",
                       {
                         key: a.id,
@@ -6656,61 +6841,65 @@ function L7({ d: t, set: e }) {
                       },
                       "\u{1F4A1} ",
                       a.r,
-                      l.default.createElement(
+                      React.default.createElement(
                         "div",
                         { className: "de" },
                         new Date(a.cree || 0).toLocaleDateString("fr-FR"),
                       ),
                     ),
                   )
-                : l.default.createElement("div", { className: "de" }, "Pas encore de r\xE9ponse."),
+                : React.default.createElement("div", { className: "de" }, "Pas encore de r\xE9ponse."),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "button",
             { className: "btn gh", onClick: s },
-            he.plus(),
+            I10.plus(),
             "Nouveau sondage",
           ),
         )
-      : l.default.createElement(
+      : React.default.createElement(
           "button",
           { className: "btn dark", onClick: s },
-          he.plus(),
+          I10.plus(),
           "Cr\xE9er un sondage",
         ),
     o.length > 0 &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "card", style: { marginTop: 12 } },
-        l.default.createElement("div", { className: "nm", style: { marginBottom: 6 } }, "Anciens sondages"),
-        l.default.createElement(
+        React.default.createElement(
+          "div",
+          { className: "nm", style: { marginBottom: 6 } },
+          "Anciens sondages",
+        ),
+        React.default.createElement(
           "div",
           { className: "de", style: { marginBottom: 8 } },
           (t.reponses || []).filter((a) => a.s !== n.id).length,
           " r\xE9ponse(s) d'anciens sondages sont encore gard\xE9es.",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn gh sm",
             style: { width: "auto" },
             onClick: async () =>
               (await De("Effacer les r\xE9ponses des anciens sondages ?", { oui: "Effacer" })) &&
-              e("reponses", (a) => a.filter((u) => u.s === n.id)),
+              set("reponses", (a) => a.filter((u) => u.s === n.id)),
           },
           "Effacer les anciennes r\xE9ponses",
         ),
       ),
   );
 }
-function O7({ d: t, set: e }) {
+function RoueAdmin({ d: t, set: set }) {
   let n = oc(t.roue),
-    r = (E) => e("roue", (A) => ({ ...oc(A), ...E })),
+    r = (E) => set("roue", (A) => ({ ...oc(A), ...E })),
     i = (E, A) => r({ tirages: n.tirages.map((S) => (S.id === E ? { ...S, ...A } : S)) }),
     s = VS(t.clients, n).sort((E, A) => A.tickets - E.tickets),
     o = s.reduce((E, A) => E + A.tickets, 0),
-    [a, u] = (0, l.useState)(null),
-    [d, h] = (0, l.useState)(null),
+    [a, u] = (0, React.useState)(null),
+    [d, h] = (0, React.useState)(null),
     p = BS(n),
     m = [
       { id: "a", prenom: "Jean", tickets: 3 },
@@ -6720,27 +6909,27 @@ function O7({ d: t, set: e }) {
       { id: "e", prenom: "Paul", tickets: 1 },
     ],
     w = s.length >= 2 ? s : m;
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("style", null, WS),
-    l.default.createElement("div", { className: "t1" }, "Roue de No\xEBl"),
-    l.default.createElement(
+    React.default.createElement("style", null, WS),
+    React.default.createElement("div", { className: "t1" }, "Roue de No\xEBl"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Chaque tampon en caisse offre un tour de roue au client (une chance sur deux). Chaque \xAB Gagn\xE9 \xBB = 1 ticket pour le prochain tirage au sort. Le tirage se lance depuis la caisse, sur l'iPad.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "tog" },
-        l.default.createElement(
+        React.default.createElement(
           "span",
           { style: { fontSize: 13, fontWeight: 700 } },
           "Roue active",
-          l.default.createElement(
+          React.default.createElement(
             "span",
             { className: "de", style: { display: "block", fontWeight: 400 } },
             p
@@ -6750,20 +6939,20 @@ function O7({ d: t, set: e }) {
                 : "D\xE9sactiv\xE9e : aucun tour de roue en caisse.",
           ),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "rt" },
-          l.default.createElement(ze, { on: n.active, set: () => r({ active: !n.active }) }),
+          React.default.createElement(ze, { on: n.active, set: () => r({ active: !n.active }) }),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: 10 } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: 1, minWidth: 0 } },
-          l.default.createElement("label", { className: "lab" }, "Du"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Du"),
+          React.default.createElement("input", {
             className: "inp",
             type: "date",
             style: { width: "100%", minWidth: 0, boxSizing: "border-box" },
@@ -6771,11 +6960,11 @@ function O7({ d: t, set: e }) {
             onChange: (E) => r({ debut: E.target.value }),
           }),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: 1, minWidth: 0 } },
-          l.default.createElement("label", { className: "lab" }, "Au (inclus)"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Au (inclus)"),
+          React.default.createElement("input", {
             className: "inp",
             type: "date",
             style: { width: "100%", minWidth: 0, boxSizing: "border-box" },
@@ -6785,70 +6974,70 @@ function O7({ d: t, set: e }) {
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "nm", style: { marginBottom: 6 } },
         "\u{1F3A1} Voir la d\xE9mo",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { marginBottom: 10 } },
         "Ce que voit le client dans son appli, et l'animation du tirage sur l'iPad. Rien n'est enregistr\xE9.",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: 8, flexWrap: "wrap" } },
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn sm", style: { width: "auto" }, onClick: () => u("g") },
           "Roue : tour gagn\xE9",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn gh sm", style: { width: "auto" }, onClick: () => u("p") },
           "Roue : tour perdu",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn gh sm",
             style: { width: "auto" },
             onClick: () => {
-              (h(w[Math.floor(Math.random() * w.length)]), u("tirage"));
+              h(w[Math.floor(Math.random() * w.length)]), u("tirage");
             },
           },
           "Animation du tirage",
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "nm", style: { marginBottom: 6 } },
         "\u{1F381} Tirages au sort",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { marginBottom: 8 } },
         "Les dates sont des rep\xE8res : le tirage se fait quand vous appuyez sur \xAB Lancer le tirage \xBB dans la caisse. Apr\xE8s chaque tirage, les tickets repartent \xE0 z\xE9ro.",
       ),
       n.tirages.map((E) =>
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { key: E.id, className: "tir-adm" },
-          l.default.createElement("input", {
+          React.default.createElement("input", {
             className: "inp",
             value: E.titre || "",
             maxLength: 60,
             disabled: E.fait,
             onChange: (A) => i(E.id, { titre: A.target.value }),
           }),
-          l.default.createElement("input", {
+          React.default.createElement("input", {
             className: "inp",
             type: "date",
             value: E.date || "",
@@ -6857,13 +7046,13 @@ function O7({ d: t, set: e }) {
             style: { maxWidth: 160 },
           }),
           E.fait
-            ? l.default.createElement(
+            ? React.default.createElement(
                 "span",
                 { className: "de" },
                 "\u2713 Gagnant : ",
-                l.default.createElement("b", null, E.gagnant),
+                React.default.createElement("b", null, E.gagnant),
               )
-            : l.default.createElement(
+            : React.default.createElement(
                 "button",
                 {
                   className: "btn gh sm",
@@ -6876,7 +7065,7 @@ function O7({ d: t, set: e }) {
               ),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "btn gh sm",
@@ -6887,10 +7076,10 @@ function O7({ d: t, set: e }) {
         "+ Ajouter un tirage",
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "nm", style: { marginBottom: 6 } },
         "\u{1F39F}\uFE0F Tickets en jeu pour le prochain tirage : ",
@@ -6898,7 +7087,7 @@ function O7({ d: t, set: e }) {
       ),
       s.length
         ? s.map((E) =>
-            l.default.createElement(
+            React.default.createElement(
               "div",
               {
                 key: E.id,
@@ -6910,24 +7099,24 @@ function O7({ d: t, set: e }) {
                   fontSize: 14,
                 },
               },
-              l.default.createElement("span", null, E.nom || E.prenom),
-              l.default.createElement("b", null, E.tickets, " ticket", E.tickets > 1 ? "s" : ""),
+              React.default.createElement("span", null, E.nom || E.prenom),
+              React.default.createElement("b", null, E.tickets, " ticket", E.tickets > 1 ? "s" : ""),
             ),
           )
-        : l.default.createElement("div", { className: "de" }, "Aucun ticket pour l'instant."),
+        : React.default.createElement("div", { className: "de" }, "Aucun ticket pour l'instant."),
       n.annonce?.prenom &&
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { marginTop: 10 } },
           "Dernier gagnant annonc\xE9 dans l'appli : ",
-          l.default.createElement("b", null, n.annonce.prenom),
+          React.default.createElement("b", null, n.annonce.prenom),
           " (",
           new Date(n.annonce.date).toLocaleDateString("fr-FR"),
           ")",
         ),
     ),
     a === "g" || a === "p"
-      ? l.default.createElement(GS, {
+      ? React.default.createElement(RoueNoel, {
           key: a,
           demo: !0,
           premiere: !1,
@@ -6936,15 +7125,15 @@ function O7({ d: t, set: e }) {
           onFini: () => u(null),
         })
       : a === "tirage"
-        ? l.default.createElement(
+        ? React.default.createElement(
             "div",
             { className: "roue-fond", onClick: () => {} },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "roue-in", style: { maxWidth: 560 } },
-              l.default.createElement("h2", null, "Tirage au sort"),
-              d && l.default.createElement(HS, { participants: w, gagnant: d }),
-              l.default.createElement(
+              React.default.createElement("h2", null, "Tirage au sort"),
+              d && React.default.createElement(TirageAuSort, { participants: w, gagnant: d }),
+              React.default.createElement(
                 "button",
                 { className: "roue-b2", style: { marginTop: 10 }, onClick: () => u(null) },
                 "Fermer la d\xE9mo",
@@ -6954,19 +7143,19 @@ function O7({ d: t, set: e }) {
         : null,
   );
 }
-function B7({ d: t, set: e }) {
-  let [n, r] = (0, l.useState)("clients"),
-    [i, s] = (0, l.useState)(""),
-    [o, a] = (0, l.useState)(!1),
-    [u, d] = (0, l.useState)(""),
-    [h, p] = (0, l.useState)(null),
-    [m, w] = (0, l.useState)(null),
-    [E, A] = (0, l.useState)(null),
-    [S, _] = (0, l.useState)("achat"),
-    [I, T] = (0, l.useState)(""),
-    [M, V] = (0, l.useState)(""),
+function Fidelite({ d: t, set: set }) {
+  let [n, r] = (0, React.useState)("clients"),
+    [i, s] = (0, React.useState)(""),
+    [o, a] = (0, React.useState)(!1),
+    [u, d] = (0, React.useState)(""),
+    [h, p] = (0, React.useState)(null),
+    [m, w] = (0, React.useState)(null),
+    [E, A] = (0, React.useState)(null),
+    [S, _] = (0, React.useState)("achat"),
+    [I, T] = (0, React.useState)(""),
+    [M, V] = (0, React.useState)(""),
     O = t.fidelite,
-    [b, v] = (0, l.useState)(!1),
+    [b, v] = (0, React.useState)(!1),
     x = (L) => t.clients.find((z) => z.id === L) || E,
     C = async () => {
       let L = parseFloat(I);
@@ -6974,7 +7163,7 @@ function B7({ d: t, set: e }) {
       let z = Math.floor(L / (O.parEuro || 10));
       v(!0);
       try {
-        (await hw(x(E.id), z, { type: "achat", montant: L }), A(null), T(""));
+        await ajouterPoints(x(E.id), z, { type: "achat", montant: L }), A(null), T("");
       } catch {
         ft("Points non enregistr\xE9s. V\xE9rifiez la connexion et r\xE9essayez.");
       }
@@ -6999,7 +7188,7 @@ function B7({ d: t, set: e }) {
       ) {
         v(!0);
         try {
-          await hw(L, -F.points, { type: "remise", remise: F.euros });
+          await ajouterPoints(L, -F.points, { type: "remise", remise: F.euros });
         } catch {
           ft("Remise non enregistr\xE9e. V\xE9rifiez la connexion et r\xE9essayez.");
         }
@@ -7011,13 +7200,13 @@ function B7({ d: t, set: e }) {
       if (!(!L || b)) {
         v(!0);
         try {
-          (await hw(
+          await ajouterPoints(
             x(E.id),
             L,
             L > 0 ? { type: "achat", source: "admin" } : { type: "manuel", motif: "Correction" },
           ),
             A(null),
-            V(""));
+            V("");
         } catch {
           ft("Ajustement non enregistr\xE9. V\xE9rifiez la connexion et r\xE9essayez.");
         }
@@ -7048,8 +7237,8 @@ function B7({ d: t, set: e }) {
       let ne = new Date().toLocaleDateString("sv-SE"),
         { informe: ge, ...ve } = h,
         Ae = h.code;
-      for (; !Ae || (!h.id && t.clients.some((Je) => Je.code === Ae));) Ae = U9();
-      (e("clients", (Je) =>
+      for (; !Ae || (!h.id && t.clients.some((Je) => Je.code === Ae)); ) Ae = U9();
+      set("clients", (Je) =>
         h.id
           ? Je.map((bt) => (bt.id === h.id ? ve : bt))
           : [
@@ -7065,18 +7254,18 @@ function B7({ d: t, set: e }) {
               },
             ],
       ),
-        p(null));
+        p(null);
     },
-    Y = eC(O) && cf(O),
+    Y = eC(O) && MENTION_EXCLUSIONS(O),
     U = Object.values(t.clients.reduce((L, z) => ((L[z.code] = L[z.code] || []).push(z), L), {})).filter(
       (L) => L.length > 1,
     ),
-    [G, Z] = (0, l.useState)(null),
+    [G, Z] = (0, React.useState)(null),
     fe = async (L, z, ne) => {
       if (!b) {
         v(!0);
         try {
-          await $9(L, z, ne, Y);
+          await ajouterRecompense(L, z, ne, Y);
         } catch {
           ft("Non enregistr\xE9. V\xE9rifiez la connexion et r\xE9essayez.");
         }
@@ -7090,11 +7279,11 @@ function B7({ d: t, set: e }) {
         L.code.toLowerCase().includes(i.toLowerCase()) ||
         (L.tel || "").includes(i),
     );
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "Fid\xE9lit\xE9"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "Fid\xE9lit\xE9"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       Y
@@ -7102,60 +7291,60 @@ function B7({ d: t, set: e }) {
         : "Scannez ou saisissez le code du client, puis ajoutez ses points. Les anciennes cartes papier se reprennent en ajout manuel.",
     ),
     U.length > 0 &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "cmd-alerte", style: { marginBottom: 12 } },
         "\u26A0\uFE0F Code en double : ",
         U.map((L) => L[0].code + " (" + L.map((z) => z.nom).join(", ") + ")").join(" \xB7 "),
         ". Supprimez l'une des cartes et recr\xE9ez-la (un nouveau code sera donn\xE9).",
       ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "seg" },
-      l.default.createElement(
+      React.default.createElement(
         "button",
         { className: n === "clients" ? "on" : "", onClick: () => r("clients") },
         "Clients (",
         t.clients.length,
         ")",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
         { className: n === "reglages" ? "on" : "", onClick: () => r("reglages") },
         "R\xE9glages",
       ),
     ),
     n === "clients" &&
-      l.default.createElement(
-        l.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 8, marginBottom: 12 } },
           Y
-            ? l.default.createElement(
+            ? React.default.createElement(
                 "a",
                 { className: "btn dark", href: "caisse.html", style: { textDecoration: "none" } },
-                he.qr(),
+                I10.qr(),
                 "Ouvrir la caisse",
               )
-            : l.default.createElement(
+            : React.default.createElement(
                 "button",
                 { className: "btn dark", onClick: () => a(!0) },
-                he.qr(),
+                I10.qr(),
                 "Encaisser",
               ),
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               className: "btn gh sm",
               style: { flex: "0 0 auto", padding: "13px 16px" },
               onClick: () => p({ nom: "", tel: "", points: 0 }),
             },
-            he.plus(16, "#5C6A62"),
+            I10.plus(16, "#5C6A62"),
           ),
         ),
-        l.default.createElement("input", {
+        React.default.createElement("input", {
           className: "inp",
           placeholder: "Rechercher un client\u2026",
           value: i,
@@ -7163,27 +7352,27 @@ function B7({ d: t, set: e }) {
           style: { marginBottom: 12 },
         }),
         !t.clients.length &&
-          l.default.createElement(Vn, {
+          React.default.createElement(Vn, {
             t: "Aucun client inscrit",
             s: "Vos clients cr\xE9ent eux-m\xEAmes leur carte depuis l'application. Vous pouvez aussi en ajouter un ici.",
           }),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "grille" },
           ce.map((L) => {
             let z = (O.paliers || []).find((ge) => ge.at > (L.points || 0)),
               ne = _2(O, L.points || 0);
-            return l.default.createElement(
+            return React.default.createElement(
               "div",
               { className: "card", key: L.id },
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "row" },
-                l.default.createElement(
+                React.default.createElement(
                   "div",
                   { style: { minWidth: 0 } },
-                  l.default.createElement("div", { className: "nm" }, L.nom),
-                  l.default.createElement(
+                  React.default.createElement("div", { className: "nm" }, L.nom),
+                  React.default.createElement(
                     "div",
                     { className: "de" },
                     L.code,
@@ -7202,7 +7391,7 @@ function B7({ d: t, set: e }) {
                           " en attente"
                       : "",
                   ),
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { className: "de", style: { color: "var(--gold)", fontWeight: 700 } },
                     Y
@@ -7235,48 +7424,48 @@ function B7({ d: t, set: e }) {
                           : "Tous les paliers atteints",
                   ),
                 ),
-                l.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "rt" },
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { textAlign: "center" } },
-                    l.default.createElement(
+                    React.default.createElement(
                       "div",
                       { style: { fontSize: 22, fontWeight: 800, color: "var(--gold)", lineHeight: 1 } },
                       Y ? (L.tampons || 0) + "/" + Y.nb : L.points || 0,
                     ),
-                    l.default.createElement(
+                    React.default.createElement(
                       "div",
                       { style: { fontSize: 9, color: "var(--ink3)" } },
                       Y ? "tampons" : "points",
                     ),
                   ),
                   Y
-                    ? l.default.createElement(
+                    ? React.default.createElement(
                         "button",
                         { className: "btn sm", onClick: () => Z(L) },
                         "Tampons",
                       )
-                    : l.default.createElement(
+                    : React.default.createElement(
                         "button",
                         {
                           className: "btn sm",
                           onClick: () => {
-                            (A(L), _("achat"), T(""), V(""));
+                            A(L), _("achat"), T(""), V("");
                           },
                         },
                         "Points",
                       ),
-                  l.default.createElement(
+                  React.default.createElement(
                     "button",
                     {
                       className: "ib",
                       onClick: async () =>
                         (await De("Supprimer " + L.nom + " ?")) &&
-                        e("clients", (ge) => ge.filter((ve) => ve.id !== L.id)),
+                        set("clients", (ge) => ge.filter((ve) => ve.id !== L.id)),
                     },
-                    he.bin(),
+                    I10.bin(),
                   ),
                 ),
               ),
@@ -7285,28 +7474,28 @@ function B7({ d: t, set: e }) {
         ),
       ),
     n === "reglages" &&
-      l.default.createElement(
-        l.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        l.default.createElement(q7, { d: t, set: e }),
+        React.default.createElement(Conservation, { d: t, set: set }),
         Y &&
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "card" },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { fontWeight: 800, fontSize: 14, marginBottom: 4 } },
               "Carte \xE0 tampons",
             ),
-            l.default.createElement("div", { className: "de", style: { marginBottom: 6 } }, A2(O)),
-            l.default.createElement(
+            React.default.createElement("div", { className: "de", style: { marginBottom: 6 } }, A2(O)),
+            React.default.createElement(
               "div",
               { style: { display: "flex", gap: 10 } },
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { style: { flex: 1 } },
-                l.default.createElement("label", { className: "lab" }, "Tampons sur la carte"),
-                l.default.createElement("input", {
+                React.default.createElement("label", { className: "lab" }, "Tampons sur la carte"),
+                React.default.createElement("input", {
                   className: "inp",
                   type: "number",
                   inputMode: "numeric",
@@ -7314,44 +7503,44 @@ function B7({ d: t, set: e }) {
                   max: "30",
                   value: O.tampons?.nb ?? it.nb,
                   onChange: (L) =>
-                    e("fidelite", (z) => ({
+                    set("fidelite", (z) => ({
                       ...z,
                       tampons: { ...it, ...(z.tampons || {}), nb: L.target.value },
                     })),
                 }),
               ),
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { style: { flex: 1 } },
-                l.default.createElement("label", { className: "lab" }, "1er cadeau au\u2026 (0 = aucun)"),
-                l.default.createElement("input", {
+                React.default.createElement("label", { className: "lab" }, "1er cadeau au\u2026 (0 = aucun)"),
+                React.default.createElement("input", {
                   className: "inp",
                   type: "number",
                   inputMode: "numeric",
                   min: "0",
                   value: O.tampons?.palier ?? it.palier,
                   onChange: (L) =>
-                    e("fidelite", (z) => ({
+                    set("fidelite", (z) => ({
                       ...z,
                       tampons: { ...it, ...(z.tampons || {}), palier: L.target.value },
                     })),
                 }),
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { display: "flex", gap: 10 } },
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { style: { flex: 1 } },
-                l.default.createElement("label", { className: "lab" }, "Achat minimum (\u20AC)"),
-                l.default.createElement("input", {
+                React.default.createElement("label", { className: "lab" }, "Achat minimum (\u20AC)"),
+                React.default.createElement("input", {
                   className: "inp",
                   type: "number",
                   inputMode: "decimal",
                   value: O.tampons?.seuil ?? it.seuil,
                   onChange: (L) =>
-                    e("fidelite", (z) => ({
+                    set("fidelite", (z) => ({
                       ...z,
                       tampons: { ...it, ...(z.tampons || {}), seuil: L.target.value },
                     })),
@@ -7359,73 +7548,73 @@ function B7({ d: t, set: e }) {
               ),
             ),
             Y.palier > 0 &&
-              l.default.createElement(
-                l.default.Fragment,
+              React.default.createElement(
+                React.default.Fragment,
                 null,
-                l.default.createElement(
+                React.default.createElement(
                   "label",
                   { className: "lab" },
                   "1er cadeau (au ",
                   Y.palier,
                   "e tampon)",
                 ),
-                l.default.createElement("input", {
+                React.default.createElement("input", {
                   className: "inp",
                   value: O.tampons?.recompense1 ?? it.recompense1,
                   maxLength: 60,
                   onChange: (L) =>
-                    e("fidelite", (z) => ({
+                    set("fidelite", (z) => ({
                       ...z,
                       tampons: { ...it, ...(z.tampons || {}), recompense1: L.target.value },
                     })),
                 }),
               ),
-            l.default.createElement(
+            React.default.createElement(
               "label",
               { className: "lab" },
               Y.palier
                 ? "Gros cadeau (carte pleine, " + Y.nb + "e tampon)"
                 : "R\xE9compense quand la carte est pleine",
             ),
-            l.default.createElement("input", {
+            React.default.createElement("input", {
               className: "inp",
               value: O.tampons?.recompense ?? it.recompense,
               maxLength: 60,
               onChange: (L) =>
-                e("fidelite", (z) => ({
+                set("fidelite", (z) => ({
                   ...z,
                   tampons: { ...it, ...(z.tampons || {}), recompense: L.target.value },
                 })),
             }),
-            l.default.createElement("label", { className: "lab" }, "Produits qui ne comptent pas"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Produits qui ne comptent pas"),
+            React.default.createElement("input", {
               className: "inp",
               value: O.tampons?.exclus ?? it.exclus,
               maxLength: 120,
               onChange: (L) =>
-                e("fidelite", (z) => ({
+                set("fidelite", (z) => ({
                   ...z,
                   tampons: { ...it, ...(z.tampons || {}), exclus: L.target.value },
                 })),
             }),
-            l.default.createElement(
+            React.default.createElement(
               "label",
               { className: "lab" },
               "Pas deux tampons en moins de\u2026 (minutes)",
             ),
-            l.default.createElement("input", {
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "numeric",
               value: O.tampons?.delai ?? it.delai,
               onChange: (L) =>
-                e("fidelite", (z) => ({
+                set("fidelite", (z) => ({
                   ...z,
                   tampons: { ...it, ...(z.tampons || {}), delai: L.target.value },
                 })),
               style: { maxWidth: 160 },
             }),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "de", style: { marginTop: 8 } },
               Y.palier
@@ -7438,21 +7627,21 @@ function B7({ d: t, set: e }) {
               "Affich\xE9 aux clients sur leur carte : \xAB ",
               A2(O),
               " \xB7 Hors ",
-              cf(O).exclus,
+              MENTION_EXCLUSIONS(O).exclus,
               " \xBB.",
             ),
           ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "card" },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "tog" },
-            l.default.createElement(
+            React.default.createElement(
               "span",
               { style: { fontSize: 13, fontWeight: 700 } },
               "Programme actif",
-              l.default.createElement(
+              React.default.createElement(
                 "span",
                 { className: "de", style: { display: "block", fontWeight: 400 } },
                 O.active
@@ -7460,23 +7649,23 @@ function B7({ d: t, set: e }) {
                   : "D\xE9sactiv\xE9 : les clients voient \xAB La carte de fid\xE9lit\xE9 arrive bient\xF4t \xBB.",
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: O.active,
-                set: () => e("fidelite", (L) => ({ ...L, active: !L.active })),
+                set: () => set("fidelite", (L) => ({ ...L, active: !L.active })),
               }),
             ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "tog" },
-            l.default.createElement(
+            React.default.createElement(
               "span",
               { style: { fontSize: 13, fontWeight: 700 } },
               "\u{1F382} Tampon d'anniversaire",
-              l.default.createElement(
+              React.default.createElement(
                 "span",
                 { className: "de", style: { display: "block", fontWeight: 400 } },
                 O.anniv !== !1
@@ -7484,23 +7673,23 @@ function B7({ d: t, set: e }) {
                   : "D\xE9sactiv\xE9.",
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: O.anniv !== !1,
-                set: () => e("fidelite", (L) => ({ ...L, anniv: L.anniv === !1 })),
+                set: () => set("fidelite", (L) => ({ ...L, anniv: L.anniv === !1 })),
               }),
             ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "tog" },
-            l.default.createElement(
+            React.default.createElement(
               "span",
               { style: { fontSize: 13, fontWeight: 700 } },
               "\u{1F91D} Parrainage",
-              l.default.createElement(
+              React.default.createElement(
                 "span",
                 { className: "de", style: { display: "block", fontWeight: 400 } },
                 O.parrainage !== !1
@@ -7508,89 +7697,89 @@ function B7({ d: t, set: e }) {
                   : "D\xE9sactiv\xE9 : le bloc \xAB Parrainez un voisin \xBB est masqu\xE9.",
               ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: O.parrainage !== !1,
-                set: () => e("fidelite", (L) => ({ ...L, parrainage: L.parrainage === !1 })),
+                set: () => set("fidelite", (L) => ({ ...L, parrainage: L.parrainage === !1 })),
               }),
             ),
           ),
-          l.default.createElement("label", { className: "lab" }, "Titre affich\xE9"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Titre affich\xE9"),
+          React.default.createElement("input", {
             className: "inp",
             value: O.titre,
-            onChange: (L) => e("fidelite", (z) => ({ ...z, titre: L.target.value })),
+            onChange: (L) => set("fidelite", (z) => ({ ...z, titre: L.target.value })),
           }),
-          l.default.createElement("label", { className: "lab" }, "Phrase d'explication"),
-          l.default.createElement("input", {
+          React.default.createElement("label", { className: "lab" }, "Phrase d'explication"),
+          React.default.createElement("input", {
             className: "inp",
             value: O.sousTitre,
-            onChange: (L) => e("fidelite", (z) => ({ ...z, sousTitre: L.target.value })),
+            onChange: (L) => set("fidelite", (z) => ({ ...z, sousTitre: L.target.value })),
           }),
           !Y &&
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { display: "flex", gap: 10 } },
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { style: { flex: 1 } },
-                l.default.createElement("label", { className: "lab" }, "1 point tous les\u2026 (\u20AC)"),
-                l.default.createElement("input", {
+                React.default.createElement("label", { className: "lab" }, "1 point tous les\u2026 (\u20AC)"),
+                React.default.createElement("input", {
                   className: "inp",
                   type: "number",
                   inputMode: "numeric",
                   value: O.parEuro,
-                  onChange: (L) => e("fidelite", (z) => ({ ...z, parEuro: +L.target.value || 1 })),
+                  onChange: (L) => set("fidelite", (z) => ({ ...z, parEuro: +L.target.value || 1 })),
                 }),
               ),
               !F &&
-                l.default.createElement(
+                React.default.createElement(
                   "div",
                   { style: { flex: 1 } },
-                  l.default.createElement("label", { className: "lab" }, "Points sur la carte"),
-                  l.default.createElement("input", {
+                  React.default.createElement("label", { className: "lab" }, "Points sur la carte"),
+                  React.default.createElement("input", {
                     className: "inp",
                     type: "number",
                     inputMode: "numeric",
                     value: O.total,
-                    onChange: (L) => e("fidelite", (z) => ({ ...z, total: +L.target.value || 10 })),
+                    onChange: (L) => set("fidelite", (z) => ({ ...z, total: +L.target.value || 10 })),
                   }),
                 ),
             ),
         ),
         !Y &&
-          l.default.createElement(
-            l.default.Fragment,
+          React.default.createElement(
+            React.default.Fragment,
             null,
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "card" },
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "tog", style: { borderTop: "none", paddingTop: 0 } },
-                l.default.createElement(
+                React.default.createElement(
                   "div",
                   null,
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { fontSize: 13, fontWeight: 800 } },
                     "Remise en euros",
                   ),
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { className: "de" },
                     "Les points se transforment en bon de r\xE9duction",
                   ),
                 ),
-                l.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "rt" },
-                  l.default.createElement(ze, {
+                  React.default.createElement(ze, {
                     on: !!F,
                     set: () =>
-                      e("fidelite", (L) => ({
+                      set("fidelite", (L) => ({
                         ...L,
                         remise: { ...Na, ...(L.remise || {}), active: !(L.remise && L.remise.active !== !1) },
                       })),
@@ -7598,47 +7787,47 @@ function B7({ d: t, set: e }) {
                 ),
               ),
               F &&
-                l.default.createElement(
+                React.default.createElement(
                   "div",
                   { style: { display: "flex", gap: 10, alignItems: "flex-end" } },
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { flex: 1 } },
-                    l.default.createElement("label", { className: "lab" }, "Nombre de points"),
-                    l.default.createElement("input", {
+                    React.default.createElement("label", { className: "lab" }, "Nombre de points"),
+                    React.default.createElement("input", {
                       className: "inp",
                       type: "number",
                       inputMode: "numeric",
                       value: O.remise.points,
                       onChange: (L) =>
-                        e("fidelite", (z) => ({
+                        set("fidelite", (z) => ({
                           ...z,
                           remise: { ...z.remise, points: +L.target.value || 1 },
                         })),
                     }),
                   ),
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { paddingBottom: 14, fontWeight: 800, color: "var(--ink3)" } },
                     "=",
                   ),
-                  l.default.createElement(
+                  React.default.createElement(
                     "div",
                     { style: { flex: 1 } },
-                    l.default.createElement("label", { className: "lab" }, "Remise (\u20AC)"),
-                    l.default.createElement("input", {
+                    React.default.createElement("label", { className: "lab" }, "Remise (\u20AC)"),
+                    React.default.createElement("input", {
                       className: "inp",
                       type: "number",
                       inputMode: "decimal",
                       step: "0.5",
                       value: O.remise.euros,
                       onChange: (L) =>
-                        e("fidelite", (z) => ({ ...z, remise: { ...z.remise, euros: L.target.value } })),
+                        set("fidelite", (z) => ({ ...z, remise: { ...z.remise, euros: L.target.value } })),
                     }),
                   ),
                 ),
               F &&
-                l.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "apercu-prix" },
                   "Exemple : 1 point par ",
@@ -7650,16 +7839,20 @@ function B7({ d: t, set: e }) {
                   " de remise.",
                 ),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "hd", style: { marginTop: 6 } },
-              l.default.createElement("div", { style: { fontWeight: 800, fontSize: 14 } }, "R\xE9compenses"),
-              l.default.createElement(
+              React.default.createElement(
+                "div",
+                { style: { fontWeight: 800, fontSize: 14 } },
+                "R\xE9compenses",
+              ),
+              React.default.createElement(
                 "button",
                 {
                   className: "btn gh sm",
                   onClick: () =>
-                    e("fidelite", (L) => ({
+                    set("fidelite", (L) => ({
                       ...L,
                       paliers: [...(L.paliers || []), { at: (L.paliers?.length + 1) * 5 || 5, label: "" }],
                     })),
@@ -7668,52 +7861,55 @@ function B7({ d: t, set: e }) {
               ),
             ),
             !(O.paliers || []).length &&
-              l.default.createElement(Vn, {
+              React.default.createElement(Vn, {
                 t: "Aucune r\xE9compense",
                 s: "Exemple : 5 points = une baguette offerte.",
               }),
             (O.paliers || []).map((L, z) =>
-              l.default.createElement(
+              React.default.createElement(
                 "div",
                 { className: "card", key: z },
-                l.default.createElement(
+                React.default.createElement(
                   "div",
                   { className: "row" },
-                  l.default.createElement("input", {
+                  React.default.createElement("input", {
                     className: "inp",
                     type: "number",
                     inputMode: "numeric",
                     style: { width: 66, textAlign: "center", fontWeight: 800, color: "var(--gold)" },
                     value: L.at,
                     onChange: (ne) =>
-                      e("fidelite", (ge) => ({
+                      set("fidelite", (ge) => ({
                         ...ge,
                         paliers: ge.paliers.map((ve, Ae) =>
                           Ae === z ? { ...ve, at: +ne.target.value || 0 } : ve,
                         ),
                       })),
                   }),
-                  l.default.createElement("input", {
+                  React.default.createElement("input", {
                     className: "inp",
                     style: { flex: 1 },
                     placeholder: "R\xE9compense",
                     value: L.label,
                     onChange: (ne) =>
-                      e("fidelite", (ge) => ({
+                      set("fidelite", (ge) => ({
                         ...ge,
                         paliers: ge.paliers.map((ve, Ae) =>
                           Ae === z ? { ...ve, label: ne.target.value } : ve,
                         ),
                       })),
                   }),
-                  l.default.createElement(
+                  React.default.createElement(
                     "button",
                     {
                       className: "ib",
                       onClick: () =>
-                        e("fidelite", (ne) => ({ ...ne, paliers: ne.paliers.filter((ge, ve) => ve !== z) })),
+                        set("fidelite", (ne) => ({
+                          ...ne,
+                          paliers: ne.paliers.filter((ge, ve) => ve !== z),
+                        })),
                     },
-                    he.bin(),
+                    I10.bin(),
                   ),
                 ),
               ),
@@ -7721,10 +7917,10 @@ function B7({ d: t, set: e }) {
           ),
       ),
     o &&
-      l.default.createElement(
+      React.default.createElement(
         ut,
         { titre: "Encaisser un client", onClose: () => a(!1) },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           {
             style: {
@@ -7736,15 +7932,15 @@ function B7({ d: t, set: e }) {
               marginBottom: 14,
             },
           },
-          he.qr(40, "#6E9B3A"),
-          l.default.createElement(
+          I10.qr(40, "#6E9B3A"),
+          React.default.createElement(
             "div",
             { style: { fontSize: 12, color: "var(--ink3)", marginTop: 8 } },
             "Demandez au client d'afficher son QR code, puis saisissez son code.",
           ),
         ),
-        l.default.createElement("label", { className: "lab" }, "Code client"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Code client"),
+        React.default.createElement("input", {
           className: "inp",
           autoFocus: !0,
           placeholder: "RAD-0000",
@@ -7758,7 +7954,7 @@ function B7({ d: t, set: e }) {
             textTransform: "uppercase",
           },
         }),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 14 }, onClick: $ },
           "Rechercher",
@@ -7769,24 +7965,24 @@ function B7({ d: t, set: e }) {
       (() => {
         let L = t.clients.find((ne) => ne.id === G.id) || G,
           z = L.tampons || 0;
-        return l.default.createElement(
+        return React.default.createElement(
           ut,
           { titre: L.nom, onClose: () => Z(null) },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { textAlign: "center", marginBottom: 14 } },
-            l.default.createElement("div", { style: { fontSize: 12, color: "var(--ink3)" } }, L.code),
-            l.default.createElement(
+            React.default.createElement("div", { style: { fontSize: 12, color: "var(--ink3)" } }, L.code),
+            React.default.createElement(
               "div",
               { style: { fontSize: 40, fontWeight: 800, color: "var(--gold)", lineHeight: 1.1 } },
               z,
               " / ",
               Y.nb,
             ),
-            l.default.createElement("div", { style: { fontSize: 11, color: "var(--ink3)" } }, "tampons"),
+            React.default.createElement("div", { style: { fontSize: 11, color: "var(--ink3)" } }, "tampons"),
           ),
           z >= Y.nb
-            ? l.default.createElement(
+            ? React.default.createElement(
                 "button",
                 { className: "btn terra", disabled: b, onClick: () => fe(L, -z, "recompense") },
                 "\u{1F381}\u{1F381} ",
@@ -7794,7 +7990,7 @@ function B7({ d: t, set: e }) {
                 " donn\xE9 : remettre \xE0 z\xE9ro",
               )
             : Y.palier && z >= Y.palier
-              ? l.default.createElement(
+              ? React.default.createElement(
                   "button",
                   { className: "btn terra", disabled: b, onClick: () => fe(L, -z, "recompense1") },
                   "\u{1F381} ",
@@ -7802,27 +7998,27 @@ function B7({ d: t, set: e }) {
                   " donn\xE9 : remettre \xE0 z\xE9ro",
                 )
               : null,
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { display: "flex", gap: 8, marginTop: 10 } },
-            l.default.createElement(
+            React.default.createElement(
               "button",
               { className: "btn gh", disabled: b || z <= 0, onClick: () => fe(L, -1, "correction") },
               "\u2212 1 tampon",
             ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "de", style: { marginTop: 10 } },
             "Les tampons s'ajoutent uniquement avec la Caisse (scan ou recherche du nom). Ici, seulement pour corriger une erreur.",
           ),
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               className: "btn gh",
               style: { marginTop: 12 },
               onClick: () => {
-                (Z(null), w(L));
+                Z(null), w(L);
               },
             },
             "\u{1F4F1} R\xE9installer la carte sur un nouveau t\xE9l\xE9phone",
@@ -7830,25 +8026,25 @@ function B7({ d: t, set: e }) {
         );
       })(),
     E &&
-      l.default.createElement(
+      React.default.createElement(
         ut,
         { titre: E.nom, onClose: () => A(null) },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { textAlign: "center", marginBottom: 14 } },
-          l.default.createElement("div", { style: { fontSize: 12, color: "var(--ink3)" } }, E.code),
-          l.default.createElement(
+          React.default.createElement("div", { style: { fontSize: 12, color: "var(--ink3)" } }, E.code),
+          React.default.createElement(
             "div",
             { style: { fontSize: 40, fontWeight: 800, color: "var(--gold)", lineHeight: 1.1 } },
             t.clients.find((L) => L.id === E.id)?.points || 0,
           ),
-          l.default.createElement("div", { style: { fontSize: 11, color: "var(--ink3)" } }, "points"),
+          React.default.createElement("div", { style: { fontSize: 11, color: "var(--ink3)" } }, "points"),
         ),
         F &&
           (() => {
             let L = _2(O, t.clients.find((z) => z.id === E.id)?.points || 0);
             return L.nb > 0
-              ? l.default.createElement(
+              ? React.default.createElement(
                   "button",
                   { className: "btn terra", style: { marginBottom: 12 }, disabled: b, onClick: P },
                   "\u{1F381} Appliquer ",
@@ -7858,7 +8054,7 @@ function B7({ d: t, set: e }) {
                   " points)",
                   L.nb > 1 ? " \xB7 " + L.nb + " disponibles" : "",
                 )
-              : l.default.createElement(
+              : React.default.createElement(
                   "div",
                   { className: "de", style: { textAlign: "center", marginBottom: 12 } },
                   "Encore ",
@@ -7868,16 +8064,16 @@ function B7({ d: t, set: e }) {
                   " de remise",
                 );
           })(),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "de", style: { textAlign: "center", marginBottom: 2 } },
           "Saisissez les points \xE0 cr\xE9diter (un nombre n\xE9gatif en retire, par exemple pour corriger une erreur ou reprendre une carte papier).",
         ),
-        l.default.createElement("label", { className: "lab" }, "Points"),
-        l.default.createElement(
+        React.default.createElement("label", { className: "lab" }, "Points"),
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 8, alignItems: "center" } },
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               className: "btn gh sm",
@@ -7886,7 +8082,7 @@ function B7({ d: t, set: e }) {
             },
             "\u2212",
           ),
-          l.default.createElement("input", {
+          React.default.createElement("input", {
             className: "inp",
             type: "number",
             inputMode: "numeric",
@@ -7894,40 +8090,40 @@ function B7({ d: t, set: e }) {
             onChange: (L) => V(L.target.value),
             style: { textAlign: "center", fontSize: 22, fontWeight: 800, color: "var(--apple)" },
           }),
-          l.default.createElement(
+          React.default.createElement(
             "button",
             { className: "btn sm", style: { width: 46 }, onClick: () => V(String((parseInt(M) || 0) + 1)) },
             "+",
           ),
         ),
         !!parseInt(M) &&
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "card", style: { textAlign: "center", marginTop: 12 } },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { fontSize: 11, color: "var(--ink3)" } },
               "Nouveau total",
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { style: { fontSize: 30, fontWeight: 800, color: "var(--apple)" } },
               Math.max(0, (t.clients.find((L) => L.id === E.id)?.points || 0) + parseInt(M)),
             ),
           ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn gh",
             style: { marginTop: 12 },
             onClick: () => {
               let L = t.clients.find((z) => z.id === E.id) || E;
-              (A(null), w(L));
+              A(null), w(L);
             },
           },
           "\u{1F4F1} R\xE9installer la carte sur un nouveau t\xE9l\xE9phone",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 14 }, disabled: !parseInt(M) || b, onClick: k },
           parseInt(M) < 0
@@ -7936,43 +8132,43 @@ function B7({ d: t, set: e }) {
         ),
       ),
     h &&
-      l.default.createElement(
+      React.default.createElement(
         ut,
         { titre: h.id ? "Modifier le client" : "Nouveau client", onClose: () => p(null) },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10 } },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Pr\xE9nom"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Pr\xE9nom"),
+            React.default.createElement("input", {
               className: "inp",
               autoFocus: !0,
               value: h.prenom ?? (h.nom || "").split(" ")[0],
               onChange: (L) => p({ ...h, prenom: L.target.value }),
             }),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("label", { className: "lab" }, "Nom"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Nom"),
+            React.default.createElement("input", {
               className: "inp",
               value: h.nomFamille ?? (h.nom || "").split(" ").slice(1).join(" "),
               onChange: (L) => p({ ...h, nomFamille: L.target.value }),
             }),
           ),
         ),
-        l.default.createElement("label", { className: "lab" }, "T\xE9l\xE9phone"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "T\xE9l\xE9phone"),
+        React.default.createElement("input", {
           className: "inp",
           type: "tel",
           value: h.tel,
           onChange: (L) => p({ ...h, tel: L.target.value }),
         }),
-        l.default.createElement("label", { className: "lab" }, "E-mail"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "E-mail"),
+        React.default.createElement("input", {
           className: "inp",
           type: "email",
           autoCapitalize: "off",
@@ -7980,11 +8176,11 @@ function B7({ d: t, set: e }) {
           onChange: (L) => p({ ...h, email: L.target.value }),
         }),
         !Y &&
-          l.default.createElement(
-            l.default.Fragment,
+          React.default.createElement(
+            React.default.Fragment,
             null,
-            l.default.createElement("label", { className: "lab" }, "Points de d\xE9part"),
-            l.default.createElement("input", {
+            React.default.createElement("label", { className: "lab" }, "Points de d\xE9part"),
+            React.default.createElement("input", {
               className: "inp",
               type: "number",
               inputMode: "numeric",
@@ -7993,7 +8189,7 @@ function B7({ d: t, set: e }) {
             }),
           ),
         !h.id &&
-          l.default.createElement(
+          React.default.createElement(
             "label",
             {
               style: {
@@ -8006,38 +8202,38 @@ function B7({ d: t, set: e }) {
                 cursor: "pointer",
               },
             },
-            l.default.createElement("input", {
+            React.default.createElement("input", {
               type: "checkbox",
               checked: !!h.informe,
               onChange: (L) => p({ ...h, informe: L.target.checked }),
               style: { width: 20, height: 20, flexShrink: 0, accentColor: "#6E9B3A" },
             }),
-            l.default.createElement(
+            React.default.createElement(
               "span",
               null,
               "Le client a \xE9t\xE9 inform\xE9 que ses nom, t\xE9l\xE9phone et e-mail servent uniquement \xE0 sa carte de fid\xE9lit\xE9, et qu'il peut les faire supprimer \xE0 tout moment.",
             ),
           ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 14 }, onClick: Q },
           "Enregistrer",
         ),
         h.id &&
-          l.default.createElement(
+          React.default.createElement(
             "button",
             {
               className: "btn gh",
               style: { marginTop: 8 },
               onClick: () => {
                 let L = t.clients.find((z) => z.id === h.id) || h;
-                (p(null), w(L));
+                p(null), w(L);
               },
             },
             "\u{1F4F1} R\xE9installer la carte sur un nouveau t\xE9l\xE9phone",
           ),
       ),
-    m && l.default.createElement(U7, { c: m, onClose: () => w(null) }),
+    m && React.default.createElement(QrCarteClient, { c: m, onClose: () => w(null) }),
   );
 }
 var V7 = (t) =>
@@ -8055,44 +8251,44 @@ var V7 = (t) =>
         p: String(t.prenom || (t.nom || "").split(" ")[0] || "").slice(0, 30),
       }),
     );
-function j7({ texte: t, taille: e = 240 }) {
-  let n = (0, l.useMemo)(() => {
+function QrPixels({ texte: texte, taille: taille = 240 }) {
+  let n = (0, React.useMemo)(() => {
     let r = PC(0, "M");
-    (r.addData(t), r.make());
+    r.addData(texte), r.make();
     let i = r.getModuleCount(),
       s = "";
     for (let o = 0; o < i; o++)
       for (let a = 0; a < i; a++) r.isDark(o, a) && (s += "M" + a + " " + o + "h1v1h-1z");
     return { d: s, n: i };
-  }, [t]);
-  return l.default.createElement(
+  }, [texte]);
+  return React.default.createElement(
     "svg",
     {
       viewBox: "-2 -2 " + (n.n + 4) + " " + (n.n + 4),
-      width: e,
-      height: e,
+      width: taille,
+      height: taille,
       shapeRendering: "crispEdges",
       style: { display: "block", margin: "0 auto", background: "#fff" },
     },
-    l.default.createElement("path", { d: n.d, fill: "#000" }),
+    React.default.createElement("path", { d: n.d, fill: "#000" }),
   );
 }
-function U7({ c: t, onClose: e }) {
-  let n = t.prenom || (t.nom || "").split(" ")[0] || "ce client";
-  return l.default.createElement(
+function QrCarteClient({ c: c, onClose: onClose }) {
+  let n = c.prenom || (c.nom || "").split(" ")[0] || "ce client";
+  return React.default.createElement(
     ut,
-    { titre: "Carte de " + n, onClose: e },
-    l.default.createElement(
+    { titre: "Carte de " + n, onClose: onClose },
+    React.default.createElement(
       "div",
       { className: "de", style: { fontSize: 13, color: "var(--ink2)", lineHeight: 1.5, marginBottom: 12 } },
       "Le client ouvre l'",
-      l.default.createElement("b", null, "appareil photo"),
+      React.default.createElement("b", null, "appareil photo"),
       " de son nouveau t\xE9l\xE9phone et scanne ce code : l'application s'ouvre et r\xE9cup\xE8re sa carte (m\xEAme code ",
-      t.code,
+      c.code,
       ", m\xEAmes tampons, m\xEAme historique). Il touche ensuite \xAB R\xE9cup\xE9rer \xBB.",
     ),
-    l.default.createElement(j7, { texte: z7(t) }),
-    l.default.createElement(
+    React.default.createElement(QrPixels, { texte: z7(c) }),
+    React.default.createElement(
       "div",
       {
         style: {
@@ -8109,59 +8305,59 @@ function U7({ c: t, onClose: e }) {
       n,
       " (nom, t\xE9l\xE9phone, e-mail) : montrez-le uniquement \xE0 cette personne, au comptoir. Ne le photographiez pas et ne l'envoyez \xE0 personne.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "de", style: { marginTop: 8 } },
       "Si l'ancien t\xE9l\xE9phone a \xE9t\xE9 vol\xE9, l'ancien t\xE9l\xE9phone garde aussi l'acc\xE8s \xE0 la carte : dans ce cas, mieux vaut cr\xE9er une nouvelle carte et y reporter les tampons.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "button",
-      { className: "btn", style: { marginTop: 12 }, onClick: e },
+      { className: "btn", style: { marginTop: 12 }, onClick: onClose },
       "Termin\xE9",
     ),
   );
 }
 var lN = (t) => t.derniere || t.depuis || "";
-function q7({ d: t, set: e }) {
-  let n = t.legal?.conservation || 3,
+function Conservation({ d: d, set: set }) {
+  let n = d.legal?.conservation || 3,
     r = new Date();
   r.setFullYear(r.getFullYear() - n);
   let i = r.toLocaleDateString("sv-SE"),
-    s = t.clients.filter((o) => lN(o) && lN(o) < i);
-  return l.default.createElement(
+    s = d.clients.filter((o) => lN(o) && lN(o) < i);
+  return React.default.createElement(
     "div",
     { className: "card", style: { background: "#F6F9EF", borderColor: "#D9E6C2" } },
-    l.default.createElement("div", { className: "nm" }, "Dur\xE9e de conservation (RGPD)"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "nm" }, "Dur\xE9e de conservation (RGPD)"),
+    React.default.createElement(
       "div",
       { className: "de", style: { marginBottom: 10 } },
       "Les cartes sans aucun passage en caisse depuis ",
       n,
       " ans doivent \xEAtre supprim\xE9es.",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { display: "flex", gap: 10, alignItems: "center" } },
-      l.default.createElement("label", { className: "lab", style: { margin: 0 } }, "Conserver"),
-      l.default.createElement(
+      React.default.createElement("label", { className: "lab", style: { margin: 0 } }, "Conserver"),
+      React.default.createElement(
         "select",
         {
           className: "inp",
           style: { width: "auto" },
           value: n,
-          onChange: (o) => e("legal", (a) => ({ ...a, conservation: +o.target.value })),
+          onChange: (o) => set("legal", (a) => ({ ...a, conservation: +o.target.value })),
         },
         [1, 2, 3].map((o) =>
-          l.default.createElement("option", { key: o, value: o }, o, " an", o > 1 ? "s" : ""),
+          React.default.createElement("option", { key: o, value: o }, o, " an", o > 1 ? "s" : ""),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "span",
         { style: { fontSize: 12, color: "var(--ink3)" } },
         "apr\xE8s le dernier passage",
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { marginTop: 12, fontSize: 13, fontWeight: 700 } },
       s.length
@@ -8174,7 +8370,7 @@ function q7({ d: t, set: e }) {
         : "Aucune carte \xE0 supprimer \u2713",
     ),
     !!s.length &&
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
           className: "btn sm",
@@ -8192,95 +8388,95 @@ function q7({ d: t, set: e }) {
                   ? `
 \u2026`
                   : ""),
-            )) && e("clients", (o) => o.filter((a) => !s.some((u) => u.id === a.id))),
+            )) && set("clients", (o) => o.filter((a) => !s.some((u) => u.id === a.id))),
         },
         "Supprimer les cartes inactives",
       ),
   );
 }
-function W7({ d: t, set: e }) {
+function InfosLegales({ d: d, set: set }) {
   let n = Object.fromEntries(
-      Object.entries({ ...Ma.legal, ...(t.legal || {}) }).map(([s, o]) => [
+      Object.entries({ ...EMPTY2.legal, ...(d.legal || {}) }).map(([s, o]) => [
         s,
-        o === "" || o == null ? Ma.legal[s] : o,
+        o === "" || o == null ? EMPTY2.legal[s] : o,
       ]),
     ),
-    r = (s, o) => e("legal", (a) => ({ ...Ma.legal, ...(a || {}), [s]: o })),
+    r = (s, o) => set("legal", (a) => ({ ...EMPTY2.legal, ...(a || {}), [s]: o })),
     i = (s, o, a) =>
-      l.default.createElement(
-        l.default.Fragment,
+      React.default.createElement(
+        React.default.Fragment,
         null,
-        l.default.createElement("label", { className: "lab" }, o),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, o),
+        React.default.createElement("input", {
           className: "inp",
           value: n[s] || "",
           placeholder: a,
           onChange: (u) => r(s, u.target.value),
         }),
       );
-  return l.default.createElement(
-    l.default.Fragment,
+  return React.default.createElement(
+    React.default.Fragment,
     null,
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { fontWeight: 800, fontSize: 14, margin: "18px 0 4px" } },
       "Informations l\xE9gales",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "sub", style: { margin: "0 0 8px" } },
       "Affich\xE9es dans \xAB Mentions l\xE9gales \xBB et \xAB Confidentialit\xE9 \xBB de l'application (onglet Infos).",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
       i("raison", "Raison sociale", "LTMP"),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: "0 10px", flexWrap: "wrap" } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: "1 1 230px", minWidth: 0 } },
           i("forme", "Forme juridique", "SARL"),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: "1 1 230px", minWidth: 0 } },
           i("capital", "Capital social (\u20AC)", "3 000"),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: "0 10px", flexWrap: "wrap" } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: "1 1 230px", minWidth: 0 } },
           i("siren", "SIREN", "979 301 132"),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: "1 1 230px", minWidth: 0 } },
           i("rcs", "RCS", "RCS Vesoul"),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: "0 10px", flexWrap: "wrap" } },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: "1 1 230px", minWidth: 0 } },
           i("tva", "N\xB0 TVA intracommunautaire", "FR00979301132"),
         ),
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { style: { flex: "1 1 230px", minWidth: 0 } },
           i("naf", "Activit\xE9 (code NAF)", "47.11B"),
         ),
       ),
       i("responsable", "Responsable / directrice de publication", "Marion Parnaso"),
-      i("emailDonnees", "E-mail pour les demandes RGPD", t.store.email),
+      i("emailDonnees", "E-mail pour les demandes RGPD", d.store.email),
       i("hebergementDonnees", "Lieu d'h\xE9bergement des donn\xE9es", "Union europ\xE9enne"),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { marginTop: 6 } },
         "Pr\xE9-rempli avec les donn\xE9es officielles de la soci\xE9t\xE9 (registre du commerce). V\xE9rifiez et corrigez si besoin.",
@@ -8300,13 +8496,13 @@ var Mf = "epicerie-raddonnaise-admin-appareil",
     /iPhone|iPad|iPod/.test(navigator.userAgent) &&
     !navigator.standalone &&
     !window.matchMedia("(display-mode: standalone)").matches;
-async function uN(t) {
+async function idAleatoire(t) {
   let n =
     Ew()?.id ||
     [...crypto.getRandomValues(new Uint32Array(24))]
       .map((i) => "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"[i % 56])
       .join("");
-  await ln(xe(de, "appareilsAdmin", n), { token: t, appareil: rf(), maj: Date.now() });
+  await setDoc(doc2(db2, "appareilsAdmin", n), { token: t, appareil: typeAppareil(), maj: Date.now() });
   let r = { id: n, token: t };
   try {
     localStorage.setItem(Mf, JSON.stringify(r));
@@ -8314,13 +8510,13 @@ async function uN(t) {
   return r;
 }
 var cN = "epicerie-raddonnaise-admin-notif-plus-tard";
-function $7({ d: t }) {
+function BlocNotifsAdmin({ d: t }) {
   let e = t.push?.vapid || "",
     n = Er(t.cmd).script,
-    [r, i] = (0, l.useState)(!1),
-    [s, o] = (0, l.useState)(!1);
+    [r, i] = (0, React.useState)(!1),
+    [s, o] = (0, React.useState)(!1);
   return (
-    (0, l.useEffect)(() => {
+    (0, React.useEffect)(() => {
       let u = !1;
       return (
         (async () => {
@@ -8329,7 +8525,7 @@ function $7({ d: t }) {
               try {
                 let d = await Yu(e),
                   h = Ew();
-                !u && d.token && (!h?.id || d.token !== h.token) && (await uN(d.token));
+                !u && d.token && (!h?.id || d.token !== h.token) && (await idAleatoire(d.token));
               } catch {}
             else if (Notification.permission === "default") {
               let d = !1;
@@ -8346,7 +8542,7 @@ function $7({ d: t }) {
       );
     }, [e, n]),
     r
-      ? l.default.createElement(
+      ? React.default.createElement(
           "div",
           {
             className: "card",
@@ -8358,21 +8554,25 @@ function $7({ d: t }) {
               gap: 10,
             },
           },
-          l.default.createElement("div", { style: { fontSize: 28 } }, "\u{1F514}"),
-          l.default.createElement(
+          React.default.createElement("div", { style: { fontSize: 28 } }, "\u{1F514}"),
+          React.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            l.default.createElement("div", { className: "nm" }, "\xCAtre pr\xE9venue sur ce t\xE9l\xE9phone"),
-            l.default.createElement(
+            React.default.createElement(
+              "div",
+              { className: "nm" },
+              "\xCAtre pr\xE9venue sur ce t\xE9l\xE9phone",
+            ),
+            React.default.createElement(
               "div",
               { className: "de" },
               "Commandes, r\xE9servations et messages des clients.",
             ),
           ),
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { style: { display: "flex", flexDirection: "column", gap: 6 } },
-            l.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "btn sm",
@@ -8382,14 +8582,14 @@ function $7({ d: t }) {
                   o(!0);
                   try {
                     let u = await Yu(e);
-                    u.token && (await uN(u.token));
+                    u.token && (await idAleatoire(u.token));
                   } catch {}
-                  (o(!1), i(!1));
+                  o(!1), i(!1);
                 },
               },
               "Activer",
             ),
-            l.default.createElement(
+            React.default.createElement(
               "button",
               {
                 className: "btn gh sm",
@@ -8408,26 +8608,26 @@ function $7({ d: t }) {
       : null
   );
 }
-function G7({ d: t }) {
+function NotificationsAdmin({ d: t }) {
   let e = t.push?.vapid || "",
     n = Er(t.cmd).script,
-    [r, i] = (0, l.useState)(Ew),
-    [s, o] = (0, l.useState)("\u2026"),
-    [a, u] = (0, l.useState)(""),
+    [r, i] = (0, React.useState)(Ew),
+    [s, o] = (0, React.useState)("\u2026"),
+    [a, u] = (0, React.useState)(""),
     d = async (E) => {
       let A =
         r?.id ||
         [...crypto.getRandomValues(new Uint32Array(24))]
           .map((_) => "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"[_ % 56])
           .join("");
-      await ln(xe(de, "appareilsAdmin", A), { token: E, appareil: rf(), maj: Date.now() });
+      await setDoc(doc2(db2, "appareilsAdmin", A), { token: E, appareil: typeAppareil(), maj: Date.now() });
       let S = { id: A, token: E };
       try {
         localStorage.setItem(Mf, JSON.stringify(S));
       } catch {}
-      return (i(S), S);
+      return i(S), S;
     };
-  (0, l.useEffect)(() => {
+  (0, React.useEffect)(() => {
     let E = !1;
     return (
       (async () => {
@@ -8449,24 +8649,24 @@ function G7({ d: t }) {
     );
   }, [e, n]);
   let h = async () => {
-      (o("\u2026"), u(""));
+      o("\u2026"), u("");
       try {
         let E = await Yu(e);
         if (E.erreur) return o(E.erreur === "refus" ? "refus" : "nonsup");
-        (await d(E.token), o("on"));
+        await d(E.token), o("on");
       } catch {
-        (o("off"), ft("Activation impossible pour le moment. R\xE9essayez plus tard."));
+        o("off"), ft("Activation impossible pour le moment. R\xE9essayez plus tard.");
       }
     },
     p = async () => {
       if (await De("Ne plus recevoir les notifications sur ce t\xE9l\xE9phone ?", { oui: "Couper" })) {
         try {
-          r?.id && (await Cy(xe(de, "appareilsAdmin", r.id)));
+          r?.id && (await deleteDoc(doc2(db2, "appareilsAdmin", r.id)));
         } catch {}
         try {
           localStorage.removeItem(Mf);
         } catch {}
-        (i(null), o("off"));
+        i(null), o("off");
       }
     },
     m = async () => {
@@ -8487,27 +8687,27 @@ function G7({ d: t }) {
       off: "Recevez une notification sur ce t\xE9l\xE9phone \xE0 chaque nouvelle commande, r\xE9servation ou message d'un client, m\xEAme quand l'admin est ferm\xE9e.",
       on: "\u2713 Activ\xE9es sur ce t\xE9l\xE9phone : vous \xEAtes pr\xE9venue des nouvelles commandes, r\xE9servations et messages.",
     }[s];
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "card" },
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "nm", style: { marginBottom: 4 } },
       "\u{1F514} \xCAtre pr\xE9venue sur ce t\xE9l\xE9phone",
     ),
-    l.default.createElement("div", { className: "de", style: { marginBottom: 10 } }, w),
+    React.default.createElement("div", { className: "de", style: { marginBottom: 10 } }, w),
     s === "off" &&
-      l.default.createElement("button", { className: "btn", onClick: h }, "Activer les notifications"),
+      React.default.createElement("button", { className: "btn", onClick: h }, "Activer les notifications"),
     s === "on" &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { display: "flex", gap: 8, flexWrap: "wrap" } },
-        l.default.createElement(
+        React.default.createElement(
           "button",
           { className: "btn gh sm", style: { width: "auto" }, onClick: m },
           "Envoyer un essai",
         ),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn gh sm",
@@ -8517,29 +8717,29 @@ function G7({ d: t }) {
           "Couper",
         ),
       ),
-    a && l.default.createElement("div", { className: "de", style: { marginTop: 8, fontWeight: 700 } }, a),
-    l.default.createElement(
+    a && React.default.createElement("div", { className: "de", style: { marginTop: 8, fontWeight: 700 } }, a),
+    React.default.createElement(
       "div",
       { className: "de", style: { marginTop: 8, fontSize: 12 } },
       "\xC0 activer sur chaque t\xE9l\xE9phone ou tablette o\xF9 vous voulez \xEAtre pr\xE9venue.",
     ),
   );
 }
-function H7({ d: t, set: e, reinitialiser: n }) {
-  let [r, i] = (0, l.useState)(null),
+function Reglages({ d: t, set: set, reinitialiser: reinitialiser }) {
+  let [r, i] = (0, React.useState)(null),
     s = t.store,
-    o = (h, p) => e("store", (m) => ({ ...m, [h]: p })),
-    [a, u] = (0, l.useState)(null),
+    o = (h, p) => set("store", (m) => ({ ...m, [h]: p })),
+    [a, u] = (0, React.useState)(null),
     d = async () => {
       u("prep");
       try {
         let h = [];
         for (let w of t.clients || []) {
-          let E = await Oi(Ge(de, "clients", String(w.id), "historique")),
+          let E = await getDocs(collection(db2, "clients", String(w.id), "historique")),
             A = [];
-          (E.forEach((S) => A.push({ id: S.id, ...S.data() })), h.push({ ...w, historique: A }));
+          E.forEach((S) => A.push({ id: S.id, ...S.data() })), h.push({ ...w, historique: A });
         }
-        let p = { ...t, clients: h, sauvegardeLe: new Date().toISOString(), version: yr },
+        let p = { ...t, clients: h, sauvegardeLe: new Date().toISOString(), version: VERSION },
           m = URL.createObjectURL(new Blob([JSON.stringify(p, null, 2)], { type: "application/json" }));
         u({
           url: m,
@@ -8550,199 +8750,203 @@ function H7({ d: t, set: e, reinitialiser: n }) {
         u({ erreur: !0 });
       }
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "wrap" },
-    l.default.createElement("div", { className: "t1" }, "L'\xE9picerie"),
-    l.default.createElement(
+    React.default.createElement("div", { className: "t1" }, "L'\xE9picerie"),
+    React.default.createElement(
       "div",
       { className: "sub" },
       "Coordonn\xE9es, horaires et services affich\xE9s dans l'onglet Infos (les services n'apparaissent plus sur l'accueil).",
     ),
-    l.default.createElement(G7, { d: t }),
-    l.default.createElement(
+    React.default.createElement(NotificationsAdmin, { d: t }),
+    React.default.createElement(
       "div",
       { className: "card" },
-      l.default.createElement("label", { className: "lab" }, "Nom"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "Nom"),
+      React.default.createElement("input", {
         className: "inp",
         value: s.name,
         onChange: (h) => o("name", h.target.value),
       }),
-      l.default.createElement("label", { className: "lab" }, "Slogan"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "Slogan"),
+      React.default.createElement("input", {
         className: "inp",
         value: s.slogan,
         onChange: (h) => o("slogan", h.target.value),
       }),
-      l.default.createElement("label", { className: "lab" }, "Adresse"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "Adresse"),
+      React.default.createElement("input", {
         className: "inp",
         value: s.address,
         onChange: (h) => o("address", h.target.value),
       }),
-      l.default.createElement("label", { className: "lab" }, "T\xE9l\xE9phone"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "T\xE9l\xE9phone"),
+      React.default.createElement("input", {
         className: "inp",
         type: "tel",
         value: s.phone,
         onChange: (h) => o("phone", h.target.value),
       }),
-      l.default.createElement("label", { className: "lab" }, "E-mail"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "E-mail"),
+      React.default.createElement("input", {
         className: "inp",
         type: "email",
         value: s.email,
         onChange: (h) => o("email", h.target.value),
       }),
-      l.default.createElement("label", { className: "lab" }, "Page Facebook"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "Page Facebook"),
+      React.default.createElement("input", {
         className: "inp",
         value: s.facebook,
         placeholder: "https://facebook.com/\u2026",
         onChange: (h) => o("facebook", h.target.value),
       }),
-      l.default.createElement("label", { className: "lab" }, "Lien pour laisser un avis Google"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "Lien pour laisser un avis Google"),
+      React.default.createElement("input", {
         className: "inp",
         value: s.avis || "",
         placeholder: "https://g.page/r/\u2026/review",
         autoCapitalize: "off",
         onChange: (h) => o("avis", h.target.value.trim()),
       }),
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "de", style: { marginTop: 4 } },
         "Dans Google (fiche de l'\xE9picerie) \u2192 \xAB Demander des avis \xBB \u2192 copier le lien. Les clients le voient dans Infos, et une fois apr\xE8s une commande retir\xE9e.",
       ),
     ),
-    l.default.createElement(s7, { d: t, set: e }),
-    l.default.createElement(
+    React.default.createElement(Fermetures, { d: t, set: set }),
+    React.default.createElement(
       "div",
       { style: { fontWeight: 800, fontSize: 14, margin: "18px 0 8px" } },
       "Onglets visibles par les clients",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
       [
         ["carte", "La carte (plateaux & paniers)"],
         ["fidelite", "Carte de fid\xE9lit\xE9"],
       ].map(([h, p]) =>
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "tog", key: h },
-          l.default.createElement("span", { style: { fontSize: 13, fontWeight: 700 } }, p),
-          l.default.createElement(
+          React.default.createElement("span", { style: { fontSize: 13, fontWeight: 700 } }, p),
+          React.default.createElement(
             "div",
             { className: "rt" },
-            l.default.createElement(ze, {
+            React.default.createElement(ze, {
               on: t.onglets?.[h] !== !1,
-              set: () => e("onglets", (m) => ({ ...m, [h]: m?.[h] === !1 })),
+              set: () => set("onglets", (m) => ({ ...m, [h]: m?.[h] === !1 })),
             }),
           ),
         ),
       ),
     ),
-    l.default.createElement(W7, { d: t, set: e }),
-    l.default.createElement(
+    React.default.createElement(InfosLegales, { d: t, set: set }),
+    React.default.createElement(
       "div",
       { style: { fontWeight: 800, fontSize: 14, margin: "16px 0 8px" } },
       "Horaires",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "card" },
       t.hours.map((h, p) =>
-        l.default.createElement(
+        React.default.createElement(
           "div",
           {
             key: p,
             className: "hor-ligne",
             style: { borderBottom: p < 6 ? "1px solid var(--line)" : "none" },
           },
-          l.default.createElement("span", { style: { fontSize: 12.5, fontWeight: 700 } }, h.day),
-          l.default.createElement("input", {
+          React.default.createElement("span", { style: { fontSize: 12.5, fontWeight: 700 } }, h.day),
+          React.default.createElement("input", {
             className: "inp",
             style: { padding: "8px 6px", fontSize: 12.5 },
             value: h.am,
             placeholder: "Ferm\xE9",
             "aria-label": h.day + " matin",
-            onChange: (m) => e("hours", (w) => w.map((E, A) => (A === p ? { ...E, am: m.target.value } : E))),
+            onChange: (m) =>
+              set("hours", (w) => w.map((E, A) => (A === p ? { ...E, am: m.target.value } : E))),
           }),
-          l.default.createElement("input", {
+          React.default.createElement("input", {
             className: "inp",
             style: { padding: "8px 6px", fontSize: 12.5 },
             value: h.pm,
             placeholder: "\u2014",
             "aria-label": h.day + " apr\xE8s-midi",
-            onChange: (m) => e("hours", (w) => w.map((E, A) => (A === p ? { ...E, pm: m.target.value } : E))),
+            onChange: (m) =>
+              set("hours", (w) => w.map((E, A) => (A === p ? { ...E, pm: m.target.value } : E))),
           }),
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "hd", style: { marginTop: 18 } },
-      l.default.createElement("div", { style: { fontWeight: 800, fontSize: 14 } }, "Services"),
-      l.default.createElement(
+      React.default.createElement("div", { style: { fontWeight: 800, fontSize: 14 } }, "Services"),
+      React.default.createElement(
         "button",
         { className: "btn gh sm", onClick: () => i({ label: "", desc: "", active: !0 }) },
         "Ajouter",
       ),
     ),
     !t.services.length &&
-      l.default.createElement(Vn, {
+      React.default.createElement(Vn, {
         t: "Aucun service",
         s: "Ex : D\xE9p\xF4t de pain, Relais Pickup, Station-service, Plats \xE0 emporter, Droguerie.",
       }),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { className: "grille" },
       t.services.map((h) =>
-        l.default.createElement(
+        React.default.createElement(
           "div",
           { className: "card", key: h.id },
-          l.default.createElement(
+          React.default.createElement(
             "div",
             { className: "row" },
-            l.default.createElement(
+            React.default.createElement(
               "div",
               null,
-              l.default.createElement("div", { className: "nm" }, h.label),
-              h.desc && l.default.createElement("div", { className: "de" }, h.desc),
+              React.default.createElement("div", { className: "nm" }, h.label),
+              h.desc && React.default.createElement("div", { className: "de" }, h.desc),
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "rt" },
-              l.default.createElement(ze, {
+              React.default.createElement(ze, {
                 on: h.active !== !1,
                 set: () =>
-                  e("services", (p) => p.map((m) => (m.id === h.id ? { ...m, active: m.active === !1 } : m))),
+                  set("services", (p) =>
+                    p.map((m) => (m.id === h.id ? { ...m, active: m.active === !1 } : m)),
+                  ),
               }),
-              l.default.createElement("button", { className: "ib", onClick: () => i(h) }, he.pen()),
-              l.default.createElement(
+              React.default.createElement("button", { className: "ib", onClick: () => i(h) }, I10.pen()),
+              React.default.createElement(
                 "button",
-                { className: "ib", onClick: () => e("services", (p) => p.filter((m) => m.id !== h.id)) },
-                he.bin(),
+                { className: "ib", onClick: () => set("services", (p) => p.filter((m) => m.id !== h.id)) },
+                I10.bin(),
               ),
             ),
           ),
         ),
       ),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       { style: { fontWeight: 800, fontSize: 14, margin: "18px 0 8px" } },
       "Application",
     ),
-    l.default.createElement(Xk, null),
-    l.default.createElement(
+    React.default.createElement(BoutonMaj, null),
+    React.default.createElement(
       "div",
       { style: { fontWeight: 800, fontSize: 14, margin: "18px 0 8px" } },
       "Sauvegarde",
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       {
         style: {
@@ -8759,31 +8963,31 @@ function H7({ d: t, set: e, reinitialiser: n }) {
       "La sauvegarde contient les noms et t\xE9l\xE9phones des clients : conservez-la en lieu s\xFBr, ne l'envoyez pas par e-mail.",
     ),
     !a || a.erreur
-      ? l.default.createElement(
-          l.default.Fragment,
+      ? React.default.createElement(
+          React.default.Fragment,
           null,
-          l.default.createElement(
+          React.default.createElement(
             "button",
             { className: "btn gh", onClick: d },
             "Pr\xE9parer une sauvegarde",
           ),
           a?.erreur &&
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "de", style: { color: "#B3261E", marginTop: 6 } },
               "La sauvegarde n'a pas pu \xEAtre pr\xE9par\xE9e (r\xE9seau ?). R\xE9essayez.",
             ),
         )
       : a === "prep"
-        ? l.default.createElement(
+        ? React.default.createElement(
             "button",
             { className: "btn gh", disabled: !0 },
             "Pr\xE9paration de la sauvegarde\u2026",
           )
-        : l.default.createElement(
-            l.default.Fragment,
+        : React.default.createElement(
+            React.default.Fragment,
             null,
-            l.default.createElement(
+            React.default.createElement(
               "a",
               {
                 className: "btn",
@@ -8793,7 +8997,7 @@ function H7({ d: t, set: e, reinitialiser: n }) {
               },
               "T\xE9l\xE9charger la sauvegarde",
             ),
-            l.default.createElement(
+            React.default.createElement(
               "div",
               { className: "de", style: { marginTop: 6 } },
               a.n,
@@ -8802,7 +9006,7 @@ function H7({ d: t, set: e, reinitialiser: n }) {
               " avec leur historique de tampons, commandes, r\xE9glages et contenus.",
             ),
           ),
-    l.default.createElement(
+    React.default.createElement(
       "button",
       {
         className: "btn gh",
@@ -8811,37 +9015,37 @@ function H7({ d: t, set: e, reinitialiser: n }) {
           (await De(`Effacer tout le contenu affich\xE9 aux clients (articles du jour, offres, actualit\xE9s, plateaux, pubs, coordonn\xE9es et horaires) ?
 
 Les cartes de fid\xE9lit\xE9, les commandes, les messages et les r\xE9glages techniques sont conserv\xE9s.`)) &&
-          n(),
+          reinitialiser(),
       },
       "R\xE9initialiser le contenu",
     ),
     r &&
-      l.default.createElement(
+      React.default.createElement(
         ut,
         { titre: r.id ? "Modifier le service" : "Nouveau service", onClose: () => i(null) },
-        l.default.createElement("label", { className: "lab" }, "Nom"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Nom"),
+        React.default.createElement("input", {
           className: "inp",
           autoFocus: !0,
           value: r.label,
           onChange: (h) => i({ ...r, label: h.target.value }),
           placeholder: "Relais Pickup",
         }),
-        l.default.createElement("label", { className: "lab" }, "Pr\xE9cision (facultatif)"),
-        l.default.createElement("input", {
+        React.default.createElement("label", { className: "lab" }, "Pr\xE9cision (facultatif)"),
+        React.default.createElement("input", {
           className: "inp",
           value: r.desc,
           onChange: (h) => i({ ...r, desc: h.target.value }),
           placeholder: "Retrait et d\xE9p\xF4t de colis",
         }),
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             className: "btn",
             style: { marginTop: 14 },
             onClick: () => {
               r.label.trim() &&
-                (e("services", (h) =>
+                (set("services", (h) =>
                   r.id ? h.map((p) => (p.id === r.id ? r : p)) : [...h, { ...r, id: Wr() }],
                 ),
                 i(null));
@@ -8852,7 +9056,7 @@ Les cartes de fid\xE9lit\xE9, les commandes, les messages et les r\xE9glages tec
       ),
   );
 }
-var dN = (t) =>
+var msgErreur = (t) =>
   ({
     "auth/invalid-credential": "E-mail ou mot de passe incorrect.",
     "auth/wrong-password": "E-mail ou mot de passe incorrect.",
@@ -8861,89 +9065,89 @@ var dN = (t) =>
     "auth/too-many-requests": "Trop de tentatives. Patientez quelques minutes.",
     "auth/network-request-failed": "Pas de connexion internet.",
   })[t?.code] || "Connexion impossible. R\xE9essayez.";
-function K7() {
-  let [t, e] = (0, l.useState)(""),
-    [n, r] = (0, l.useState)(""),
-    [i, s] = (0, l.useState)(""),
-    [o, a] = (0, l.useState)(""),
-    [u, d] = (0, l.useState)(!1),
+function Connexion() {
+  let [email, setEmail] = (0, React.useState)(""),
+    [mdp, setMdp] = (0, React.useState)(""),
+    [err, setErr] = (0, React.useState)(""),
+    [info, setInfo] = (0, React.useState)(""),
+    [load, setLoad] = (0, React.useState)(!1),
     h = async () => {
-      if (!(!t.trim() || !n || u)) {
-        (s(""), a(""), d(!0));
+      if (!(!email.trim() || !mdp || load)) {
+        setErr(""), setInfo(""), setLoad(!0);
         try {
-          await Xp(Gu, t.trim(), n);
+          await signInWithEmailAndPassword(auth2, email.trim(), mdp);
         } catch (m) {
-          (s(dN(m)), d(!1));
+          setErr(msgErreur(m)), setLoad(!1);
         }
       }
     },
     p = async () => {
-      if ((s(""), a(""), !t.trim())) return s("Saisissez d'abord votre adresse e-mail.");
+      if ((setErr(""), setInfo(""), !email.trim())) return setErr("Saisissez d'abord votre adresse e-mail.");
       try {
-        (await Jp(Gu, t.trim()),
-          a("Si ce compte existe, un e-mail de r\xE9initialisation vient d'\xEAtre envoy\xE9."));
+        await sendPasswordResetEmail(auth2, email.trim()),
+          setInfo("Si ce compte existe, un e-mail de r\xE9initialisation vient d'\xEAtre envoy\xE9.");
       } catch (m) {
-        s(dN(m));
+        setErr(msgErreur(m));
       }
     };
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "adm" },
-    l.default.createElement("style", null, ww),
-    l.default.createElement(
+    React.default.createElement("style", null, CSS_ADMIN),
+    React.default.createElement(
       "div",
       { className: "wrap", style: { paddingTop: 48 } },
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { style: { textAlign: "center", marginBottom: 26 } },
-        l.default.createElement("img", {
-          src: yw,
+        React.default.createElement("img", {
+          src: LOGO,
           alt: "",
           style: { width: 92, height: 92, borderRadius: "50%", border: "3px solid #EEF3E2" },
         }),
-        l.default.createElement("div", { className: "t1", style: { marginTop: 12 } }, "Administration"),
-        l.default.createElement(
+        React.default.createElement("div", { className: "t1", style: { marginTop: 12 } }, "Administration"),
+        React.default.createElement(
           "div",
           { style: { fontSize: 12.5, color: "var(--ink3)", marginTop: 6 } },
           "\xC9picerie Raddonnaise \u2014 acc\xE8s r\xE9serv\xE9 \xB7 v",
-          yr,
+          VERSION,
         ),
       ),
-      l.default.createElement("label", { className: "lab" }, "E-mail"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "E-mail"),
+      React.default.createElement("input", {
         className: "inp",
         type: "email",
         autoComplete: "username",
-        value: t,
-        onChange: (m) => e(m.target.value),
+        value: email,
+        onChange: (m) => setEmail(m.target.value),
       }),
-      l.default.createElement("label", { className: "lab" }, "Mot de passe"),
-      l.default.createElement("input", {
+      React.default.createElement("label", { className: "lab" }, "Mot de passe"),
+      React.default.createElement("input", {
         className: "inp",
         type: "password",
         autoComplete: "current-password",
-        value: n,
-        onChange: (m) => r(m.target.value),
+        value: mdp,
+        onChange: (m) => setMdp(m.target.value),
         onKeyDown: (m) => m.key === "Enter" && h(),
       }),
-      i &&
-        l.default.createElement(
+      err &&
+        React.default.createElement(
           "div",
           { style: { color: "var(--red)", fontSize: 12.5, fontWeight: 700, marginTop: 10 } },
-          i,
+          err,
         ),
-      o &&
-        l.default.createElement(
+      info &&
+        React.default.createElement(
           "div",
           { style: { color: "var(--apple)", fontSize: 12.5, fontWeight: 700, marginTop: 10 } },
-          o,
+          info,
         ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
-        { className: "btn", style: { marginTop: 16 }, disabled: u || !t.trim() || !n, onClick: h },
-        u ? "Connexion\u2026" : "Se connecter",
+        { className: "btn", style: { marginTop: 16 }, disabled: load || !email.trim() || !mdp, onClick: h },
+        load ? "Connexion\u2026" : "Se connecter",
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
         { className: "btn gh", style: { marginTop: 8 }, onClick: p },
         "Mot de passe oubli\xE9",
@@ -8951,12 +9155,12 @@ function K7() {
     ),
   );
 }
-var gw = ({ t }) =>
-  l.default.createElement(
+var Attente = ({ t }) =>
+  React.default.createElement(
     "div",
     { className: "adm" },
-    l.default.createElement("style", null, ww),
-    l.default.createElement(
+    React.default.createElement("style", null, CSS_ADMIN),
+    React.default.createElement(
       "div",
       {
         style: {
@@ -8972,18 +9176,18 @@ var gw = ({ t }) =>
       t,
     ),
   );
-function Q7() {
-  let [t, e] = (0, l.useState)(void 0);
-  ((0, l.useEffect)(() => Zp(Gu, (A) => e(A || null)), []),
-    (0, l.useEffect)(() => {
+function Admin() {
+  let [t, e] = (0, React.useState)(void 0);
+  (0, React.useEffect)(() => onAuthStateChanged2(auth2, (A) => e(A || null)), []),
+    (0, React.useEffect)(() => {
       t && ck("admin");
-    }, [!!t]));
-  let n = Yk(),
-    [r, i, s, o] = W9(!!t),
-    [a, u] = (0, l.useState)("accueil"),
-    [d, h] = (0, l.useState)(!1);
-  (0, l.useEffect)(() => {
-    (o.serveur &&
+    }, [!!t]);
+  let n = useMiseAJour(),
+    [r, i, s, o] = useShop(!!t),
+    [a, u] = (0, React.useState)("accueil"),
+    [d, h] = (0, React.useState)(!1);
+  (0, React.useEffect)(() => {
+    o.serveur &&
       t &&
       !r.fidelite?.migreRemise &&
       i("fidelite", (A) => ({
@@ -9050,21 +9254,21 @@ function Q7() {
           migreTampons20: !0,
           migreChouette: !0,
           migreExclus: !0,
-        })));
+        }));
   }, [o.pret, !!t]);
-  let p = (0, l.useRef)(new Set());
-  (0, l.useEffect)(() => {
+  let p = (0, React.useRef)(new Set());
+  (0, React.useEffect)(() => {
     !t ||
       !o.pret ||
       (r.clients || []).forEach((A) => {
         !/^RAD-[A-Z0-9]{5}$/.test(A.code || "") ||
           p.current.has(A.code) ||
           (p.current.add(A.code),
-          ln(xe(de, "codes", A.code), { c: String(A.id) }).catch(() => p.current.delete(A.code)));
+          setDoc(doc2(db2, "codes", A.code), { c: String(A.id) }).catch(() => p.current.delete(A.code)));
       });
   }, [!!t, o.pret, (r.clients || []).length]);
-  let m = (0, l.useRef)(!1);
-  (0, l.useEffect)(() => {
+  let m = (0, React.useRef)(!1);
+  (0, React.useEffect)(() => {
     if (!t || !o.serveur || !o.pret || m.current) return;
     let A = (r.clients || []).filter((S) => j9(S.id));
     A.length &&
@@ -9074,18 +9278,20 @@ function Q7() {
           try {
             let _ = z9(),
               I = String(S.id),
-              T = await ky(xe(de, "clients", I));
+              T = await getDoc(doc2(db2, "clients", I));
             if (!T.exists()) continue;
-            let M = await Oi(Ge(de, "clients", I, "historique")),
+            let M = await getDocs(collection(db2, "clients", I, "historique")),
               V = [];
-            (M.forEach((O) => V.push(O)), await ln(xe(de, "clients", _), T.data()));
+            M.forEach((O) => V.push(O)), await setDoc(doc2(db2, "clients", _), T.data());
             for (let O = 0; O < V.length; O += 400) {
-              let b = _n(de);
-              (V.slice(O, O + 400).forEach((v) => b.set(xe(de, "clients", _, "historique", v.id), v.data())),
-                await b.commit());
+              let b = writeBatch(db2);
+              V.slice(O, O + 400).forEach((v) =>
+                b.set(doc2(db2, "clients", _, "historique", v.id), v.data()),
+              ),
+                await b.commit();
             }
-            (T.data().code && (await ln(xe(de, "codes", T.data().code), { c: _ })),
-              await Pf([...V.map((O) => O.ref), xe(de, "clients", I)]));
+            T.data().code && (await setDoc(doc2(db2, "codes", T.data().code), { c: _ })),
+              await Pf([...V.map((O) => O.ref), doc2(db2, "clients", I)]);
           } catch (_) {
             console.error("migration carte", S.id, _);
           }
@@ -9097,7 +9303,7 @@ function Q7() {
         (r.commandes || []).filter((A) => A.statut === "nouvelle").length
       : 0;
   if (
-    ((0, l.useEffect)(() => {
+    ((0, React.useEffect)(() => {
       document.title = (w ? "(" + w + ") " : "") + "Administration \u2014 \xC9picerie Raddonnaise";
       try {
         w && navigator.setAppBadge
@@ -9107,65 +9313,65 @@ function Q7() {
     }, [w]),
     t === void 0)
   )
-    return l.default.createElement(gw, { t: "Chargement\u2026" });
-  if (!t) return l.default.createElement(K7, null);
+    return React.default.createElement(Attente, { t: "Chargement\u2026" });
+  if (!t) return React.default.createElement(Connexion, null);
   if (o.erreur === "permission-denied")
-    return l.default.createElement(gw, {
+    return React.default.createElement(Attente, {
       t: "Acc\xE8s refus\xE9 : ce compte n'a pas les droits d'administration.",
     });
-  if (!o.pret) return l.default.createElement(gw, { t: "Synchronisation\u2026" });
+  if (!o.pret) return React.default.createElement(Attente, { t: "Synchronisation\u2026" });
   let E = [
-    { id: "accueil", label: "Accueil", ic: he.home },
+    { id: "accueil", label: "Accueil", ic: I10.home },
     {
       id: "jour",
       label: "Aujourd'hui",
-      ic: he.shop,
+      ic: I10.shop,
       n: r.resas.filter((A) => A.statut === "reservee").length,
     },
     {
       id: "commandes",
       label: "Commandes",
-      ic: he.cmd,
+      ic: I10.cmd,
       n: r.commandes.filter((A) => A.statut === "nouvelle").length,
     },
-    { id: "messages", label: "Messages", ic: he.bulle, n: r.conversations.filter((A) => A.attente).length },
-    { id: "offres", label: "Offres", ic: he.basket, g: "Ma vitrine" },
-    { id: "actus", label: "Actus", ic: he.news, g: "Ma vitrine" },
-    { id: "pubs", label: "Pubs", ic: he.img, g: "Ma vitrine" },
-    { id: "menu", label: "Menu semaine", ic: he.cmd, g: "Ma vitrine" },
-    { id: "themes", label: "Th\xE8mes", ic: he.sapin, g: "Ma vitrine" },
-    { id: "producteurs", label: "Producteurs", ic: he.ferme, g: "Ma vitrine" },
-    { id: "recettes", label: "Recettes", ic: he.news, g: "Ma vitrine" },
-    { id: "com", label: "Communication", ic: he.porteVoix, g: "Mes clients" },
-    { id: "fidelite", label: "Fid\xE9lit\xE9", ic: he.star, g: "Mes clients" },
-    { id: "roue", label: "Roue de No\xEBl", ic: he.sapin, g: "Mes clients" },
-    { id: "sondage", label: "Sondages", ic: he.bulle, g: "Mes clients" },
-    { id: "stats", label: "Statistiques", ic: he.graph, g: "Suivi" },
-    { id: "reglages", label: "R\xE9glages", ic: he.gear, g: "Suivi" },
+    { id: "messages", label: "Messages", ic: I10.bulle, n: r.conversations.filter((A) => A.attente).length },
+    { id: "offres", label: "Offres", ic: I10.basket, g: "Ma vitrine" },
+    { id: "actus", label: "Actus", ic: I10.news, g: "Ma vitrine" },
+    { id: "pubs", label: "Pubs", ic: I10.img, g: "Ma vitrine" },
+    { id: "menu", label: "Menu semaine", ic: I10.cmd, g: "Ma vitrine" },
+    { id: "themes", label: "Th\xE8mes", ic: I10.sapin, g: "Ma vitrine" },
+    { id: "producteurs", label: "Producteurs", ic: I10.ferme, g: "Ma vitrine" },
+    { id: "recettes", label: "Recettes", ic: I10.news, g: "Ma vitrine" },
+    { id: "com", label: "Communication", ic: I10.porteVoix, g: "Mes clients" },
+    { id: "fidelite", label: "Fid\xE9lit\xE9", ic: I10.star, g: "Mes clients" },
+    { id: "roue", label: "Roue de No\xEBl", ic: I10.sapin, g: "Mes clients" },
+    { id: "sondage", label: "Sondages", ic: I10.bulle, g: "Mes clients" },
+    { id: "stats", label: "Statistiques", ic: I10.graph, g: "Suivi" },
+    { id: "reglages", label: "R\xE9glages", ic: I10.gear, g: "Suivi" },
   ];
-  return l.default.createElement(
+  return React.default.createElement(
     "div",
     { className: "adm main" },
-    l.default.createElement("style", null, ww),
-    l.default.createElement(
+    React.default.createElement("style", null, CSS_ADMIN),
+    React.default.createElement(
       "header",
       { className: "top" },
-      l.default.createElement("img", { src: yw, alt: "" }),
-      l.default.createElement(
+      React.default.createElement("img", { src: LOGO, alt: "" }),
+      React.default.createElement(
         "div",
         null,
-        l.default.createElement("h1", null, "Administration"),
-        l.default.createElement(
+        React.default.createElement("h1", null, "Administration"),
+        React.default.createElement(
           "small",
           null,
           "\xC9picerie Raddonnaise ",
-          l.default.createElement("span", { className: "vers" }, "v", yr),
+          React.default.createElement("span", { className: "vers" }, "v", VERSION),
         ),
       ),
-      l.default.createElement(
+      React.default.createElement(
         "button",
         {
-          onClick: async () => (await De("Se d\xE9connecter ?")) && Rp(Gu),
+          onClick: async () => (await De("Se d\xE9connecter ?")) && signOut2(auth2),
           style: {
             marginLeft: "auto",
             background: "rgba(255,255,255,.14)",
@@ -9182,36 +9388,36 @@ function Q7() {
         "D\xE9connexion",
       ),
     ),
-    l.default.createElement($7, { d: r }),
-    l.default.createElement(
-      vw,
+    React.default.createElement(BlocNotifsAdmin, { d: r }),
+    React.default.createElement(
+      SecoursEcran,
       { key: a },
       a === "accueil" &&
-        l.default.createElement(H9, {
+        React.default.createElement(TableauDeBord, {
           d: r,
           set: i,
           aller: (A) => {
-            (u(A), window.scrollTo(0, 0));
+            u(A), window.scrollTo(0, 0);
           },
         }),
-      a === "stats" && l.default.createElement(K9, { d: r }),
-      a === "com" && l.default.createElement(Y9, { d: r, set: i }),
-      a === "jour" && l.default.createElement(o7, { d: r, set: i }),
-      a === "commandes" && l.default.createElement(d7, { d: r, set: i }),
-      a === "messages" && l.default.createElement(N7, { d: r, set: i }),
-      a === "offres" && l.default.createElement(a7, { d: r, set: i }),
-      a === "pubs" && l.default.createElement(F7, { d: r, set: i }),
-      a === "themes" && l.default.createElement(k7, { d: r, set: i }),
-      a === "menu" && l.default.createElement(PS, { d: r, set: i }),
-      a === "actus" && l.default.createElement(D7, { d: r, set: i }),
-      a === "producteurs" && l.default.createElement(P7, { d: r, set: i }),
-      a === "fidelite" && l.default.createElement(B7, { d: r, set: i }),
-      a === "roue" && l.default.createElement(O7, { d: r, set: i }),
-      a === "recettes" && l.default.createElement(M7, { d: r, set: i }),
-      a === "sondage" && l.default.createElement(L7, { d: r, set: i }),
-      a === "reglages" && l.default.createElement(H7, { d: r, set: i, reinitialiser: s }),
+      a === "stats" && React.default.createElement(EcranStatistiques, { d: r }),
+      a === "com" && React.default.createElement(Communication, { d: r, set: i }),
+      a === "jour" && React.default.createElement(Jour, { d: r, set: i }),
+      a === "commandes" && React.default.createElement(Commandes, { d: r, set: i }),
+      a === "messages" && React.default.createElement(Messages, { d: r, set: i }),
+      a === "offres" && React.default.createElement(Offres, { d: r, set: i }),
+      a === "pubs" && React.default.createElement(Pubs, { d: r, set: i }),
+      a === "themes" && React.default.createElement(Themes, { d: r, set: i }),
+      a === "menu" && React.default.createElement(EditeurMenuDaval, { d: r, set: i }),
+      a === "actus" && React.default.createElement(Actus, { d: r, set: i }),
+      a === "producteurs" && React.default.createElement(Producteurs, { d: r, set: i }),
+      a === "fidelite" && React.default.createElement(Fidelite, { d: r, set: i }),
+      a === "roue" && React.default.createElement(RoueAdmin, { d: r, set: i }),
+      a === "recettes" && React.default.createElement(Recettes, { d: r, set: i }),
+      a === "sondage" && React.default.createElement(Sondages, { d: r, set: i }),
+      a === "reglages" && React.default.createElement(Reglages, { d: r, set: i, reinitialiser: s }),
     ),
-    l.default.createElement(
+    React.default.createElement(
       "div",
       {
         className: "signature",
@@ -9224,28 +9430,28 @@ function Q7() {
         },
       },
       "Conception et r\xE9alisation Eric Tisserand",
-      l.default.createElement("br", null),
+      React.default.createElement("br", null),
       "Reproduction interdite",
     ),
-    l.default.createElement(Jk, { dispo: n }),
-    l.default.createElement(
+    React.default.createElement(BandeauMaj, { dispo: n }),
+    React.default.createElement(
       "nav",
       { className: "tabs" },
       E.map((A) =>
-        l.default.createElement(
+        React.default.createElement(
           "button",
           {
             key: A.id,
             className: "tab" + (a === A.id ? " on" : "") + (RS.includes(A.id) ? "" : " sec"),
             onClick: () => {
-              (u(A.id), window.scrollTo(0, 0));
+              u(A.id), window.scrollTo(0, 0);
             },
           },
-          l.default.createElement(
+          React.default.createElement(
             "span",
             { className: "tab-ic" },
             A.ic(20, a === A.id ? "#1C433B" : "#93A099"),
-            !!A.n && l.default.createElement("b", { className: "tab-n" }, A.n),
+            !!A.n && React.default.createElement("b", { className: "tab-n" }, A.n),
           ),
           A.label,
         ),
@@ -9254,28 +9460,28 @@ function Q7() {
         let A = E.filter((I) => !RS.includes(I.id)),
           S = A.find((I) => I.id === a),
           _ = A.reduce((I, T) => I + (T.n || 0), 0);
-        return l.default.createElement(
+        return React.default.createElement(
           "button",
           {
             className: "tab plus" + (S ? " on" : ""),
             onClick: () => h(!0),
             "aria-label": "Autres rubriques",
           },
-          l.default.createElement(
+          React.default.createElement(
             "span",
             { className: "tab-ic" },
-            S ? S.ic(20, "#1C433B") : he.plusMenu(20, "#93A099"),
-            !!_ && l.default.createElement("b", { className: "tab-n" }, _),
+            S ? S.ic(20, "#1C433B") : I10.plusMenu(20, "#93A099"),
+            !!_ && React.default.createElement("b", { className: "tab-n" }, _),
           ),
           S ? S.label : "Plus",
         );
       })(),
     ),
     d &&
-      l.default.createElement(
+      React.default.createElement(
         "div",
         { className: "plus-fond", onClick: () => h(!1) },
-        l.default.createElement(
+        React.default.createElement(
           "div",
           {
             className: "plus-in",
@@ -9284,26 +9490,26 @@ function Q7() {
             "aria-label": "Autres rubriques",
           },
           ["Ma vitrine", "Mes clients", "Suivi"].map((A) =>
-            l.default.createElement(
+            React.default.createElement(
               "section",
               { key: A, className: "plus-g" },
-              l.default.createElement("h4", null, A),
-              l.default.createElement(
+              React.default.createElement("h4", null, A),
+              React.default.createElement(
                 "div",
                 { className: "plus-l" },
                 E.filter((S) => S.g === A).map((S) =>
-                  l.default.createElement(
+                  React.default.createElement(
                     "button",
                     {
                       key: S.id,
                       className: a === S.id ? "on" : "",
                       onClick: () => {
-                        (u(S.id), h(!1), window.scrollTo(0, 0));
+                        u(S.id), h(!1), window.scrollTo(0, 0);
                       },
                     },
                     S.ic(24, a === S.id ? "#1C433B" : "#5C6A62"),
                     S.label,
-                    !!S.n && l.default.createElement("b", { className: "tab-n" }, S.n),
+                    !!S.n && React.default.createElement("b", { className: "tab-n" }, S.n),
                   ),
                 ),
               ),
@@ -9315,7 +9521,9 @@ function Q7() {
 }
 "serviceWorker" in navigator &&
   addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
-(0, hN.createRoot)(document.getElementById("root")).render(l.default.createElement(Q7, null));
+(0, ReactDOMClient.createRoot)(document.getElementById("root")).render(
+  React.default.createElement(Admin, null),
+);
 /*! Bundled license information:
 
 react/cjs/react.production.min.js:

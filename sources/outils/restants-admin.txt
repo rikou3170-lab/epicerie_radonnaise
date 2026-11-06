@@ -1,0 +1,248 @@
+YP	fonction	962	Running in emulator mode. Do not use with production credentials. | fixed | 100% | #ffffff
+g8	fonction	247	MouseEvent | click
+nf	variable	11	
+tf	variable	2	
+de	variable	41	
+Gu	variable	11	
+ak	variable	199	RAD-
+yr	variable	11	
+un	variable	13	
+lk	variable	13	
+Js	variable	7	
+i2	variable	9	
+uk	variable	114	
+ft	variable	38	
+De	variable	42	
+C8	variable	50	
+S8	variable	397	Confirmer | Oui, annuler | Afficher | se déconnecter
+N8	variable	923	.dlg-fond{position:fixed;inset:0;z-index:1000;background:rgba(20,32,26,.55);display:flex;align-items:center;justify-content:center;padding:20px;animation:dlgIn 
+F8	fonction	1426	Escape | Enter | keydown | dlg-fond
+Hu	variable	54	sv-SE
+rf	fonction	819	iPhone | MacIntel | iPad | Téléphone Android
+ck	fonction	253	epicerie-raddonnaise-cnx- | connexions
+RL	variable	159	v_accueil | Accueil | v_carte | La carte
+eO	variable	61	dim. | lun. | mar. | mer.
+tO	variable	78	dimanche | lundi | mardi | mercredi
+Hk	fonction	165	
+nO	variable	348	var(--apple) | var(--line) | hidden | 100%
+Kk	fonction	15356	stats | jour | connexions | menage-stats
+Rt	variable	13	
+rO	variable	263	activated | statechange | redundant
+b2	fonction	263	serviceWorker
+uf	variable	94	
+Na	variable	42	
+x2	variable	268	
+eo	variable	118	
+_2	fonction	267	
+it	variable	194	un cadeau surprise | un chouette cadeau surprise | carburant, gaz et alcool
+eC	variable	13	
+cf	variable	613	carburant, gaz, alcools, tabac, presse, jeux | un cadeau
+A2	variable	354	1 passage dès | € d'achats = 1 tampon | 1 passage = 1 tampon | tampons =
+Rk	variable	135	Membre supporter | Pilier de l'épicerie
+df	variable	240	
+D	variable	12	
+J	variable	12	
+sO	variable	230	halloween | octobrerose | beaujolais | stnicolas
+Zn	variable	83	
+to	variable	140	#2B1B3D | #140B22 | #E8731C | #FFB547
+tC	variable	1059	amb-chapeau | 0 0 44 40 | aria-hidden | true
+oO	variable	962	amb-citrouille | 0 0 40 36 | aria-hidden | true
+aO	variable	1058	0 0 60 26 | aria-hidden | true | #1A0F28
+nC	fonction	1218	amb-guirl | apercu | aria-hidden | true
+lO	fonction	492	amb-vol | boucle | apercu | aria-hidden
+uO	variable	1343	amb-sorciere | 0 0 120 60 | aria-hidden | true
+cO	variable	2482	amb-village | 0 0 400 150 | xMidYMax slice | aria-hidden
+rC	fonction	630	decor-magie amb-intro-h | aria-hidden | true | amb-etoiles
+dO	variable	309	url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%235E3F82' stroke-width='.9' opacity='.75'%3E%3
+iC	variable	647	#EC407A | #F06292 | 0 0 24 30 | aria-hidden
+sC	variable	171	span | amb-ruban-logo
+oC	fonction	1141	amb-guirl | apercu | aria-hidden | true
+hO	fonction	1280	amb-ballons | apercu | aria-hidden | true
+pO	variable	1732	amb-village | 0 0 400 150 | xMidYMax slice | aria-hidden
+aC	fonction	355	decor-magie amb-intro-r | aria-hidden | true | amb-aurore
+y	variable	12	
+k2	variable	102	galette | chandeleur | valentin | paques
+T2	variable	629	#D4AF37 | 0 0 26 20 | aria-hidden | true
+hf	variable	316	#F4D774 | 0 0 24 24 | aria-hidden | true
+I2	variable	756	0 0 24 16 | aria-hidden | true | ellipse
+mO	variable	617	0 0 16 26 | aria-hidden | true | path
+Ju	variable	505	#E05A73 | 0 0 24 22 | aria-hidden | true
+Ui	variable	983	#F6C6D9 | #E05A73 | 0 0 20 26 | aria-hidden
+qi	variable	531	#F48FB1 | #FFD54F | 0 0 24 24 | aria-hidden
+Ru	variable	1021	0 0 24 30 | aria-hidden | true | path
+Xu	variable	1185	#F2B134 | 0 0 24 24 | aria-hidden | true
+gO	variable	480	#24507E | 0 0 16 28 | aria-hidden | true
+vO	variable	355	#4E342E | 0 0 30 12 | aria-hidden | true
+uC	variable	344	#1F3A93 | 0 0 16 18 | aria-hidden | true
+yO	variable	417	0 0 24 24 | aria-hidden | true | circle
+wO	variable	1616	0 0 70 60 | aria-hidden | true | #F3ECE2
+bO	variable	1436	0 0 100 64 | aria-hidden | true | rect
+jr	variable	575	amb-village | 0 0 400 150 | xMidYMax slice | aria-hidden
+Zu	variable	589	#2E5A2E | #4A3222 | rect | circle
+EO	variable	216	#3E7A2E | path | l-3-7M | l0-9M
+xO	variable	29488	amb-lueur | circle | #FFF3C4 | ellipse
+Ur	variable	93	
+C2	variable	21541	#E9C46A | #B8860B | #F4D774 | pluie
+cC	variable	1769	.amb2-monte{position:fixed;inset:0;z-index:57;pointer-events:none;overflow:hidden;max-width:440px;margin:0 auto} .amb2-monte.apercu{position:absolute} .amb2-mon
+pf	variable	51	beaujolais | stnicolas | nouvelan
+pC	variable	1443	#6E1F45 | #6E9B3A | 0 0 24 30 | aria-hidden
+fC	variable	528	#C9562A | 0 0 24 24 | aria-hidden | true
+S2	variable	875	0 0 24 22 | aria-hidden | true | path
+dC	variable	316	#E9B949 | 0 0 24 24 | aria-hidden | true
+_O	variable	619	#E9B949 | 0 0 24 28 | aria-hidden | true
+mC	variable	1435	0 0 120 70 | aria-hidden | true | #3B2A36
+wr	variable	6428	0 0 40 24 | ellipse | #1E1A1C | #2E2A2C
+gC	variable	243	span | amb2-acc | aria-hidden | true
+vC	fonction	1144	amb-guirl | apercu | aria-hidden | true
+ec	fonction	2425	amb2-ane | apercu | aria-hidden | true
+hC	variable	978	#1E3A3A | path | -.4zM | #FFFFFF
+AO	variable	10378	beaujolais | amb-village | 0 0 400 150 | xMidYMax slice
+yC	fonction	1008	decor-magie amb2-intro | aria-hidden | true | amb-intro-h
+IO	variable	89	
+kO	variable	156	
+ff	variable	167	
+mf	variable	319	grapheme
+M2	variable	7	
+tc	fonction	791	emoji | monte | haut | rose
+L2	variable	302	degrade | Dégradé | lumiere | Lumière
+O2	fonction	1737	#1C433B | #6E9B3A | radial-gradient(120% 75% at 50% 45%, | EE 0%,
+B2	variable	7	
+CO	variable	80	
+vf	fonction	161	
+V2	fonction	900	sv-SE
+D2	variable	13752	none | round | path | M12 2v20M3.3 7l17.4 10M3.3 17l17.4-10M12 5.5l-2.2-2M12 5.5l2.2-2M12 18.5l-2.2 2M12 18.5l2.2 2M5.6 8.3l-.4 3M18.4 15.7l.4-3M5.6 15.7l-.4-3M
+yf	variable	1808	flocon | Flocon | #FFFFFF | etoile
+Fa	variable	51	
+AC	variable	442	0 0 24 24 | aria-hidden | true | #FFFFFF
+SO	variable	373	
+Wi	variable	108	
+FO	variable	241	
+j2	fonction	665	neige | dans | aria-hidden | true
+EC	variable	71	#FF4D4D | #FFD54F | #4FC3F7 | #81C784
+IC	fonction	906	guirlande | apercu | aria-hidden | true
+kC	variable	670	bonnet | 0 0 40 34 | aria-hidden | true
+DO	fonction	2450	traineau | boucle | apercu | aria-hidden
+PO	variable	4375	village | 0 0 400 150 | xMidYMax slice | aria-hidden
+CC	fonction	413	decor-magie | aria-hidden | true | etoiles-ciel
+xC	fonction	383	🎄 Joyeuses fêtes ! | 🎄 C'est le réveillon ce soir ! | 🎄 Plus que | jours avant les fêtes
+T9	variable	53	
+CS	variable	105	
+SS	fonction	2938	dates | jours | prix- | jour-
+I9	variable	25	
+Z2	variable	53	T12:00
+R2	variable	120	T12:00
+ew	variable	122	
+Tf	variable	66	
+Pe	variable	13	
+k9	variable	371	mn-plat | mn-acc
+tw	fonction	2850	Escape | keydown | mn-feuille | mn-tete
+C9	fonction	1037	canvas | high
+S9	fonction	634	ocr/worker.min.js | ocr/ | recognizing text
+N9	variable	107	
+DS	variable	294	
+nw	variable	369	
+PS	fonction	11527	jour- | Indiquez les dates de la semaine. | La date de fin est avant la date de début. | Aucun plat n'est rempli.
+MS	variable	1138	.mna-lect{display:flex;gap:12px;align-items:center;margin-bottom:6px} .mna-lect img{width:64px;height:84px;object-fit:cover;border-radius:8px;border:1px solid v
+K	variable	12	
+LS	variable	287	2026-12-01 | 2026-12-24 | 2026-12-15 | Tirage de mi-décembre
+oc	variable	151	
+F9	variable	54	sv-SE
+BS	variable	148	
+sw	variable	107	
+D9	variable	79	
+P9	variable	150	Client
+VS	variable	191	
+Qi	variable	9	
+zS	variable	307	playback | suspended
+jS	fonction	497	square
+US	fonction	574	triangle
+sc	variable	60	#FF4D5E | #FFD86B | #5FD068 | #7FC8FF
+M9	fonction	1779	guirl | vite | 0 0 300 66 | xMidYMin meet
+qS	variable	6	
+br	variable	13	
+rw	variable	86	
+OS	fonction	3667	roue-svg | vite | -118 -122 236 240 | block
+L9	fonction	1064	
+O9	fonction	2378	roue-regl | Règlement de la roue de Noël | Jeu gratuit organisé par l'Épicerie Raddonnaise (Raddon-et-Chapendu), réservé aux personnes de 18 ans et plus titulai
+$S	fonction	525	#F6D47A | #C9E38A | #E05A73 | #FFFFFF
+B9	variable	384	roue-etoiles | aria-hidden | true
+GS	fonction	6689	intro | pret | tourne | regl
+iw	variable	64	Client
+V9	variable	179	
+HS	fonction	1734	tir-fen | tir-cadre | tir-nom | tir-gagnant
+Er	variable	37	
+lw	variable	84	
+ac	variable	7	
+QS	variable	122	
+An	variable	95	
+ow	variable	41	sv-SE
+aw	variable	110	
+YS	fonction	643	T12:00
+Ji	variable	72	
+If	variable	141	
+JS	variable	82	?test=1
+lc	variable	42	
+er	variable	35	
+kf	fonction	471	Au choix
+XS	variable	149	
+Bn	variable	49	sv-SE
+Wr	variable	55	
+z9	variable	206	ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+j9	variable	35	
+U9	variable	7	
+RS	variable	49	accueil | jour | commandes | messages
+cw	variable	105	
+tN	variable	88	
+Pf	fonction	165	
+nN	fonction	186	conversations | messages
+Xi	variable	81	string
+Sf	variable	72	
+q9	variable	556	object | Plateau
+vw	variable	1087	wrap | card | Cet écran n'a pas pu s'afficher | 6px 0 10px
+$9	fonction	820	recompense | recompense1 | clients | tampon
+ww	variable	19419	:root{--bg:#F7F3EA;--card:#fff;--forest:#1C433B;--apple:#6E9B3A;--apple-soft:#EEF3E2; --terra:#C27B42;--gold:#C69A3C;--red:#C86B5C;--ink:#22302A;--ink2:#5C6A62;
+ze	variable	175	
+Vn	variable	122	empty
+ut	fonction	579	button | #93A099
+H9	fonction	5162	reservee | nouvelle | wrap | Bonjour Marion
+K9	fonction	439	wrap | Statistiques | Vos ventes dans l'appli et ce que regardent vos clients, pour choisir quoi mettre en avant.
+Q9	fonction	3953	popup | card | 💬 Message à l'ouverture | Une fenêtre qui s'affiche quand le client ouvre l'appli
+Y9	fonction	3073	wrap | Communication | Prévenez vos clients : une notification sur leur téléphone, ou un bandeau en haut de l'appli. | card
+J9	fonction	877	conversations | Vous : | Client | messages
+X9	variable	697	Nous vous confirmons la bonne prise en compte de votre commande 😁 | Votre commande est prête, à tout à l'heure ! | Petit changement : il me manque un produit, 
+mN	fonction	1547	Message non envoyé. Vérifiez la connexion et réessayez. | 💬 Écrire à | ce client | Le message arrive dans l'application du client
+iN	variable	315	
+R9	fonction	271	jour | Impossible de remettre le compteur à 0. Vérifiez la connexion.
+pw	variable	120	
+bw	variable	51	
+gN	fonction	382	appareils
+vN	fonction	2352	Envoyer cette notification à | téléphone(s) ? « | diffusions | diff
+n7	fonction	726	gaspi | ⏳ Date courte : | panier | 🧺 Panier anti-gaspi :
+r7	fonction	2715	diffusions | card | 📣 Prévenir mes clients | téléphone(s) reçoivent les notifications ·
+yN	variable	84	T12:00
+sN	variable	70	auto
+g7	variable	106	normal | Logo habituel | logo-intro.png | rose
+v7	variable	309	rose | octobrerose | logo-rose.png | noel
+y7	fonction	1504	intro-tel | Toucher pour rejouer | halloween | octobrerose
+wN	fonction	4882	tog ri-magie | ✨ Magie de Noël | Neige qui tombe et posée sur les menus, guirlande lumineuse, bonnet sur le logo, traîneau du Père Noël, village enneigé à l'ouv
+w7	variable	69	logo | phrase | fond | motifs
+oN	variable	115	phrase
+b7	variable	118	emoji
+E7	fonction	2429	auto | T12:00 | sv-SE | card
+A7	variable	288	#E8731C
+P7	fonction	7018	producteurs | wrap | Nos producteurs | Présentez les producteurs dont vous vendez les produits : une photo, quelques mots. Ils apparaissent sur l'accueil de l'a
+M7	fonction	6748	recettes | wrap | La recette de la semaine | La recette la plus récente s'affiche sur l'accueil de l'appli, les précédentes juste en dessous. Écrivez un ingrédi
+L7	fonction	8968	choix | sondage | Commencer un nouveau sondage ? Le sondage actuel s'arrête (ses réponses restent consultables ci-dessous jusqu'à ce que vous les effaciez). | N
+O7	fonction	8755	roue | Jean | Sophie | Michel
+V7	variable	133	
+z7	variable	255	#transfert=ERT1.
+j7	fonction	663	h1v1h-1z | -2 -2 | crispEdges | block
+U7	fonction	1668	ce client | Carte de | var(--ink2) | Le client ouvre l'
+lN	variable	40	
+Mf	variable	42	
+Ew	variable	126	null
+bN	variable	152	(display-mode: standalone)
+uN	fonction	407	ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789 | appareilsAdmin
+cN	variable	49	
+$7	fonction	2819	granted | default | card | 12px 14px 0
+G7	fonction	4496	ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789 | appareilsAdmin | indispo | nonsup

@@ -1,0 +1,402 @@
+{
+ "k8": {
+  "nom": "firebaseConfig",
+  "source": "firebase.js",
+  "score": 1
+ },
+ "Sa": {
+  "nom": "CONFIG_REF",
+  "source": "firebase.js",
+  "score": 1
+ },
+ "ok": {
+  "nom": "ALPHA",
+  "source": "firebase.js",
+  "score": 1
+ },
+ "Qk": {
+  "nom": "versionEnLigne",
+  "source": "maj.jsx",
+  "score": 1
+ },
+ "Yk": {
+  "nom": "useMiseAJour",
+  "source": "maj.jsx",
+  "score": 1
+ },
+ "iO": {
+  "nom": "styleBandeau",
+  "source": "maj.jsx",
+  "score": 1
+ },
+ "E2": {
+  "nom": "heureMsg",
+  "source": "chat.js",
+  "score": 1
+ },
+ "Zk": {
+  "nom": "jourMsg",
+  "source": "chat.js",
+  "score": 1
+ },
+ "cn": {
+  "nom": "FRISE",
+  "source": "themes.jsx",
+  "score": 1
+ },
+ "gf": {
+  "nom": "persoVersTheme",
+  "source": "themes.jsx",
+  "score": 1
+ },
+ "Ki": {
+  "nom": "dateFr",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "KS": {
+  "nom": "CMD_DEF",
+  "source": "commande.js",
+  "score": 1
+ },
+ "uw": {
+  "nom": "MODES",
+  "source": "commande.js",
+  "score": 1
+ },
+ "Yi": {
+  "nom": "dateCourte",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "ZS": {
+  "nom": "LISTE_RACLETTE",
+  "source": "commande.js",
+  "score": 1
+ },
+ "yw": {
+  "nom": "LOGO",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "Ma": {
+  "nom": "EMPTY",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "Cf": {
+  "nom": "TYPES",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "Nf": {
+  "nom": "aujourdhui",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "cc": {
+  "nom": "jourFr",
+  "source": "boutique.js",
+  "score": 1
+ },
+ "pN": {
+  "nom": "statut",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "G9": {
+  "nom": "lirePhoto",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "lt": {
+  "nom": "esc",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "fw": {
+  "nom": "STATUTS",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "mw": {
+  "nom": "SUIVANT",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "uc": {
+  "nom": "enCoursCmd",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "l7": {
+  "nom": "MOTIFS",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "c7": {
+  "nom": "quand",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "qr": {
+  "nom": "dateLongue",
+  "source": "commande.js",
+  "score": 1
+ },
+ "x7": {
+  "nom": "COULEURS_THEME",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "_7": {
+  "nom": "EMOJIS_THEME",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "C7": {
+  "nom": "REPONSES",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "aN": {
+  "nom": "ACTIONS",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "dN": {
+  "nom": "msgErreur",
+  "source": "admin.jsx",
+  "score": 1
+ },
+ "e7": {
+  "nom": "imprimerPreparation",
+  "source": "admin.jsx",
+  "score": 0.95
+ },
+ "i7": {
+  "nom": "Statistiques",
+  "source": "admin.jsx",
+  "score": 0.95
+ },
+ "I7": {
+  "nom": "MesThemes",
+  "source": "admin.jsx",
+  "score": 0.95
+ },
+ "Jk": {
+  "nom": "BandeauMaj",
+  "source": "maj.jsx",
+  "score": 0.93
+ },
+ "Xk": {
+  "nom": "BoutonMaj",
+  "source": "maj.jsx",
+  "score": 0.93
+ },
+ "P2": {
+  "nom": "THEMES",
+  "source": "themes.jsx",
+  "score": 0.93
+ },
+ "F7": {
+  "nom": "Pubs",
+  "source": "admin.jsx",
+  "score": 0.93
+ },
+ "NO": {
+  "nom": "ILLU",
+  "source": "themes.jsx",
+  "score": 0.92
+ },
+ "u7": {
+  "nom": "Decision",
+  "source": "admin.jsx",
+  "score": 0.92
+ },
+ "a7": {
+  "nom": "Offres",
+  "source": "admin.jsx",
+  "score": 0.9
+ },
+ "d7": {
+  "nom": "Commandes",
+  "source": "admin.jsx",
+  "score": 0.9
+ },
+ "p7": {
+  "nom": "Plateaux",
+  "source": "admin.jsx",
+  "score": 0.9
+ },
+ "S7": {
+  "nom": "Fil",
+  "source": "admin.jsx",
+  "score": 0.9
+ },
+ "W7": {
+  "nom": "InfosLegales",
+  "source": "admin.jsx",
+  "score": 0.9
+ },
+ "t7": {
+  "nom": "BoutonPreparation",
+  "source": "admin.jsx",
+  "score": 0.89
+ },
+ "m7": {
+  "nom": "ReglagesCmd",
+  "source": "admin.jsx",
+  "score": 0.89
+ },
+ "f7": {
+  "nom": "EditionChoix",
+  "source": "admin.jsx",
+  "score": 0.88
+ },
+ "z2": {
+  "nom": "Particules",
+  "source": "themes.jsx",
+  "score": 0.87
+ },
+ "s7": {
+  "nom": "Fermetures",
+  "source": "admin.jsx",
+  "score": 0.87
+ },
+ "K7": {
+  "nom": "Connexion",
+  "source": "admin.jsx",
+  "score": 0.87
+ },
+ "Ri": {
+  "nom": "PhotoField",
+  "source": "admin.jsx",
+  "score": 0.86
+ },
+ "N7": {
+  "nom": "Messages",
+  "source": "admin.jsx",
+  "score": 0.86
+ },
+ "D7": {
+  "nom": "Actus",
+  "source": "admin.jsx",
+  "score": 0.86
+ },
+ "W9": {
+  "nom": "useShop",
+  "source": "admin.jsx",
+  "score": 0.84
+ },
+ "Zi": {
+  "nom": "Periode",
+  "source": "admin.jsx",
+  "score": 0.83
+ },
+ "Z9": {
+  "nom": "Reservations",
+  "source": "admin.jsx",
+  "score": 0.83
+ },
+ "o7": {
+  "nom": "Jour",
+  "source": "admin.jsx",
+  "score": 0.83
+ },
+ "q7": {
+  "nom": "Conservation",
+  "source": "admin.jsx",
+  "score": 0.83
+ },
+ "gw": {
+  "nom": "Attente",
+  "source": "admin.jsx",
+  "score": 0.81
+ },
+ "h7": {
+  "nom": "ListeCommandes",
+  "source": "admin.jsx",
+  "score": 0.79
+ },
+ "rN": {
+  "nom": "ChampsResa",
+  "source": "admin.jsx",
+  "score": 0.77
+ },
+ "T7": {
+  "nom": "EditionPerso",
+  "source": "admin.jsx",
+  "score": 0.75
+ },
+ "he": {
+  "nom": "I",
+  "source": "admin.jsx",
+  "score": 0.74
+ },
+ "eN": {
+  "nom": "COLS",
+  "source": "admin.jsx",
+  "score": 0.73
+ },
+ "k7": {
+  "nom": "Themes",
+  "source": "admin.jsx",
+  "score": 0.73
+ },
+ "dw": {
+  "nom": "syncCol",
+  "source": "admin.jsx",
+  "score": 0.72
+ },
+ "io": {
+  "nom": "Pastille",
+  "source": "admin.jsx",
+  "score": 0.71
+ },
+ "hw": {
+  "nom": "ajouterPoints",
+  "source": "admin.jsx",
+  "score": 0.71
+ },
+ "fN": {
+  "nom": "CONFIG_KEYS",
+  "source": "admin.jsx",
+  "score": 0.69
+ },
+ "wf": {
+  "nom": "IllustrationTheme",
+  "source": "themes.jsx",
+  "score": 0.68
+ },
+ "TC": {
+  "nom": "CarteTheme",
+  "source": "themes.jsx",
+  "score": 0.65
+ },
+ "B7": {
+  "nom": "Fidelite",
+  "source": "admin.jsx",
+  "score": 0.6
+ },
+ "H7": {
+  "nom": "Reglages",
+  "source": "admin.jsx",
+  "score": 0.53
+ },
+ "Q7": {
+  "nom": "Admin",
+  "source": "admin.jsx",
+  "score": 0.44
+ },
+ "Ff": {
+  "nom": "ApercuTheme",
+  "source": "admin.jsx",
+  "score": 0.38
+ },
+ "Pa": {
+  "nom": "avertirMessage",
+  "source": "commande.js",
+  "score": 0.36
+ }
+}

@@ -1,0 +1,517 @@
+{
+ "HP": {
+  "nom": "firebaseConfig",
+  "source": "firebase.js",
+  "score": 1
+ },
+ "Z3": {
+  "nom": "CONFIG_REF",
+  "source": "firebase.js",
+  "score": 1
+ },
+ "X3": {
+  "nom": "ALPHA",
+  "source": "firebase.js",
+  "score": 1
+ },
+ "nI": {
+  "nom": "versionEnLigne",
+  "source": "maj.jsx",
+  "score": 1
+ },
+ "rI": {
+  "nom": "useMiseAJour",
+  "source": "maj.jsx",
+  "score": 1
+ },
+ "YP": {
+  "nom": "styleBandeau",
+  "source": "maj.jsx",
+  "score": 1
+ },
+ "rn": {
+  "nom": "FRISE",
+  "source": "themes.jsx",
+  "score": 1
+ },
+ "xM": {
+  "nom": "persoVersTheme",
+  "source": "themes.jsx",
+  "score": 1
+ },
+ "za": {
+  "nom": "dateFr",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "v2": {
+  "nom": "MODES",
+  "source": "commande.js",
+  "score": 1
+ },
+ "ja": {
+  "nom": "jourFr",
+  "source": "boutique.js",
+  "score": 1
+ },
+ "n5": {
+  "nom": "ALPHA_R",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "o5": {
+  "nom": "envoyerMail",
+  "source": "commande.js",
+  "score": 1
+ },
+ "s5": {
+  "nom": "avertirMessage",
+  "source": "commande.js",
+  "score": 1
+ },
+ "a5": {
+  "nom": "avertirResa",
+  "source": "commande.js",
+  "score": 1
+ },
+ "b2": {
+  "nom": "SUIVI",
+  "source": "commande.js",
+  "score": 1
+ },
+ "yc": {
+  "nom": "icsDate",
+  "source": "commande.js",
+  "score": 1
+ },
+ "u5": {
+  "nom": "rappelTexte",
+  "source": "commande.js",
+  "score": 1
+ },
+ "c5": {
+  "nom": "fichierAgenda",
+  "source": "commande.js",
+  "score": 1
+ },
+ "d5": {
+  "nom": "lienGoogleAgenda",
+  "source": "commande.js",
+  "score": 1
+ },
+ "OV": {
+  "nom": "LISTE_RACLETTE",
+  "source": "commande.js",
+  "score": 1
+ },
+ "wf": {
+  "nom": "dateLongue",
+  "source": "commande.js",
+  "score": 1
+ },
+ "h5": {
+  "nom": "texteFermeture",
+  "source": "boutique.js",
+  "score": 1
+ },
+ "kf": {
+  "nom": "CHAT_KEY",
+  "source": "chat.js",
+  "score": 1
+ },
+ "Q5": {
+  "nom": "heureMsg",
+  "source": "chat.js",
+  "score": 1
+ },
+ "J5": {
+  "nom": "jourMsg",
+  "source": "chat.js",
+  "score": 1
+ },
+ "qa": {
+  "nom": "USER_KEY",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "rs": {
+  "nom": "LOGO",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "X5": {
+  "nom": "TYPES",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "R5": {
+  "nom": "INSTALL_KEY",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "fO": {
+  "nom": "plateforme",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "mO": {
+  "nom": "useInstall",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "vT": {
+  "nom": "CarteActu",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "iT": {
+  "nom": "aller",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "LO": {
+  "nom": "Actus",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "yT": {
+  "nom": "CMD_KEY",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "VO": {
+  "nom": "AVERTIR",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "zO": {
+  "nom": "phraseSuivi",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "HO": {
+  "nom": "ALLERGENES",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "KO": {
+  "nom": "REGIMES",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "QO": {
+  "nom": "ALLERG_PREFIXE",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "o9": {
+  "nom": "Fidelite",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "px": {
+  "nom": "BIENVENUE_KEY",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "Ac": {
+  "nom": "mouvementReduit",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "x9": {
+  "nom": "FEUILLES",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "k9": {
+  "nom": "useChat",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "mx": {
+  "nom": "PRENOM_KEY",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "CT": {
+  "nom": "RESA_KEY",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "U9": {
+  "nom": "useMesResas",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "q9": {
+  "nom": "MesResas",
+  "source": "client.jsx",
+  "score": 1
+ },
+ "vO": {
+  "nom": "AssistantInstall",
+  "source": "client.jsx",
+  "score": 0.97
+ },
+ "K9": {
+  "nom": "PartagerAppli",
+  "source": "client.jsx",
+  "score": 0.96
+ },
+ "UO": {
+  "nom": "AlerteCommande",
+  "source": "client.jsx",
+  "score": 0.95
+ },
+ "iI": {
+  "nom": "BandeauMaj",
+  "source": "maj.jsx",
+  "score": 0.93
+ },
+ "oI": {
+  "nom": "BoutonMaj",
+  "source": "maj.jsx",
+  "score": 0.93
+ },
+ "vM": {
+  "nom": "THEMES",
+  "source": "themes.jsx",
+  "score": 0.93
+ },
+ "jO": {
+  "nom": "BoutonsRappel",
+  "source": "client.jsx",
+  "score": 0.93
+ },
+ "TT": {
+  "nom": "FenetreReception",
+  "source": "client.jsx",
+  "score": 0.93
+ },
+ "V9": {
+  "nom": "ChangerTelephone",
+  "source": "client.jsx",
+  "score": 0.93
+ },
+ "TM": {
+  "nom": "ILLU",
+  "source": "themes.jsx",
+  "score": 0.92
+ },
+ "AO": {
+  "nom": "Bannieres",
+  "source": "client.jsx",
+  "score": 0.92
+ },
+ "ET": {
+  "nom": "FidCarte",
+  "source": "client.jsx",
+  "score": 0.92
+ },
+ "b9": {
+  "nom": "Feuille",
+  "source": "client.jsx",
+  "score": 0.92
+ },
+ "B9": {
+  "nom": "MonPrenom",
+  "source": "client.jsx",
+  "score": 0.92
+ },
+ "J2": {
+  "nom": "EMPTY",
+  "source": "client.jsx",
+  "score": 0.91
+ },
+ "eT": {
+  "nom": "IcPartage",
+  "source": "client.jsx",
+  "score": 0.91
+ },
+ "Xn": {
+  "nom": "Deco",
+  "source": "client.jsx",
+  "score": 0.91
+ },
+ "_9": {
+  "nom": "Illu",
+  "source": "client.jsx",
+  "score": 0.91
+ },
+ "A9": {
+  "nom": "Bienvenue",
+  "source": "client.jsx",
+  "score": 0.91
+ },
+ "Yn": {
+  "nom": "Ic",
+  "source": "client.jsx",
+  "score": 0.89
+ },
+ "$O": {
+  "nom": "ChoixPlateau",
+  "source": "client.jsx",
+  "score": 0.89
+ },
+ "gO": {
+  "nom": "IcMenu",
+  "source": "client.jsx",
+  "score": 0.88
+ },
+ "JO": {
+  "nom": "Commande",
+  "source": "client.jsx",
+  "score": 0.88
+ },
+ "r2": {
+  "nom": "Particules",
+  "source": "themes.jsx",
+  "score": 0.87
+ },
+ "qO": {
+  "nom": "Carte",
+  "source": "client.jsx",
+  "score": 0.87
+ },
+ "rT": {
+  "nom": "ListeJour",
+  "source": "client.jsx",
+  "score": 0.86
+ },
+ "kO": {
+  "nom": "IcR",
+  "source": "client.jsx",
+  "score": 0.86
+ },
+ "L9": {
+  "nom": "FenetreEnvoi",
+  "source": "client.jsx",
+  "score": 0.84
+ },
+ "IT": {
+  "nom": "DemandePrenom",
+  "source": "client.jsx",
+  "score": 0.83
+ },
+ "O9": {
+  "nom": "importerTransfert",
+  "source": "client.jsx",
+  "score": 0.83
+ },
+ "y9": {
+  "nom": "Infos",
+  "source": "client.jsx",
+  "score": 0.8
+ },
+ "tT": {
+  "nom": "IcPlus",
+  "source": "client.jsx",
+  "score": 0.79
+ },
+ "C9": {
+  "nom": "Messagerie",
+  "source": "client.jsx",
+  "score": 0.79
+ },
+ "Wa": {
+  "nom": "QR",
+  "source": "client.jsx",
+  "score": 0.78
+ },
+ "If": {
+  "nom": "IcPoints",
+  "source": "client.jsx",
+  "score": 0.77
+ },
+ "CO": {
+  "nom": "Accueil",
+  "source": "client.jsx",
+  "score": 0.77
+ },
+ "T9": {
+  "nom": "BulleChat",
+  "source": "client.jsx",
+  "score": 0.77
+ },
+ "YO": {
+  "nom": "Jauge",
+  "source": "client.jsx",
+  "score": 0.76
+ },
+ "$9": {
+  "nom": "Reserver",
+  "source": "client.jsx",
+  "score": 0.76
+ },
+ "ox": {
+  "nom": "Installer",
+  "source": "client.jsx",
+  "score": 0.75
+ },
+ "H2": {
+  "nom": "PageLegale",
+  "source": "client.jsx",
+  "score": 0.75
+ },
+ "yO": {
+  "nom": "ProposeInstall",
+  "source": "client.jsx",
+  "score": 0.7
+ },
+ "CM": {
+  "nom": "IllustrationTheme",
+  "source": "themes.jsx",
+  "score": 0.68
+ },
+ "GO": {
+  "nom": "Calendrier",
+  "source": "client.jsx",
+  "score": 0.68
+ },
+ "hO": {
+  "nom": "useShop",
+  "source": "client.jsx",
+  "score": 0.67
+ },
+ "WO": {
+  "nom": "BarrePanier",
+  "source": "client.jsx",
+  "score": 0.66
+ },
+ "OI": {
+  "nom": "CarteTheme",
+  "source": "themes.jsx",
+  "score": 0.65
+ },
+ "l9": {
+  "nom": "MesDonnees",
+  "source": "client.jsx",
+  "score": 0.65
+ },
+ "_T": {
+  "nom": "Bientot",
+  "source": "client.jsx",
+  "score": 0.63
+ },
+ "hx": {
+  "nom": "SuiviCommande",
+  "source": "client.jsx",
+  "score": 0.62
+ },
+ "E9": {
+  "nom": "Intro",
+  "source": "client.jsx",
+  "score": 0.62
+ },
+ "IO": {
+  "nom": "Raccourcis",
+  "source": "client.jsx",
+  "score": 0.49
+ },
+ "J9": {
+  "nom": "App",
+  "source": "client.jsx",
+  "score": 0.44
+ }
+}

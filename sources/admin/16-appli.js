@@ -1,35 +1,35 @@
-async function C9(t) {
+async function preparerImage(t) {
   let e = URL.createObjectURL(t);
   try {
     let n = await new Promise((h, p) => {
         let m = new Image();
-        ((m.onload = () => h(m)), (m.onerror = p), (m.src = e));
+        (m.onload = () => h(m)), (m.onerror = p), (m.src = e);
       }),
       r = Math.min(3, 2400 / n.naturalWidth, 5e3 / n.naturalHeight),
       i = document.createElement("canvas");
-    ((i.width = Math.round(n.naturalWidth * r)), (i.height = Math.round(n.naturalHeight * r)));
+    (i.width = Math.round(n.naturalWidth * r)), (i.height = Math.round(n.naturalHeight * r));
     let s = i.getContext("2d");
-    ((s.imageSmoothingQuality = "high"), s.drawImage(n, 0, 0, i.width, i.height));
+    (s.imageSmoothingQuality = "high"), s.drawImage(n, 0, 0, i.width, i.height);
     let o = s.getImageData(0, 0, i.width, i.height),
       a = o.data,
       u = 0;
     for (let h = 0; h < a.length; h += 4) {
       let p = 0.299 * a[h] + 0.587 * a[h + 1] + 0.114 * a[h + 2];
-      ((a[h] = p), (u += p));
+      (a[h] = p), (u += p);
     }
     let d = u / (a.length / 4);
     for (let h = 0; h < a.length; h += 4) {
       let p = Math.max(0, Math.min(255, (a[h] - d) * 1.6 + d));
       a[h] = a[h + 1] = a[h + 2] = p;
     }
-    return (s.putImageData(o, 0, 0), i);
+    return s.putImageData(o, 0, 0), i;
   } finally {
     URL.revokeObjectURL(e);
   }
 }
-async function S9(t, e) {
-  let n = await C9(t),
-    r = await (0, FS.createWorker)("fra", 1, {
+async function lancerOCR(t, e) {
+  let n = await preparerImage(t),
+    r = await (0, Tesseract.createWorker)("fra", 1, {
       workerPath: "ocr/worker.min.js",
       corePath: "ocr/",
       langPath: "ocr",
@@ -44,14 +44,14 @@ async function S9(t, e) {
     for (let o of i.blocks || [])
       for (let a of o.paragraphs || [])
         for (let u of a.lines || []) s.push({ text: u.text, y: (u.bbox.y0 + u.bbox.y1) / 2 });
-    return SS(s);
+    return GrilleMenuSemaine(s);
   } finally {
     r.terminate();
   }
 }
 var N9 = (t) => {
     let e = new Date(t);
-    return (e.setDate(e.getDate() - ((e.getDay() + 6) % 7)), e);
+    return e.setDate(e.getDate() - ((e.getDay() + 6) % 7)), e;
   },
   DS = () => {
     let t = N9(new Date()),
@@ -78,22 +78,22 @@ var N9 = (t) => {
       .filter((n) => n.j < 6 || n.plat);
     return { ...DS(), ...t, jours: e };
   };
-function PS({ d: t, set: e }) {
+function EditeurMenuDaval({ d: t, set: set }) {
   let n = t.menu,
-    [r, i] = (0, ae.useState)(null),
-    [s, o] = (0, ae.useState)(null),
-    [a, u] = (0, ae.useState)(null),
-    d = (0, ae.useRef)(null),
+    [r, i] = (0, ReactC.useState)(null),
+    [s, o] = (0, ReactC.useState)(null),
+    [a, u] = (0, ReactC.useState)(null),
+    d = (0, ReactC.useRef)(null),
     h = (S) => r?.doutes?.includes(S),
     p = async (S) => {
       let _ = S.target.files?.[0];
       if (((S.target.value = ""), !!_)) {
-        (u(URL.createObjectURL(_)), o({ p: 0 }), i(null));
+        u(URL.createObjectURL(_)), o({ p: 0 }), i(null);
         try {
-          let I = await S9(_, (T) => o({ p: T }));
-          (i(nw(I)), o(null));
+          let I = await lancerOCR(_, (T) => o({ p: T }));
+          i(nw(I)), o(null);
         } catch (I) {
-          (console.error(I), o({ erreur: !0 }));
+          console.error(I), o({ erreur: !0 });
         }
       }
     },
@@ -149,13 +149,13 @@ function PS({ d: t, set: e }) {
             : "Aucun plat n'est rempli."
       : "",
     A = () => {
-      E || (e("menu", w()), i(null), u(null));
+      E || (set("menu", w()), i(null), u(null));
     };
-  return ae.default.createElement(
+  return ReactC.default.createElement(
     "div",
     { className: "wrap" },
-    ae.default.createElement("div", { className: "t1" }, "Menu de la semaine"),
-    ae.default.createElement(
+    ReactC.default.createElement("div", { className: "t1" }, "Menu de la semaine"),
+    ReactC.default.createElement(
       "div",
       { className: "sub" },
       "Les plats cuisin\xE9s de la charcuterie ",
@@ -163,66 +163,66 @@ function PS({ d: t, set: e }) {
       " : d\xE9posez la photo du menu (celle que vous postez sur les r\xE9seaux), l'application lit le texte et pr\xE9pare un joli menu. Le plat du jour s'affiche tout seul sur l'accueil des clients.",
     ),
     !r &&
-      ae.default.createElement(
+      ReactC.default.createElement(
         "div",
         { className: "card" },
-        ae.default.createElement(
+        ReactC.default.createElement(
           "div",
           { className: "nm", style: { marginBottom: 6 } },
           "En ligne en ce moment",
         ),
         ew(n)
-          ? ae.default.createElement(
-              ae.default.Fragment,
+          ? ReactC.default.createElement(
+              ReactC.default.Fragment,
               null,
-              ae.default.createElement(
+              ReactC.default.createElement(
                 "div",
                 { className: "de", style: { marginBottom: 10 } },
                 "Du ",
-                Ki(n.du),
+                dateFr(n.du),
                 " au ",
-                Ki(n.au),
+                dateFr(n.au),
                 " \xB7 ",
                 n.jours.length,
                 " plat",
                 n.jours.length > 1 ? "s" : "",
                 ". Il dispara\xEEt tout seul apr\xE8s le ",
-                Ki(n.au),
+                dateFr(n.au),
                 ".",
               ),
-              ae.default.createElement(tw, { menu: n, apercu: !0 }),
-              ae.default.createElement(
+              ReactC.default.createElement(FeuilleMenu, { menu: n, apercu: !0 }),
+              ReactC.default.createElement(
                 "div",
                 { style: { display: "flex", gap: 8, marginTop: 10 } },
-                ae.default.createElement(
+                ReactC.default.createElement(
                   "button",
                   { className: "btn gh sm", style: { flex: 1 }, onClick: () => i(nw({ ...n, doutes: [] })) },
                   "Modifier",
                 ),
-                ae.default.createElement(
+                ReactC.default.createElement(
                   "button",
                   {
                     className: "btn gh sm",
                     style: { flex: 1 },
-                    onClick: () => e("menu", { ...n, actif: !1 }),
+                    onClick: () => set("menu", { ...n, actif: !1 }),
                   },
                   "Retirer",
                 ),
               ),
             )
-          : ae.default.createElement("div", { className: "de" }, "Aucun menu en cours."),
+          : ReactC.default.createElement("div", { className: "de" }, "Aucun menu en cours."),
       ),
     !r &&
-      ae.default.createElement(
+      ReactC.default.createElement(
         "div",
         { className: "card" },
-        ae.default.createElement("div", { className: "nm" }, "Nouveau menu"),
-        ae.default.createElement(
+        ReactC.default.createElement("div", { className: "nm" }, "Nouveau menu"),
+        ReactC.default.createElement(
           "div",
           { className: "de", style: { marginBottom: 10 } },
           "Une photo ou une capture d'\xE9cran bien droite et nette donne le meilleur r\xE9sultat. La photo reste sur votre t\xE9l\xE9phone : seul le texte est publi\xE9.",
         ),
-        ae.default.createElement("input", {
+        ReactC.default.createElement("input", {
           ref: d,
           type: "file",
           accept: "image/*",
@@ -230,32 +230,32 @@ function PS({ d: t, set: e }) {
           onChange: p,
         }),
         !s &&
-          ae.default.createElement(
+          ReactC.default.createElement(
             "button",
             { className: "btn", onClick: () => d.current.click() },
             "\u{1F4F7} D\xE9poser la photo du menu",
           ),
         s &&
           !s.erreur &&
-          ae.default.createElement(
+          ReactC.default.createElement(
             "div",
             { className: "mna-lect" },
-            a && ae.default.createElement("img", { src: a, alt: "" }),
-            ae.default.createElement(
+            a && ReactC.default.createElement("img", { src: a, alt: "" }),
+            ReactC.default.createElement(
               "div",
               null,
-              ae.default.createElement(
+              ReactC.default.createElement(
                 "div",
                 { className: "nm" },
                 "Lecture du menu\u2026 ",
                 s.p ? s.p + " %" : "",
               ),
-              ae.default.createElement(
+              ReactC.default.createElement(
                 "div",
                 { className: "mna-barre" },
-                ae.default.createElement("i", { style: { width: (s.p || 3) + "%" } }),
+                ReactC.default.createElement("i", { style: { width: (s.p || 3) + "%" } }),
               ),
-              ae.default.createElement(
+              ReactC.default.createElement(
                 "div",
                 { className: "de" },
                 "La premi\xE8re fois, le t\xE9l\xE9phone t\xE9l\xE9charge l'outil de lecture (quelques secondes).",
@@ -263,64 +263,64 @@ function PS({ d: t, set: e }) {
             ),
           ),
         s?.erreur &&
-          ae.default.createElement(
-            ae.default.Fragment,
+          ReactC.default.createElement(
+            ReactC.default.Fragment,
             null,
-            ae.default.createElement(
+            ReactC.default.createElement(
               "div",
               { className: "de", style: { color: "#B3261E", margin: "0 0 10px" } },
               "La photo n'a pas pu \xEAtre lue. R\xE9essayez, ou remplissez le menu \xE0 la main.",
             ),
-            ae.default.createElement(
+            ReactC.default.createElement(
               "button",
               { className: "btn", onClick: () => d.current.click() },
               "R\xE9essayer avec une photo",
             ),
           ),
-        ae.default.createElement(
+        ReactC.default.createElement(
           "button",
           {
             className: "btn gh",
             style: { marginTop: 8 },
             onClick: () => {
-              (o(null), i(nw(DS())));
+              o(null), i(nw(DS()));
             },
           },
           "Remplir \xE0 la main",
         ),
       ),
     r &&
-      ae.default.createElement(
+      ReactC.default.createElement(
         "div",
         { className: "card" },
-        ae.default.createElement("div", { className: "nm" }, "V\xE9rifiez le menu avant de le publier"),
-        ae.default.createElement(
+        ReactC.default.createElement("div", { className: "nm" }, "V\xE9rifiez le menu avant de le publier"),
+        ReactC.default.createElement(
           "div",
           { className: "de", style: { marginBottom: 4 } },
           r.doutes?.length
             ? "Les cases en orange sont \xE0 v\xE9rifier en priorit\xE9."
             : "Relisez chaque ligne : la lecture automatique peut se tromper sur un mot.",
         ),
-        a && ae.default.createElement("img", { className: "mna-photo", src: a, alt: "Photo du menu" }),
-        ae.default.createElement(
+        a && ReactC.default.createElement("img", { className: "mna-photo", src: a, alt: "Photo du menu" }),
+        ReactC.default.createElement(
           "div",
           { style: { display: "flex", gap: 8 } },
-          ae.default.createElement(
+          ReactC.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            ae.default.createElement("label", { className: "lab" }, "Du"),
-            ae.default.createElement("input", {
+            ReactC.default.createElement("label", { className: "lab" }, "Du"),
+            ReactC.default.createElement("input", {
               className: "inp" + (h("dates") ? " mna-doute" : ""),
               type: "date",
               value: r.du,
               onChange: (S) => i({ ...r, du: S.target.value, doutes: r.doutes.filter((_) => _ !== "dates") }),
             }),
           ),
-          ae.default.createElement(
+          ReactC.default.createElement(
             "div",
             { style: { flex: 1, minWidth: 0 } },
-            ae.default.createElement("label", { className: "lab" }, "Au"),
-            ae.default.createElement("input", {
+            ReactC.default.createElement("label", { className: "lab" }, "Au"),
+            ReactC.default.createElement("input", {
               className: "inp" + (h("dates") ? " mna-doute" : ""),
               type: "date",
               value: r.au,
@@ -329,39 +329,39 @@ function PS({ d: t, set: e }) {
           ),
         ),
         r.jours.map((S) =>
-          ae.default.createElement(
+          ReactC.default.createElement(
             "div",
             { key: S.j, className: "mna-jour" },
-            ae.default.createElement(
+            ReactC.default.createElement(
               "div",
               { className: "mna-jt" },
               Tf(S.j),
               h("jour-" + S.j) &&
-                ae.default.createElement("span", { className: "mna-av" }, "jour \xE0 v\xE9rifier"),
+                ReactC.default.createElement("span", { className: "mna-av" }, "jour \xE0 v\xE9rifier"),
             ),
-            ae.default.createElement("textarea", {
+            ReactC.default.createElement("textarea", {
               className: "inp" + (h("plat-" + S.j) || h("jour-" + S.j) ? " mna-doute" : ""),
               rows: 2,
               value: S.plat,
               placeholder: "Plat (et accompagnement \xE0 la ligne)",
               onChange: (_) => m(S.j, { plat: _.target.value }),
             }),
-            ae.default.createElement(
+            ReactC.default.createElement(
               "div",
               { className: "mna-px" },
-              ae.default.createElement("input", {
+              ReactC.default.createElement("input", {
                 className: "inp" + (h("prix-" + S.j) ? " mna-doute" : ""),
                 inputMode: "decimal",
                 value: String(S.prix ?? "").replace(".", ","),
                 placeholder: "Prix",
                 onChange: (_) => m(S.j, { prix: _.target.value.replace(",", ".") }),
               }),
-              ae.default.createElement("span", null, "\u20AC"),
+              ReactC.default.createElement("span", null, "\u20AC"),
             ),
           ),
         ),
         !r.jours.some((S) => S.j === 6) &&
-          ae.default.createElement(
+          ReactC.default.createElement(
             "button",
             {
               className: "btn gh sm",
@@ -370,37 +370,41 @@ function PS({ d: t, set: e }) {
             },
             "+ Ajouter le dimanche",
           ),
-        ae.default.createElement("label", { className: "lab" }, "Petit mot en bas du menu (facultatif)"),
-        ae.default.createElement("textarea", {
+        ReactC.default.createElement("label", { className: "lab" }, "Petit mot en bas du menu (facultatif)"),
+        ReactC.default.createElement("textarea", {
           className: "inp",
           rows: 2,
           value: r.message,
           onChange: (S) => i({ ...r, message: S.target.value }),
         }),
-        ae.default.createElement(
+        ReactC.default.createElement(
           "div",
           { className: "nm", style: { margin: "16px 0 8px" } },
           "Ce que verront les clients",
         ),
-        ae.default.createElement(tw, {
+        ReactC.default.createElement(FeuilleMenu, {
           menu: { ...w(), jours: w().jours },
           apercu: !0,
           aujourdhui: On(new Date()) >= r.du && On(new Date()) <= r.au ? On(new Date()) : r.du,
         }),
         E &&
-          ae.default.createElement("div", { className: "de", style: { color: "#B3261E", marginTop: 10 } }, E),
-        ae.default.createElement(
+          ReactC.default.createElement(
+            "div",
+            { className: "de", style: { color: "#B3261E", marginTop: 10 } },
+            E,
+          ),
+        ReactC.default.createElement(
           "button",
           { className: "btn", style: { marginTop: 12 }, disabled: !!E, onClick: A },
           "Publier le menu",
         ),
-        ae.default.createElement(
+        ReactC.default.createElement(
           "button",
           {
             className: "btn gh",
             style: { marginTop: 8 },
             onClick: () => {
-              (i(null), u(null));
+              i(null), u(null);
             },
           },
           "Annuler",
@@ -408,7 +412,7 @@ function PS({ d: t, set: e }) {
       ),
   );
 }
-var MS = `
+var CSS_MENU = `
 .mna-lect{display:flex;gap:12px;align-items:center;margin-bottom:6px}
 .mna-lect img{width:64px;height:84px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
 .mna-lect>div{flex:1}
@@ -449,7 +453,7 @@ var K = en(hn()),
   },
   sw = () => {
     let t = new Uint32Array(1);
-    return (crypto.getRandomValues(t), t[0] / 4294967296);
+    return crypto.getRandomValues(t), t[0] / 4294967296;
   };
 var D9 = (t, e) => (t && Number(t.roueP) === oc(e).periode && Number(t.roueG)) || 0,
   P9 = (t) =>
@@ -471,8 +475,8 @@ var VS = (t, e) =>
       navigator.audioSession && (navigator.audioSession.type = "playback");
     } catch {}
     try {
-      ((Qi = Qi || new (window.AudioContext || window.webkitAudioContext)()),
-        Qi.state === "suspended" && Qi.resume());
+      (Qi = Qi || new (window.AudioContext || window.webkitAudioContext)()),
+        Qi.state === "suspended" && Qi.resume();
     } catch {
       Qi = null;
     }
@@ -485,14 +489,14 @@ function jS(t = 1) {
       let n = e.currentTime,
         r = e.createOscillator(),
         i = e.createGain();
-      ((r.type = "square"),
+      (r.type = "square"),
         r.frequency.setValueAtTime(1800, n),
         r.frequency.exponentialRampToValueAtTime(900, n + 0.03),
         i.gain.setValueAtTime(0.12 * t, n),
         i.gain.exponentialRampToValueAtTime(1e-4, n + 0.045),
         r.connect(i).connect(e.destination),
         r.start(n),
-        r.stop(n + 0.05));
+        r.stop(n + 0.05);
     } catch {}
 }
 function US(t) {
@@ -503,19 +507,19 @@ function US(t) {
       let s = e.currentTime + i * 0.13,
         o = e.createOscillator(),
         a = e.createGain();
-      ((o.type = "triangle"),
+      (o.type = "triangle"),
         (o.frequency.value = r),
         a.gain.setValueAtTime(1e-4, s),
         a.gain.exponentialRampToValueAtTime(0.25, s + 0.02),
         a.gain.exponentialRampToValueAtTime(1e-4, s + (t ? 0.5 : 0.35)),
         o.connect(a).connect(e.destination),
         o.start(s),
-        o.stop(s + 0.6));
+        o.stop(s + 0.6);
     } catch {}
   });
 }
 var sc = ["#FF4D5E", "#FFD86B", "#5FD068", "#7FC8FF", "#FFFFFF"];
-function M9({ vite: t }) {
+function M9({ vite: vite }) {
   let r = [];
   for (let s = 0; s < 3; s++)
     for (let o of [0.15, 0.38, 0.62, 0.85]) r.push([s * 100 + 100 * o, 6 + 80 * o * (1 - o)]);
@@ -529,7 +533,7 @@ function M9({ vite: t }) {
   return K.default.createElement(
     "svg",
     {
-      className: "guirl" + (t ? " vite" : ""),
+      className: "guirl" + (vite ? " vite" : ""),
       viewBox: "0 0 300 66",
       preserveAspectRatio: "xMidYMin meet",
       "aria-hidden": "true",
@@ -585,14 +589,14 @@ function M9({ vite: t }) {
 var qS = 8,
   br = 360 / qS,
   rw = (t, e) => [e * Math.sin((t * Math.PI) / 180), -e * Math.cos((t * Math.PI) / 180)];
-function OS({ angle: t = 0, taille: e = 300, tourne: n }) {
+function RoueSvg({ angle: angle = 0, taille: taille = 300, tourne: tourne }) {
   return K.default.createElement(
     "svg",
     {
-      className: "roue-svg" + (n ? " vite" : ""),
+      className: "roue-svg" + (tourne ? " vite" : ""),
       viewBox: "-118 -122 236 240",
-      width: e,
-      height: (e * 240) / 236,
+      width: taille,
+      height: (taille * 240) / 236,
       style: { display: "block", overflow: "visible" },
       "aria-hidden": "true",
     },
@@ -650,7 +654,7 @@ function OS({ angle: t = 0, taille: e = 300, tourne: n }) {
     }),
     K.default.createElement(
       "g",
-      { transform: `rotate(${t})` },
+      { transform: `rotate(${angle})` },
       Array.from({ length: qS }, (i, s) => {
         let o = s * br - br / 2,
           a = o + br,
@@ -723,17 +727,17 @@ function L9() {
               M = 1 - Math.pow(1 - T, 3),
               V = p + (w - p) * M,
               O = Math.floor((V + br / 2) / br);
-            (O !== S && ((S = O), jS(0.6 + 0.4 * (1 - T))),
+            O !== S && ((S = O), jS(0.6 + 0.4 * (1 - T))),
               (n.current = V),
               e(V),
-              T < 1 ? (r.current = requestAnimationFrame(_)) : o());
+              T < 1 ? (r.current = requestAnimationFrame(_)) : o();
           };
         r.current = requestAnimationFrame(_);
       },
     ]
   );
 }
-function O9({ onClose: t }) {
+function ReglementRoue({ onClose: onClose }) {
   return K.default.createElement(
     "div",
     { className: "roue-regl" },
@@ -782,6 +786,6 @@ function O9({ onClose: t }) {
         "Vous pouvez refuser de participer \xE0 tout moment, et changer d'avis dans \xAB Mes donn\xE9es \xBB.",
       ),
     ),
-    K.default.createElement("button", { className: "roue-b2", onClick: t }, "Fermer"),
+    K.default.createElement("button", { className: "roue-b2", onClick: onClose }, "Fermer"),
   );
 }

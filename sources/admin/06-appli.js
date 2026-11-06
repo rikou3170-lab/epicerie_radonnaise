@@ -2,15 +2,15 @@ qP({
   loadJS(t) {
     return new Promise((e, n) => {
       let r = document.createElement("script");
-      (r.setAttribute("src", t),
+      r.setAttribute("src", t),
         (r.onload = e),
         (r.onerror = (i) => {
           let s = gr("internal-error");
-          ((s.customData = i), n(s));
+          (s.customData = i), n(s);
         }),
         (r.type = "text/javascript"),
         (r.charset = "UTF-8"),
-        I8().appendChild(r));
+        I8().appendChild(r);
     });
   },
   gapiScript: "https://apis.google.com/js/api.js",
@@ -18,7 +18,7 @@ qP({
   recaptchaEnterpriseScript: "https://www.google.com/recaptcha/enterprise.js?render=",
 });
 x8("Browser");
-var k8 = {
+var firebaseConfig = {
     apiKey: "AIzaSyCRvvyP7yCOSj2u4WDFCDvBWnGix0Ck-os",
     authDomain: "application-famille-897df.firebaseapp.com",
     projectId: "application-famille-897df",
@@ -26,36 +26,36 @@ var k8 = {
     messagingSenderId: "718726611261",
     appId: "1:718726611261:web:793adf52ab34c8739d8554",
   },
-  nf = K0(k8),
-  tf;
+  app2 = initializeApp(firebaseConfig),
+  cacheLocal;
 try {
-  tf = aI({ tabManager: lI() });
+  cacheLocal = persistentLocalCache({ tabManager: persistentMultipleTabManager() });
 } catch {
-  tf = void 0;
+  cacheLocal = void 0;
 }
-var de = ZT(nf, tf ? { localCache: tf } : {}),
-  Gu = r2(nf),
-  Sa = xe(de, "shop", "config"),
-  ok = "ABCDEFGHJKMNPQRSTUVWXYZ23456789",
+var db2 = initializeFirestore(app2, cacheLocal ? { localCache: cacheLocal } : {}),
+  auth2 = getAuth(app2),
+  CONFIG_REF = doc2(db2, "shop", "config"),
+  ALPHA = "ABCDEFGHJKMNPQRSTUVWXYZ23456789",
   ak = () => {
     let t = "",
       e = new Uint32Array(5);
     return (
       crypto.getRandomValues(e),
       e.forEach((n) => {
-        t += ok[n % ok.length];
+        t += ALPHA[n % ALPHA.length];
       }),
       "RAD-" + t
     );
   };
-var yr = "2.37";
+var VERSION = "2.37";
 var un = en(hn()),
   lk = en(A0()),
   Js = [],
   i2 = null,
   uk = (t) =>
     new Promise((e) => {
-      ((Js = [...Js, { ...t, res: e, id: Math.random() }]), i2?.(Js));
+      (Js = [...Js, { ...t, res: e, id: Math.random() }]), i2?.(Js);
     }),
   ft = (t) => uk({ texte: t, seul: !0 }),
   De = (t, e = {}) => uk({ texte: t, ...e }),
@@ -72,7 +72,7 @@ var un = en(hn()),
       e[1][0].toUpperCase() + e[1].slice(1)
     );
   },
-  N8 = `
+  CSS_DIALOGUE = `
 .dlg-fond{position:fixed;inset:0;z-index:1000;background:rgba(20,32,26,.55);display:flex;align-items:center;justify-content:center;padding:20px;animation:dlgIn .15s ease}
 .dlg{background:#FFFFFF;border-radius:20px;max-width:400px;width:100%;padding:22px 20px 18px;box-shadow:0 18px 50px rgba(0,0,0,.25);font-family:'Nunito',system-ui,sans-serif;color:#22302A}
 .dlg-t{font-size:15.5px;font-weight:700;line-height:1.5;white-space:pre-line;word-break:break-word;user-select:text;-webkit-user-select:text;margin:0 0 18px}
@@ -82,7 +82,7 @@ var un = en(hn()),
 .dlg-b button.ok.danger{background:#B2563F;border-color:#B2563F}
 @keyframes dlgIn{from{opacity:0}to{opacity:1}}
 `;
-function F8() {
+function Dialogue() {
   let [t, e] = (0, un.useState)(Js);
   (0, un.useEffect)(
     () => (
@@ -98,21 +98,21 @@ function F8() {
     ((0, un.useEffect)(() => {
       if (!n) return;
       let s = (o) => {
-        (o.key === "Escape" && r(!1), o.key === "Enter" && r(!0));
+        o.key === "Escape" && r(!1), o.key === "Enter" && r(!0);
       };
-      return (window.addEventListener("keydown", s), () => window.removeEventListener("keydown", s));
+      return window.addEventListener("keydown", s), () => window.removeEventListener("keydown", s);
     }, [n?.id]),
     !n)
   )
     return null;
   function r(s) {
-    (n.res(n.seul ? void 0 : s), (Js = Js.filter((o) => o.id !== n.id)), e(Js));
+    n.res(n.seul ? void 0 : s), (Js = Js.filter((o) => o.id !== n.id)), e(Js);
   }
   let i = n.danger ?? C8.test(n.texte.trim());
   return un.default.createElement(
     "div",
     { className: "dlg-fond", onClick: () => r(!1) },
-    un.default.createElement("style", null, N8),
+    un.default.createElement("style", null, CSS_DIALOGUE),
     un.default.createElement(
       "div",
       { className: "dlg", role: "alertdialog", "aria-modal": "true", onClick: (s) => s.stopPropagation() },
@@ -132,12 +132,12 @@ function F8() {
 }
 if (typeof document < "u") {
   let t = document.createElement("div");
-  ((t.id = "dialogues"),
+  (t.id = "dialogues"),
     (document.body || document.documentElement).appendChild(t),
-    (0, lk.createRoot)(t).render(un.default.createElement(F8, null)));
+    (0, lk.createRoot)(t).render(un.default.createElement(Dialogue, null));
 }
 var Hu = (t = new Date()) => t.toLocaleDateString("sv-SE");
-function rf() {
+function typeAppareil() {
   let t = navigator.userAgent || "",
     e = /iPhone/.test(t)
       ? "iPhone"
@@ -172,5 +172,7 @@ function ck(t) {
     if (sessionStorage.getItem(e)) return;
     sessionStorage.setItem(e, "1");
   } catch {}
-  Sy(Ge(de, "connexions"), { date: Date.now(), app: t, appareil: rf() }).catch(() => {});
+  addDoc(collection(db2, "connexions"), { date: Date.now(), app: t, appareil: typeAppareil() }).catch(
+    () => {},
+  );
 }
