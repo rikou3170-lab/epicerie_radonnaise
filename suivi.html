@@ -69,7 +69,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 .pied{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 </style></head>
 <body>
-<div class="top"><div class="t">Suivi du lancement</div><div class="s">Épicerie Raddonnaise · Suivi v1.0 <span class="live" id="live" hidden><i></i>en direct</span><span id="maj"></span></div></div>
+<div class="top"><div class="t">Suivi du lancement</div><div class="s">Épicerie Raddonnaise · Suivi v1.1 <span class="live" id="live" hidden><i></i>en direct</span><span id="maj"></span></div></div>
 <div class="wrap" id="app"><div class="vide">Chargement…</div></div>
 
 <script type="module">
@@ -170,7 +170,7 @@ function tech(b, st) {
   const ligne = (n, v) => `<tr><td>${n}</td><td class="r">${v}</td></tr>`;
   return `<div class="tech"><h2>Données techniques</h2><div class="grid">
     <div class="card"><h3>État</h3><div class="sub">Application et connexion à la base</div><table class="tab">
-      ${ligne("Version des applis", "v" + esc(T.version))}${ligne("Version du suivi", "v1.0")}
+      ${ligne("Version des applis", "v" + esc(T.version))}${ligne("Version du suivi", "v1.1")}
       ${ligne("Base Firebase", DEMO ? "aperçu" : (T.dernier && maintenant - T.dernier < 5 * 6e4 ? '<span class="ok">en direct</span>' : T.dernier ? "dernière donnée " + hm(T.dernier) : '<span class="ko">pas de données</span>'))}
       ${ligne("Compte connecté", esc(T.compte || "—"))}
       ${ligne("Documents lus (cette page)", T.lectures + ` <span style="font-weight:400;color:var(--ink3)">en ${dureeMin} min</span>`)}
@@ -238,7 +238,7 @@ if (DEMO) {
       <input class="inp" id="em" type="email" autocomplete="username" placeholder="E-mail"><input class="inp" id="mp" type="password" autocomplete="current-password" placeholder="Mot de passe">
       <div class="err" id="er">${esc(msg)}</div><button class="btn" id="go">Se connecter</button></div>`;
     const go = async () => { $("#er").textContent = ""; try { await signInWithEmailAndPassword(auth, $("#em").value.trim(), $("#mp").value); } catch { $("#er").textContent = "E-mail ou mot de passe incorrect."; } };
-    $("#go").onclick = go; $("#mp").onkeydown = e => e.key === "Enter" && go();
+    $("#go").onclick = go; $("#mp").onkeydown = e => { if (e.key === "Enter") go(); };
   };
   const refus = () => { arrets.forEach(f => f()); arrets = []; signOut(auth); connexion("Ce compte n'a pas accès au suivi (réservé à l'administratrice)."); };
   onAuthStateChanged(auth, (u) => {
