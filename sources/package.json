@@ -1,0 +1,11 @@
+{
+  "name": "epicerie-raddonnaise-sources",
+  "private": true,
+  "type": "module",
+  "description": "Sources de l'appli de l'Épicerie Raddonnaise (client, admin, caisse)",
+  "devDependencies": {
+    "esbuild": "0.23.1",
+    "prettier": "3.3.3",
+    "@babel/parser": "7.25.6"
+  }
+}
