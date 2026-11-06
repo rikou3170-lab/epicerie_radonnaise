@@ -15,7 +15,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 .live i{width:7px;height:7px;border-radius:50%;background:#7CFC9A;animation:clign 1.6s infinite}
 @keyframes clign{50%{opacity:.25}}
 .live[hidden]{display:none}
-.wrap{max-width:980px;margin:0 auto;padding:16px}
+.wrap{max-width:1200px;margin:0 auto;padding:16px}
 .seg{display:flex;gap:6px;background:#E9E4D8;padding:4px;border-radius:12px;margin:0 0 14px}
 .seg button{flex:1;border:none;background:transparent;padding:9px 6px;border-radius:9px;font:inherit;font-weight:800;font-size:13px;color:var(--ink2);cursor:pointer}
 .seg button.on{background:#fff;color:var(--forest);box-shadow:0 1px 4px rgba(0,0,0,.08)}
@@ -34,18 +34,18 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 .barre .b i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--apple),#5E9A3E)}
 .barre .c{text-align:right;font-weight:800;color:var(--forest)}
 .vide{font-size:13px;color:var(--ink3);padding:8px 0}
-.jours{display:flex;align-items:flex-end;gap:4px;height:160px;padding-top:18px;overflow-x:auto}
-.jours .col{flex:1;min-width:22px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px}
-.jours .col i{display:block;width:100%;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,var(--gold),#C9972C);min-height:2px}
+.jours{display:flex;align-items:flex-end;justify-content:center;gap:6px;height:170px;padding-top:4px;overflow-x:auto}
+.jours .col{flex:1;min-width:30px;max-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px}
+.jours .col i{display:block;flex:1;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,var(--gold),#C9972C);min-height:2px}
 .jours .col i.o{background:linear-gradient(180deg,#9CC0A8,#5E8A70)}
 .jours .col span{font-size:10px;color:var(--ink3);white-space:nowrap}
-.jours .col b{font-size:11px;color:var(--forest)}
+.jours .col b{font-size:11px;color:#8A6410;line-height:1.1}.jours .col b.o{color:#3F6E55}
 .leg{display:flex;gap:14px;font-size:12px;color:var(--ink2);margin-top:8px}
 .leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-.heures{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;align-items:end;height:110px}
-.heures div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
-.heures i{display:block;width:100%;border-radius:3px;background:var(--apple);min-height:1px}
-.heures span{font-size:9px;color:var(--ink3);margin-top:3px}
+.heures{display:grid;grid-template-columns:repeat(24,minmax(0,1fr));gap:2px;align-items:end;height:120px;padding-bottom:16px}
+.heures div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;position:relative;min-width:0}
+.heures i{display:block;width:100%;border-radius:3px;background:var(--apple)}.heures i.z{background:none}
+.heures span{position:absolute;bottom:-15px;left:0;font-size:9px;color:var(--ink3);white-space:nowrap}
 .login{max-width:380px;margin:60px auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
 .login h2{margin:0 0 6px;color:var(--forest)}
 .login p{font-size:13px;color:var(--ink2);margin:0 0 16px;line-height:1.45}
@@ -89,7 +89,7 @@ const court = (j) => new Date(j + "T12:00").toLocaleDateString("fr-FR", { weekda
 const dateDe = (v) => { if (!v) return null; if (typeof v === "number") return iso(new Date(v)); if (v.toDate) return iso(v.toDate()); const s = String(v); return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : (isNaN(Date.parse(s)) ? null : iso(new Date(s))); };
 
 let periode = "lancement", recherche = "";   // aujourdhui | 7j | lancement
-const D = { stats: [], clients: [], commandes: [], appareils: [], plateaux: {}, producteurs: {}, pret: false, nbClients: null, nbClientsPeriode: null };
+const D = { stats: [], clients: [], commandes: [], appareils: [], plateaux: {}, offres: {}, producteurs: {}, pret: false, nbClients: null, nbClientsPeriode: null };
 const T = { version: "?", compte: "", lectures: 0, docs: {}, dernier: null, erreurs: [], connexions: [], debut: Date.now() };
 const hm = (t) => t ? new Date(t).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
 fetch("version.json?t=" + Date.now()).then(r => r.json()).then(v => { T.version = v.version || "?"; rendu(); }).catch(() => { });
@@ -141,12 +141,12 @@ function rendu() {
     </div>
     <div class="grid">
       <div class="card" style="grid-column:1/-1"><h3>Jour par jour</h3><div class="sub">Visiteurs (or) et ouvertures (vert)</div>
-        <div class="jours">${jours.map(j => `<div class="col"><b>${vj[j] || ""}</b><div style="display:flex;gap:2px;align-items:flex-end;width:100%;height:100%"><i style="height:${100 * vj[j] / mx}%"></i><i class="o" style="height:${100 * oj[j] / mx}%"></i></div><span>${court(j)}</span></div>`).join("")}</div></div>
+        <div class="jours">${jours.map(j => `<div class="col"><b>${vj[j] || ""}</b><b class="o">${oj[j] || ""}</b><div style="display:flex;gap:3px;align-items:flex-end;width:100%;height:100%"><i style="height:${100 * vj[j] / mx}%"></i><i class="o" style="height:${100 * oj[j] / mx}%"></i></div><span>${court(j)}</span></div>`).join("")}</div></div>
       <div class="card"><h3>Rubriques consultées</h3><div class="sub">Nombre d'affichages de chaque onglet</div>${barres(Object.entries(rub).map(([k, v]) => [RUB[k] || k, v]), "Pas encore de consultation sur cette période.")}</div>
       <div class="card"><h3>Heures d'affluence</h3><div class="sub">Ouvertures de l'appli selon l'heure</div>
-        <div class="heures">${Array.from({ length: 24 }, (_, i) => { const k = String(i).padStart(2, "0"), v = h[k] || 0; return `<div title="${i} h : ${v}"><i style="height:${100 * v / hmax}%"></i><span>${i % 3 === 0 ? i + "h" : ""}</span></div>`; }).join("")}</div></div>
-      <div class="card"><h3>Plateaux regardés</h3><div class="sub">Fiches plateaux / paniers ouvertes</div>${barres(Object.entries(pl).map(([k, v]) => [D.plateaux[k] || "Plateau supprimé", v]), "Aucun plateau consulté sur cette période.")}</div>
-      <div class="card"><h3>Producteurs consultés</h3><div class="sub">Fiches producteurs ouvertes</div>${barres(Object.entries(pr).map(([k, v]) => [D.producteurs[k] || "Producteur", v]), "Aucune fiche producteur ouverte sur cette période.")}</div>
+        <div class="heures">${Array.from({ length: 24 }, (_, i) => { const k = String(i).padStart(2, "0"), v = h[k] || 0; return `<div title="${i} h : ${v}"><i class="${v ? "" : "z"}" style="height:${100 * v / hmax}%"></i><span>${i % 3 === 0 ? i + "h" : ""}</span></div>`; }).join("")}</div></div>
+      <div class="card"><h3>Plateaux regardés</h3><div class="sub">Fiches plateaux / paniers ouvertes</div>${barres(Object.entries(pl).map(([k, v]) => [D.plateaux[k] || D.offres[k] || "Fiche " + k.slice(0, 8), v]), "Aucun plateau consulté sur cette période.")}</div>
+      <div class="card"><h3>Producteurs consultés</h3><div class="sub">Fiches producteurs ouvertes</div>${barres(Object.entries(pr).map(([k, v]) => [D.producteurs[k] || "Producteur " + k.slice(0, 8), v]), "Aucune fiche producteur ouverte sur cette période.")}</div>
       <div class="card"><h3>Actions des clients</h3><div class="sub">Ce que les clients ont fait dans l'appli</div>${barres(Object.entries(AUTRES).map(([k, t]) => [t, somme(s => s.cle === k)]), "Aucune action sur cette période.")}</div>
     </div>
     ${comptes(b)}
@@ -226,10 +226,11 @@ if (DEMO) {
   const fb = "https://www.gstatic.com/firebasejs/10.12.2/";
   let M; try { M = await Promise.all(["firebase-app.js", "firebase-auth.js", "firebase-firestore.js"].map(f => import(fb + f))); }
   catch { $("#app").innerHTML = '<div class="login"><h2>Pas de connexion</h2><p>Impossible de joindre Firebase. Vérifiez la connexion internet puis rechargez la page.</p></div>'; throw new Error("Firebase injoignable"); }
-  const [{ initializeApp }, { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }, { getFirestore, collection, doc, onSnapshot, query, where, getCountFromServer }] = M;
+  const [{ initializeApp }, { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, inMemoryPersistence }, { getFirestore, collection, doc, onSnapshot, query, where, getCountFromServer }] = M;
   const app = initializeApp({ apiKey: "AIzaSyCRvvyP7yCOSj2u4WDFCDvBWnGix0Ck-os", authDomain: "application-famille-897df.firebaseapp.com", projectId: "application-famille-897df",
-    storageBucket: "application-famille-897df.firebasestorage.app", messagingSenderId: "718726611261", appId: "1:718726611261:web:793adf52ab34c8739d8554" });
+    storageBucket: "application-famille-897df.firebasestorage.app", messagingSenderId: "718726611261", appId: "1:718726611261:web:793adf52ab34c8739d8554" }, "suivi");   // appli séparée : ne reprend pas la session de l'admin
   const auth = getAuth(app), db = getFirestore(app); let arrets = [];
+  await setPersistence(auth, inMemoryPersistence).catch(() => { });   // identifiant + mot de passe demandés à chaque ouverture
   window.__sortir = () => { arrets.forEach(f => f()); arrets = []; D.clients = []; D.pret = false; signOut(auth); };
   const connexion = (msg = "") => {
     $("#live").hidden = true;
@@ -254,7 +255,8 @@ if (DEMO) {
     arrets.push(onSnapshot(collection(db, "commandes"), s => { lu("commandes", s); D.commandes = s.docs.map(d => ({ cree: d.data().cree })); ok(); }, refus));
     arrets.push(onSnapshot(collection(db, "appareils"), s => { lu("appareils", s); D.appareils = s.docs.map(d => { const x = d.data(); return { promo: !!x.promo, maj: x.maj, refs: (x.refs || []).length }; }); ok(); }, (e) => { err("appareils")(e); D.appareils = []; ok(); }));
     arrets.push(onSnapshot(collection(db, "plateaux"), s => { lu("plateaux", s); D.plateaux = Object.fromEntries(s.docs.map(d => [d.id, d.data().nom || d.data().titre || "Plateau"])); ok(); }, () => ok()));
-    arrets.push(onSnapshot(doc(db, "shop", "config"), s => { const p = s.data()?.producteurs || []; D.producteurs = Object.fromEntries(p.map(x => [String(x.id), x.nom])); rendu(); }, err("shop/config")));
+    arrets.push(onSnapshot(collection(db, "producteurs"), s => { lu("producteurs", s); D.producteurs = Object.fromEntries(s.docs.map(d => [d.id, d.data().nom || "Producteur"])); rendu(); }, err("producteurs")));
+    arrets.push(onSnapshot(collection(db, "offres"), s => { lu("offres", s); D.offres = Object.fromEntries(s.docs.map(d => [d.id, d.data().titre || d.data().nom || "Bon plan"])); rendu(); }, err("offres")));
     arrets.push(onSnapshot(collection(db, "connexions"), s => { lu("connexions", s); T.connexions = s.docs.map(d => d.data()).sort((x, y) => (y.date || 0) - (x.date || 0)); rendu(); }, err("connexions")));
   });
   async function compter() {
