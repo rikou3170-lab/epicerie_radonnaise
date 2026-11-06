@@ -435,7 +435,8 @@
   "Attente": "Écran d'attente (chargement / accès refusé).",
   "Admin": "Administration : connexion, menu, écrans et sauvegarde automatique.",
   "app:2": "Lance l'administration dans la page.",
-  "dialogue:3": "Monte le composant Dialogue une fois pour toute la page."
+  "dialogue:3": "Monte le composant Dialogue une fois pour toute la page.",
+  "SuiviComptes": "v2.39 : suivi des comptes clients (cartes créées, dernières cartes, doublons probables, téléphones avec alertes).\nMêmes informations que la page de suivi d'Eric, sans la partie technique."
  },
  "declarations_caisse": {
   "WD": "Interne Firebase (mode émulateur) : jamais utilisé ici.",

@@ -34,7 +34,15 @@ function canonique(code) {
   });
   // réécriture : chaque identifiant lié est remplacé par son nom canonique
   const ids = [];
-  traverse(ast, { Identifier(p) { if (noms.has(p.node.start)) ids.push([p.node.start, p.node.end, noms.get(p.node.start)]); } });
+  // écriture courte { r } ou { r = 1 } : on la développe en { r: nom } pour comparer à égalité avec { r: nom }
+  traverse(ast, { Identifier(p) {
+    if (!noms.has(p.node.start)) return;
+    const par = p.parent, gp = p.parentPath.parent;
+    if (par.type === "ObjectProperty" && par.shorthand && par.key === p.node && par.value !== p.node) return; // la clé, traitée avec la valeur
+    const court = (par.type === "ObjectProperty" && par.shorthand && par.value === p.node) ||
+      (par.type === "AssignmentPattern" && par.left === p.node && gp?.type === "ObjectProperty" && gp.shorthand);
+    ids.push([p.node.start, p.node.end, (court ? p.node.name + ":" : "") + noms.get(p.node.start)]);
+  } });
   ids.sort((x, y) => x[0] - y[0]);
   let out = "", pos = 0;
   for (const [d, f, c] of ids) { if (d < pos) continue; out += code.slice(pos, d) + c; pos = f; }

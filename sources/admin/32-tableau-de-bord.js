@@ -164,6 +164,7 @@ function EcranStatistiques({ d }) {
       "Vos ventes dans l'appli et ce que regardent vos clients, pour choisir quoi mettre en avant.",
     ),
     React.default.createElement(Statistiques, { d }),
+    React.default.createElement(SuiviComptes, { d }),
     React.default.createElement(Frequentation, { d }),
   );
 }
