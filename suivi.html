@@ -54,6 +54,15 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 .btn.gh{background:transparent;color:var(--forest);border:1.5px solid var(--line);width:auto;padding:8px 14px;font-size:13px}
 .err{color:#B3261E;font-size:13px;margin:4px 0 10px;min-height:18px}
 .note{font-size:12px;color:var(--ink3);line-height:1.5;margin:18px 4px 30px}
+.tech{margin-top:16px}
+.tech h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin:6px 4px 10px}
+.tab{width:100%;border-collapse:collapse;font-size:12.5px}
+.tab td,.tab th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tab th{font-size:11px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.tab td.r,.tab th.r{text-align:right;font-weight:800;color:var(--forest)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+.ok{color:#2E7D32;font-weight:800}.ko{color:#B3261E;font-weight:800}
+.defil{max-height:260px;overflow:auto}
 .pied{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 </style></head>
 <body>
@@ -77,6 +86,9 @@ const dateDe = (v) => { if (!v) return null; if (typeof v === "number") return i
 
 let periode = "lancement";   // aujourdhui | 7j | lancement
 const D = { stats: [], clients: [], commandes: [], appareils: [], plateaux: {}, producteurs: {}, pret: false };
+const T = { version: "?", compte: "", lectures: 0, docs: {}, dernier: null, erreurs: [], connexions: [], debut: Date.now() };
+const hm = (t) => t ? new Date(t).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
+fetch("version.json?t=" + Date.now()).then(r => r.json()).then(v => { T.version = v.version || "?"; rendu(); }).catch(() => { });
 
 function bornes() {
   const a = auj();
@@ -131,11 +143,41 @@ function rendu() {
       <div class="card"><h3>Producteurs consultés</h3><div class="sub">Fiches producteurs ouvertes</div>${barres(Object.entries(pr).map(([k, v]) => [D.producteurs[k] || "Producteur", v]), "Aucune fiche producteur ouverte sur cette période.")}</div>
       <div class="card"><h3>Actions des clients</h3><div class="sub">Ce que les clients ont fait dans l'appli</div>${barres(Object.entries(AUTRES).map(([k, t]) => [t, somme(s => s.cle === k)]), "Aucune action sur cette période.")}</div>
     </div>
+    ${tech(b, st)}
     <div class="pied"><span class="note" style="margin:0">Données anonymes : l'appli compte les consultations sans jamais savoir qui les fait.</span>${DEMO ? "" : '<button class="btn gh" id="sortir">Se déconnecter</button>'}</div>
     <div class="note">« Visiteurs » = nombre de téléphones différents ayant ouvert l'appli chaque jour (additionnés sur la période). Les cartes et commandes viennent directement de la base de l'épicerie.${DEMO ? " <b>Aperçu avec des données fictives.</b>" : ""}</div>`;
   document.querySelectorAll(".seg button").forEach(x => x.onclick = () => { periode = x.dataset.p; rendu(); });
   const so = $("#sortir"); if (so) so.onclick = () => window.__sortir?.();
   $("#maj").textContent = "· " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+}
+
+function tech(b, st) {
+  const maintenant = Date.now(), J = 864e5;
+  const ap = D.appareils, actifs7 = ap.filter(x => x.maj && maintenant - x.maj < 7 * J).length, majAuj = ap.filter(x => x.maj && dateDe(x.maj) === auj()).length;
+  const promo = ap.filter(x => x.promo).length, refsMoy = ap.length ? (ap.reduce((m, x) => m + (x.refs || 0), 0) / ap.length).toFixed(1).replace(".", ",") : "—";
+  const brut = {}; st.forEach(s => brut[s.cle] = (brut[s.cle] || 0) + (s.n || 0));
+  const lignesBrut = Object.entries(brut).sort((a, b) => a[0].localeCompare(b[0]));
+  const parApp = {}; T.connexions.forEach(c => parApp[c.app || "?"] = (parApp[c.app || "?"] || 0) + 1);
+  const dureeMin = Math.round((maintenant - T.debut) / 6e4);
+  const ligne = (n, v) => `<tr><td>${n}</td><td class="r">${v}</td></tr>`;
+  return `<div class="tech"><h2>Données techniques</h2><div class="grid">
+    <div class="card"><h3>État</h3><div class="sub">Application et connexion à la base</div><table class="tab">
+      ${ligne("Version en ligne", "v" + esc(T.version))}
+      ${ligne("Base Firebase", DEMO ? "aperçu" : (T.dernier && maintenant - T.dernier < 5 * 6e4 ? '<span class="ok">en direct</span>' : T.dernier ? "dernière donnée " + hm(T.dernier) : '<span class="ko">pas de données</span>'))}
+      ${ligne("Compte connecté", esc(T.compte || "—"))}
+      ${ligne("Documents lus (cette page)", T.lectures + ` <span style="font-weight:400;color:var(--ink3)">en ${dureeMin} min</span>`)}
+      ${Object.entries(T.docs).map(([k, v]) => ligne("· " + esc(k), v)).join("")}
+      ${ligne("Erreurs", T.erreurs.length ? '<span class="ko">' + T.erreurs.length + "</span>" : '<span class="ok">aucune</span>')}
+    </table>${T.erreurs.length ? `<div class="mono" style="margin-top:8px;color:#B3261E">${T.erreurs.slice(-5).map(esc).join("<br>")}</div>` : ""}
+    <div class="sub" style="margin:8px 0 0">Quota gratuit Firebase : 50 000 lectures par jour pour tout le projet.</div></div>
+    <div class="card"><h3>Téléphones abonnés aux alertes</h3><div class="sub">Fiches techniques des notifications (aucune donnée personnelle)</div><table class="tab">
+      ${ligne("Total", ap.length)}${ligne("Acceptent les bons plans", promo)}${ligne("Actifs ces 7 derniers jours", actifs7)}${ligne("Mis à jour aujourd'hui", majAuj)}${ligne("Suivis par téléphone (moyenne)", refsMoy)}
+    </table><div class="sub" style="margin:8px 0 0">« Suivis » = cartes, commandes ou réservations dont le téléphone reçoit les alertes.</div></div>
+    <div class="card"><h3>Connexions admin et caisse</h3><div class="sub">90 derniers jours · ${Object.entries(parApp).map(([k, v]) => esc(k) + " : " + v).join(" · ") || "aucune"}</div>
+      <div class="defil"><table class="tab"><tr><th>Date</th><th>Appli</th><th>Appareil</th></tr>${T.connexions.slice(0, 30).map(c => `<tr><td>${hm(c.date)}</td><td>${esc(c.app)}</td><td>${esc(c.appareil)}</td></tr>`).join("") || '<tr><td colspan="3" class="vide">Aucune connexion.</td></tr>'}</table></div></div>
+    <div class="card"><h3>Compteurs bruts</h3><div class="sub">Tous les compteurs de la période (${b[0] === b[1] ? b[0] : b[0] + " → " + b[1]}) · ${st.length} fiches</div>
+      <div class="defil"><table class="tab"><tr><th>Clé</th><th class="r">Total</th></tr>${lignesBrut.map(([k, v]) => `<tr><td class="mono">${esc(k)}</td><td class="r">${v}</td></tr>`).join("") || '<tr><td colspan="2" class="vide">Aucun compteur.</td></tr>'}</table></div></div>
+  </div></div>`;
 }
 
 // ── données fictives (aperçu) ──
@@ -149,7 +191,9 @@ if (DEMO) {
     add("pl_p1", 25 * f * rnd()); add("pl_p2", 12 * f * rnd()); add("prod_f1", 14 * f * rnd()); add("prod_f2", 9 * f * rnd()); add("prod_f3", 7 * f * rnd());
     add("commandes", 3 * f * rnd()); add("reservations", 5 * f * rnd()); add("chat", 4 * f * rnd()); }
   D.plateaux = { p1: "Plateau charcuterie", p2: "Plateau apéritif" }; D.producteurs = { f1: "Ferme Tisserand", f2: "Le rucher de Launot", f3: "Le rucher de la Brèche" };
-  D.clients = Array.from({ length: 87 }, (_, i) => ({ depuis: i < 23 ? a : "2026-10-15" })); D.commandes = Array.from({ length: 4 }, () => ({ cree: Date.now() })); D.appareils = Array.from({ length: 41 }, () => ({}));
+  D.clients = Array.from({ length: 87 }, (_, i) => ({ depuis: i < 23 ? a : "2026-10-15" })); D.commandes = Array.from({ length: 4 }, () => ({ cree: Date.now() })); D.appareils = Array.from({ length: 41 }, (_, i) => ({ promo: i % 3 !== 0, maj: Date.now() - (i % 10) * 864e5, refs: 1 + (i % 3) }));
+  T.version = "2.35"; T.compte = "(aperçu)"; T.lectures = 312; T.docs = { stats: 180, clients: 87, commandes: 4, appareils: 41 };
+  T.connexions = [{ date: Date.now() - 36e5, app: "admin", appareil: "iPhone · Safari" }, { date: Date.now() - 5e6, app: "caisse", appareil: "iPad · Safari" }, { date: Date.now() - 9e7, app: "admin", appareil: "iPhone · Safari" }];
   D.pret = true; periode = "aujourdhui"; rendu();
 } else {
   const fb = "https://www.gstatic.com/firebasejs/10.12.2/";
@@ -174,13 +218,16 @@ if (DEMO) {
     if (!u) return connexion();
     $("#app").innerHTML = '<div class="vide">Chargement des chiffres…</div>';
     let recu = 0; const ok = () => { if (++recu >= 5) { D.pret = true; $("#live").hidden = false; } rendu(); };
-    const debut = bornesMin();
-    arrets.push(onSnapshot(query(collection(db, "stats"), where("jour", ">=", debut)), s => { D.stats = s.docs.map(d => d.data()).filter(x => x.jour && x.cle); ok(); }, refus));
-    arrets.push(onSnapshot(collection(db, "clients"), s => { D.clients = s.docs.map(d => ({ depuis: d.data().depuis })); ok(); }, refus));
-    arrets.push(onSnapshot(collection(db, "commandes"), s => { D.commandes = s.docs.map(d => ({ cree: d.data().cree })); ok(); }, refus));
-    arrets.push(onSnapshot(collection(db, "appareils"), s => { D.appareils = s.docs.map(() => ({})); ok(); }, () => { D.appareils = []; ok(); }));
-    arrets.push(onSnapshot(collection(db, "plateaux"), s => { D.plateaux = Object.fromEntries(s.docs.map(d => [d.id, d.data().nom || d.data().titre || "Plateau"])); ok(); }, () => ok()));
-    arrets.push(onSnapshot(doc(db, "shop", "config"), s => { const p = s.data()?.producteurs || []; D.producteurs = Object.fromEntries(p.map(x => [String(x.id), x.nom])); rendu(); }, () => { }));
+    const debut = bornesMin(); T.compte = u.email || u.uid; T.lectures = 0; T.docs = {}; T.debut = Date.now();
+    const lu = (nom, s) => { T.lectures += s.docChanges().length || 1; T.docs[nom] = s.size; T.dernier = Date.now(); };
+    const err = (nom) => (e) => { T.erreurs.push(new Date().toLocaleTimeString("fr-FR") + " " + nom + " : " + (e?.code || e?.message || e)); rendu(); };
+    arrets.push(onSnapshot(query(collection(db, "stats"), where("jour", ">=", debut)), s => { lu("stats", s); D.stats = s.docs.map(d => d.data()).filter(x => x.jour && x.cle); ok(); }, refus));
+    arrets.push(onSnapshot(collection(db, "clients"), s => { lu("clients", s); D.clients = s.docs.map(d => ({ depuis: d.data().depuis })); ok(); }, refus));
+    arrets.push(onSnapshot(collection(db, "commandes"), s => { lu("commandes", s); D.commandes = s.docs.map(d => ({ cree: d.data().cree })); ok(); }, refus));
+    arrets.push(onSnapshot(collection(db, "appareils"), s => { lu("appareils", s); D.appareils = s.docs.map(d => { const x = d.data(); return { promo: !!x.promo, maj: x.maj, refs: (x.refs || []).length }; }); ok(); }, (e) => { err("appareils")(e); D.appareils = []; ok(); }));
+    arrets.push(onSnapshot(collection(db, "plateaux"), s => { lu("plateaux", s); D.plateaux = Object.fromEntries(s.docs.map(d => [d.id, d.data().nom || d.data().titre || "Plateau"])); ok(); }, () => ok()));
+    arrets.push(onSnapshot(doc(db, "shop", "config"), s => { const p = s.data()?.producteurs || []; D.producteurs = Object.fromEntries(p.map(x => [String(x.id), x.nom])); rendu(); }, err("shop/config")));
+    arrets.push(onSnapshot(collection(db, "connexions"), s => { lu("connexions", s); T.connexions = s.docs.map(d => d.data()).sort((x, y) => (y.date || 0) - (x.date || 0)); rendu(); }, err("connexions")));
   });
   function bornesMin() { const a = auj(), m7 = plus(a, -6); return LANCEMENT < m7 ? LANCEMENT : m7; }
   setInterval(rendu, 60000);   // la date du jour et l'heure de mise à jour restent justes
