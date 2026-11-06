@@ -82,12 +82,13 @@ function MesResas({ resas }) {
 }
 
 // Réserver un produit anti-gaspi.
-function Reserver({ i: t, d: e, prenom, onClose, onFait, inst }) {
+function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
   let s = Math.min(10, Ro(t)),
     [qte, setQte] = (0, React.useState)(1),
     d = ts()[0] || {},
-    [nom, setNom] = (0, React.useState)(prenom || d.nom || ""),
-    [tel, setTel] = (0, React.useState)(d.tel || ""),
+    // v2.38 : on propose le nom complet et le téléphone de la carte de fidélité (sinon ceux de la dernière réservation)
+    [nom, setNom] = (0, React.useState)(moi?.nom || d.nom || prenom || ""),
+    [tel, setTel] = (0, React.useState)(moi?.tel || d.tel || ""),
     [etat, setEtat] = (0, React.useState)(""),
     [fini, setFini] = (0, React.useState)(null),
     A = Number(t.prix) || 0;
@@ -95,7 +96,7 @@ function Reserver({ i: t, d: e, prenom, onClose, onFait, inst }) {
     s > 0 && qte > s && (setQte(s), setEtat("Il n'en reste plus que " + s + " : quantité ajustée."));
   }, [s]);
   let S = async () => {
-    if (!nom.trim() || qte < 1 || etat === "envoi") return;
+    if (!nom.trim() || !telValide(tel) || qte < 1 || etat === "envoi") return;
     if (qte > s) {
       setQte(Math.max(1, s)), setEtat("Il n'en reste plus que " + s + " : quantité ajustée.");
       return;
@@ -110,8 +111,8 @@ function Reserver({ i: t, d: e, prenom, onClose, onFait, inst }) {
         qte,
         prix: A,
         total: Math.round(A * qte * 100) / 100,
-        nom: nom.trim().slice(0, 40),
-        tel: tel.trim().slice(0, 20),
+        nom: nomPropre(nom).slice(0, 40),
+        tel: telFormate(tel),
         retrait: String(t.retrait || "").slice(0, 60),
       },
       z = writeBatch(db),
@@ -278,7 +279,7 @@ function Reserver({ i: t, d: e, prenom, onClose, onFait, inst }) {
                       className: "inp",
                       value: nom,
                       maxLength: 40,
-                      placeholder: "Votre nom",
+                      placeholder: "Prénom et nom",
                       onChange: (P) => setNom(P.target.value),
                     }),
                     React.default.createElement("input", {
@@ -286,10 +287,17 @@ function Reserver({ i: t, d: e, prenom, onClose, onFait, inst }) {
                       type: "tel",
                       value: tel,
                       maxLength: 20,
-                      placeholder: "Tél. (facultatif)",
+                      placeholder: "Téléphone",
                       onChange: (P) => setTel(P.target.value),
                     }),
                   ),
+                  // v2.38 : nom et téléphone nécessaires pour que l'épicerie reconnaisse le client
+                  (!nom.trim() || !telValide(tel)) &&
+                    React.default.createElement(
+                      "div",
+                      { style: { fontSize: 11.5, color: "var(--ink3)", marginTop: 6 } },
+                      "Votre nom et votre téléphone permettent à l'épicerie de savoir qui a réservé.",
+                    ),
                   React.default.createElement(
                     "div",
                     { style: { marginTop: 10 } },
@@ -304,7 +312,7 @@ function Reserver({ i: t, d: e, prenom, onClose, onFait, inst }) {
                     {
                       className: "btn",
                       style: { marginTop: 12, background: "var(--terra)" },
-                      disabled: !nom.trim() || etat === "envoi",
+                      disabled: !nom.trim() || !telValide(tel) || etat === "envoi",
                       onClick: S,
                     },
                     etat === "envoi" ? "Réservation…" : "Je réserve" + (A > 0 ? " — " + ze(A * qte) : ""),

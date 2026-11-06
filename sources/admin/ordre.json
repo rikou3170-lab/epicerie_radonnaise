@@ -52,5 +52,6 @@
   "51-notifications-admin.js",
   "52-reglages.js",
   "53-connexion.js",
-  "54-app.js"
+  "54-app.js",
+  "55-bibliotheques-licences.js"
 ]

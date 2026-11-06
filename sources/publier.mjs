@@ -16,11 +16,12 @@ const remplacer = (fichier, a, b) => {
 for (const app of ["client", "admin", "caisse"]) {
   const dos = path.join(racine, "sources", app);
   const ordre = JSON.parse(fs.readFileSync(path.join(dos, "ordre.json"), "utf8"));
-  const re = new RegExp(`var (\\w+) ?= ?"${anc.replace(".", "\\.")}";`);
+  // numéro actuel des sources (normalement = version.json ; accepte aussi une relance avec le même numéro)
+  const re = new RegExp(`var (\\w+) ?= ?"(${anc.replace(".", "\\.")}|${nouv.replace(".", "\\.")})";`);
   const f = ordre.map(x => path.join(dos, x)).find(x => re.test(fs.readFileSync(x, "utf8")));
   if (!f) throw new Error(`${app} : numéro de version ${anc} introuvable dans les sources`);
   const m = fs.readFileSync(f, "utf8").match(re)[0];
-  remplacer(f, m, m.replace(`"${anc}"`, `"${nouv}"`));
+  if (!m.includes(`"${nouv}"`)) remplacer(f, m, m.replace(`"${anc}"`, `"${nouv}"`));
   execFileSync("node", [path.join(racine, "sources/outils/compiler.mjs"), dos, path.join(racine, app + ".js")], { stdio: "inherit" });
 }
 remplacer(path.join(racine, "index.html"), `client.js?v=${anc}`, `client.js?v=${nouv}`);

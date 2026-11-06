@@ -203,6 +203,7 @@ function useMoi() {
                 anniv: o.anniv || "",
                 annivAn: o.annivAn || 0,
                 prenom: o.prenom || "",
+                tel: o.tel || "",
                 bonusAttente: Number(o.bonusAttente) || 0,
                 cadeaux: Number(o.cadeaux) || 0,
               });

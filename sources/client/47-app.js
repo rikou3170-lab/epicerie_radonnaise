@@ -473,6 +473,7 @@ function App() {
         i: (t.jour?.items || []).find((K) => K.id === Gi.id) || Gi,
         d: t,
         prenom: y,
+        moi: e,
         inst: se,
         onClose: () => as(null),
         onFait: () => ss((K) => K + 1),
