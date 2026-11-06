@@ -11,23 +11,35 @@ const ici = path.dirname(new URL(import.meta.url).pathname);
 const appli = process.argv[2];
 const lire = (f) => fs.existsSync(path.join(ici, f)) ? JSON.parse(fs.readFileSync(path.join(ici, f), "utf8")) : {};
 const auto = Object.fromEntries(Object.entries(lire(`noms-${appli}.auto.json`)).map(([k, v]) => [k, v.nom]));
-const voulu = { ...auto, ...lire(`noms-${appli}.manuel.json`) };
+const voulu = { ...auto, ...lire(`noms-${appli}.manuel.json`), ...lire(`noms-${appli}.complement.json`) };
 
 const { texte, zones, dos } = programme(appli);
 const ast = parse(texte, { sourceType: "module" });
 
 // tous les noms déjà utilisés (toutes portées), pour ne jamais créer de conflit
 const utilises = new Set();
-traverse(ast, { Identifier(p) { utilises.add(p.node.name); } });
+traverse(ast, { Identifier(p) {
+  const par = p.parent;
+  // les noms de propriétés (objet.nom, { nom: … }) ne sont pas des variables : pas de conflit possible
+  if ((par.type === "MemberExpression" || par.type === "OptionalMemberExpression") && par.property === p.node && !par.computed) return;
+  if ((par.type === "ObjectProperty" || par.type === "ObjectMethod" || par.type === "ClassMethod" || par.type === "ClassProperty") && par.key === p.node && !par.computed && !par.shorthand) return;
+  utilises.add(p.node.name);
+} });
 const RESERVES = new Set(["window", "document", "navigator", "location", "globalThis", "self", "Object", "Array", "String", "Number", "Date", "Math", "JSON", "Promise", "Error", "Set", "Map", "crypto", "fetch", "console", "localStorage", "sessionStorage", "Intl", "URL", "Notification", "Image", "Blob"]);
 
 let racine; traverse(ast, { Program(p) { racine = p; p.stop(); } });
+const globaux = new Set(Object.keys(racine.scope.globals || {}));
+traverse(ast, { ReferencedIdentifier(p) { if (!p.scope.getBinding(p.node.name)) globaux.add(p.node.name); } });
 const liaisons = racine.scope.bindings;
 const choisis = new Map(), pris = new Set();
 for (const [ancien, nouveau0] of Object.entries(voulu)) {
   if (!liaisons[ancien] || ancien === nouveau0) continue;
   let nouveau = nouveau0, i = 2;
-  while (utilises.has(nouveau) || pris.has(nouveau) || RESERVES.has(nouveau)) nouveau = nouveau0 + i++;
+  // conflit seulement si le nouveau nom existe au premier niveau, est une variable globale du navigateur,
+  // ou masquerait / serait masqué là où la variable est utilisée
+  const conflit = (n) => pris.has(n) || RESERVES.has(n) || liaisons[n] || globaux.has(n) ||
+    [liaisons[ancien].identifier && liaisons[ancien].path, ...liaisons[ancien].referencePaths].some(r => r && r.scope.getBinding(n));
+  while (conflit(nouveau)) nouveau = nouveau0 + i++;
   pris.add(nouveau); choisis.set(ancien, nouveau);
 }
 

@@ -1,0 +1,11 @@
+{
+ "02-appli.js": [[null, "firebase-avertissement"]],
+ "04-appli.js": [[null, "firebase-complement"]],
+ "06-appli.js": [[null, "demarrage"], ["firebaseConfig", "firebase"], ["VERSION", "version"], ["un", "dialogue"], ["Hu", "appareils-et-connexions"]],
+ "08-appli.js": [[null, "frequentation"], ["Rt", "mise-a-jour"], ["uf", "messagerie-outils"], ["Na", "fidelite-outils"], ["D", "decors-themes-1"]],
+ "10-appli.js": [[null, "decors-themes-2"]],
+ "12-appli.js": [[null, "themes"]],
+ "14-appli.js": [[null, "menu-daval-grille"]],
+ "16-appli.js": [[null, "menu-daval-lecture"], ["K", "roue-noel-dessins"]],
+ "18-appli.js": [[null, "roue-noel"], ["CMD_DEF", "commande"], ["LOGO", "admin-base"], ["I10", "styles"], ["ut", "composants"], ["TableauDeBord", "tableau-de-bord"], ["Reservations", "reservations"], ["esc", "feuille-preparation"], ["pw", "notifications-clients"], ["Statistiques", "statistiques"], ["Fermetures", "fermetures"], ["Jour", "aujourd-hui"], ["Offres", "offres"], ["STATUTS_COMMANDE", "commandes"], ["sN", "themes-reglages"], ["REPONSES", "messages-clients"], ["ACTIONS", "bannieres"], ["Actus", "actus"], ["Producteurs", "producteurs"], ["Recettes", "recettes"], ["Sondages", "sondages"], ["RoueAdmin", "roue-noel-reglages"], ["Fidelite", "fidelite"], ["Conservation", "rgpd"], ["Mf", "notifications-admin"], ["Reglages", "reglages"], ["msgErreur", "connexion"], ["Admin", "app"]]
+}

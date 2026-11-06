@@ -1,0 +1,414 @@
+{
+ "aujourdISO": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "AAAA-MM-JJ, heure locale"
+  ]
+ },
+ "finie": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "AAAA-MM-JJ, heure locale"
+  ]
+ },
+ "statut": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "Statut d'une annonce selon ses dates de parution"
+  ]
+ },
+ "Periode": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "Dates de parution : vides = tout de suite / sans fin"
+  ]
+ },
+ "syncCol": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "Écrit les différences entre l'ancienne et la nouvelle liste (ajouts, modifs, suppressions)"
+  ]
+ },
+ "ajouterPoints": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "Points fidélité : incrément atomique + trace dans l'historique du client"
+  ]
+ },
+ "lirePhoto": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "photo → base64 compressé"
+  ]
+ },
+ "Reservations": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "Réservations anti-gaspi (promos, dates courtes, paniers)"
+  ]
+ },
+ "ChampsResa": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "Champs « réservable » d'un article du jour"
+  ]
+ },
+ "Decision": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "Accepter (avec l'heure de retrait) ou refuser (avec un motif) : le client est prévenu dans son application"
+  ]
+ },
+ "EditionChoix": {
+  "fichier": "admin.jsx",
+  "texte": [
+   "Choix proposés au client sur un plateau (fromages, charcuteries…)"
+  ]
+ },
+ "fermeLe": {
+  "fichier": "boutique.js",
+  "texte": [
+   "── Fermetures exceptionnelles (congés, jours fériés) ──",
+   "fermetures : [{ du, au, motif }]"
+  ]
+ },
+ "fermetureAAnnoncer": {
+  "fichier": "boutique.js",
+  "texte": [
+   "La fermeture à annoncer aux clients : en cours, ou qui commence dans les 14 jours"
+  ]
+ },
+ "PAIN_DEF": {
+  "fichier": "boutique.js",
+  "texte": [
+   "── Réservation du pain ──"
+  ]
+ },
+ "datesPain": {
+  "fichier": "boutique.js",
+  "texte": [
+   "Prochaines dates où l'on peut venir chercher son pain (à partir de demain ; après l'heure limite, à partir d'après-demain)"
+  ]
+ },
+ "Connexion": {
+  "fichier": "caisse.jsx",
+  "texte": [
+   "── Connexion (même compte que l'administration) ──"
+  ]
+ },
+ "Scanner": {
+  "fichier": "caisse.jsx",
+  "texte": [
+   "── Scanner de QR code (appareil photo) ──"
+  ]
+ },
+ "crediter": {
+  "fichier": "caisse.jsx",
+  "texte": [
+   "── Points : incrément atomique + trace dans l'historique (comme l'administration) ──"
+  ]
+ },
+ "enCours": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Visible si actif ET dans sa période de parution (dates vides = pas de limite)"
+  ]
+ },
+ "QR": {
+  "fichier": "client.jsx",
+  "texte": [
+   "QR code dessiné par l'application (aucun service extérieur, fonctionne hors ligne)"
+  ]
+ },
+ "useShop": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Contenu publié par Marion (lecture seule, temps réel)"
+  ]
+ },
+ "useMoi": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Ma carte : on garde sur le téléphone l'identifiant secret de la fiche,",
+   "et on suit les points en temps réel."
+  ]
+ },
+ "INSTALL_KEY": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Chaque navigateur a sa méthode : on détecte le téléphone et on n'affiche",
+   "que les étapes qui le concernent."
+  ]
+ },
+ "IcPartage": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Petites icônes qui ressemblent aux vrais boutons des navigateurs"
+  ]
+ },
+ "Installer": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Encart « Installer » (accueil, fidélité, infos)"
+  ]
+ },
+ "ProposeInstall": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Proposée une seule fois, juste après la création de la carte"
+  ]
+ },
+ "IcR": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Icônes des raccourcis"
+  ]
+ },
+ "useMesCommandes": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Suivi en temps réel des commandes passées depuis ce téléphone",
+   "(chaque commande est lue avec son identifiant secret gardé sur le téléphone)"
+  ]
+ },
+ "phraseSuivi": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Phrase de suivi pour le client"
+  ]
+ },
+ "AlerteCommande": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Fenêtre qui s'ouvre quand l'épicerie a répondu"
+  ]
+ },
+ "ChoixPlateau": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Choix du nombre de personnes pour un plateau"
+  ]
+ },
+ "BarrePanier": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Barre « Ma commande » en bas d'écran"
+  ]
+ },
+ "Calendrier": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Calendrier : seules les dates autorisées par Marion sont cliquables"
+  ]
+ },
+ "ALLERGENES": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Les 14 allergènes à déclaration obligatoire + régimes courants"
+  ]
+ },
+ "Commande": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Récapitulatif, date, coordonnées et envoi"
+  ]
+ },
+ "Jauge": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Jauge circulaire de progression vers la prochaine remise"
+  ]
+ },
+ "Bientot": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Carte de fidélité pas encore ouverte : on l'annonce"
+  ]
+ },
+ "BIENVENUE_KEY": {
+  "fichier": "client.jsx",
+  "texte": [
+   "1. Écran d'ouverture (à chaque lancement) : feuilles qui tombent, la pomme",
+   "   qui atterrit, le slogan. Plus court pour un habitué, avec son prénom.",
+   "2. Présentation en 3 écrans (une seule fois, au tout premier lancement)."
+  ]
+ },
+ "Illu": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Illustrations des écrans de présentation (dessin au trait, couleurs de la marque)"
+  ]
+ },
+ "useChat": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Suit la conversation du client (identifiant secret gardé sur le téléphone)"
+  ]
+ },
+ "TR_PREFIXE": {
+  "fichier": "client.jsx",
+  "texte": [
+   "Le code de transfert contient les identifiants secrets de la carte, des commandes et de la conversation."
+  ]
+ },
+ "CMD_DEF": {
+  "fichier": "commande.js",
+  "texte": [
+   "Réglages par défaut (modifiables par Marion : Commandes → Calendrier & e-mail)"
+  ]
+ },
+ "regleDates": {
+  "fichier": "commande.js",
+  "texte": [
+   "Quelles dates le client peut choisir"
+  ]
+ },
+ "prixPers": {
+  "fichier": "commande.js",
+  "texte": [
+   "Prix d'une ligne : prix par personne × nombre de personnes"
+  ]
+ },
+ "envoyerMail": {
+  "fichier": "commande.js",
+  "texte": [
+   "E-mail à Marion via son Google Apps Script.",
+   "L'application n'envoie QUE l'identifiant de la commande : le script relit lui-même la commande",
+   "dans Firebase, puis écrit à Marion (une seule fois par commande). Impossible de lui faire",
+   "envoyer un faux e-mail ou d'écrire à quelqu'un d'autre."
+  ]
+ },
+ "avertirMessage": {
+  "fichier": "commande.js",
+  "texte": [
+   "Prévient Marion par e-mail d'un nouveau message de client (le script relit la conversation)"
+  ]
+ },
+ "avertirResa": {
+  "fichier": "commande.js",
+  "texte": [
+   "Prévient Marion d'une nouvelle réservation anti-gaspi (le script relit la réservation)"
+  ]
+ },
+ "heureFr": {
+  "fichier": "commande.js",
+  "texte": [
+   "── Suivi côté client ──"
+  ]
+ },
+ "pad": {
+  "fichier": "commande.js",
+  "texte": [
+   "Rappel dans l'agenda du téléphone (.ics) : alerte 1 h avant l'heure choisie par Marion"
+  ]
+ },
+ "choixDe": {
+  "fichier": "commande.js",
+  "texte": [
+   "── Choix proposés au client sur un plateau (ex. fromages à raclette) ──"
+  ]
+ },
+ "prixAvecChoix": {
+  "fichier": "commande.js",
+  "texte": [
+   "Prix par personne avec les suppléments des choix cochés"
+  ]
+ },
+ "REMISE_DEF": {
+  "fichier": "fidelite.js",
+  "texte": [
+   "Règles de la carte de fidélité partagées (client, admin, caisse)",
+   "Par défaut : 1 € = 1 point ; 200 points = 5 € de remise."
+  ]
+ },
+ "etatRemise": {
+  "fichier": "fidelite.js",
+  "texte": [
+   "Où en est le client"
+  ]
+ },
+ "ALPHA": {
+  "fichier": "firebase.js",
+  "texte": [
+   "Code fidélité : RAD- + 5 caractères sans ambiguïté (pas de 0/O, 1/I/L)"
+  ]
+ },
+ "BoutonMaj": {
+  "fichier": "maj.jsx",
+  "texte": [
+   "Bouton manuel, toujours disponible (onglet Infos / Réglages)"
+  ]
+ },
+ "nieme": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "n-ième jour de la semaine (0 = dimanche) d'un mois"
+  ]
+ },
+ "paques": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "Dimanche de Pâques (algorithme de Meeus)"
+  ]
+ },
+ "fdm": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "Fête des mères : dernier dimanche de mai, décalée au 1er dimanche de juin si c'est la Pentecôte"
+  ]
+ },
+ "THEMES": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "── Catalogue (ordre du calendrier) ──"
+  ]
+ },
+ "hexRgb": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "── Thèmes créés par Marion ──"
+  ]
+ },
+ "periodeTheme": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "Dates d'un thème pour l'année Y (réglage de Marion si fait pour cette année, sinon dates habituelles)"
+  ]
+ },
+ "themeDuJour": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "Thème à afficher aujourd'hui"
+  ]
+ },
+ "P": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "── Petits éléments animés (24×24) ──"
+  ]
+ },
+ "GRAINES": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "Pluie d'éléments (positions fixes, calculées une fois)"
+  ]
+ },
+ "ILLU": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "── Illustrations des cartes de vœux (100×100) ──"
+  ]
+ },
+ "CarteTheme": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "Carte de vœux affichée en haut de l'accueil"
+  ]
+ },
+ "CSS_THEMES": {
+  "fichier": "themes.jsx",
+  "texte": [
+   "Styles communs (client + aperçu admin)"
+  ]
+ }
+}

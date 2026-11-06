@@ -13,7 +13,7 @@ const REF = { client: ["client.jsx"], admin: ["admin.jsx"], caisse: ["caisse.jsx
 export function programme(appli) {
   const dos = path.join(racine, appli), ordre = JSON.parse(fs.readFileSync(path.join(dos, "ordre.json"), "utf8"));
   let texte = "", zones = [];
-  for (const f of ordre) { const t = fs.readFileSync(path.join(dos, f), "utf8"); zones.push({ f, debut: texte.length, fin: texte.length + t.length, appli: f.includes("appli") }); texte += t + "\n"; }
+  for (const f of ordre) { const t = fs.readFileSync(path.join(dos, f), "utf8"); zones.push({ f, debut: texte.length, fin: texte.length + t.length, appli: !f.includes("bibliotheques") }); texte += t + "\n"; }
   return { texte, zones, ordre, dos };
 }
 

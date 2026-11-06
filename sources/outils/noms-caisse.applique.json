@@ -1,3 +1,9 @@
 {
- "tl": "VERSION"
+ "jsQR2": "jsQR",
+ "increment2": "increment",
+ "onAuthStateChanged2": "onAuthStateChanged",
+ "signOut2": "signOut",
+ "auth2": "auth",
+ "app2": "app",
+ "db2": "db"
 }
