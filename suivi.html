@@ -3,12 +3,19 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Suivi du lancement — Épicerie Raddonnaise</title>
 <meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="suivi.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Suivi">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1C433B">
 <link rel="stylesheet" href="fonts.css">
 <style>
 :root{--forest:#1C433B;--apple:#7FB24A;--gold:#E9B949;--bg:#F5F2EA;--card:#fff;--ink:#1E2A26;--ink2:#5A6A62;--ink3:#93A099;--line:#E5E0D4}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,sans-serif}
-.top{background:var(--forest);color:#fff;padding:18px 16px 16px;position:sticky;top:0;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.top{background:var(--forest);color:#fff;padding:calc(18px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 16px calc(16px + env(safe-area-inset-left));position:sticky;top:0;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.15)}
 .top .t{font-family:'Sacramento',cursive;font-size:34px;line-height:1;color:var(--gold)}
 .top .s{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .live{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);padding:2px 9px;border-radius:12px;letter-spacing:.06em}
@@ -69,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 .pied{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 </style></head>
 <body>
-<div class="top"><div class="t">Suivi du lancement</div><div class="s">Épicerie Raddonnaise · Suivi v1.1 <span class="live" id="live" hidden><i></i>en direct</span><span id="maj"></span></div></div>
+<div class="top"><div class="t">Suivi du lancement</div><div class="s">Épicerie Raddonnaise · Suivi v1.2 <span class="live" id="live" hidden><i></i>en direct</span><span id="maj"></span></div></div>
 <div class="wrap" id="app"><div class="vide">Chargement…</div></div>
 
 <script type="module">
@@ -170,7 +177,7 @@ function tech(b, st) {
   const ligne = (n, v) => `<tr><td>${n}</td><td class="r">${v}</td></tr>`;
   return `<div class="tech"><h2>Données techniques</h2><div class="grid">
     <div class="card"><h3>État</h3><div class="sub">Application et connexion à la base</div><table class="tab">
-      ${ligne("Version des applis", "v" + esc(T.version))}${ligne("Version du suivi", "v1.1")}
+      ${ligne("Version des applis", "v" + esc(T.version))}${ligne("Version du suivi", "v1.2")}
       ${ligne("Base Firebase", DEMO ? "aperçu" : (T.dernier && maintenant - T.dernier < 5 * 6e4 ? '<span class="ok">en direct</span>' : T.dernier ? "dernière donnée " + hm(T.dernier) : '<span class="ko">pas de données</span>'))}
       ${ligne("Compte connecté", esc(T.compte || "—"))}
       ${ligne("Documents lus (cette page)", T.lectures + ` <span style="font-weight:400;color:var(--ink3)">en ${dureeMin} min</span>`)}
