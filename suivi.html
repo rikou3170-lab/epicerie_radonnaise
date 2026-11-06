@@ -66,8 +66,6 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 .rech{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-size:14px;margin-bottom:8px;background:#FCFBF7}
 .neuf{display:inline-block;background:#FFF3D1;color:#8A6410;font-size:10.5px;font-weight:800;padding:1px 6px;border-radius:6px;margin-left:4px}
 .tab a{color:var(--forest)}
-.pc-seul{display:none}.mobile-seul{display:block}
-@media (min-width:900px) and (hover:hover){.pc-seul{display:block}.mobile-seul{display:none}}
 .pied{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 </style></head>
 <body>
@@ -79,6 +77,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 // Rien n'est écrit dans la base. Les consultations sont des compteurs anonymes (jamais liés à une personne).
 const DEMO = new URLSearchParams(location.search).has("demo");   // aperçu avec des données fictives (sans connexion)
 const LANCEMENT = "2026-11-06";
+const PC = matchMedia("(min-width:900px) and (hover:hover)").matches;   // la liste nominative n'est téléchargée que sur ordinateur ; sur téléphone, seulement des nombres
 const RUB = { accueil: "Accueil", carte: "La carte", fidelite: "Fidélité", actus: "Actus", infos: "Infos" };
 const AUTRES = { commandes: "Commandes passées", reservations: "Bons plans réservés", chat: "Messages envoyés", avis: "Avis / sondages" };
 const $ = (s) => document.querySelector(s);
@@ -90,7 +89,7 @@ const court = (j) => new Date(j + "T12:00").toLocaleDateString("fr-FR", { weekda
 const dateDe = (v) => { if (!v) return null; if (typeof v === "number") return iso(new Date(v)); if (v.toDate) return iso(v.toDate()); const s = String(v); return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : (isNaN(Date.parse(s)) ? null : iso(new Date(s))); };
 
 let periode = "lancement", recherche = "";   // aujourdhui | 7j | lancement
-const D = { stats: [], clients: [], commandes: [], appareils: [], plateaux: {}, producteurs: {}, pret: false };
+const D = { stats: [], clients: [], commandes: [], appareils: [], plateaux: {}, producteurs: {}, pret: false, nbClients: null, nbClientsPeriode: null };
 const T = { version: "?", compte: "", lectures: 0, docs: {}, dernier: null, erreurs: [], connexions: [], debut: Date.now() };
 const hm = (t) => t ? new Date(t).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
 fetch("version.json?t=" + Date.now()).then(r => r.json()).then(v => { T.version = v.version || "?"; rendu(); }).catch(() => { });
@@ -118,7 +117,8 @@ function rendu() {
   const somme = (pred) => st.filter(pred).reduce((m, s) => m + (s.n || 0), 0);
   const parCle = (prefixe) => { const m = {}; st.filter(s => s.cle.startsWith(prefixe)).forEach(s => { const k = s.cle.slice(prefixe.length); m[k] = (m[k] || 0) + (s.n || 0); }); return m; };
   const visiteurs = somme(s => s.cle === "visiteurs"), ouvertures = somme(s => s.cle === "ouvertures");
-  const cartes = D.clients.filter(c => dans(dateDe(c.depuis), b)).length;
+  const cartes = PC ? D.clients.filter(c => dans(dateDe(c.depuis), b)).length : (D.nbClientsPeriode ?? "…");
+  const totalClients = PC ? D.clients.length : (D.nbClients ?? "…");
   const cmds = D.commandes.filter(c => dans(dateDe(c.cree), b)).length;
   const visitAuj = D.stats.filter(s => s.jour === a && s.cle === "visiteurs").reduce((m, s) => m + s.n, 0);
   // jour par jour
@@ -134,7 +134,7 @@ function rendu() {
     <div class="kpis">
       <div class="kpi"><div class="v">${visiteurs}</div><div class="l">Visiteurs</div><div class="d">${libelle(periode)} · téléphones différents chaque jour</div></div>
       <div class="kpi"><div class="v">${ouvertures}</div><div class="l">Ouvertures de l'appli</div><div class="d">${visiteurs ? (ouvertures / visiteurs).toFixed(1).replace(".", ",") + " par visiteur" : "—"}</div></div>
-      <div class="kpi"><div class="v">${cartes}</div><div class="l">Cartes de fidélité créées</div><div class="d">${D.clients.length} au total</div></div>
+      <div class="kpi"><div class="v">${cartes}</div><div class="l">Cartes de fidélité créées</div><div class="d">${totalClients} au total</div></div>
       <div class="kpi"><div class="v">${D.appareils.length}</div><div class="l">Téléphones avec alertes</div><div class="d">notifications activées (total)</div></div>
       <div class="kpi"><div class="v">${cmds}</div><div class="l">Commandes</div><div class="d">${libelle(periode)}</div></div>
       <div class="kpi"><div class="v">${visitAuj}</div><div class="l">Visiteurs aujourd'hui</div><div class="d">mis à jour en direct</div></div>
@@ -154,7 +154,7 @@ function rendu() {
     <div class="pied"><span class="note" style="margin:0">Données anonymes : l'appli compte les consultations sans jamais savoir qui les fait.</span>${DEMO ? "" : '<button class="btn gh" id="sortir">Se déconnecter</button>'}</div>
     <div class="note">« Visiteurs » = nombre de téléphones différents ayant ouvert l'appli chaque jour (additionnés sur la période). Les cartes et commandes viennent directement de la base de l'épicerie.${DEMO ? " <b>Aperçu avec des données fictives.</b>" : ""}</div>`;
   const rc = $("#rech"); if (rc) { rc.oninput = () => { recherche = rc.value; $("#tclients").innerHTML = lignesClients(bornes()); }; if (focusRech) { rc.focus(); rc.setSelectionRange(rc.value.length, rc.value.length); } }
-  document.querySelectorAll(".seg button").forEach(x => x.onclick = () => { periode = x.dataset.p; rendu(); });
+  document.querySelectorAll(".seg button").forEach(x => x.onclick = () => { periode = x.dataset.p; rendu(); if (!PC) window.__compter?.(); });
   const so = $("#sortir"); if (so) so.onclick = () => window.__sortir?.();
   $("#maj").textContent = "· " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 }
@@ -190,20 +190,19 @@ function tech(b, st) {
 
 function lignesClients(b) {
   const q = recherche.trim().toLowerCase();
-  const l = D.clients.filter(c => !q || [c.nom, c.code, c.tel].some(v => String(v || "").toLowerCase().includes(q)))
+  const l = D.clients.filter(c => !q || [c.nom, c.code, c.tel, c.email].some(v => String(v || "").toLowerCase().includes(q)))
     .sort((x, y) => String(dateDe(y.depuis) || "").localeCompare(String(dateDe(x.depuis) || "")) || String(x.nom || "").localeCompare(String(y.nom || "")));
   const fr = (j) => j ? new Date(j + "T12:00").toLocaleDateString("fr-FR") : "—";
-  return `<tr><th>Client</th><th>Carte</th><th>Téléphone</th><th>Créée le</th><th class="r">Points</th><th class="r">Tampons</th><th>Dernier tampon</th></tr>` +
+  return `<tr><th>Client</th><th>Carte</th><th>Téléphone</th><th>E-mail</th><th>Anniversaire</th><th>Créée le</th><th class="r">Points</th><th class="r">Tampons</th><th>Dernier tampon</th></tr>` +
     (l.map(c => { const j = dateDe(c.depuis); const tel = String(c.tel || "").replace(/[^\d+]/g, "");
-      return `<tr><td>${esc(c.nom || "—")}${dans(j, b) ? '<span class="neuf">nouveau</span>' : ""}</td><td class="mono">${esc(c.code || "")}</td><td>${tel ? `<a href="tel:${esc(tel)}">${esc(c.tel)}</a>` : "—"}</td><td>${fr(j)}</td><td class="r">${c.points || 0}</td><td class="r">${c.tampons || 0}</td><td>${c.dernierTampon ? hm(c.dernierTampon) : "—"}</td></tr>`; }).join("")
-     || `<tr><td colspan="7" class="vide">${D.clients.length ? "Aucun client ne correspond." : "Aucune carte pour l'instant."}</td></tr>`);
+      return `<tr><td>${esc(c.nom || "—")}${dans(j, b) ? '<span class="neuf">nouveau</span>' : ""}</td><td class="mono">${esc(c.code || "")}</td><td>${tel ? `<a href="tel:${esc(tel)}">${esc(c.tel)}</a>` : "—"}</td><td>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : "—"}</td><td>${esc(c.anniv || "—")}</td><td>${fr(j)}</td><td class="r">${c.points || 0}</td><td class="r">${c.tampons || 0}</td><td>${c.dernierTampon ? hm(c.dernierTampon) : "—"}</td></tr>`; }).join("")
+     || `<tr><td colspan="9" class="vide">${D.clients.length ? "Aucun client ne correspond." : "Aucune carte pour l'instant."}</td></tr>`);
 }
 function comptes(b) {
-  const n = D.clients.filter(c => dans(dateDe(c.depuis), b)).length;
-  return `<div class="card mobile-seul" style="margin-top:12px"><h3>Comptes clients</h3><div class="sub">${D.clients.length} cartes de fidélité · ${n} nouvelle${n > 1 ? "s" : ""} sur la période</div><div class="vide">La liste détaillée des clients s'affiche uniquement sur ordinateur.</div></div>
-  <div class="card pc-seul" style="margin-top:12px"><h3>Comptes clients</h3><div class="sub">${D.clients.length} cartes de fidélité · ${n} nouvelle${n > 1 ? "s" : ""} sur la période · données personnelles : ne pas diffuser</div>
+  const n = PC ? D.clients.filter(c => dans(dateDe(c.depuis), b)).length : (D.nbClientsPeriode ?? "…");
+  return !PC ? `<div class="card" style="margin-top:12px"><h3>Comptes clients</h3><div class="sub">${D.nbClients ?? "…"} cartes de fidélité · ${n} nouvelle${n > 1 ? "s" : ""} sur la période</div><div class="vide">La liste détaillée des clients s'affiche uniquement sur ordinateur.</div></div>` : `<div class="card" style="margin-top:12px"><h3>Comptes clients</h3><div class="sub">${D.clients.length} cartes de fidélité · ${n} nouvelle${n > 1 ? "s" : ""} sur la période · données personnelles : ne pas diffuser</div>
     <input class="rech" id="rech" type="search" placeholder="Rechercher un nom, une carte, un téléphone…" value="${esc(recherche)}">
-    <div class="defil" style="max-height:420px;overflow-x:auto"><table class="tab" id="tclients" style="min-width:640px">${lignesClients(b)}</table></div></div>`;
+    <div class="defil" style="max-height:420px;overflow-x:auto"><table class="tab" id="tclients" style="min-width:860px">${lignesClients(b)}</table></div></div>`;
 }
 
 // ── données fictives (aperçu) ──
@@ -218,7 +217,8 @@ if (DEMO) {
     add("commandes", 3 * f * rnd()); add("reservations", 5 * f * rnd()); add("chat", 4 * f * rnd()); }
   D.plateaux = { p1: "Plateau charcuterie", p2: "Plateau apéritif" }; D.producteurs = { f1: "Ferme Tisserand", f2: "Le rucher de Launot", f3: "Le rucher de la Brèche" };
   const P = ["Julie", "Marc", "Sophie", "Thomas", "Claire", "Nicolas", "Emma", "Lucas", "Léa", "Hugo"], N = ["Martin", "Bernard", "Petit", "Durand", "Leroy", "Moreau", "Simon", "Laurent"];
-  D.clients = Array.from({ length: 87 }, (_, i) => ({ nom: P[i % 10] + " " + N[i % 8], code: "RAD-" + (10000 + i * 137).toString(36).toUpperCase().padStart(5, "0").slice(-5), tel: "06 " + String(10 + i).padStart(2, "0") + " 00 00 00", depuis: i < 23 ? a : "2026-10-15", points: (i * 7) % 40, tampons: i % 10, dernierTampon: i % 4 ? Date.now() - i * 36e5 : 0 })); D.commandes = Array.from({ length: 4 }, () => ({ cree: Date.now() })); D.appareils = Array.from({ length: 41 }, (_, i) => ({ promo: i % 3 !== 0, maj: Date.now() - (i % 10) * 864e5, refs: 1 + (i % 3) }));
+  D.clients = Array.from({ length: 87 }, (_, i) => ({ nom: P[i % 10] + " " + N[i % 8], code: "RAD-" + (10000 + i * 137).toString(36).toUpperCase().padStart(5, "0").slice(-5), tel: "06 " + String(10 + i).padStart(2, "0") + " 00 00 00", email: i % 3 ? P[i % 10].toLowerCase() + "@exemple.fr" : "", anniv: i % 5 ? "" : "12/0" + (1 + i % 9), depuis: i < 23 ? a : "2026-10-15", points: (i * 7) % 40, tampons: i % 10, dernierTampon: i % 4 ? Date.now() - i * 36e5 : 0 })); if (!PC) { D.nbClients = D.clients.length; D.nbClientsPeriode = 23; D.clients = []; }
+  D.commandes = Array.from({ length: 4 }, () => ({ cree: Date.now() })); D.appareils = Array.from({ length: 41 }, (_, i) => ({ promo: i % 3 !== 0, maj: Date.now() - (i % 10) * 864e5, refs: 1 + (i % 3) }));
   T.version = "2.35"; T.compte = "(aperçu)"; T.lectures = 312; T.docs = { stats: 180, clients: 87, commandes: 4, appareils: 41 };
   T.connexions = [{ date: Date.now() - 36e5, app: "admin", appareil: "iPhone · Safari" }, { date: Date.now() - 5e6, app: "caisse", appareil: "iPad · Safari" }, { date: Date.now() - 9e7, app: "admin", appareil: "iPhone · Safari" }];
   D.pret = true; periode = "aujourdhui"; rendu();
@@ -226,11 +226,11 @@ if (DEMO) {
   const fb = "https://www.gstatic.com/firebasejs/10.12.2/";
   let M; try { M = await Promise.all(["firebase-app.js", "firebase-auth.js", "firebase-firestore.js"].map(f => import(fb + f))); }
   catch { $("#app").innerHTML = '<div class="login"><h2>Pas de connexion</h2><p>Impossible de joindre Firebase. Vérifiez la connexion internet puis rechargez la page.</p></div>'; throw new Error("Firebase injoignable"); }
-  const [{ initializeApp }, { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }, { getFirestore, collection, doc, onSnapshot, query, where }] = M;
+  const [{ initializeApp }, { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut }, { getFirestore, collection, doc, onSnapshot, query, where, getCountFromServer }] = M;
   const app = initializeApp({ apiKey: "AIzaSyCRvvyP7yCOSj2u4WDFCDvBWnGix0Ck-os", authDomain: "application-famille-897df.firebaseapp.com", projectId: "application-famille-897df",
     storageBucket: "application-famille-897df.firebasestorage.app", messagingSenderId: "718726611261", appId: "1:718726611261:web:793adf52ab34c8739d8554" });
   const auth = getAuth(app), db = getFirestore(app); let arrets = [];
-  window.__sortir = () => { arrets.forEach(f => f()); arrets = []; signOut(auth); };
+  window.__sortir = () => { arrets.forEach(f => f()); arrets = []; D.clients = []; D.pret = false; signOut(auth); };
   const connexion = (msg = "") => {
     $("#live").hidden = true;
     $("#app").innerHTML = `<div class="login"><h2>Connexion</h2><p>Avec le compte administrateur de l'épicerie (le même que pour l'administration).</p>
@@ -249,13 +249,21 @@ if (DEMO) {
     const lu = (nom, s) => { T.lectures += s.docChanges().length || 1; T.docs[nom] = s.size; T.dernier = Date.now(); };
     const err = (nom) => (e) => { T.erreurs.push(new Date().toLocaleTimeString("fr-FR") + " " + nom + " : " + (e?.code || e?.message || e)); rendu(); };
     arrets.push(onSnapshot(query(collection(db, "stats"), where("jour", ">=", debut)), s => { lu("stats", s); D.stats = s.docs.map(d => d.data()).filter(x => x.jour && x.cle); ok(); }, refus));
-    arrets.push(onSnapshot(collection(db, "clients"), s => { lu("clients", s); D.clients = s.docs.map(d => { const x = d.data(); return { nom: x.nom, code: x.code, tel: x.tel, depuis: x.depuis, points: x.points || 0, tampons: x.tampons || 0, dernierTampon: x.dernierTampon || 0 }; }); ok(); }, refus));
+    if (!PC) { compter(); const t = setInterval(compter, 60000); arrets.push(() => clearInterval(t)); recu++; }   // téléphone : seulement des nombres, aucune fiche client téléchargée
+    else arrets.push(onSnapshot(collection(db, "clients"), s => { lu("clients", s); D.clients = s.docs.map(d => { const x = d.data(); return { nom: x.nom, code: x.code, tel: x.tel, email: x.email, anniv: x.anniv, depuis: x.depuis, points: x.points || 0, tampons: x.tampons || 0, dernierTampon: x.dernierTampon || 0 }; }); ok(); }, refus));
     arrets.push(onSnapshot(collection(db, "commandes"), s => { lu("commandes", s); D.commandes = s.docs.map(d => ({ cree: d.data().cree })); ok(); }, refus));
     arrets.push(onSnapshot(collection(db, "appareils"), s => { lu("appareils", s); D.appareils = s.docs.map(d => { const x = d.data(); return { promo: !!x.promo, maj: x.maj, refs: (x.refs || []).length }; }); ok(); }, (e) => { err("appareils")(e); D.appareils = []; ok(); }));
     arrets.push(onSnapshot(collection(db, "plateaux"), s => { lu("plateaux", s); D.plateaux = Object.fromEntries(s.docs.map(d => [d.id, d.data().nom || d.data().titre || "Plateau"])); ok(); }, () => ok()));
     arrets.push(onSnapshot(doc(db, "shop", "config"), s => { const p = s.data()?.producteurs || []; D.producteurs = Object.fromEntries(p.map(x => [String(x.id), x.nom])); rendu(); }, err("shop/config")));
     arrets.push(onSnapshot(collection(db, "connexions"), s => { lu("connexions", s); T.connexions = s.docs.map(d => d.data()).sort((x, y) => (y.date || 0) - (x.date || 0)); rendu(); }, err("connexions")));
   });
+  async function compter() {
+    try { const c = collection(db, "clients"), [du, au] = bornes();
+      const [t, p] = await Promise.all([getCountFromServer(c), getCountFromServer(query(c, where("depuis", ">=", du), where("depuis", "<=", au)))]);
+      D.nbClients = t.data().count; D.nbClientsPeriode = p.data().count; T.lectures += 2; rendu();
+    } catch (e) { T.erreurs.push(new Date().toLocaleTimeString("fr-FR") + " comptage clients : " + (e?.code || e?.message || e)); rendu(); }
+  }
+  window.__compter = compter;
   function bornesMin() { const a = auj(), m7 = plus(a, -6); return LANCEMENT < m7 ? LANCEMENT : m7; }
   setInterval(rendu, 60000);   // la date du jour et l'heure de mise à jour restent justes
 }
