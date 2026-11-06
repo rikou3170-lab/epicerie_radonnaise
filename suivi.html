@@ -81,7 +81,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',sy
 .pied{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
 </style></head>
 <body>
-<div class="top"><div class="t">Suivi du lancement</div><div class="s">Épicerie Raddonnaise · Suivi v1.4 <span class="live" id="live" hidden><i></i>en direct</span><span id="maj"></span></div></div>
+<div class="top"><div class="t">Suivi du lancement</div><div class="s">Épicerie Raddonnaise · Suivi v1.5 <span class="live" id="live" hidden><i></i>en direct</span><span id="maj"></span></div></div>
 <div class="wrap" id="app"><div class="vide">Chargement…</div></div>
 
 <script type="module">
@@ -95,6 +95,9 @@ const RUB = { accueil: "Accueil", carte: "La carte", fidelite: "Fidélité", act
 const AUTRES = { commandes: "Commandes passées", reservations: "Bons plans réservés", chat: "Messages envoyés", avis: "Avis / sondages" };
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? "").normalize("NFC").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const nomP = (t) => { let x = String(t || "").normalize("NFC").trim().replace(/\s+/g, " "); if (!x) return x; const parts = x.toLocaleLowerCase("fr-FR").split(/([ \-'\u2019])/), pt = ["de", "du", "des", "la", "le", "d", "van", "von"];
+  return parts.map((w, i) => /^[ \-'\u2019]$/.test(w) || !w ? w : (i > 0 && pt.includes(w) && parts[i + 1] !== "-" ? w : w.charAt(0).toLocaleUpperCase("fr-FR") + w.slice(1))).join(""); };
+const telF = (t) => { const x = String(t || "").trim(); let d = x.replace(/\D/g, ""); if (d.length === 11 && d.startsWith("33")) d = "0" + d.slice(2); return d.length === 10 && d[0] === "0" ? d.replace(/(\d{2})(?=\d)/g, "$1 ") : x; };
 const iso = (d) => d.toLocaleDateString("sv-SE");
 const auj = () => iso(new Date());
 const plus = (j, n) => { const d = new Date(j + "T12:00"); d.setDate(d.getDate() + n); return iso(d); };
@@ -183,7 +186,7 @@ function tech(b, st) {
   const ligne = (n, v) => `<tr><td>${n}</td><td class="r">${v}</td></tr>`;
   return `<div class="tech"><h2>Données techniques</h2><div class="grid">
     <div class="card"><h3>État</h3><div class="sub">Application et connexion à la base</div><table class="tab">
-      ${ligne("Version des applis", "v" + esc(T.version))}${ligne("Version du suivi", "v1.4")}
+      ${ligne("Version des applis", "v" + esc(T.version))}${ligne("Version du suivi", "v1.5")}
       ${ligne("Base Firebase", DEMO ? "aperçu" : (T.dernier && maintenant - T.dernier < 5 * 6e4 ? '<span class="ok">en direct</span>' : T.dernier ? "dernière donnée " + hm(T.dernier) : '<span class="ko">pas de données</span>'))}
       ${ligne("Compte connecté", esc(T.compte || "—"))}
       ${ligne("Documents lus (cette page)", T.lectures + ` <span style="font-weight:400;color:var(--ink3)">en ${dureeMin} min</span>`)}
@@ -203,13 +206,13 @@ function tech(b, st) {
 
 function lignesClients(b) {
   const q = recherche.trim().toLowerCase();
-  const l = D.clients.filter(c => !q || [c.nom, c.code, c.tel, c.email].some(v => String(v || "").toLowerCase().includes(q)))
-    .sort((x, y) => String(dateDe(y.depuis) || "").localeCompare(String(dateDe(x.depuis) || "")) || String(x.nom || "").localeCompare(String(y.nom || "")));
+  const l = D.clients.filter(c => !q || [nomP(c.nom), c.nom, c.code, c.tel, telF(c.tel), String(c.tel || "").replace(/\D/g, ""), c.email].some(v => String(v || "").toLowerCase().includes(q)))
+    .sort((x, y) => String(dateDe(y.depuis) || "").localeCompare(String(dateDe(x.depuis) || "")) || nomP(x.nom).localeCompare(nomP(y.nom), "fr"));
   const fr = (j) => j ? new Date(j + "T12:00").toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) : "—";
   const lies = refsLiees();
   return `<tr><th>Client</th><th>Carte</th><th>Téléphone</th><th>E-mail</th><th>Anniv.</th><th>Créée</th><th class="r">Points</th><th class="r">Tamp.</th><th>Dernier tampon</th></tr>` +
     (l.map(c => { const j = dateDe(c.depuis); const tel = String(c.tel || "").replace(/[^\d+]/g, "");
-      return `<tr><td class="nm">${esc(c.nom || "—")}${lies.has(c.id) ? '<span class="tel1" title="Carte reliée à un téléphone avec alertes">📱</span>' : ""}${dans(j, b) ? '<span class="neuf">nouveau</span>' : ""}</td><td class="mono">${esc(c.code || "")}</td><td>${tel ? `<a href="tel:${esc(tel)}">${esc(c.tel)}</a>` : "—"}</td><td>${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : "—"}</td><td>${esc(/^\d{2}-\d{2}$/.test(c.anniv || "") ? c.anniv.slice(3) + "/" + c.anniv.slice(0, 2) : (c.anniv || "—"))}</td><td>${fr(j)}</td><td class="r">${c.points || 0}</td><td class="r">${c.tampons || 0}</td><td>${c.dernierTampon ? hm(c.dernierTampon) : "—"}</td></tr>`; }).join("")
+      return `<tr><td class="nm">${esc(nomP(c.nom) || "—")}${lies.has(c.id) ? '<span class="tel1" title="Carte reliée à un téléphone avec alertes">📱</span>' : ""}${dans(j, b) ? '<span class="neuf">nouveau</span>' : ""}</td><td class="mono">${esc(c.code || "")}</td><td>${tel ? `<a href="tel:${esc(tel)}">${esc(telF(c.tel))}</a>` : "—"}</td><td>${c.email ? `<a href="mailto:${esc(String(c.email).trim().toLowerCase())}">${esc(String(c.email).trim().toLowerCase())}</a>` : "—"}</td><td>${esc(/^\d{2}-\d{2}$/.test(c.anniv || "") ? c.anniv.slice(3) + "/" + c.anniv.slice(0, 2) : (c.anniv || "—"))}</td><td>${fr(j)}</td><td class="r">${c.points || 0}</td><td class="r">${c.tampons || 0}</td><td>${c.dernierTampon ? hm(c.dernierTampon) : "—"}</td></tr>`; }).join("")
      || `<tr><td colspan="9" class="vide">${D.clients.length ? "Aucun client ne correspond." : "Aucune carte pour l'instant."}</td></tr>`);
 }
 function refsLiees() { const s = new Set(); D.appareils.forEach(a => (a.refs || []).forEach(x => s.add(x))); return s; }
@@ -225,7 +228,7 @@ function doublons() {
   const lies = refsLiees(), fr = (j) => j ? new Date(j + "T12:00").toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }) : "—";
   return `<div class="dbl"><h3 style="font-size:14px">⚠️ Doublons probables : ${groupes.length} client${groupes.length > 1 ? "s" : ""} avec plusieurs cartes</h3>
     <div class="sub" style="margin:2px 0 6px">À supprimer dans l'admin, en gardant la carte que le client utilise (demander son QR code ; 📱 = carte reliée à un téléphone avec alertes).</div>
-    <table class="tab tc">${groupes.map(gr => gr.sort((x, y) => String(y.depuis).localeCompare(String(x.depuis))).map((c, k) => `<tr${k === gr.length - 1 ? ' style="border-bottom:2px solid #E9B949"' : ""}><td class="nm">${k ? "" : "<b>"}${esc(c.nom || "—")}${k ? "" : "</b>"}${lies.has(c.id) ? '<span class="tel1">📱</span>' : ""}</td><td class="mono">${esc(c.code || "")}</td><td>créée le ${fr(dateDe(c.depuis))}</td><td class="r">${c.points || 0} pts</td><td class="r">${c.tampons || 0} tamp.</td></tr>`).join("")).join("")}</table></div>`;
+    <table class="tab tc">${groupes.map(gr => gr.sort((x, y) => String(y.depuis).localeCompare(String(x.depuis))).map((c, k) => `<tr${k === gr.length - 1 ? ' style="border-bottom:2px solid #E9B949"' : ""}><td class="nm">${k ? "" : "<b>"}${esc(nomP(c.nom) || "—")}${k ? "" : "</b>"}${lies.has(c.id) ? '<span class="tel1">📱</span>' : ""}</td><td class="mono">${esc(c.code || "")}</td><td>créée le ${fr(dateDe(c.depuis))}</td><td class="r">${c.points || 0} pts</td><td class="r">${c.tampons || 0} tamp.</td></tr>`).join("")).join("")}</table></div>`;
 }
 function comptes(b) {
   const n = PC ? D.clients.filter(c => dans(dateDe(c.depuis), b)).length : (D.nbClientsPeriode ?? "…");
