@@ -166,6 +166,11 @@ function SuiviComptes({ d }) {
       ),
     [],
   );
+  const telN = (t) => {
+    let x = String(t || "").replace(/\D/g, "");
+    if (x.length === 11 && x.startsWith("33")) x = "0" + x.slice(2);
+    return x.length >= 9 ? x : "";
+  };
   const iso = (x) => x.toLocaleDateString("sv-SE");
   const jourMoins = (n) => {
     const x = new Date();
@@ -181,17 +186,17 @@ function SuiviComptes({ d }) {
   const parJour = jours.map((j) => clients.filter((c) => dateDe(c) === j).length);
   const max = Math.max(1, ...parJour);
   const court = (j) => (j === auj ? "Aujourd'hui" : new Date(j + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }));
-  const recents = [...clients].sort((a, b) => dateDe(b).localeCompare(dateDe(a))).slice(0, 8);
+  // v2.41 : tous les comptes, du plus récent au plus ancien, avec recherche (nom, carte, téléphone, e-mail)
+  const [recherche, setRecherche] = (0, React.useState)("");
+  const q = recherche.trim().toLowerCase(), qChiffres = q.replace(/\D/g, "");
+  const recents = [...clients]
+    .sort((a, b) => dateDe(b).localeCompare(dateDe(a)) || String(a.nom || "").localeCompare(String(b.nom || ""), "fr"))
+    .filter((c) => !q || [c.nom, c.code, c.email].some((v) => String(v || "").toLowerCase().includes(q)) || (qChiffres.length >= 3 && telN(c.tel).includes(qChiffres)));
   // téléphones reliés à une carte (alertes activées)
   const lies = new Set();
   (appareils || []).forEach((a) => (a.refs || []).forEach((r) => lies.add(String(r))));
   const actifs7 = (appareils || []).filter((a) => a.maj && Date.now() - a.maj < 7 * 864e5).length;
   // doublons probables : même téléphone ou même e-mail
-  const telN = (t) => {
-    let x = String(t || "").replace(/\D/g, "");
-    if (x.length === 11 && x.startsWith("33")) x = "0" + x.slice(2);
-    return x.length >= 9 ? x : "";
-  };
   const groupes = (() => {
     const parent = clients.map((_, i) => i),
       f = (i) => (parent[i] === i ? i : (parent[i] = f(parent[i]))),
@@ -238,17 +243,39 @@ function SuiviComptes({ d }) {
       ),
     ),
     h("div", { className: "de", style: { display: "flex", justifyContent: "space-between", fontSize: 10.5 } }, h("span", null, court(jours[0])), h("span", null, "Aujourd'hui")),
-    h("div", { className: "de", style: { fontWeight: 800, marginTop: 12 } }, "Dernières cartes créées"),
-    recents.length
-      ? recents.map((c) =>
-          h(
-            "div",
-            { key: c.id, className: "de", style: { color: "var(--ink)", display: "flex", justifyContent: "space-between", gap: 8, padding: "3px 0" } },
-            h("span", null, c.nom || "—", lies.has(String(c.id)) ? " 📱" : ""),
-            h("span", { style: { color: "var(--ink3)", whiteSpace: "nowrap" } }, court(dateDe(c))),
-          ),
-        )
-      : h("div", { className: "de" }, "Aucune carte pour l'instant."),
+    h("div", { className: "de", style: { fontWeight: 800, marginTop: 12 } }, "Tous les comptes (" + clients.length + ")"),
+    clients.length > 5 &&
+      h("input", {
+        className: "inp",
+        type: "search",
+        value: recherche,
+        placeholder: "Rechercher (nom, carte, tél.)",
+        onChange: (e) => setRecherche(e.target.value),
+        style: { margin: "6px 0" },
+      }),
+    h(
+      "div",
+      { style: { maxHeight: 340, overflowY: "auto", WebkitOverflowScrolling: "touch", border: "1px solid var(--line)", borderRadius: 12, padding: "2px 10px" } },
+      recents.length
+        ? recents.map((c, k) =>
+            h(
+              "div",
+              { key: c.id, style: { padding: "7px 0", borderTop: k ? "1px solid var(--line)" : "none" } },
+              h(
+                "div",
+                { className: "de", style: { color: "var(--ink)", display: "flex", justifyContent: "space-between", gap: 8 } },
+                h("b", null, c.nom || "—", lies.has(String(c.id)) ? " 📱" : ""),
+                h("span", { style: { color: dateDe(c) === auj ? "var(--apple)" : "var(--ink3)", whiteSpace: "nowrap", fontWeight: dateDe(c) === auj ? 800 : 400 } }, court(dateDe(c))),
+              ),
+              h(
+                "div",
+                { className: "de", style: { fontSize: 12 } },
+                [c.code, c.tel, (c.tampons || 0) + " tampon" + ((c.tampons || 0) > 1 ? "s" : "")].filter(Boolean).join(" · "),
+              ),
+            ),
+          )
+        : h("div", { className: "de", style: { padding: "8px 0" } }, clients.length ? "Aucun compte ne correspond." : "Aucune carte pour l'instant."),
+    ),
     h("div", { className: "de", style: { fontWeight: 800, marginTop: 12 } }, "Doublons probables"),
     groupes.length
       ? h(
