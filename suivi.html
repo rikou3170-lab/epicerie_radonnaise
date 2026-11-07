@@ -105,7 +105,7 @@ const court = (j) => new Date(j + "T12:00").toLocaleDateString("fr-FR", { weekda
 const dateDe = (v) => { if (!v) return null; if (typeof v === "number") return iso(new Date(v)); if (v.toDate) return iso(v.toDate()); const s = String(v); return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : (isNaN(Date.parse(s)) ? null : iso(new Date(s))); };
 
 let periode = "lancement", recherche = "";   // aujourdhui | 7j | lancement
-const D = { stats: [], clients: [], commandes: [], appareils: [], plateaux: {}, offres: {}, producteurs: {}, pret: false, nbClients: null, nbClientsPeriode: null };
+const D = { stats: [], clients: [], commandes: [], appareils: [], plateaux: {}, offres: {}, producteurs: {}, jour: {}, pret: false, nbClients: null, nbClientsPeriode: null };
 const T = { version: "?", compte: "", lectures: 0, docs: {}, dernier: null, erreurs: [], connexions: [], debut: Date.now() };
 const hm = (t) => t ? new Date(t).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
 fetch("version.json?t=" + Date.now()).then(r => r.json()).then(v => { T.version = v.version || "?"; const e = document.getElementById("vsuivi"); if (e && v.version) e.textContent = "v" + v.version; rendu(); }).catch(() => { });
@@ -161,8 +161,9 @@ function rendu() {
       <div class="card"><h3>Rubriques consultées</h3><div class="sub">Nombre d'affichages de chaque onglet</div>${barres(Object.entries(rub).map(([k, v]) => [RUB[k] || k, v]), "Pas encore de consultation sur cette période.")}</div>
       <div class="card"><h3>Heures d'affluence</h3><div class="sub">Ouvertures de l'appli selon l'heure</div>
         <div class="heures">${Array.from({ length: 24 }, (_, i) => { const k = String(i).padStart(2, "0"), v = h[k] || 0; return `<div title="${i} h : ${v}"><i class="${v ? "" : "z"}" style="height:${100 * v / hmax}%"></i><span>${i % 3 === 0 ? i + "h" : ""}</span></div>`; }).join("")}</div></div>
-      <div class="card"><h3>Plateaux regardés</h3><div class="sub">Fiches plateaux / paniers ouvertes</div>${barres(Object.entries(pl).map(([k, v]) => [D.plateaux[k] || D.offres[k] || "Fiche " + k.slice(0, 8), v]), "Aucun plateau consulté sur cette période.")}</div>
-      <div class="card"><h3>Producteurs consultés</h3><div class="sub">Fiches producteurs ouvertes</div>${barres(Object.entries(pr).map(([k, v]) => [D.producteurs[k] || "Producteur " + k.slice(0, 8), v]), "Aucune fiche producteur ouverte sur cette période.")}</div>
+      <div class="card"><h3>Plateaux regardés</h3><div class="sub">Fiches plateaux / paniers ouvertes</div>${barres(Object.entries(pl).map(([k, v]) => [D.plateaux[k] || D.offres[k] || "Plateau retiré", v]), "Aucun plateau consulté sur cette période.")}</div>
+      <div class="card"><h3>Producteurs consultés</h3><div class="sub">Fiches producteurs ouvertes</div>${barres(Object.entries(pr).map(([k, v]) => [D.producteurs[k] || "Producteur retiré", v]), "Aucune fiche producteur ouverte sur cette période.")}</div>
+      <div class="card"><h3>Articles réservés</h3><div class="sub">Clics sur « Réserver » (promos, dates courtes, plats du jour)</div>${barres(Object.entries(rs).map(([k, v]) => [D.jour[k] || D.offres[k] || "Article retiré", v]), "Aucune réservation sur cette période.")}</div>
       <div class="card"><h3>Actions des clients</h3><div class="sub">Ce que les clients ont fait dans l'appli</div>${barres(Object.entries(AUTRES).map(([k, t]) => [t, somme(s => s.cle === k)]), "Aucune action sur cette période.")}</div>
     </div>
     ${comptes(b)}
@@ -246,9 +247,9 @@ if (DEMO) {
     add("visiteurs", 60 * f + rnd() * 20); add("ouvertures", 140 * f + rnd() * 40);
     ["accueil", "carte", "fidelite", "actus", "infos"].forEach((t, i) => add("v_" + t, (180 - i * 30) * f * (.7 + rnd() * .5)));
     for (let hh = 7; hh <= 20; hh++) add("h_" + String(hh).padStart(2, "0"), (hh >= 11 && hh <= 13 || hh >= 17 && hh <= 19 ? 18 : 6) * f * (.6 + rnd()));
-    add("pl_p1", 25 * f * rnd()); add("pl_p2", 12 * f * rnd()); add("prod_f1", 14 * f * rnd()); add("prod_f2", 9 * f * rnd()); add("prod_f3", 7 * f * rnd());
+    add("pl_p1", 25 * f * rnd()); add("pl_p2", 12 * f * rnd()); add("prod_f1", 14 * f * rnd()); add("prod_f2", 9 * f * rnd()); add("prod_f3", 7 * f * rnd()); add("resa_kq7xbzt2", 9 * f * rnd()); add("resa_m3pfa81c", 5 * f * rnd()); add("resa_ancien000", 2 * f * rnd());
     add("commandes", 3 * f * rnd()); add("reservations", 5 * f * rnd()); add("chat", 4 * f * rnd()); }
-  D.plateaux = { p1: "Plateau charcuterie", p2: "Plateau apéritif" }; D.producteurs = { f1: "Ferme Tisserand", f2: "Le rucher de Launot", f3: "Le rucher de la Brèche" };
+  D.plateaux = { p1: "Plateau charcuterie", p2: "Plateau apéritif" }; D.producteurs = { f1: "Ferme Tisserand", f2: "Le rucher de Launot", f3: "Le rucher de la Brèche" }; D.jour = { kq7xbzt2: "Comté 18 mois", m3pfa81c: "Panier anti-gaspi" };
   const P = ["Julie", "Marc", "Sophie", "Thomas", "Claire", "Nicolas", "Emma", "Lucas", "Léa", "Hugo"], N = ["Martin", "Bernard", "Petit", "Durand", "Leroy", "Moreau", "Simon", "Laurent"];
   D.clients = Array.from({ length: 87 }, (_, i) => ({ id: "c" + i, nom: P[i % 10] + " " + N[i % 8], code: "RAD-" + (10000 + i * 137).toString(36).toUpperCase().padStart(5, "0").slice(-5), tel: "06 " + String(10 + i).padStart(2, "0") + " 00 00 00", email: i % 3 ? P[i % 10].toLowerCase() + i + "@exemple.fr" : "", anniv: i % 5 ? "" : "12/0" + (1 + i % 9), depuis: i < 23 ? a : "2026-10-15", points: (i * 7) % 40, tampons: i % 10, dernierTampon: i % 4 ? Date.now() - i * 36e5 : 0 })); D.clients.push({ ...D.clients[3], id: "x1", code: "RAD-ZZ9Q1", points: 0, tampons: 0, dernierTampon: 0 }, { ...D.clients[5], id: "x2", code: "RAD-QQ7P2", tel: "+33" + D.clients[5].tel.replace(/\D/g, "").slice(1), points: 0, tampons: 0, dernierTampon: 0 });
   if (!PC) { D.nbClients = D.clients.length; D.nbClientsPeriode = 23; D.clients = []; }
@@ -288,9 +289,11 @@ if (DEMO) {
     else arrets.push(onSnapshot(collection(db, "clients"), s => { lu("clients", s); D.clients = s.docs.map(d => { const x = d.data(); return { id: d.id, nom: x.nom, code: x.code, tel: x.tel, email: x.email, anniv: x.anniv, depuis: x.depuis, points: x.points || 0, tampons: x.tampons || 0, dernierTampon: x.dernierTampon || 0 }; }); ok(); }, refus));
     arrets.push(onSnapshot(collection(db, "commandes"), s => { lu("commandes", s); D.commandes = s.docs.map(d => ({ cree: d.data().cree })); ok(); }, refus));
     arrets.push(onSnapshot(collection(db, "appareils"), s => { lu("appareils", s); D.appareils = s.docs.map(d => { const x = d.data(); return { promo: !!x.promo, maj: x.maj, refs: Array.isArray(x.refs) ? x.refs.map(String) : [] }; }); ok(); }, (e) => { err("appareils")(e); D.appareils = []; ok(); }));
-    arrets.push(onSnapshot(collection(db, "plateaux"), s => { lu("plateaux", s); D.plateaux = Object.fromEntries(s.docs.map(d => [d.id, d.data().nom || d.data().titre || "Plateau"])); ok(); }, () => ok()));
-    arrets.push(onSnapshot(collection(db, "producteurs"), s => { lu("producteurs", s); D.producteurs = Object.fromEntries(s.docs.map(d => [d.id, d.data().nom || "Producteur"])); rendu(); }, err("producteurs")));
-    arrets.push(onSnapshot(collection(db, "offres"), s => { lu("offres", s); D.offres = Object.fromEntries(s.docs.map(d => [d.id, d.data().titre || d.data().nom || "Bon plan"])); rendu(); }, err("offres")));
+    arrets.push(onSnapshot(collection(db, "plateaux"), s => { lu("plateaux", s); D.plateaux = Object.fromEntries(s.docs.map(d => [d.id.toLowerCase(), d.data().nom || d.data().titre || "Plateau"])); ok(); }, () => ok()));
+    arrets.push(onSnapshot(collection(db, "producteurs"), s => { lu("producteurs", s); D.producteurs = Object.fromEntries(s.docs.map(d => [d.id.toLowerCase(), d.data().nom || "Producteur"])); rendu(); }, err("producteurs")));
+    arrets.push(onSnapshot(collection(db, "offres"), s => { lu("offres", s); D.offres = Object.fromEntries(s.docs.map(d => [d.id.toLowerCase(), d.data().titre || d.data().nom || "Bon plan"])); rendu(); }, err("offres")));
+    // articles du jour (pour nommer les « articles réservés »)
+    arrets.push(onSnapshot(collection(db, "jour"), s => { lu("jour", s); D.jour = Object.fromEntries(s.docs.map(d => [d.id.toLowerCase(), d.data().titre || "Article"])); rendu(); }, err("jour")));
     arrets.push(onSnapshot(collection(db, "connexions"), s => { lu("connexions", s); T.connexions = s.docs.map(d => d.data()).sort((x, y) => (y.date || 0) - (x.date || 0)); rendu(); }, err("connexions")));
   });
   async function compter() {
