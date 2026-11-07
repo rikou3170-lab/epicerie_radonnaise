@@ -64,7 +64,7 @@ function imprimerPreparation(t, e) {
   }
   ${n.length ? n.map(u).join("") : '<p class="vide">Aucun plateau à préparer ce jour-là.</p>'}
   <h2>Réservations anti-gaspi à mettre de côté (${s.length})</h2>
-  ${s.length ? s.map((p) => `<div class="c"><span class="box"></span><b>${esc(p.qte)} × ${esc(p.titre)}</b> — ${esc(p.nom)} ${esc(p.tel)} · à retirer ${esc(p.retrait || "à l'épicerie")} <span class="st">${esc(p.numero)}</span></div>`).join("") : '<p class="vide">Aucune réservation en attente.</p>'}
+  ${s.length ? s.map((p) => `<div class="c"><span class="box"></span><b>${esc(libelleResa(p))}</b> — ${esc(p.nom)} ${esc(p.tel)} · à retirer ${esc(p.retrait || "à l'épicerie")} <span class="st">${esc(p.numero)}</span></div>`).join("") : '<p class="vide">Aucune réservation en attente.</p>'}
   </body></html>`,
     h = window.open("", "_blank");
   if (!h) return ft("La fenêtre a été bloquée : autorisez les fenêtres (pop-up) pour ce site.");

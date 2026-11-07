@@ -2,6 +2,38 @@
  *  AUJOURD'HUI — produits du jour (frais, plats, promos, anti-gaspi).
  * ═══════════════════════════════════════════════════════════════════════ */
 
+// v2.42 : choix « À la pièce » / « Au kilo » d'un article (au kilo = unité « kg », prix du kilo).
+function ChoixVente({ unite, onChange }) {
+  const kilo = auKilo({ unite }),
+    bouton = (actif, texte, val) =>
+      React.default.createElement(
+        "button",
+        {
+          type: "button",
+          onClick: () => onChange(val),
+          style: {
+            flex: 1,
+            padding: "8px 6px",
+            borderRadius: 9,
+            cursor: "pointer",
+            fontFamily: "var(--body)",
+            fontSize: 12.5,
+            fontWeight: 800,
+            color: actif ? "#fff" : "var(--forest)",
+            background: actif ? "var(--forest)" : "#fff",
+            border: "1.5px solid var(--forest)",
+          },
+        },
+        texte,
+      );
+  return React.default.createElement(
+    "div",
+    { style: { display: "flex", gap: 6, marginTop: 8 } },
+    bouton(!kilo, "À la pièce", kilo ? "" : unite),
+    bouton(kilo, "Au kilo", "kg"),
+  );
+}
+
 // Produits du jour : frais, plats, promos, anti-gaspi (réservables ou non).
 function Jour({ d: t, set }) {
   let [n, r] = (0, React.useState)(""),
@@ -82,16 +114,18 @@ function Jour({ d: t, set }) {
           step: "0.01",
           value: i,
           onChange: (k) => s(k.target.value),
-          placeholder: "Prix (facultatif)",
+          placeholder: auKilo({ unite: o }) ? "Prix du kilo (€)" : "Prix (facultatif)",
         }),
-        React.default.createElement("input", {
-          className: "inp",
-          style: { width: 108 },
-          value: o,
-          onChange: (k) => a(k.target.value),
-          placeholder: "kg, part…",
-        }),
+        !auKilo({ unite: o }) &&
+          React.default.createElement("input", {
+            className: "inp",
+            style: { width: 108 },
+            value: o,
+            onChange: (k) => a(k.target.value),
+            placeholder: "pièce, part…",
+          }),
       ),
+      React.default.createElement(ChoixVente, { unite: o, onChange: a }),
       React.default.createElement(
         "div",
         { style: { display: "flex", gap: 6, marginTop: 9, flexWrap: "wrap" } },
@@ -133,7 +167,7 @@ function Jour({ d: t, set }) {
             placeholder: "Facultatif",
           }),
         ),
-      x(u) && React.default.createElement(ChampsResa, { v: I, onChange: T }),
+      x(u) && React.default.createElement(ChampsResa, { v: { ...I, unite: o }, onChange: ({ unite: _u, ...k }) => T(k) }),
       u === "panier" &&
         !n &&
         React.default.createElement(
@@ -326,7 +360,7 @@ function Jour({ d: t, set }) {
           React.default.createElement(
             "div",
             { style: { flex: 1 } },
-            React.default.createElement("label", { className: "lab" }, "Prix (€)"),
+            React.default.createElement("label", { className: "lab" }, auKilo(S) ? "Prix du kilo (€)" : "Prix (€)"),
             React.default.createElement("input", {
               className: "inp",
               type: "number",
@@ -336,17 +370,20 @@ function Jour({ d: t, set }) {
               onChange: (k) => _({ ...S, prix: k.target.value }),
             }),
           ),
-          React.default.createElement(
-            "div",
-            { style: { flex: 1 } },
-            React.default.createElement("label", { className: "lab" }, "Unité"),
-            React.default.createElement("input", {
-              className: "inp",
-              value: S.unite,
-              onChange: (k) => _({ ...S, unite: k.target.value }),
-            }),
-          ),
+          !auKilo(S) &&
+            React.default.createElement(
+              "div",
+              { style: { flex: 1 } },
+              React.default.createElement("label", { className: "lab" }, "Unité"),
+              React.default.createElement("input", {
+                className: "inp",
+                value: S.unite,
+                placeholder: "pièce, part…",
+                onChange: (k) => _({ ...S, unite: k.target.value }),
+              }),
+            ),
         ),
+        React.default.createElement(ChoixVente, { unite: S.unite, onChange: (u) => _({ ...S, unite: u }) }),
         React.default.createElement(
           "div",
           { style: { display: "flex", gap: 10 } },

@@ -24,6 +24,13 @@ var RESA_KEY = "epicerie-raddonnaise-resas",
   Ro = (t) => Math.max(0, (parseInt(t.stock) || 0) - (parseInt(t.reserves) || 0)),
   j9 = (t) => (parseInt(t.stock) || 0) > 0;
 
+// v2.42 : articles vendus au kilo (unité « kg ») — le client choisit un poids par tranches de 100 g ;
+// libellé d'une réservation : « 2 × Endive » ou « Mandarines · 1,1 kg ».
+const auKilo = (t) => /^\s*(le\s+)?(kg|kilo|kilos|kilogrammes?)\s*$/i.test(String(t?.unite || "")),
+  poidsTexte = (g) => (g < 1000 ? g + " g" : String(g / 1000).replace(".", ",") + " kg"),
+  // libellé d'une réservation : « 2 × Endive » ou « Mandarine · 1,1 kg » (réservation au poids)
+  libelleResa = (r) => (/ · \d+(,\d+)? k?g$/.test(String(r.titre || "")) ? r.titre : r.qte + " × " + r.titre);
+
 // Réservations du client, suivies en direct.
 function useMesResas(t) {
   let [liste, setListe] = (0, React.useState)(ts),
@@ -65,7 +72,7 @@ function MesResas({ resas }) {
           React.default.createElement(
             "div",
             { style: { minWidth: 0 } },
-            React.default.createElement("b", null, "Réservé : ", n.qte, " × ", n.titre),
+            React.default.createElement("b", null, "Réservé : ", libelleResa(n)),
             React.default.createElement(
               "div",
               null,
@@ -91,13 +98,17 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
     [tel, setTel] = (0, React.useState)(moi?.tel || d.tel || ""),
     [etat, setEtat] = (0, React.useState)(""),
     [fini, setFini] = (0, React.useState)(null),
-    A = Number(t.prix) || 0;
+    A = Number(t.prix) || 0,
+    // v2.42 : au kilo → poids en grammes (100 g → 5 kg), prix = prix du kilo × poids
+    kilo = auKilo(t),
+    [grammes, setGrammes] = (0, React.useState)(500),
+    totalEstime = kilo ? Math.round(A * grammes / 10) / 100 : Math.round(A * qte * 100) / 100;
   (0, React.useEffect)(() => {
     s > 0 && qte > s && (setQte(s), setEtat("Il n'en reste plus que " + s + " : quantité ajustée."));
   }, [s]);
   let S = async () => {
     if (!nom.trim() || !telValide(tel) || qte < 1 || etat === "envoi") return;
-    if (qte > s) {
+    if (!kilo && qte > s) {
       setQte(Math.max(1, s)), setEtat("Il n'en reste plus que " + s + " : quantité ajustée.");
       return;
     }
@@ -107,10 +118,11 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
         cree: Date.now(),
         statut: "reservee",
         item: String(t.id),
-        titre: String(t.titre).slice(0, 80),
-        qte,
+        // au kilo : une réservation = 1 (pour le stock), le poids est écrit dans le titre
+        titre: kilo ? (String(t.titre).slice(0, 66) + " · " + poidsTexte(grammes)) : String(t.titre).slice(0, 80),
+        qte: kilo ? 1 : qte,
         prix: A,
-        total: Math.round(A * qte * 100) / 100,
+        total: totalEstime,
         nom: nomPropre(nom).slice(0, 40),
         tel: telFormate(tel),
         retrait: String(t.retrait || "").slice(0, 60),
@@ -118,7 +130,7 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
       z = writeBatch(db),
       j = doc2(collection(db, "resas")),
       b = q2(j);
-    z.set(j, P), z.update(doc2(db, "jour", String(t.id)), { reserves: increment(qte), derniereResa: b });
+    z.set(j, P), z.update(doc2(db, "jour", String(t.id)), { reserves: increment(P.qte), derniereResa: b });
     let y = () => {
       rx(ts().filter((N) => N.ref !== b)), Cf(b);
     };
@@ -127,7 +139,7 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
         ref: b,
         numero: P.numero,
         titre: P.titre,
-        qte,
+        qte: P.qte,
         total: P.total,
         retrait: P.retrait,
         nom: P.nom,
@@ -179,7 +191,7 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
             React.default.createElement(
               "p",
               { className: "tr-txt" },
-              React.default.createElement("b", null, fini.qte, " × ", fini.titre),
+              React.default.createElement("b", null, libelleResa(fini)),
               " mis de côté pour vous.",
               React.default.createElement("br", null),
               "À retirer ",
@@ -242,9 +254,39 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
                   React.default.createElement(
                     "div",
                     { className: "lab", style: { textAlign: "center", marginTop: 12 } },
-                    "Quantité",
+                    kilo ? "Poids souhaité" : "Quantité",
                   ),
-                  React.default.createElement(
+                  kilo
+                    ? React.default.createElement(
+                        "div",
+                        { className: "pas" },
+                        React.default.createElement(
+                          "button",
+                          {
+                            onClick: () => setGrammes(Math.max(100, grammes - 100)),
+                            disabled: grammes <= 100,
+                            "aria-label": "100 g de moins",
+                          },
+                          "−",
+                        ),
+                        React.default.createElement("input", {
+                          type: "text",
+                          value: poidsTexte(grammes),
+                          readOnly: !0,
+                          style: { width: 150, fontSize: 30 },
+                          "aria-label": "Poids",
+                        }),
+                        React.default.createElement(
+                          "button",
+                          {
+                            onClick: () => setGrammes(Math.min(5000, grammes + 100)),
+                            disabled: grammes >= 5000,
+                            "aria-label": "100 g de plus",
+                          },
+                          "+",
+                        ),
+                      )
+                    : React.default.createElement(
                     "div",
                     { className: "pas" },
                     React.default.createElement(
@@ -272,6 +314,12 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
                       "+",
                     ),
                   ),
+                  kilo &&
+                    React.default.createElement(
+                      "div",
+                      { style: { fontSize: 11.5, color: "var(--ink3)", textAlign: "center", marginTop: 4 } },
+                      "Prix approximatif : le prix exact dépend de la pesée en boutique.",
+                    ),
                   React.default.createElement(
                     "div",
                     { style: { display: "flex", gap: 8, marginTop: 6 } },
@@ -315,7 +363,7 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
                       disabled: !nom.trim() || !telValide(tel) || etat === "envoi",
                       onClick: S,
                     },
-                    etat === "envoi" ? "Réservation…" : "Je réserve" + (A > 0 ? " — " + ze(A * qte) : ""),
+                    etat === "envoi" ? "Réservation…" : "Je réserve" + (A > 0 ? " — " + (kilo ? "≈ " : "") + ze(totalEstime) : ""),
                   ),
                   React.default.createElement(
                     "p",

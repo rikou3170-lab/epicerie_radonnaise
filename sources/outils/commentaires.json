@@ -298,7 +298,8 @@
   "Intro": "Animation d'ouverture de l'appli (logo, thème du moment).",
   "Bienvenue": "Écrans de bienvenue lors de la première ouverture.",
   "PRENOM_KEY": "Prénom gardé sur le téléphone (lecture).",
-  "importerTransfert": "Récupère sur le nouveau téléphone la carte, les commandes et la conversation."
+  "importerTransfert": "Récupère sur le nouveau téléphone la carte, les commandes et la conversation.",
+  "auKilo": "v2.42 : articles vendus au kilo (unité « kg ») — le client choisit un poids par tranches de 100 g ;\nlibellé d'une réservation : « 2 × Endive » ou « Mandarines · 1,1 kg »."
  },
  "declarations_admin": {
   "YP": "Interne Firebase (mode émulateur) : jamais utilisé ici.",
@@ -436,7 +437,9 @@
   "Admin": "Administration : connexion, menu, écrans et sauvegarde automatique.",
   "app:2": "Lance l'administration dans la page.",
   "dialogue:3": "Monte le composant Dialogue une fois pour toute la page.",
-  "SuiviComptes": "v2.39 : suivi des comptes clients (cartes créées, dernières cartes, doublons probables, téléphones avec alertes).\nMêmes informations que la page de suivi d'Eric, sans la partie technique."
+  "SuiviComptes": "v2.39 : suivi des comptes clients (cartes créées, dernières cartes, doublons probables, téléphones avec alertes).\nMêmes informations que la page de suivi d'Eric, sans la partie technique.",
+  "ChoixVente": "v2.42 : choix « À la pièce » / « Au kilo » d'un article (au kilo = unité « kg », prix du kilo).",
+  "auKilo": "v2.42 : vente au kilo (unité « kg ») et libellé des réservations au poids (« Mandarines · 1,1 kg »)."
  },
  "declarations_caisse": {
   "WD": "Interne Firebase (mode émulateur) : jamais utilisé ici.",

@@ -2,6 +2,10 @@
  *  RÉSERVATIONS ANTI-GASPI — liste des réservations et champs « réservable » des articles du jour.
  * ═══════════════════════════════════════════════════════════════════════ */
 
+// v2.42 : vente au kilo (unité « kg ») et libellé des réservations au poids (« Mandarines · 1,1 kg »).
+const auKilo = (t) => /^\s*(le\s+)?(kg|kilo|kilos|kilogrammes?)\s*$/i.test(String(t?.unite || "")),
+  libelleResa = (r) => (/ · \d+(,\d+)? k?g$/.test(String(r.titre || "")) ? r.titre : r.qte + " × " + r.titre);
+
 // Réservations anti-gaspi (promos, dates courtes, paniers)
 function Reservations({ d: t }) {
   let [e, n] = (0, React.useState)(!1),
@@ -38,9 +42,7 @@ function Reservations({ d: t }) {
           React.default.createElement(
             "div",
             { className: "nm" },
-            h.qte,
-            " × ",
-            h.titre,
+            libelleResa(h),
             h.total > 0 &&
               React.default.createElement(
                 "span",
@@ -201,7 +203,7 @@ function ChampsResa({ v, onChange }) {
         React.default.createElement(
           "div",
           { style: { width: 110, flexShrink: 0 } },
-          React.default.createElement("label", { className: "lab" }, "Quantité dispo."),
+          React.default.createElement("label", { className: "lab" }, auKilo(v) ? "Nb de réservations" : "Quantité dispo."),
           React.default.createElement("input", {
             className: "inp",
             type: "number",
