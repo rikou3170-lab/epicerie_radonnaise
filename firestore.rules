@@ -32,7 +32,7 @@ service cloud.firestore {
         && resource.data.get('stock', 0) is int && resource.data.get('stock', 0) > 0
         && request.resource.data.reserves is int
         && request.resource.data.reserves > resource.data.get('reserves', 0)
-        && request.resource.data.reserves - resource.data.get('reserves', 0) <= 10
+        && request.resource.data.reserves - resource.data.get('reserves', 0) <= 50   // 50 = 5 kg au kilo (tranches de 100 g)
         && request.resource.data.reserves <= resource.data.get('stock', 0)
         && request.resource.data.derniereResa is string && request.resource.data.derniereResa.size() >= 15 && request.resource.data.derniereResa.size() <= 40
         && !exists(/databases/$(database)/documents/resas/$(request.resource.data.derniereResa))
@@ -50,7 +50,7 @@ service cloud.firestore {
         && request.resource.data.statut == 'reservee'
         && request.resource.data.numero is string && request.resource.data.numero.matches('R-[A-Z0-9]{5}')
         && request.resource.data.cree is int
-        && request.resource.data.qte is int && request.resource.data.qte >= 1 && request.resource.data.qte <= 10
+        && request.resource.data.qte is int && request.resource.data.qte >= 1 && request.resource.data.qte <= 50   // au kilo : tranches de 100 g (50 = 5 kg)
         && request.resource.data.item is string && request.resource.data.item.size() <= 40
         && request.resource.data.titre is string && request.resource.data.titre.size() <= 80
         && request.resource.data.prix is number && request.resource.data.total is number && request.resource.data.total <= 1000

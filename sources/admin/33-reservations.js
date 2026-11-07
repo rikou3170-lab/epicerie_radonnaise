@@ -203,16 +203,25 @@ function ChampsResa({ v, onChange }) {
         React.default.createElement(
           "div",
           { style: { width: 110, flexShrink: 0 } },
-          React.default.createElement("label", { className: "lab" }, auKilo(v) ? "Nb de réservations" : "Quantité dispo."),
+          React.default.createElement("label", { className: "lab" }, auKilo(v) ? "Dispo. (kg)" : "Quantité dispo."),
           React.default.createElement("input", {
             className: "inp",
             type: "number",
             inputMode: "numeric",
             min: "1",
             max: "998",
-            value: r ? "" : v.stock || "",
+            // v2.43 : au kilo, Marion saisit des kilos (1,5) ; on enregistre des tranches de 100 g (15)
+            ...(auKilo(v) ? { step: "0.1", inputMode: "decimal", max: "99.8" } : {}),
+            value: r ? "" : auKilo(v) ? (v.stock ? (v.kgSaisie ?? String(v.stock / 10)) : "") : v.stock || "",
             placeholder: "Sans limite",
-            onChange: (i) => onChange({ ...v, stock: i.target.value, resaOn: i.target.value.trim() !== "0" }),
+            onChange: (i) => {
+              let val = i.target.value;
+              if (auKilo(v)) {
+                const kg = parseFloat(String(val).replace(",", "."));
+                return onChange({ ...v, kgSaisie: val, stock: val.trim() === "" ? "" : String(Math.round((kg || 0) * 10)), resaOn: val.trim() !== "0" });
+              }
+              onChange({ ...v, stock: val, resaOn: val.trim() !== "0" });
+            },
           }),
         ),
         React.default.createElement(
@@ -263,7 +272,7 @@ function ChampsResa({ v, onChange }) {
 var iN = (t) => {
   let e = String(t.stock ?? "").trim() === "",
     n = t.resaOn && e ? 999 : Math.max(0, Math.min(999, parseInt(t.stock) || 0)),
-    { resaOn: r, ...i } = t;
+    { resaOn: r, kgSaisie: _k, ...i } = t;
   return {
     ...i,
     stock: n,

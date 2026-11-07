@@ -118,8 +118,8 @@ function ListeJour({ items, maj, onReserver }) {
                     parseInt(r.stock) < 999 &&
                       React.default.createElement(
                         "span",
-                        { className: Ro(r) <= 2 ? "chaud" : "" },
-                        Ro(r) <= 2 ? "Plus que " + Ro(r) + " !" : Ro(r) + " dispo.",
+                        { className: Ro(r) <= (auKilo(r) ? 5 : 2) ? "chaud" : "" },
+                        Ro(r) <= (auKilo(r) ? 5 : 2) ? "Plus que " + dispoTexte(r) + " !" : dispoTexte(r) + " dispo.",
                       ),
                   )
                 : React.default.createElement("span", { className: "epuise" }, "Épuisé"),

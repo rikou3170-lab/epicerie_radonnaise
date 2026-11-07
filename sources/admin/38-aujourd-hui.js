@@ -259,8 +259,9 @@ function Jour({ d: t, set }) {
                   "div",
                   { className: "de", style: { fontWeight: 800, color: "#2E7D32" } },
                   "🧺 Réservable · ",
-                  parseInt(k.reserves) || 0,
-                  parseInt(k.stock) >= 999 ? "" : " / " + k.stock,
+                  // v2.43 : au kilo, compté en tranches de 100 g → affiché en kg
+                  auKilo(k) ? String((parseInt(k.reserves) || 0) / 10).replace(".", ",") + " kg" : parseInt(k.reserves) || 0,
+                  parseInt(k.stock) >= 999 ? "" : " / " + (auKilo(k) ? String(parseInt(k.stock) / 10).replace(".", ",") + " kg" : k.stock),
                   " réservé",
                   (parseInt(k.reserves) || 0) > 1 ? "s" : "",
                   parseInt(k.stock) < 999 && (parseInt(k.reserves) || 0) >= parseInt(k.stock)

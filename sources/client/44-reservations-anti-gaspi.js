@@ -29,6 +29,8 @@ var RESA_KEY = "epicerie-raddonnaise-resas",
 const auKilo = (t) => /^\s*(le\s+)?(kg|kilo|kilos|kilogrammes?)\s*$/i.test(String(t?.unite || "")),
   poidsTexte = (g) => (g < 1000 ? g + " g" : String(g / 1000).replace(".", ",") + " kg"),
   // libellé d'une réservation : « 2 × Endive » ou « Mandarine · 1,1 kg » (réservation au poids)
+  // v2.43 : au kilo, le stock et les réservations se comptent en tranches de 100 g (10 = 1 kg)
+  dispoTexte = (t) => (auKilo(t) ? poidsTexte(Ro(t) * 100) : String(Ro(t))),
   libelleResa = (r) => (/ · \d+(,\d+)? k?g$/.test(String(r.titre || "")) ? r.titre : r.qte + " × " + r.titre);
 
 // Réservations du client, suivies en direct.
@@ -90,7 +92,7 @@ function MesResas({ resas }) {
 
 // Réserver un produit anti-gaspi.
 function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
-  let s = Math.min(10, Ro(t)),
+  let s = auKilo(t) ? Math.min(50, Ro(t)) : Math.min(10, Ro(t)),
     [qte, setQte] = (0, React.useState)(1),
     d = ts()[0] || {},
     // v2.38 : on propose le nom complet et le téléphone de la carte de fidélité (sinon ceux de la dernière réservation)
@@ -101,13 +103,19 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
     A = Number(t.prix) || 0,
     // v2.42 : au kilo → poids en grammes (100 g → 5 kg), prix = prix du kilo × poids
     kilo = auKilo(t),
-    [grammes, setGrammes] = (0, React.useState)(500),
+    [grammes, setGrammes] = (0, React.useState)(Math.max(100, Math.min(500, s * 100))),
     totalEstime = kilo ? Math.round(A * grammes / 10) / 100 : Math.round(A * qte * 100) / 100;
   (0, React.useEffect)(() => {
-    s > 0 && qte > s && (setQte(s), setEtat("Il n'en reste plus que " + s + " : quantité ajustée."));
+    kilo
+      ? s > 0 && grammes > s * 100 && (setGrammes(s * 100), setEtat("Il n'en reste plus que " + poidsTexte(s * 100) + " : poids ajusté."))
+      : s > 0 && qte > s && (setQte(s), setEtat("Il n'en reste plus que " + s + " : quantité ajustée."));
   }, [s]);
   let S = async () => {
     if (!nom.trim() || !telValide(tel) || qte < 1 || etat === "envoi") return;
+    if (kilo && grammes / 100 > s) {
+      setGrammes(Math.max(100, s * 100)), setEtat("Il n'en reste plus que " + poidsTexte(s * 100) + " : poids ajusté.");
+      return;
+    }
     if (!kilo && qte > s) {
       setQte(Math.max(1, s)), setEtat("Il n'en reste plus que " + s + " : quantité ajustée.");
       return;
@@ -118,9 +126,9 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
         cree: Date.now(),
         statut: "reservee",
         item: String(t.id),
-        // au kilo : une réservation = 1 (pour le stock), le poids est écrit dans le titre
+        // au kilo : qte = nombre de tranches de 100 g (pour le stock) ; le poids est aussi écrit dans le titre
         titre: kilo ? (String(t.titre).slice(0, 66) + " · " + poidsTexte(grammes)) : String(t.titre).slice(0, 80),
-        qte: kilo ? 1 : qte,
+        qte: kilo ? Math.round(grammes / 100) : qte,
         prix: A,
         total: totalEstime,
         nom: nomPropre(nom).slice(0, 40),
@@ -245,7 +253,7 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
               { className: "resa-info" },
               "🕒 À retirer ",
               React.default.createElement("b", null, t.retrait || "à l'épicerie"),
-              parseInt(t.stock) < 999 ? " · " + (s > 0 ? "plus que " + Ro(t) : "épuisé") : "",
+              parseInt(t.stock) < 999 ? " · " + (s > 0 ? "plus que " + dispoTexte(t) : "épuisé") : "",
             ),
             s > 0
               ? React.default.createElement(
@@ -279,8 +287,8 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
                         React.default.createElement(
                           "button",
                           {
-                            onClick: () => setGrammes(Math.min(5000, grammes + 100)),
-                            disabled: grammes >= 5000,
+                            onClick: () => setGrammes(Math.min(5000, s * 100, grammes + 100)),
+                            disabled: grammes >= Math.min(5000, s * 100),
                             "aria-label": "100 g de plus",
                           },
                           "+",
