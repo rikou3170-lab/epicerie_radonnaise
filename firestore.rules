@@ -61,6 +61,20 @@ service cloud.firestore {
            == get(/databases/$(database)/documents/jour/$(request.resource.data.item)).data.get('reserves', 0) + request.resource.data.qte);
     }
     match /pubs/{id}     { allow read: if true; allow write: if estAdmin(); }
+    match /producteurs/{id} { allow read: if true; allow write: if estAdmin(); }
+    match /recettes/{id}    { allow read: if true; allow write: if estAdmin(); }
+    // Réponses aux sondages : anonymes, une seule par téléphone (pas de modification), seulement pour le sondage en cours
+    match /reponses/{id} {
+      allow read, delete: if estAdmin();
+      allow create: if request.resource.data.keys().hasOnly(['s','o','r','cree'])
+        && request.resource.data.s is string && request.resource.data.s.matches('s[0-9]{6,20}')
+        && id.matches(request.resource.data.s + '_[a-z0-9]{8,40}')
+        && get(/databases/$(database)/documents/shop/config).data.sondage.id == request.resource.data.s
+        && get(/databases/$(database)/documents/shop/config).data.sondage.active == true
+        && request.resource.data.o is int && request.resource.data.o >= -1 && request.resource.data.o <= 9
+        && request.resource.data.r is string && request.resource.data.r.size() <= 500
+        && request.resource.data.cree is int;
+    }
     match /plateaux/{id} { allow read: if true; allow write: if estAdmin(); }
 
     // Commandes de plateaux : un client peut seulement EN DÉPOSER une (contrôlée champ par champ)
@@ -148,21 +162,69 @@ service cloud.firestore {
       allow read, create, delete: if estAdmin();
       allow update: if false;
     }
+    // Téléphones de Marion qui reçoivent les notifications (nouvelle commande, réservation, message) :
+    // réservé à l'épicerie ; le script d'envoi les lit avec son compte de service.
+    // Tirages au sort de la roue de Noël (gagnant, participants) : réservés à l'épicerie
+    match /tirages/{id} { allow read, write: if estAdmin(); }
+    match /appareilsAdmin/{id} {
+      allow read, delete: if estAdmin();
+      allow create, update: if estAdmin() && id.size() >= 20 && id.size() <= 40
+        && request.resource.data.keys().hasOnly(['token','appareil','maj'])
+        && request.resource.data.token is string && request.resource.data.token.size() > 20 && request.resource.data.token.size() <= 400
+        && request.resource.data.appareil is string && request.resource.data.appareil.size() <= 60
+        && request.resource.data.maj is int;
+    }
+    // Codes de carte déjà attribués : un client peut réserver un code libre en créant sa carte, jamais en reprendre un.
+    match /codes/{code} {
+      allow read, update, delete: if estAdmin();
+      allow create: if estAdmin() || (code.matches('RAD-[A-Z0-9]{5}')
+        && request.resource.data.keys().hasOnly(['c']) && request.resource.data.c is string
+        && getAfter(/databases/$(database)/documents/clients/$(request.resource.data.c)).data.code == code);
+    }
     // Messages envoyés par Marion à tous les clients : réservé à l'épicerie
     match /diffusions/{id} { allow read, write: if estAdmin(); }
     match /clients/{id} {
       allow get: if true;
       allow list: if estAdmin();
       allow create: if estAdmin() || (
-        request.resource.data.keys().hasOnly(['code','nom','tel','points','depuis','accord'])
-        && request.resource.data.keys().hasAll(['code','nom','tel','points','depuis','accord'])
+        // le code doit être réservé en même temps dans codes/{code} (pas de doublon possible)
+        getAfter(/databases/$(database)/documents/codes/$(request.resource.data.code)).data.c == id
+        && request.resource.data.keys().hasOnly(['code','prenom','nomFamille','nom','tel','email','points','depuis','accord','parrain','anniv'])
+        && (!('anniv' in request.resource.data) || (request.resource.data.anniv is string && request.resource.data.anniv.matches('(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])')))
+        && (!('parrain' in request.resource.data) || (request.resource.data.parrain is string && request.resource.data.parrain.matches('RAD-[A-Z0-9]{5}') && request.resource.data.parrain != request.resource.data.code))
+        && request.resource.data.keys().hasAll(['code','prenom','nomFamille','nom','tel','email','points','depuis','accord'])
+        && request.resource.data.prenom is string && request.resource.data.prenom.size() > 0 && request.resource.data.prenom.size() <= 40
+        && request.resource.data.nomFamille is string && request.resource.data.nomFamille.size() > 0 && request.resource.data.nomFamille.size() <= 40
+        && request.resource.data.email is string && request.resource.data.email.size() <= 100 && request.resource.data.email.matches('[^@ ]+@[^@ ]+[.][a-z]{2,}')
         && request.resource.data.points == 0
         && request.resource.data.code is string && request.resource.data.code.matches('RAD-[A-Z0-9]{5}')
         && request.resource.data.nom is string && request.resource.data.nom.size() > 0 && request.resource.data.nom.size() <= 60
         && request.resource.data.tel is string && request.resource.data.tel.size() <= 20
         && request.resource.data.depuis is string && request.resource.data.depuis.size() <= 10
         && request.resource.data.accord is string && request.resource.data.accord.size() <= 10);
-      allow update: if estAdmin();
+      // le titulaire (qui connaît l'identifiant secret de sa carte) peut corriger ses coordonnées, et rien d'autre
+      allow update: if estAdmin() || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['prenom','nomFamille','nom','tel','email','anniv'])
+        && (!('anniv' in request.resource.data) || (request.resource.data.anniv is string && (request.resource.data.anniv == '' || request.resource.data.anniv.matches('(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])'))))
+        && request.resource.data.prenom is string && request.resource.data.prenom.size() > 0 && request.resource.data.prenom.size() <= 40
+        && request.resource.data.nomFamille is string && request.resource.data.nomFamille.size() > 0 && request.resource.data.nomFamille.size() <= 40
+        && request.resource.data.nom is string && request.resource.data.nom.size() > 0 && request.resource.data.nom.size() <= 60
+        && request.resource.data.tel is string && request.resource.data.tel.size() <= 20
+        && request.resource.data.email is string && request.resource.data.email.size() <= 100 && request.resource.data.email.matches('[^@ ]+@[^@ ]+[.][a-z]{2,}'))
+        // au 10e tampon, le titulaire choisit dans l'appli : « je vais chercher mon cadeau » ou « je continue »
+        || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['choix','choixLe'])
+          && request.resource.data.choix in ['cadeau','continue']
+          && request.resource.data.choixLe is int && request.resource.data.choixLe <= request.time.toMillis() + 600000)
+        // roue de Noël : le titulaire peut seulement refuser / réactiver la roue et marquer ses tours comme vus.
+        // Les résultats (gagné / perdu) et les tickets sont écrits par la caisse : impossible de tricher depuis l'appli.
+        || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['roueNon','roueAJouer'])
+          // « vus » : la liste ne peut que perdre des tours (jamais en gagner ni en changer)
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['roueAJouer'])
+            || (request.resource.data.roueAJouer is list && (request.resource.data.roueAJouer.size() == 0
+              || ('roueAJouer' in resource.data && resource.data.roueAJouer is list
+                && request.resource.data.roueAJouer.size() < resource.data.roueAJouer.size()
+                && resource.data.roueAJouer.hasAll(request.resource.data.roueAJouer)))))
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['roueNon']) || request.resource.data.roueNon is bool));
       allow delete: if estAdmin();   // seule l'épicerie supprime une carte
       match /historique/{h} {
         allow read: if true;              // consultation par le titulaire
