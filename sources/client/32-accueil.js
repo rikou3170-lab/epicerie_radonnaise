@@ -421,6 +421,22 @@ function Accueil({
         React.default.createElement(BadgeOuverture, { e: ouverture }),
       ),
     ),
+    // v2.44d : fermeture exceptionnelle et message d'accueil de Marion remontés en haut, juste sous le « Bonjour »
+    _2(t.fermetures) &&
+      React.default.createElement(
+        "div",
+        { className: "annonce terra" },
+        "🔔 ",
+        texteFermeture(_2(t.fermetures)),
+      ),
+    vn(t.annonce) &&
+      t.annonce.active &&
+      t.annonce.text &&
+      React.default.createElement(
+        "div",
+        { className: "annonce " + (t.annonce.couleur || "apple") },
+        t.annonce.text,
+      ),
     React.default.createElement(BandeauNotifications, { n: notifs, inst }),
     React.default.createElement(TuileMenu, { menu: t.menu, onOuvrir: () => D(!0) }),
     F &&
@@ -441,21 +457,6 @@ function Accueil({
         inst,
         texte: "Retrouvez votre carte de fidélité d'un geste.",
       }),
-    _2(t.fermetures) &&
-      React.default.createElement(
-        "div",
-        { className: "annonce terra" },
-        "🔔 ",
-        texteFermeture(_2(t.fermetures)),
-      ),
-    vn(t.annonce) &&
-      t.annonce.active &&
-      t.annonce.text &&
-      React.default.createElement(
-        "div",
-        { className: "annonce " + (t.annonce.couleur || "apple") },
-        t.annonce.text,
-      ),
     !!A.length &&
       React.default.createElement(
         "section",
