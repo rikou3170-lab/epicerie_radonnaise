@@ -215,8 +215,9 @@ function App() {
               theme: xe,
               onSortie: () => S(!0),
               onEnd: () => {
-                // v2.44 : petit fondu d'ouverture (« Bonsoir Eric ») à la place de l'étiquette
-                z(!0), C(!1);
+                // v2.44 : petit fondu d'ouverture (« Bonsoir Eric ») à la place de l'étiquette,
+                // seulement si le prénom est déjà connu (v2.44a, comme l'ancienne étiquette)
+                z(!!y), C(!1);
               },
             }
           : null,

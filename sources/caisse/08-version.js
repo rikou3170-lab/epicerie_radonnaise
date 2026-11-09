@@ -2,4 +2,4 @@
  *  NUMÉRO DE VERSION — changé automatiquement par sources/publier.mjs.
  * ═══════════════════════════════════════════════════════════════════════ */
 
-var VERSION = "2.44";
+var VERSION = "2.44a";
