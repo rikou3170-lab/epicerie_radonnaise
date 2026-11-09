@@ -2,6 +2,80 @@
  *  APPLI — écran principal : navigation entre les onglets, fenêtres, démarrage.
  * ═══════════════════════════════════════════════════════════════════════ */
 
+// v2.44f : la caisse rend aussi les plats du menu de la semaine réservables (comme l'admin), pour qu'ils
+// le soient chaque jour même si personne n'ouvre l'admin. Même fonction que dans l'admin (33-reservations.js).
+// Crée / met à jour / retire les articles « menu » d'après le menu de la semaine (jours à venir seulement).
+// N'écrit que ce qui a changé ; le compteur de réservations n'est jamais touché.
+async function synchroPlatsMenu(menu, existants) {
+  let auj = new Date().toLocaleDateString("sv-SE"),
+    voulus = new Map();
+  if (menu && menu.actif !== !1 && menu.du && menu.au && Array.isArray(menu.jours)) {
+    let base = new Date(menu.du + "T12:00"),
+      jd = (base.getDay() + 6) % 7;
+    menu.jours.forEach((j) => {
+      let plat = String(j?.plat || "")
+        .split("\n")
+        .map((x) => x.trim())
+        .filter(Boolean)[0];
+      if (!plat) return;
+      let d = new Date(base);
+      d.setDate(d.getDate() + (j.j - jd));
+      let date = d.toLocaleDateString("sv-SE");
+      if (date < auj || date > menu.au) return;
+      voulus.set("menu" + date.replace(/-/g, ""), {
+        type: "menu",
+        active: !1, // caché pour les anciennes versions de l'appli client
+        titre: plat.slice(0, 60) + " (plat du jour)",
+        prix: Number(j.prix) || 0,
+        stock: 999,
+        retrait: d
+          .toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
+          .replace(/ 1 /, " 1er ")
+          .slice(0, 60),
+        date,
+      });
+    });
+  }
+  let b = writeBatch(db),
+    n = 0;
+  voulus.forEach((v, id) => {
+    let e = existants.find((x) => x.id === id);
+    (!e || Object.keys(v).some((k) => e[k] !== v[k])) &&
+      (b.set(doc2(db, "jour", id), e ? v : { ...v, reserves: 0, cree: Date.now() }, { merge: !0 }), n++);
+  });
+  existants.forEach((e) => {
+    voulus.has(e.id) || (b.delete(doc2(db, "jour", e.id)), n++);
+  });
+  n && (await b.commit());
+}
+
+// Suit le menu de la semaine et les plats réservables ; met à jour dès que l'un des deux change.
+function usePlatsMenu(actif) {
+  let [menu, setMenu] = (0, React.useState)(void 0),
+    [plats, setPlats] = (0, React.useState)(null);
+  (0, React.useEffect)(() => {
+    if (!actif) return;
+    // réglages lus sur le serveur seulement (jamais une copie locale incomplète, qui ferait tout retirer)
+    let a = onSnapshot(
+        CONFIG_REF,
+        { includeMetadataChanges: !0 },
+        (x) => x.metadata.fromCache || setMenu(x.exists() ? x.data().menu || null : null),
+        () => {},
+      ),
+      b = onSnapshot(
+        collection(db, "jour"),
+        (x) => setPlats(x.docs.map((y) => ({ ...y.data(), id: y.id })).filter((y) => y.type === "menu")),
+        () => {},
+      );
+    return () => {
+      a(), b();
+    };
+  }, [actif]);
+  (0, React.useEffect)(() => {
+    menu === void 0 || plats === null || synchroPlatsMenu(menu, plats).catch((x) => console.warn("plats du menu", x));
+  }, [JSON.stringify(menu || null), JSON.stringify(plats)]);
+}
+
 // La caisse : connexion, écran de caisse, journal.
 function Caisse({ user }) {
   let [e, n] = (0, React.useState)([]),
@@ -23,6 +97,7 @@ function Caisse({ user }) {
     [v, A] = (0, React.useState)(0),
     [D, w] = (0, React.useState)(""),
     P = useMiseAJour();
+  usePlatsMenu(!!user);
   (0, React.useEffect)(() => {
     let W = onSnapshot(
         collection(db, "clients"),
