@@ -149,7 +149,7 @@ function Salutation({ prenom, onFin, amb }) {
   );
 }
 
-// v2.44 : à l'ouverture, « Bonsoir Eric » discret sur l'accueil flouté, fil doré de chargement en haut,
+// v2.44 : à l'ouverture, « Bonsoir Eric » discret sur l'accueil flouté (fil doré retiré en v2.44c),
 // puis l'accueil apparaît en fondu (environ 3 secondes). Remplace l'étiquette « Salutation ».
 function FonduOuverture({ prenom, onFin }) {
   (0, React.useEffect)(() => {
@@ -160,7 +160,6 @@ function FonduOuverture({ prenom, onFin }) {
   return React.default.createElement(
     "div",
     { className: "fo-fond" + (mouvementReduit() ? " calme" : ""), "aria-hidden": "true" },
-    React.default.createElement("div", { className: "fo-fil" }),
     React.default.createElement(
       "div",
       { className: "fo-mot" },

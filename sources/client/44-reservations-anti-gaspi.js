@@ -75,8 +75,8 @@ function MesResas({ resas }) {
             ? ["validee", "✅ Validée"]
             : ["attente", "⏳ En attente de validation"]
           : ["validee", "✅ Réservé"];
-  return e.length
-    ? React.default.createElement(
+  // v2.44c : la rubrique est toujours là ; vide → « Aucune réservation en cours », en une ligne discrète
+  return React.default.createElement(
         "section",
         { className: "mes-resas" },
         React.default.createElement(
@@ -85,6 +85,7 @@ function MesResas({ resas }) {
           React.default.createElement("i", { style: { background: "var(--terra)" } }),
           "Mes réservations",
         ),
+        !e.length && React.default.createElement("div", { className: "resa-vide" }, "Aucune réservation en cours"),
         e.map((n) =>
           React.default.createElement(
             "div",
@@ -109,8 +110,7 @@ function MesResas({ resas }) {
             ),
           ),
         ),
-      )
-    : null;
+      );
 }
 
 // Réserver un produit anti-gaspi.

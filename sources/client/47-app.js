@@ -213,11 +213,14 @@ function App() {
               tampons: fc(t.fidelite),
               prenom: y,
               theme: xe,
-              onSortie: () => S(!0),
+              // v2.44 : petit fondu d'ouverture (« Bonsoir Eric ») à la place de l'étiquette, seulement si le
+              // prénom est déjà connu (v2.44a). v2.44c : il démarre dès que l'écran d'accueil commence à
+              // s'effacer, placé juste dessous : l'appli n'apparaît jamais nette avant le flou.
+              onSortie: () => {
+                S(!0), z(!!y);
+              },
               onEnd: () => {
-                // v2.44 : petit fondu d'ouverture (« Bonsoir Eric ») à la place de l'étiquette,
-                // seulement si le prénom est déjà connu (v2.44a, comme l'ancienne étiquette)
-                z(!!y), C(!1);
+                C(!1);
               },
             }
           : null,
@@ -263,10 +266,63 @@ function App() {
             Ht(null);
         },
       });
+  let Df = [
+    { id: "accueil", label: "Accueil", ic: Ic2.home, on: !0 },
+    { id: "carte", label: "La carte", ic: Ic2.basket, on: t.onglets?.carte !== !1 },
+    { id: "fidelite", label: "Fidélité", ic: Ic2.star, on: t.onglets?.fidelite !== !1 },
+    { id: "actus", label: "Actus", ic: Ic2.news, on: t.actus.some(vn) },
+    // v2.44 : la messagerie passe dans la barre du bas (ouvre la conversation, pastille = messages non lus)
+    { id: "chat", label: "Messages", ic: icoChat, on: t.chat?.active !== !1, nb: yn.nonLus },
+    { id: "infos", label: "Infos", ic: Ic2.info, on: !0 },
+  ].filter((K) => K.on);
+  // v2.44c : barre du bas commune (aussi affichée sur la messagerie, onglet « Messages » actif)
+  let barre = (actif) =>
+    React.default.createElement(
+      "nav",
+      { className: "tabs" },
+      Df.map((K) =>
+        React.default.createElement(
+          "button",
+          {
+            key: K.id + (actif === K.id ? "-" + kc : ""),
+            className: "tab" + (actif === K.id ? " on" : "") + (K.nb > 0 ? " a-lire" : ""),
+            "aria-current": actif === K.id ? "page" : void 0,
+            onClick: () => {
+              try {
+                navigator.vibrate?.(8);
+              } catch {}
+              if (K.id === "chat") return Ga || (ls(!0), tn("chat"));
+              // v2.44c : depuis la messagerie, un autre onglet la referme
+              ls(!1), E(K.id), Ic((ge) => ge + 1);
+              window.scrollTo(0, 0);
+            },
+          },
+          React.default.createElement(
+            "span",
+            { className: "pastille" },
+            K.ic(21, "currentColor"),
+            K.nb > 0 && React.default.createElement("b", { className: "tab-nb" }, K.nb > 9 ? "9+" : K.nb),
+            actif === K.id &&
+              [0, 60, 120, 180, 240, 300].map((ge) =>
+                React.default.createElement("i", {
+                  key: ge,
+                  className: "etincelle",
+                  style: { "--a": ge + "deg" },
+                }),
+              ),
+          ),
+          React.default.createElement("span", { className: "tab-l" }, K.label),
+        ),
+      ),
+    );
+  // v2.44c : la messagerie s'ouvre comme un onglet, dans l'appli (polices, thème) avec la barre du bas
   if (Ga)
     return React.default.createElement(
-      React.default.Fragment,
-      null,
+      "div",
+      {
+        className: "app avec-chat" + (xe?.magie ? " magie" : "") + (Qe ? " " + Qe : ""),
+        style: xe ? { "--top": xe.top } : void 0,
+      },
       React.default.createElement("style", null, CSS_APPLI),
       React.default.createElement(Messagerie, {
         d: t,
@@ -277,6 +333,7 @@ function App() {
         ouvrirLegal: Ae,
         onClose: () => ls(!1),
       }),
+      barre("chat"),
       Q &&
         React.default.createElement(
           "div",
@@ -359,15 +416,6 @@ function App() {
       }),
       Qa,
     );
-  let Df = [
-    { id: "accueil", label: "Accueil", ic: Ic2.home, on: !0 },
-    { id: "carte", label: "La carte", ic: Ic2.basket, on: t.onglets?.carte !== !1 },
-    { id: "fidelite", label: "Fidélité", ic: Ic2.star, on: t.onglets?.fidelite !== !1 },
-    { id: "actus", label: "Actus", ic: Ic2.news, on: t.actus.some(vn) },
-    // v2.44 : la messagerie passe dans la barre du bas (ouvre la conversation, pastille = messages non lus)
-    { id: "chat", label: "Messages", ic: icoChat, on: t.chat?.active !== !1, nb: yn.nonLus },
-    { id: "infos", label: "Infos", ic: Ic2.info, on: !0 },
-  ].filter((K) => K.on);
   return React.default.createElement(
     "div",
     {
@@ -589,43 +637,7 @@ function App() {
     R && React.default.createElement(ProposeInstall, { inst: se, onClose: () => fe(!1) }),
     se.ouvert && React.default.createElement(AssistantInstall, { inst: se }),
     Qa,
-    React.default.createElement(
-      "nav",
-      { className: "tabs" },
-      Df.map((K) =>
-        React.default.createElement(
-          "button",
-          {
-            key: K.id + (m === K.id ? "-" + kc : ""),
-            className: "tab" + (m === K.id ? " on" : "") + (K.nb > 0 ? " a-lire" : ""),
-            "aria-current": m === K.id ? "page" : void 0,
-            onClick: () => {
-              try {
-                navigator.vibrate?.(8);
-              } catch {}
-              if (K.id === "chat") return ls(!0), tn("chat");
-              E(K.id), Ic((ge) => ge + 1);
-              window.scrollTo(0, 0);
-            },
-          },
-          React.default.createElement(
-            "span",
-            { className: "pastille" },
-            K.ic(21, "currentColor"),
-            K.nb > 0 && React.default.createElement("b", { className: "tab-nb" }, K.nb > 9 ? "9+" : K.nb),
-            m === K.id &&
-              [0, 60, 120, 180, 240, 300].map((ge) =>
-                React.default.createElement("i", {
-                  key: ge,
-                  className: "etincelle",
-                  style: { "--a": ge + "deg" },
-                }),
-              ),
-          ),
-          React.default.createElement("span", { className: "tab-l" }, K.label),
-        ),
-      ),
-    ),
+    barre(m),
   );
 }
 

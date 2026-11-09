@@ -219,14 +219,11 @@ var Ic2 = {
 .mini .nm{font-weight:700;font-size:12.5px;line-height:1.25;margin-bottom:5px}
 .mn-resa{display:inline-block;margin-top:6px;background:var(--terra,#C27B42);color:#fff;border:none;border-radius:20px;padding:6px 14px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
 .mn-ligne.passe .mn-resa{display:none}
-.fo-fond{position:fixed;inset:0;z-index:9100;display:flex;align-items:center;justify-content:center;pointer-events:none;background:rgba(14,38,32,.28);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);animation:foDissipe .7s ease 2.1s forwards}
-.fo-fil{position:absolute;top:0;left:0;height:5px;width:0;border-radius:0 3px 3px 0;background:linear-gradient(90deg,var(--gold,#C9972C),#F5D78A);box-shadow:0 0 10px rgba(201,151,44,.75);animation:foFil 2.1s ease-out forwards}
+.fo-fond{position:fixed;inset:0;z-index:390;display:flex;align-items:center;justify-content:center;pointer-events:none;background:rgba(14,38,32,.28);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);animation:foDissipe .7s ease 2.1s forwards}
 .fo-mot{font-family:var(--script);color:#fff;font-size:52px;line-height:1.1;padding:0 20px;text-align:center;opacity:0;text-shadow:0 2px 12px rgba(0,0,0,.28);animation:foMot 2.5s ease forwards}
 .fo-fond.calme{animation:foDissipe .3s ease 1.8s forwards}
-.fo-fond.calme .fo-fil{display:none}
 .fo-fond.calme .fo-mot{opacity:1;animation:none}
 @keyframes foDissipe{to{opacity:0;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}}
-@keyframes foFil{0%{width:0;opacity:1}85%{width:100%;opacity:1}100%{width:100%;opacity:0}}
 @keyframes foMot{0%{opacity:0;transform:translateY(8px)}30%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
 .tab .tab-nb{position:absolute;top:-3px;right:6px;min-width:18px;height:18px;padding:0 5px;box-sizing:border-box;border-radius:9px;background:#B2263A;color:#fff;border:2px solid #fff;font-size:10px;font-weight:900;line-height:14px;text-align:center;animation:tabNb .5s cubic-bezier(.3,1.7,.5,1)}
 .tab.a-lire .pastille svg{animation:tabCoucou 2.4s ease-in-out infinite;transform-origin:50% 80%}
@@ -599,6 +596,8 @@ var Ic2 = {
 .bulle-chat,.bulle-chat.petit{padding:0;gap:0;border-radius:50%}
 .bulle-chat .bc-txt{max-width:0;opacity:0}
 .chat-page{display:flex;flex-direction:column}
+.app.avec-chat .chat-page{bottom:calc(76px + env(safe-area-inset-bottom))}
+.app.avec-chat .chat-saisie{padding-bottom:10px}
 .chat-top{display:flex;align-items:center;gap:10px;color:#fff}
 .chat-top button{font-size:22px !important;padding:0 6px 0 0 !important}
 .chat-top img{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.8)}
@@ -636,6 +635,7 @@ var Ic2 = {
 .resa-suivi.refusee{background:#F7ECEC;border-color:#E8CFCF;color:#7A3A3A}
 .resa-suivi.refusee .rs-statut{background:#EED2D2;color:#9A2B2B}
 .mes-resas{margin-bottom:6px}
+.resa-vide{font-size:12.5px;color:var(--ink3);background:var(--card);border:1px dashed var(--line);border-radius:var(--r-s);padding:9px 13px;margin-bottom:12px}
 .rs-ic{font-size:26px}
 .notif-bloc{background:#FFF8EC;border:1.5px solid #F0D7BF;border-radius:var(--r);padding:14px 16px;margin:14px 0}
 .notif-bloc b{font-size:14px;color:var(--forest)}
