@@ -41,14 +41,28 @@ function useMiseAJour() {
   return (
     (0, Rt.useEffect)(() => {
       location.search.includes("maj=") && history.replaceState(null, "", location.pathname);
-      let n = async () => {
-        let s = await versionEnLigne();
-        s && s !== VERSION && setDispo(s);
-      };
-      n();
-      let r = setInterval(n, 300 * 1e3),
+      // v2.44a : mise à jour automatique à l'ouverture de l'appli, ou au retour après 30 min en arrière-plan
+      // (une seule tentative par version et par session, pour ne jamais boucler) ; sinon, le bandeau.
+      let cache = 0,
+        auto = (v) => {
+          try {
+            if (sessionStorage.getItem("maj-auto") === v) return !1;
+            sessionStorage.setItem("maj-auto", v);
+          } catch {
+            return !1;
+          }
+          return b2(), !0;
+        },
+        n = async (ouverture) => {
+          let s = await versionEnLigne();
+          s && s !== VERSION && ((ouverture && auto(s)) || setDispo(s));
+        };
+      n(!0);
+      let r = setInterval(() => n(!1), 300 * 1e3),
         i = () => {
-          document.visibilityState === "visible" && n();
+          document.visibilityState === "hidden"
+            ? (cache = Date.now())
+            : (n(!!cache && Date.now() - cache > 18e5), (cache = 0));
         };
       return (
         document.addEventListener("visibilitychange", i),
