@@ -384,7 +384,10 @@ function useShop(t) {
         ..._,
         offres: cw(r.offres),
         actus: cw(r.actus, !0),
-        jour: { items: cw(r.jour, !0), maj: _.jourMaj || "" },
+        // v2.44 : les plats du menu réservables (type « menu ») restent à part : jamais dans la liste
+        // « Aujourd'hui », donc jamais effacés quand Marion enregistre sa liste
+        jour: { items: cw(r.jour.filter((I) => I.type !== "menu"), !0), maj: _.jourMaj || "" },
+        jourMenu: r.jour.filter((I) => I.type === "menu"),
         pubs: [...r.pubs].sort((I, T) => (I.ordre ?? I.cree ?? 0) - (T.ordre ?? T.cree ?? 0)),
         plateaux: [...r.plateaux].sort((I, T) => (I.ordre ?? I.cree ?? 0) - (T.ordre ?? T.cree ?? 0)),
         commandes: r.commandes.map(q9),

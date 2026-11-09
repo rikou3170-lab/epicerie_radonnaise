@@ -6,13 +6,87 @@
 const auKilo = (t) => /^\s*(le\s+)?(kg|kilo|kilos|kilogrammes?)\s*$/i.test(String(t?.unite || "")),
   libelleResa = (r) => (/ · \d+(,\d+)? k?g$/.test(String(r.titre || "")) ? r.titre : r.qte + " × " + r.titre);
 
+// v2.44 : plats du menu de la semaine réservables. L'admin crée un article caché « menuAAAAMMJJ » par jour
+// (type « menu », sans limite) ; le client réserve, Marion confirme ou refuse, le client est prévenu par message.
+const estMenuResa = (r) => /^menu\d{8}$/.test(String(r?.item || ""));
+
+// Crée / met à jour / retire les articles « menu » d'après le menu de la semaine (jours à venir seulement).
+// N'écrit que ce qui a changé ; le compteur de réservations n'est jamais touché.
+async function synchroPlatsMenu(menu, existants) {
+  let auj = new Date().toLocaleDateString("sv-SE"),
+    voulus = new Map();
+  if (menu && menu.actif !== !1 && menu.du && menu.au && Array.isArray(menu.jours)) {
+    let base = new Date(menu.du + "T12:00"),
+      jd = (base.getDay() + 6) % 7;
+    menu.jours.forEach((j) => {
+      let plat = String(j?.plat || "")
+        .split("\n")
+        .map((x) => x.trim())
+        .filter(Boolean)[0];
+      if (!plat) return;
+      let d = new Date(base);
+      d.setDate(d.getDate() + (j.j - jd));
+      let date = d.toLocaleDateString("sv-SE");
+      if (date < auj || date > menu.au) return;
+      voulus.set("menu" + date.replace(/-/g, ""), {
+        type: "menu",
+        active: !1, // caché pour les anciennes versions de l'appli client
+        titre: plat.slice(0, 60) + " (plat du jour)",
+        prix: Number(j.prix) || 0,
+        stock: 999,
+        retrait: d
+          .toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
+          .replace(/ 1 /, " 1er ")
+          .slice(0, 60),
+        date,
+      });
+    });
+  }
+  let b = writeBatch(db),
+    n = 0;
+  voulus.forEach((v, id) => {
+    let e = existants.find((x) => x.id === id);
+    (!e || Object.keys(v).some((k) => e[k] !== v[k])) &&
+      (b.set(doc2(db, "jour", id), e ? v : { ...v, reserves: 0, cree: Date.now() }, { merge: !0 }), n++);
+  });
+  existants.forEach((e) => {
+    voulus.has(e.id) || (b.delete(doc2(db, "jour", e.id)), n++);
+  });
+  n && (await b.commit());
+}
+
 // Réservations anti-gaspi (promos, dates courtes, paniers)
 function Reservations({ d: t }) {
   let [e, n] = (0, React.useState)(!1),
     [r, i] = (0, React.useState)(null),
     s = [...t.resas].sort((h, p) => (p.cree || 0) - (h.cree || 0)),
-    o = s.filter((h) => h.statut === "reservee"),
+    // v2.44 : les plats du menu à confirmer en tête de liste
+    o = s
+      .filter((h) => h.statut === "reservee")
+      .sort((h, p) => (estMenuResa(p) && !p.confirme ? 1 : 0) - (estMenuResa(h) && !h.confirme ? 1 : 0)),
     a = s.filter((h) => h.statut !== "reservee").slice(0, e ? 50 : 5),
+    aConfirmer = o.filter((h) => estMenuResa(h) && !h.confirme).length,
+    [occupe, setOccupe] = (0, React.useState)(""),
+    // v2.44 : Marion confirme ou refuse un plat du menu → message au client (notification sur son téléphone)
+    repondre = async (h, ok) => {
+      if (occupe) return;
+      if (!ok && !(await De("Refuser cette réservation ? Le client sera prévenu par message."))) return;
+      setOccupe(h.id);
+      try {
+        await envoyerMessageClient(
+          t,
+          "resas",
+          h,
+          ok
+            ? "Votre réservation de " + libelleResa(h) + " pour " + (h.retrait || "le jour prévu") + " est confirmée 😁 À bientôt à l'épicerie !"
+            : "Désolée, nous ne pouvons pas vous réserver " + libelleResa(h) + " pour " + (h.retrait || "le jour prévu") + " : il n'y en aura pas assez. À bientôt à l'épicerie !",
+          ok ? { confirme: !0 } : { statut: "refusee" },
+        );
+      } catch {
+        ft("Envoi impossible. Vérifiez la connexion et réessayez.");
+      }
+      setOccupe("");
+    },
     u = async (h, p) => {
       try {
         let m = writeBatch(db);
@@ -32,13 +106,20 @@ function Reservations({ d: t }) {
   let d = ({ r: h }) =>
     React.default.createElement(
       "div",
-      { className: "card resa-adm " + h.statut, key: h.id },
+      { className: "card resa-adm " + h.statut + (estMenuResa(h) && h.statut === "reservee" && !h.confirme ? " menu-attente" : ""), key: h.id },
       React.default.createElement(
         "div",
         { className: "row", style: { alignItems: "flex-start" } },
         React.default.createElement(
           "div",
           { style: { minWidth: 0, flex: 1 } },
+          estMenuResa(h) &&
+            React.default.createElement(
+              "div",
+              { className: "rs-menu" },
+              "🍽️ Menu de la semaine",
+              h.statut === "reservee" ? (h.confirme ? " · ✅ confirmé" : " · ⏳ à confirmer") : "",
+            ),
           React.default.createElement(
             "div",
             { className: "nm" },
@@ -62,7 +143,7 @@ function Reservations({ d: t }) {
                 React.default.createElement("a", { href: "tel:" + h.tel.replace(/\s/g, "") }, h.tel),
               ),
             " · ",
-            h.retrait || "retrait à l'épicerie",
+            (estMenuResa(h) ? "à retirer " : "") + (h.retrait || "retrait à l'épicerie"),
           ),
           React.default.createElement(
             "div",
@@ -72,11 +153,34 @@ function Reservations({ d: t }) {
             " · réservé à ",
             new Date(h.cree || 0).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
             h.statut !== "reservee" &&
-              " · " + ({ retiree: "✓ Retiré", absent: "Pas venu", annulee: "Annulé" }[h.statut] || h.statut),
+              " · " + ({ retiree: "✓ Retiré", absent: "Pas venu", annulee: "Annulé", refusee: "Refusé" }[h.statut] || h.statut),
           ),
         ),
       ),
       h.statut === "reservee" &&
+        estMenuResa(h) &&
+        !h.confirme &&
+        React.default.createElement(
+          "div",
+          { style: { display: "flex", gap: 6, marginTop: 8 } },
+          React.default.createElement(
+            "button",
+            { className: "btn sm", style: { flex: 2 }, disabled: !!occupe, onClick: () => repondre(h, !0) },
+            occupe === h.id ? "Envoi…" : "✓ Confirmer",
+          ),
+          React.default.createElement(
+            "button",
+            {
+              className: "btn gh sm",
+              style: { flex: 1, color: "var(--red)" },
+              disabled: !!occupe,
+              onClick: () => repondre(h, !1),
+            },
+            "Refuser",
+          ),
+        ),
+      h.statut === "reservee" &&
+        !(estMenuResa(h) && !h.confirme) &&
         React.default.createElement(
           "div",
           { style: { display: "flex", gap: 6, marginTop: 8 } },
@@ -121,6 +225,7 @@ function Reservations({ d: t }) {
       { className: "nm", style: { marginBottom: 6 } },
       "🧺 Réservations ",
       o.length ? "— " + o.length + " à retirer" : "",
+      aConfirmer ? " · " + aConfirmer + " à confirmer" : "",
     ),
     !o.length &&
       React.default.createElement(

@@ -215,7 +215,8 @@ function App() {
               theme: xe,
               onSortie: () => S(!0),
               onEnd: () => {
-                z(!!y), C(!1);
+                // v2.44 : petit fondu d'ouverture (« Bonsoir Eric ») à la place de l'étiquette
+                z(!0), C(!1);
               },
             }
           : null,
@@ -362,6 +363,8 @@ function App() {
     { id: "carte", label: "La carte", ic: Ic2.basket, on: t.onglets?.carte !== !1 },
     { id: "fidelite", label: "Fidélité", ic: Ic2.star, on: t.onglets?.fidelite !== !1 },
     { id: "actus", label: "Actus", ic: Ic2.news, on: t.actus.some(vn) },
+    // v2.44 : la messagerie passe dans la barre du bas (ouvre la conversation, pastille = messages non lus)
+    { id: "chat", label: "Messages", ic: icoChat, on: t.chat?.active !== !1, nb: yn.nonLus },
     { id: "infos", label: "Infos", ic: Ic2.info, on: !0 },
   ].filter((K) => K.on);
   return React.default.createElement(
@@ -470,7 +473,7 @@ function App() {
       }),
     Gi &&
       React.default.createElement(Reserver, {
-        i: (t.jour?.items || []).find((K) => K.id === Gi.id) || Gi,
+        i: [...(t.jour?.items || []), ...(t.jourMenu || [])].find((K) => K.id === Gi.id) || Gi,
         d: t,
         prenom: y,
         moi: e,
@@ -480,13 +483,7 @@ function App() {
       }),
     X && React.default.createElement(FenetreReception, { code0: X, onClose: () => le(null) }),
     !X && !M && !y && !j.demande && !Zn && React.default.createElement(DemandePrenom, { onFin: b }),
-    v &&
-      !X &&
-      React.default.createElement(Salutation, {
-        prenom: y,
-        amb: xe?.magie ? "noel" : Qe,
-        onFin: () => z(!1),
-      }),
+    v && !X && React.default.createElement(FonduOuverture, { prenom: y, onFin: () => z(!1) }),
     Zn &&
       !de &&
       !X &&
@@ -546,10 +543,10 @@ function App() {
       },
     }),
     t.chat?.active !== !1 &&
-      React.default.createElement(BulleChat, {
-        nonLus: yn.nonLus,
+      React.default.createElement(PopupChat, {
+        chat: yn,
         haut: qr.length > 0,
-        onClick: () => {
+        onOuvrir: () => {
           ls(!0), tn("chat");
         },
       }),
@@ -599,13 +596,14 @@ function App() {
           "button",
           {
             key: K.id + (m === K.id ? "-" + kc : ""),
-            className: "tab" + (m === K.id ? " on" : ""),
+            className: "tab" + (m === K.id ? " on" : "") + (K.nb > 0 ? " a-lire" : ""),
             "aria-current": m === K.id ? "page" : void 0,
             onClick: () => {
-              E(K.id), Ic((ge) => ge + 1);
               try {
                 navigator.vibrate?.(8);
               } catch {}
+              if (K.id === "chat") return ls(!0), tn("chat");
+              E(K.id), Ic((ge) => ge + 1);
               window.scrollTo(0, 0);
             },
           },
@@ -613,6 +611,7 @@ function App() {
             "span",
             { className: "pastille" },
             K.ic(21, "currentColor"),
+            K.nb > 0 && React.default.createElement("b", { className: "tab-nb" }, K.nb > 9 ? "9+" : K.nb),
             m === K.id &&
               [0, 60, 120, 180, 240, 300].map((ge) =>
                 React.default.createElement("i", {

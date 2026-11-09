@@ -423,7 +423,13 @@ function Accueil({
     ),
     React.default.createElement(BandeauNotifications, { n: notifs, inst }),
     React.default.createElement(TuileMenu, { menu: t.menu, onOuvrir: () => D(!0) }),
-    F && React.default.createElement(FeuilleMenu, { menu: t.menu, onClose: () => D(!1) }),
+    F &&
+      React.default.createElement(FeuilleMenu, {
+        menu: t.menu,
+        onClose: () => D(!1),
+        plats: t.jourMenu,
+        onReserver: onReserver && ((v) => (D(!1), onReserver(v))),
+      }),
     React.default.createElement(Raccourcis, { liens: y }),
     React.default.createElement(MesResas, { resas: mesResas }),
     M.slice(0, 2).map((v) =>

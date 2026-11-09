@@ -122,9 +122,18 @@ function Admin() {
           }
       })());
   }, [!!t, o.serveur, o.pret, (r.clients || []).length]);
+  // v2.44 : plats du menu de la semaine réservables (un article caché par jour à venir)
+  (0, React.useEffect)(() => {
+    !t ||
+      !o.pret ||
+      !o.serveur ||
+      synchroPlatsMenu(r.menu, r.jourMenu || []).catch((A) => console.warn("plats du menu", A));
+  }, [!!t, o.pret, o.serveur, JSON.stringify(r.menu || null), JSON.stringify(r.jourMenu || [])]);
   let w =
     t && o.pret
       ? (r.conversations || []).filter((A) => A.attente).length +
+        // v2.44 : plats du menu à confirmer comptés dans la pastille de l'appli
+        (r.resas || []).filter((A) => A.statut === "reservee" && estMenuResa(A) && !A.confirme).length +
         (r.commandes || []).filter((A) => A.statut === "nouvelle").length
       : 0;
   if (

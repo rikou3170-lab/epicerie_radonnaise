@@ -146,7 +146,9 @@ function useShop() {
         offres: $2(i.offres),
         plateaux: [...i.plateaux].sort((l, u) => (l.ordre ?? l.cree ?? 0) - (u.ordre ?? u.cree ?? 0)),
         actus: $2(i.actus, !0),
-        jour: { items: $2(i.jour, !0), maj: s.jourMaj || "" },
+        jour: { items: $2(i.jour.filter((l) => l.type !== "menu"), !0), maj: s.jourMaj || "" },
+        // v2.44 : plats du menu de la semaine réservables (articles « menu » créés par l'admin, cachés de la liste du jour)
+        jourMenu: i.jour.filter((l) => l.type === "menu"),
         pubs: [...i.pubs].filter(vn).sort((l, u) => (l.ordre ?? l.cree ?? 0) - (u.ordre ?? u.cree ?? 0)),
         producteurs: [...i.producteurs]
           .filter((l) => l.active !== !1 && l.nom)

@@ -114,7 +114,7 @@ function Frequentation({ d: t }) {
     I = Math.max(1, ...Object.values(_)),
     T = Object.entries(_).sort(($, Q) => Q[1] - $[1])[0],
     M = ($) => t.plateaux.find((Q) => String(Q.id).toLowerCase() === $)?.nom || "Plateau retiré",
-    V = ($) => (t.jour?.items || []).find((Q) => String(Q.id).toLowerCase() === $)?.titre || "Article retiré",
+    V = ($) => [...(t.jour?.items || []), ...(t.jourMenu || [])].find((Q) => String(Q.id).toLowerCase() === $)?.titre || "Article retiré",
     O = Object.entries(p("pl_"))
       .sort(($, Q) => Q[1] - $[1])
       .slice(0, 5)

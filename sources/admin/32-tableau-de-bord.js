@@ -4,10 +4,12 @@
 
 // Accueil de l'administration : « Bonjour Marion », à faire (commandes, réservations, messages), raccourcis.
 function TableauDeBord({ d, set, aller }) {
-  let r = d.resas.filter((a) => a.statut === "reservee").length,
+  // v2.44 : les plats du menu à confirmer passent en premier (le client attend la réponse)
+  let aConfirmer = d.resas.filter((a) => a.statut === "reservee" && estMenuResa(a) && !a.confirme).length,
+    r = d.resas.filter((a) => a.statut === "reservee").length - aConfirmer,
     i = d.conversations.filter((a) => a.attente).length,
     s = d.commandes.filter((a) => a.statut === "nouvelle").length,
-    o = !r && !i && !s;
+    o = !r && !i && !s && !aConfirmer;
   return React.default.createElement(
     "div",
     { className: "wrap" },
@@ -18,6 +20,23 @@ function TableauDeBord({ d, set, aller }) {
       "Tout ce que vous modifiez ici apparaît aussitôt dans l'application de vos clients.",
     ),
     React.default.createElement("div", { className: "nm", style: { margin: "4px 0 8px" } }, "À faire"),
+    !!aConfirmer &&
+      React.default.createElement(
+        "button",
+        {
+          className: "card carte-lien",
+          style: { background: "#FBEFE4", borderColor: "#E7B98C", borderWidth: 2 },
+          onClick: () => aller("jour"),
+        },
+        React.default.createElement(
+          "div",
+          { className: "nm" },
+          "🍽️ ",
+          aConfirmer,
+          aConfirmer > 1 ? " réservations de plats du menu à confirmer" : " réservation de plat du menu à confirmer",
+        ),
+        React.default.createElement("div", { className: "de" }, "Le client attend votre réponse · Ouvrir Aujourd'hui →"),
+      ),
     !!s &&
       React.default.createElement(
         "button",
@@ -65,7 +84,7 @@ function TableauDeBord({ d, set, aller }) {
           { className: "nm" },
           "🧺 ",
           r,
-          " réservation(s) anti-gaspi à mettre de côté",
+          " réservation(s) à mettre de côté",
         ),
         React.default.createElement("div", { className: "de" }, "Ouvrir Aujourd'hui →"),
       ),
@@ -375,7 +394,8 @@ function Communication({ d, set }) {
 }
 
 // Envoie un message au client dans sa conversation (la crée si besoin) et prévient son téléphone.
-async function envoyerMessageClient(t, e, n, r) {
+// v2.44 : « plus » = champs à modifier en même temps sur la commande / réservation (ex. { confirme: true }).
+async function envoyerMessageClient(t, e, n, r, plus) {
   let i = n.conv;
   if (!i) {
     let a = String(n.tel || "").replace(/\D/g, "");
@@ -398,7 +418,7 @@ async function envoyerMessageClient(t, e, n, r) {
       });
   }
   o.set(doc2(collection(db, "conversations", i, "messages")), { de: "epicerie", texte: r, date: s }),
-    n.conv !== i && o.update(doc2(db, e, n.id), { conv: i }),
+    (n.conv !== i || plus) && o.update(doc2(db, e, n.id), { ...(n.conv !== i ? { conv: i } : {}), ...(plus || {}) }),
     await o.commit(),
     avertirMessage(t.cmd, "msg", i);
 }

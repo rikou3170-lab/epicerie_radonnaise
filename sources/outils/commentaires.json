@@ -439,7 +439,9 @@
   "dialogue:3": "Monte le composant Dialogue une fois pour toute la page.",
   "SuiviComptes": "v2.39 : suivi des comptes clients (cartes créées, dernières cartes, doublons probables, téléphones avec alertes).\nMêmes informations que la page de suivi d'Eric, sans la partie technique.",
   "ChoixVente": "v2.42 : choix « À la pièce » / « Au kilo » d'un article (au kilo = unité « kg », prix du kilo).",
-  "auKilo": "v2.42 : vente au kilo (unité « kg ») et libellé des réservations au poids (« Mandarines · 1,1 kg »)."
+  "auKilo": "v2.42 : vente au kilo (unité « kg ») et libellé des réservations au poids (« Mandarines · 1,1 kg »).",
+  "estMenuResa": "v2.44 : plats du menu de la semaine réservables. L'admin crée un article caché « menuAAAAMMJJ » par jour\n(type « menu », sans limite) ; le client réserve, Marion confirme ou refuse, le client est prévenu par message.",
+  "synchroPlatsMenu": "Crée / met à jour / retire les articles « menu » d'après le menu de la semaine (jours à venir seulement).\nN'écrit que ce qui a changé ; le compteur de réservations n'est jamais touché."
  },
  "declarations_caisse": {
   "WD": "Interne Firebase (mode émulateur) : jamais utilisé ici.",

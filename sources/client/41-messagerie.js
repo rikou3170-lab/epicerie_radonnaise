@@ -149,6 +149,81 @@ function Salutation({ prenom, onFin, amb }) {
   );
 }
 
+// v2.44 : à l'ouverture, « Bonsoir Eric » discret sur l'accueil flouté, fil doré de chargement en haut,
+// puis l'accueil apparaît en fondu (environ 3 secondes). Remplace l'étiquette « Salutation ».
+function FonduOuverture({ prenom, onFin }) {
+  (0, React.useEffect)(() => {
+    let h = setTimeout(onFin, mouvementReduit() ? 2200 : 2900);
+    return () => clearTimeout(h);
+  }, []);
+  let l = new Date().getHours();
+  return React.default.createElement(
+    "div",
+    { className: "fo-fond" + (mouvementReduit() ? " calme" : ""), "aria-hidden": "true" },
+    React.default.createElement("div", { className: "fo-fil" }),
+    React.default.createElement(
+      "div",
+      { className: "fo-mot" },
+      l >= 18 || l < 5 ? "Bonsoir" : "Bonjour",
+      prenom ? " " + prenom : "",
+    ),
+  );
+}
+
+// v2.44 : icône « Messages » de la barre du bas (la bulle flottante a été retirée).
+var icoChat = (t = 21, e = "currentColor") =>
+  React.default.createElement(
+    "svg",
+    { width: t, height: t, viewBox: "0 0 24 24", fill: "none", stroke: e, strokeWidth: "2", strokeLinejoin: "round" },
+    React.default.createElement("path", { d: "M4 5h16v11H9l-5 4z" }),
+    React.default.createElement("path", { d: "M8 9.5h8M8 12.5h5", strokeLinecap: "round" }),
+  );
+
+// v2.44 : petit message qui apparaît au-dessus de la barre du bas quand l'épicerie a écrit (non lu).
+// Toucher → ouvre la conversation ; × ou 8 secondes → disparaît (revient au prochain message).
+function PopupChat({ chat, haut, onOuvrir }) {
+  let dernier = [...(chat.msgs || [])]
+      .reverse()
+      .find((m) => m.de === "epicerie" && (m.date || 0) > (chat.moiChat?.vu || 0)),
+    cle = dernier ? String(dernier.id || dernier.date) : "",
+    [ferme, setFerme] = (0, React.useState)("");
+  (0, React.useEffect)(() => {
+    if (!cle || ferme === cle) return;
+    let h = setTimeout(() => setFerme(cle), 8e3);
+    return () => clearTimeout(h);
+  }, [cle, ferme]);
+  if (!dernier || ferme === cle) return null;
+  let texte = String(dernier.texte || "").replace(/\s+/g, " ").trim();
+  return React.default.createElement(
+    "div",
+    {
+      key: cle,
+      className: "popup-chat" + (haut ? " haut" : ""),
+      role: "button",
+      tabIndex: 0,
+      onClick: () => (setFerme(cle), onOuvrir()),
+    },
+    React.default.createElement("span", { className: "pc-ic" }, icoChat(20, "#fff")),
+    React.default.createElement(
+      "span",
+      { className: "pc-txt" },
+      React.default.createElement("b", null, "Message de l'épicerie", chat.nonLus > 1 ? " (" + chat.nonLus + ")" : ""),
+      React.default.createElement("span", null, texte.length > 90 ? texte.slice(0, 88) + "…" : texte),
+    ),
+    React.default.createElement(
+      "button",
+      {
+        className: "pc-x",
+        "aria-label": "Fermer",
+        onClick: (e) => {
+          e.stopPropagation(), setFerme(cle);
+        },
+      },
+      "×",
+    ),
+  );
+}
+
 // Bulle des messages (avec nombre de non lus).
 function BulleChat({ nonLus, haut, onClick }) {
   let [petit, setPetit] = (0, React.useState)(!1);

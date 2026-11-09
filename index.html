@@ -55,6 +55,10 @@ html.ouv{background:#0D2721}
 #ouverture .ov-logo img{display:block;width:100%;filter:drop-shadow(0 14px 20px rgba(0,0,0,.35))}
 #ouverture .ov-txt{position:absolute;left:0;right:0;top:63%;text-align:center}
 #ouverture .ov-slogan{font-family:'Sacramento',cursive;font-size:clamp(32px,9.4vw,42px);line-height:1.05;color:#FFF6DA;text-shadow:0 0 2px rgba(8,30,24,.7),0 2px 14px rgba(8,30,24,.85),0 0 32px rgba(8,30,24,.6);opacity:0;filter:blur(8px);animation:ovNet 1s ease 2.4s forwards}
+/* v2.44 : mention de l'auteur, en bas, sur les collines */
+#ouverture .ov-auteur{position:absolute;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:3;text-align:center;padding:0 16px;font-size:11px;font-weight:700;letter-spacing:.3px;color:rgba(255,246,218,.78);text-shadow:0 1px 6px rgba(8,30,24,.9);opacity:0;animation:ovFade .7s ease 2s forwards}
+#ouverture.th-neige .ov-auteur{color:rgba(22,41,74,.78);text-shadow:0 1px 4px rgba(255,255,255,.9)}
+#ouverture.th-halloween .ov-auteur{max-width:220px;margin:0 auto;line-height:1.45}
 #ouverture .ov-lieu{margin-top:12px;font-size:10.5px;font-weight:800;letter-spacing:.4em;color:#FFE9A8;text-shadow:0 1px 8px rgba(8,30,24,.9);opacity:0;animation:ovFade .7s ease 2.8s forwards}
 #ouverture .ov-luc{position:absolute;width:4px;height:4px;border-radius:50%;background:#FFF3C4;box-shadow:0 0 10px 2px rgba(255,236,170,.8);opacity:0;animation:ovLuciole 3.5s ease-in-out infinite}
 @keyframes ovLeve{to{opacity:1;transform:translateY(0)}}
@@ -140,6 +144,7 @@ html.ouv{background:#0D2721}
   <div class="ov-onde"></div>
   <div class="ov-logo"><img src="logo-intro.png" alt="Épicerie Raddonnaise"></div>
   <div class="ov-txt"><div class="ov-slogan">Votre épicerie,<br>tout près de chez vous</div><div class="ov-lieu">RADDON-ET-CHAPENDU</div></div>
+  <div class="ov-auteur">Cette application a été développée par Eric Tisserand</div>
 </div>
 <script>
   // Ouverture : au moins 3,6 s (ou un toucher), et jamais avant que l'appli soit prête derrière ; ensuite elle s'efface sur l'écran du thème
@@ -189,6 +194,7 @@ html.ouv{background:#0D2721}
         o.querySelector(".ov-soleil").style.background = g.soleil;
         [".ov-c1", ".ov-c2", ".ov-c3"].forEach(function (c, k) { o.querySelector(c + " path").setAttribute("fill", g.coll[k]); });
         o.querySelector(".ov-lieu").style.color = g.lieu;
+        if (g.neige) o.classList.add("th-neige");   // v2.44 : collines enneigées → mention de l'auteur en foncé
         var ch = document.createElement("div"); ch.className = "ov-g ov-pomme"; ch.innerHTML = g.chute; ch.firstChild.setAttribute("style", "width:100%;height:100%;filter:drop-shadow(0 0 10px rgba(255,240,200,.9))");
         o.insertBefore(ch, o.querySelector(".ov-onde"));
         window.__ovLuc = g.luc;
@@ -233,6 +239,6 @@ html.ouv{background:#0D2721}
       setTimeout(secours, 7000);
     })();
   </script>
-  <script type="module" src="client.js?v=2.43a" onerror="window.__secours && window.__secours()"></script>
+  <script type="module" src="client.js?v=2.44" onerror="window.__secours && window.__secours()"></script>
 </body>
 </html>

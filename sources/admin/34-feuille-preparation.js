@@ -14,8 +14,12 @@ function imprimerPreparation(t, e) {
     r = new Date(e + "T00:00");
   r.setDate(r.getDate() - 1);
   let i = new Date(e + "T23:59:59"),
-    s = t.resas.filter(
-      (p) => p.statut === "reservee" && (p.cree || 0) >= r.getTime() && (p.cree || 0) <= i.getTime(),
+    // v2.44 : un plat du menu se prépare le jour prévu (identifiant menuAAAAMMJJ), quelle que soit la date de réservation
+    s = t.resas.filter((p) =>
+      p.statut === "reservee" &&
+      (estMenuResa(p)
+        ? String(p.item).slice(4) === e.replace(/-/g, "")
+        : (p.cree || 0) >= r.getTime() && (p.cree || 0) <= i.getTime()),
     ),
     o = {};
   n.forEach((p) =>

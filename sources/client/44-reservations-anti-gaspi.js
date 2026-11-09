@@ -40,7 +40,8 @@ function useMesResas(t) {
   (0, React.useEffect)(() => {
     setListe(ts());
   }, [t]);
-  let o = liste.filter((s) => s.ref && Date.now() - (s.cree || 0) < 4 * 864e5).map((s) => s.ref);
+  // v2.44 : un plat du menu peut se réserver pour la fin de la semaine → suivi 8 jours au lieu de 4
+  let o = liste.filter((s) => s.ref && Date.now() - (s.cree || 0) < (s.menu ? 8 : 4) * 864e5).map((s) => s.ref);
   return (
     (0, React.useEffect)(() => {
       let s = o.map((l) =>
@@ -58,31 +59,53 @@ function useMesResas(t) {
     }, [o.join()]),
     liste
       .filter((s) => o.includes(s.ref))
-      .map((s) => (live[s.ref] ? { ...s, statut: live[s.ref].statut, conv: live[s.ref].conv || "" } : s))
+      .map((s) => (live[s.ref] ? { ...s, statut: live[s.ref].statut, conv: live[s.ref].conv || "", confirme: !!live[s.ref].confirme } : s))
   );
 }
 
-// Réservations en cours.
+// v2.44 : rubrique « Mes réservations » sur l'accueil — les réservations en cours avec leur statut
+// (plats du menu : en attente de validation / validée / refusée ; autres articles : réservé).
 function MesResas({ resas }) {
-  let e = resas.filter((n) => n.statut === "reservee");
+  let e = resas.filter((n) => n.statut === "reservee" || (n.menu && n.statut === "refusee")),
+    statut = (n) =>
+      n.statut === "refusee"
+        ? ["refusee", "❌ Refusée"]
+        : n.menu
+          ? n.confirme
+            ? ["validee", "✅ Validée"]
+            : ["attente", "⏳ En attente de validation"]
+          : ["validee", "✅ Réservé"];
   return e.length
-    ? e.map((n) =>
+    ? React.default.createElement(
+        "section",
+        { className: "mes-resas" },
         React.default.createElement(
-          "div",
-          { className: "resa-suivi", key: n.numero },
-          React.default.createElement("div", { className: "rs-ic" }, "🧺"),
+          "h3",
+          { className: "h2" },
+          React.default.createElement("i", { style: { background: "var(--terra)" } }),
+          "Mes réservations",
+        ),
+        e.map((n) =>
           React.default.createElement(
             "div",
-            { style: { minWidth: 0 } },
-            React.default.createElement("b", null, "Réservé : ", libelleResa(n)),
+            { className: "resa-suivi " + statut(n)[0], key: n.numero },
+            React.default.createElement("div", { className: "rs-ic" }, n.menu ? "🍽️" : "🧺"),
             React.default.createElement(
               "div",
-              null,
-              "À retirer ",
-              n.retrait || "à l'épicerie",
-              " · N° ",
-              n.numero,
-              n.total > 0 ? " · " + ze(n.total) : "",
+              { style: { minWidth: 0, flex: 1 } },
+              React.default.createElement("span", { className: "rs-statut" }, statut(n)[1]),
+              React.default.createElement("b", null, libelleResa(n)),
+              React.default.createElement(
+                "div",
+                null,
+                n.statut === "refusee" ? "Prévu " : "À retirer ",
+                n.retrait || "à l'épicerie",
+                " · N° ",
+                n.numero,
+                n.total > 0 ? " · " + ze(n.total) : "",
+              ),
+              n.statut === "refusee" &&
+                React.default.createElement("div", null, "L'épicerie vous a expliqué pourquoi dans vos messages."),
             ),
           ),
         ),
@@ -101,6 +124,8 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
     [etat, setEtat] = (0, React.useState)(""),
     [fini, setFini] = (0, React.useState)(null),
     A = Number(t.prix) || 0,
+    // v2.44 : plat du menu de la semaine → l'épicerie confirme ensuite la réservation par message
+    menu = t.type === "menu",
     // v2.42 : au kilo → poids en grammes (100 g → 5 kg), prix = prix du kilo × poids
     kilo = auKilo(t),
     [grammes, setGrammes] = (0, React.useState)(Math.max(100, Math.min(500, s * 100))),
@@ -154,6 +179,7 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
         tel: P.tel,
         cree: P.cree,
         statut: "reservee",
+        ...(menu ? { menu: !0 } : {}),
       },
       ...ts(),
     ]),
@@ -195,15 +221,28 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
             React.default.Fragment,
             null,
             React.default.createElement("div", { className: "ok-rond" }, "✓"),
-            React.default.createElement("h3", { className: "alerte-t" }, "C'est réservé !"),
+            React.default.createElement("h3", { className: "alerte-t" }, menu ? "Demande envoyée !" : "C'est réservé !"),
             React.default.createElement(
               "p",
               { className: "tr-txt" },
               React.default.createElement("b", null, libelleResa(fini)),
-              " mis de côté pour vous.",
-              React.default.createElement("br", null),
-              "À retirer ",
-              React.default.createElement("b", null, fini.retrait || "à l'épicerie"),
+              menu ? " pour " : " mis de côté pour vous.",
+              menu
+                ? React.default.createElement("b", null, fini.retrait)
+                : React.default.createElement(
+                    React.default.Fragment,
+                    null,
+                    React.default.createElement("br", null),
+                    "À retirer ",
+                    React.default.createElement("b", null, fini.retrait || "à l'épicerie"),
+                  ),
+              menu &&
+                React.default.createElement(
+                  React.default.Fragment,
+                  null,
+                  React.default.createElement("br", null),
+                  "L'épicerie vous confirme très vite par message dans l'appli 💬",
+                ),
               fini.total > 0 &&
                 React.default.createElement(
                   React.default.Fragment,
@@ -376,7 +415,9 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
                   React.default.createElement(
                     "p",
                     { className: "cal-info", style: { textAlign: "center" } },
-                    "Paiement sur place. Pas venu à temps ? L'article est remis en vente.",
+                    menu
+                      ? "Paiement sur place. L'épicerie vous confirme la réservation par message dans l'appli."
+                      : "Paiement sur place. Pas venu à temps ? L'article est remis en vente.",
                   ),
                 )
               : React.default.createElement(

@@ -465,7 +465,9 @@ button.carte-lien:active{transform:scale(.98)}
 .stat i{display:block;font-style:normal;font-size:10px;font-weight:800;color:var(--apple)}
 .prepa{background:#FBF8F1}
 .resa-adm{border-left:4px solid #2E7D32}
-.resa-adm.retiree,.resa-adm.absent,.resa-adm.annulee{opacity:.6;border-left-color:var(--line)}
+.resa-adm.menu-attente{border-left-color:var(--terra,#C27B42)}
+.resa-adm .rs-menu{font-size:11.5px;font-weight:800;color:var(--terra,#C27B42);margin-bottom:2px}
+.resa-adm.retiree,.resa-adm.absent,.resa-adm.annulee,.resa-adm.refusee{opacity:.6;border-left-color:var(--line)}
 .conv{cursor:pointer}
 .conv.attente{border-left:4px solid var(--terra)}
 .av-conv{width:42px;height:42px;border-radius:50%;background:var(--apple-soft);color:var(--forest);font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
