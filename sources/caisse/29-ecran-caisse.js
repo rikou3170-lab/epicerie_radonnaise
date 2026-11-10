@@ -345,7 +345,8 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
       demanderMontant(q);
     },
     K = async () => {
-      if (!(!h?.n || m)) {
+      // v2.45a : on peut aussi annuler un passage sans tampon (il faut alors remettre la cagnotte d'avant)
+      if ((h?.n || h?.montant != null) && !m) {
         g(!0);
         try {
           let R = writeBatch(db),
