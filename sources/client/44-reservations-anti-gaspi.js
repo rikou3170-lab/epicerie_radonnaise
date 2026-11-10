@@ -33,6 +33,14 @@ const auKilo = (t) => /^\s*(le\s+)?(kg|kilo|kilos|kilogrammes?)\s*$/i.test(Strin
   dispoTexte = (t) => (auKilo(t) ? poidsTexte(Ro(t) * 100) : String(Ro(t))),
   libelleResa = (r) => (/ · \d+(,\d+)? k?g$/.test(String(r.titre || "")) ? r.titre : r.qte + " × " + r.titre);
 
+// v2.45d : le client retire une réservation terminée de sa liste (seulement sur son téléphone)
+var retirerResaLocale = (ref) => {
+  rx(ts().filter((n) => n.ref !== ref));
+  try {
+    window.dispatchEvent(new Event("resas-maj"));
+  } catch {}
+};
+
 // Réservations du client, suivies en direct.
 function useMesResas(t) {
   let [liste, setListe] = (0, React.useState)(ts),
@@ -40,6 +48,10 @@ function useMesResas(t) {
   (0, React.useEffect)(() => {
     setListe(ts());
   }, [t]);
+  (0, React.useEffect)(() => {
+    let f = () => setListe(ts());
+    return window.addEventListener("resas-maj", f), () => window.removeEventListener("resas-maj", f);
+  }, []);
   // v2.44 : un plat du menu peut se réserver pour la fin de la semaine → suivi 8 jours au lieu de 4
   let o = liste.filter((s) => s.ref && Date.now() - (s.cree || 0) < (s.menu ? 8 : 4) * 864e5).map((s) => s.ref);
   return (
@@ -66,7 +78,16 @@ function useMesResas(t) {
 // v2.44 : rubrique « Mes réservations » sur l'accueil — les réservations en cours avec leur statut
 // (plats du menu : en attente de validation / validée / refusée ; autres articles : réservé).
 function MesResas({ resas }) {
-  let e = resas.filter((n) => n.statut === "reservee" || (n.menu && n.statut === "refusee")),
+  // v2.45d : nettoyage automatique — un plat disparaît le lendemain de son jour de retrait, une réservation
+  // refusée au bout de 2 jours ; et une croix pour retirer soi-même une réservation terminée
+  let auj = new Date().toLocaleDateString("sv-SE"),
+    jourDe = (ms) => new Date(ms || 0).toLocaleDateString("sv-SE"),
+    perimee = (n) =>
+      (n.statut === "refusee" && Date.now() - (n.cree || 0) > 2 * 864e5) ||
+      (n.menu && n.jour && n.jour < auj) ||
+      (!n.menu && /aujourd/i.test(n.retrait || "") && jourDe(n.cree) < auj),
+    terminee = (n) => n.statut === "refusee",
+    e = resas.filter((n) => (n.statut === "reservee" || (n.menu && n.statut === "refusee")) && !perimee(n)),
     statut = (n) =>
       n.statut === "refusee"
         ? ["refusee", "❌ Refusée"]
@@ -108,6 +129,16 @@ function MesResas({ resas }) {
               n.statut === "refusee" &&
                 React.default.createElement("div", null, "L'épicerie vous a expliqué pourquoi dans vos messages."),
             ),
+            terminee(n) &&
+              React.default.createElement(
+                "button",
+                {
+                  className: "rs-x",
+                  "aria-label": "Retirer de ma liste",
+                  onClick: () => retirerResaLocale(n.ref),
+                },
+                "×",
+              ),
           ),
         ),
       );
@@ -179,7 +210,7 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
         tel: P.tel,
         cree: P.cree,
         statut: "reservee",
-        ...(menu ? { menu: !0 } : {}),
+        ...(menu ? { menu: !0, jour: t.date || "" } : {}),
       },
       ...ts(),
     ]),
