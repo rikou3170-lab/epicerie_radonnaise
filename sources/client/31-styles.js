@@ -292,6 +292,7 @@ var Ic2 = {
 .pop{background:#fff;border-radius:24px;max-width:360px;width:100%;padding:22px 20px 18px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.25);max-height:88vh;overflow-y:auto;animation:popIn .35s cubic-bezier(.3,1.5,.5,1)}
 .pop-ph{width:100%;max-height:200px;object-fit:cover;border-radius:16px;margin-bottom:10px}
 .pop-em{font-size:42px;line-height:1.1}
+.pop-logo{width:76px;height:76px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 6px;box-shadow:0 4px 14px rgba(28,67,59,.25)}
 .pop-t{font-family:var(--script);font-size:34px;color:var(--forest);line-height:1.1;margin-top:4px}
 .pop-x{font-size:14.5px;line-height:1.5;color:var(--ink2);margin-top:8px;white-space:pre-line}
 @keyframes popFond{from{opacity:0}}

@@ -911,7 +911,10 @@ function PopupMessage({ d }) {
       "div",
       { className: "pop", role: "dialog", "aria-modal": "true", onClick: (s) => s.stopPropagation() },
       e.photo && React.default.createElement("img", { src: e.photo, alt: "", className: "pop-ph" }),
-      e.emoji && React.default.createElement("div", { className: "pop-em" }, e.emoji),
+      // v2.45c : la pomme de l'épicerie à la place du porte-voix 📢 (un autre émoji choisi par Marion reste affiché)
+      !e.emoji || e.emoji === "📢"
+        ? React.default.createElement("img", { src: LOGO, alt: "", className: "pop-logo" })
+        : React.default.createElement("div", { className: "pop-em" }, e.emoji),
       e.titre && React.default.createElement("div", { className: "pop-t" }, e.titre),
       e.texte && React.default.createElement("div", { className: "pop-x" }, e.texte),
       React.default.createElement(
