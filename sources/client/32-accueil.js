@@ -882,17 +882,23 @@ var aT = () =>
     return String(n);
   };
 
+// v2.45b : messages déjà fermés depuis l'ouverture de l'appli (« à chaque ouverture » = une fois par lancement,
+// même si l'accueil se recharge en revenant de la messagerie).
+var popupsFermes = new Set();
+
 // Message de Marion affiché à l'ouverture de l'appli.
 function PopupMessage({ d }) {
   let e = d.popup,
     [n, r] = (0, React.useState)(!1);
   if (n || !e || !vn({ ...e, active: !!e.active }) || !(e.titre || e.texte)) return null;
   let i = DO(e);
+  if (popupsFermes.has(i)) return null;
   if (e.frequence !== "chaque")
     try {
       if (localStorage.getItem(lT) === i) return null;
     } catch {}
   let o = () => {
+    popupsFermes.add(i);
     try {
       localStorage.setItem(lT, i);
     } catch {}
