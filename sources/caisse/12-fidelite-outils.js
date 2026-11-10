@@ -58,13 +58,22 @@ var FC = {
   wC = (t) => {
     let e = MENTION_EXCLUSIONS(t);
     return (
-      (e.seuil ? "1 passage dès " + e.seuil + " € d'achats = 1 tampon" : "1 passage = 1 tampon") +
+      "1 tampon par tranche de " + (e.seuil > 0 ? e.seuil : 10) + " € d'achats" +
       " · " +
       (e.palier
         ? e.palier + " tampons = " + e.recompense1 + ", ou continuez : " + e.nb + " tampons = " + e.recompense
         : e.nb + " tampons = " + e.recompense)
     );
   },
+  // v2.45 : 1 tampon par tranche de « seuil » € (10 € par défaut) ; le reste en euros est gardé sur la carte
+  trancheTampon = (t) => (t.seuil > 0 ? t.seuil : 10),
+  calculTampons = (t, e, n) => {
+    let r = Math.round(((Number(t) || 0) + (Number(e) || 0)) * 100),
+      i = Math.round(n * 100),
+      o = Math.floor(r / i);
+    return { n: o, reste: (r - o * i) / 100 };
+  },
+  eurosCaisse = (t) => (Math.round((Number(t) || 0) * 100) / 100).toFixed(2).replace(".", ",") + " €",
   _C = (t, e) => {
     let n = Number(t?.tampons) || 0;
     return n >= e.nb

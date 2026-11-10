@@ -71,6 +71,29 @@ body{background:var(--bg)}
 .actions{display:flex;gap:9px;width:100%;margin-top:12px}
 .actions .gh{flex:0 0 34%}
 .ok{width:100%;text-align:center;padding-top:16px}
+.mt-saisie{display:block;width:260px;max-width:90%;margin:18px auto 10px;font-size:46px;font-weight:800;text-align:center;padding:12px 16px;border-radius:16px}
+.mt-suivi{width:560px;max-width:94%;margin:0 auto;background:#fff;border:1px solid var(--line,#E6E0D2);border-radius:20px;padding:16px 20px;text-align:left}
+.mt-nom{font-size:24px;font-weight:800;color:var(--forest,#1C433B);text-align:center}
+.mt-chiffres{display:flex;gap:12px;margin:10px 0 6px}
+.mt-chiffres>div{flex:1;background:#F6F1E7;border-radius:14px;padding:10px;text-align:center}
+.mt-chiffres b{display:block;font-size:28px;color:var(--gold,#C9972C);line-height:1.1}
+.mt-chiffres span{font-size:12px;color:var(--ink3,#5C6A62)}
+.mt-ligne{display:flex;gap:8px;align-items:baseline;font-size:15px;padding:5px 0;border-top:1px solid #F0EBE0}
+.mt-ligne b{color:var(--forest,#1C433B)}
+.mt-ligne i{margin-left:auto;font-style:normal;color:var(--ink3,#5C6A62);font-size:13.5px;text-align:right}
+.mt-histo{margin-top:10px;border-top:1px solid #F0EBE0;padding-top:8px}
+.mt-ht{font-size:12px;font-weight:800;color:var(--ink3,#5C6A62);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.mt-hl{display:flex;gap:8px;align-items:baseline;font-size:13.5px;padding:3px 0}
+.mt-hl b{font-weight:600;color:var(--ink,#22302A)}
+.mt-hl i{margin-left:auto;font-style:normal;color:var(--ink3,#5C6A62);font-size:12px;white-space:nowrap}
+.mt-pied{font-size:12px;color:var(--ink3,#5C6A62);text-align:center;margin-top:8px}
+.mt-reprise{width:560px;max-width:94%;margin:16px auto 0;background:#FBF1E4;border:1px solid #EFD7B8;border-radius:18px;padding:14px 18px;text-align:left}
+.mt-rt{font-weight:800;color:#8A5418;margin-bottom:8px}
+.mt-rc{display:flex;gap:12px}
+.mt-rc label{flex:1;font-size:12.5px;color:#7A5426;display:flex;flex-direction:column;gap:5px}
+.mt-rc label{min-width:0}
+.mt-rc .inp{width:100%;box-sizing:border-box;font-size:22px;font-weight:800;text-align:center}
+.mt-calc{font-size:17px;font-weight:700;color:var(--forest,#1C433B);margin-top:6px;line-height:1.4}
 .ok .rond{width:110px;height:110px;border-radius:50%;background:var(--apple);color:#fff;font-size:58px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:pop .35s cubic-bezier(.3,1.6,.6,1)}
 @keyframes pop{from{transform:scale(.4);opacity:0}}
 .ok .plus{font-size:44px;font-weight:800;color:var(--apple);line-height:1}

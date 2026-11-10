@@ -58,7 +58,7 @@ var it = {
   A2 = (t) => {
     let e = MENTION_EXCLUSIONS(t);
     return (
-      (e.seuil ? "1 passage dès " + e.seuil + " € d'achats = 1 tampon" : "1 passage = 1 tampon") +
+      "1 tampon par tranche de " + (e.seuil > 0 ? e.seuil : 10) + " € d'achats" +
       " · " +
       (e.palier
         ? e.palier + " tampons = " + e.recompense1 + ", ou continuez : " + e.nb + " tampons = " + e.recompense

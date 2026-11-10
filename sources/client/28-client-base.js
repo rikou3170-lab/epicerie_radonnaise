@@ -208,6 +208,8 @@ function useMoi() {
                 tel: o.tel || "",
                 bonusAttente: Number(o.bonusAttente) || 0,
                 cadeaux: Number(o.cadeaux) || 0,
+                // v2.45 : euros gardés pour le prochain tampon (1 tampon par tranche de 10 €)
+                reste: Number(o.reste) || 0,
               });
             } else i.metadata.fromCache || r(null);
           },

@@ -113,6 +113,7 @@ function FicheClient({ c: t, t: e, onClose, onTamponner }) {
             "/",
             e.nb,
             " tampons",
+            Number(t.reste) > 0 ? " · " + eurosCaisse(t.reste) + " de côté" : "",
             t.depuis ? " · depuis le " + new Date(t.depuis + "T12:00").toLocaleDateString("fr-FR") : "",
             t.derniere
               ? " · dernier passage le " + new Date(t.derniere + "T12:00").toLocaleDateString("fr-FR")

@@ -7,6 +7,7 @@
 //  Le script relit la commande dans Firebase, vérifie qu'elle est récente
 //  et toute neuve, et n'envoie qu'UN seul e-mail par commande.
 //  Réservations au kilo : le poids est affiché sans « N × » (appli v2.42+).
+//  Tampons (appli v2.45) : 1 tampon par tranche de 10 €, notification « +3 tampons » et euros gardés.
 //  Il n'écrit qu'à Marion (adresse fixée ci-dessous, jamais transmise par l'appli).
 //  Prévient aussi Marion des nouveaux messages de clients (?msg=…), 1 e-mail max / 10 min par conversation.
 //  En plus de l'e-mail, une notification part sur les téléphones de Marion inscrits dans l'admin (Réglages → 🔔).
@@ -385,9 +386,11 @@ function evenementFid_(id, e) {
     const cleC = "fidc_" + id + "_" + h.date;
     if (!reserver_(cleC)) return "deja-envoye";
     const reste = palier && n < palier ? palier - n : nb - n;
+    // v2.45 : plusieurs tampons au même passage (1 par tranche de 10 €) ; seuls les tampons en plus de ceux du ticket sont « offerts »
+    const offerts = gain - (Number(h.points) || 1);
     const T2 = n >= nb ? ["🎁🎁 Carte complète : " + nb + " tampons !", "Bravo ! " + cad2.charAt(0).toUpperCase() + cad2.slice(1) + " vous attend en caisse."]
       : palier && n === palier ? ["🎁 " + n + " tampons : votre cadeau vous attend !", "En caisse : prenez " + cad1 + ", ou continuez jusqu'à " + nb + " pour " + cad2 + "."]
-      : [gain > 1 ? "🍏 +" + gain + " tampons !" : "🍏 +1 tampon !", (gain > 1 ? "Dont " + (gain - 1) + " tampon" + (gain > 2 ? "s" : "") + " offert" + (gain > 2 ? "s" : "") + (hs.some(x => x.date === h.date && x.type === "parrainage") ? " pour le parrainage" : "") + " 🎁. " : "") + "Vous avez " + n + " / " + nb + " tampons · encore " + reste + " pour " + (palier && n < palier ? "votre cadeau" : "votre chouette cadeau") + "."];
+      : [gain > 1 ? "🍏 +" + gain + " tampons !" : "🍏 +1 tampon !", (offerts > 0 ? "Dont " + offerts + " tampon" + (offerts > 1 ? "s" : "") + " offert" + (offerts > 1 ? "s" : "") + (hs.some(x => x.date === h.date && x.type === "parrainage") ? " pour le parrainage" : "") + " 🎁. " : "") + "Vous avez " + n + " / " + nb + " tampons · encore " + reste + " pour " + (palier && n < palier ? "votre cadeau" : "votre chouette cadeau") + "." + (Number(c.reste) > 0 ? " 💶 " + euros_(c.reste) + " gardés pour le prochain tampon." : "")];
     if (Array.isArray(c.roueAJouer) && c.roueAJouer.length && !c.roueNon) T2[1] += " 🎄 Un tour de roue de Noël vous attend dans l'appli !";
     try { return "ok:" + pushClientFid_(id, T2[0], T2[1]); } catch (err) { liberer_(cleC); throw err; }
   }

@@ -635,6 +635,7 @@ var Ic2 = {
 .resa-suivi.refusee{background:#F7ECEC;border-color:#E8CFCF;color:#7A3A3A}
 .resa-suivi.refusee .rs-statut{background:#EED2D2;color:#9A2B2B}
 .mes-resas{margin-bottom:6px}
+.fid-reste{margin-top:12px;text-align:center;font-size:12.5px;background:rgba(255,255,255,.1);border-radius:12px;padding:8px 10px;line-height:1.4}
 .resa-vide{font-size:12.5px;color:var(--ink3);background:var(--card);border:1px dashed var(--line);border-radius:var(--r-s);padding:9px 13px;margin-bottom:12px}
 .rs-ic{font-size:26px}
 .notif-bloc{background:#FFF8EC;border:1.5px solid #F0D7BF;border-radius:var(--r);padding:14px 16px;margin:14px 0}

@@ -136,7 +136,7 @@ function PageLegale({ type, d, onClose }) {
               React.default.createElement("b", null, "téléphone"),
               ", votre ",
               React.default.createElement("b", null, "adresse e-mail"),
-              ", votre code de carte, vos tampons, la date d'inscription, le code de votre parrain si vous en indiquez un (pour vous offrir à tous les deux le tampon de parrainage), et, si vous l'indiquez, le jour et le mois de votre anniversaire (sans l'année), pour vous offrir un tampon ce jour-là. Les réponses aux sondages de l'appli sont anonymes et l'historique de vos passages en caisse (date, tampons ou points gagnés), dont le nombre de cadeaux reçus qui donne votre niveau (Membre supporter, Pilier de l'épicerie).",
+              ", votre code de carte, vos tampons et le montant de vos achats en caisse (pour calculer les tampons : 1 par tranche de 10 €, le reste étant gardé pour la fois suivante), la date d'inscription, le code de votre parrain si vous en indiquez un (pour vous offrir à tous les deux le tampon de parrainage), et, si vous l'indiquez, le jour et le mois de votre anniversaire (sans l'année), pour vous offrir un tampon ce jour-là. Les réponses aux sondages de l'appli sont anonymes et l'historique de vos passages en caisse (date, tampons ou points gagnés), dont le nombre de cadeaux reçus qui donne votre niveau (Membre supporter, Pilier de l'épicerie).",
             ),
             React.default.createElement(
               "p",
@@ -339,6 +339,7 @@ function MesDonnees({ moi, d: e, setMoi, ouvrirLegal }) {
             code: P.code,
             points: P.points || 0,
             tampons: P.tampons || 0,
+            euros_gardes: Number(P.reste) || 0,
             inscription: P.depuis,
             accord: P.accord || "",
           },

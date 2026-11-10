@@ -464,14 +464,14 @@ function BravoNiveau({ moi }) {
   );
 }
 
-// Règle de la carte (« 1 passage dès 10 € = 1 tampon »).
+// Règle de la carte (v2.45 : « 1 tampon par tranche de 10 € d'achats »).
 function RegleTampons({ f }) {
   let [e, n] = (0, React.useState)(!1),
     r = MENTION_EXCLUSIONS(f);
   return React.default.createElement(
     "div",
     { className: "s" },
-    r.seuil ? "1 passage dès " + pc(r.seuil) + " d'achats = 1 tampon" : "1 passage = 1 tampon",
+    "1 tampon par tranche de " + pc(r.seuil > 0 ? r.seuil : 10) + " d'achats",
     " ",
     React.default.createElement(
       "button",
@@ -506,6 +506,18 @@ function FidCarte({ d: t, moi, onFid, compact }) {
       ),
       React.default.createElement(RegleTampons, { f: i }),
       React.default.createElement(GrilleTampons, { f: i, moi, amb: o }),
+      // v2.45 : euros gardés depuis le dernier passage et ce qu'il manque pour le prochain tampon
+      moi &&
+        moi.reste > 0 &&
+        React.default.createElement(
+          "div",
+          { className: "fid-reste" },
+          "💶 ",
+          React.default.createElement("b", null, pc(moi.reste)),
+          " de côté · plus que ",
+          React.default.createElement("b", null, pc(Math.max(0, Math.round((MENTION_EXCLUSIONS(i).seuil > 0 ? MENTION_EXCLUSIONS(i).seuil : 10) * 100 - moi.reste * 100) / 100))),
+          " pour votre prochain tampon",
+        ),
       React.default.createElement(
         "div",
         {

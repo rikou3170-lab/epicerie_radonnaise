@@ -2,6 +2,65 @@
  *  ÉCRAN DE CAISSE — recherche du client, scan, tampons, cadeaux, roue de Noël.
  * ═══════════════════════════════════════════════════════════════════════ */
 
+// v2.45 : derniers passages du client (historique de sa carte), affichés à la caisse dès le scan.
+function HistoriqueCaisse({ id }) {
+  let [l, setL] = (0, React.useState)(null);
+  (0, React.useEffect)(
+    () =>
+      onSnapshot(
+        collection(db, "clients", String(id), "historique"),
+        (x) => setL(x.docs.map((y) => ({ ...y.data(), id: y.id })).sort((y, z) => (z.date || 0) - (y.date || 0))),
+        () => setL([]),
+      ),
+    [id],
+  );
+  let pl = (n) => (n > 1 || n < -1 ? "s" : ""),
+    texte = (h) => {
+      let p = Number(h.points) || 0,
+        tk = h.montant != null ? " · ticket " + eurosCaisse(h.montant) : "";
+      return (
+        {
+          tampon: ["🍏", "+" + p + " tampon" + pl(p) + tk + (h.attente ? " (+" + h.attente + " en attente)" : "")],
+          achat: ["🧾", "Pas de tampon" + tk],
+          reprise: ["📇", "Reprise carte papier : +" + p + " tampon" + pl(p) + (h.attente ? " (+" + h.attente + " en attente)" : "")],
+          recompense1: ["🎁", "Petit cadeau pris"],
+          recompense: ["🎁🎁", "Grand cadeau pris"],
+          parrainage: ["🤝", "Parrainage +" + p],
+          bonus: ["🎁", "+" + p + " tampon" + pl(p) + " offert" + pl(p)],
+          anniversaire: ["🎂", h.attente ? "Tampon d'anniversaire (en attente)" : "Tampon d'anniversaire"],
+          annulation: ["↩\uFE0F", "Annulation (" + p + ")"],
+          correction: ["✏\uFE0F", h.motif === "reste" ? "Cagnotte corrigée : " + eurosCaisse(h.reste) : "Correction (" + p + ")"],
+        }[h.type] || ["•", h.type + (p ? " (" + p + ")" : "")]
+      );
+    };
+  return React.default.createElement(
+    "div",
+    { className: "mt-histo" },
+    React.default.createElement("div", { className: "mt-ht" }, "Derniers passages"),
+    l === null
+      ? React.default.createElement("div", { className: "mt-pied" }, "Chargement…")
+      : l.length
+        ? l.slice(0, 6).map((h) => {
+            let [ic, tx] = texte(h),
+              d = new Date(h.date || 0);
+            return React.default.createElement(
+              "div",
+              { className: "mt-hl", key: h.id },
+              React.default.createElement("span", null, ic),
+              React.default.createElement("b", null, tx),
+              React.default.createElement(
+                "i",
+                null,
+                d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }) +
+                  " · " +
+                  d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }).replace(":", "h"),
+              ),
+            );
+          })
+        : React.default.createElement("div", { className: "mt-pied" }, "Aucun passage pour l'instant"),
+  );
+}
+
 // Écran de caisse : client trouvé par scan ou recherche, tampons, cadeaux, roue de Noël.
 function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
   let a = MENTION_EXCLUSIONS(fid),
@@ -14,6 +73,58 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
     [k, T] = (0, React.useState)(0),
     [N, v] = (0, React.useState)(_k),
     [A, D] = (0, React.useState)(null),
+    // v2.45 : montant du ticket tapé par Marion après le scan
+    [mt, setMt] = (0, React.useState)(""),
+    // v2.45 : reprise d'une carte papier (tampons et euros notés dessus)
+    [rep, setRep] = (0, React.useState)(null),
+    demanderMontant = (R) => {
+      C(""), B({ c: R }), setMt(""), setRep(null), c("montant");
+    },
+    reprendrePapier = async (R) => {
+      let n = Math.max(0, Math.min(a.nb, parseInt(rep?.t) || 0)),
+        e = Math.max(0, Number(String(rep?.e || "").replace(",", ".")) || 0);
+      if (!n && !e) return;
+      if (
+        !(await CC(
+          "Ajouter " + (n ? n + " tampon" + (n > 1 ? "s" : "") : "") + (n && e ? " et " : "") + (e ? eurosCaisse(e) : "") +
+            " de la carte papier sur la carte de " + R.nom + " ?",
+        ))
+      )
+        return;
+      g(!0);
+      try {
+        let te = R.tampons || 0,
+          x = calculTampons(R.reste, e, trancheTampon(a)),
+          tot = n + x.n,
+          dir = Math.min(tot, Math.max(0, a.nb - te)),
+          sur = tot - dir,
+          X = writeBatch(db);
+        X.update(doc2(db, "clients", String(R.id)), {
+          tampons: increment(dir),
+          reste: x.reste,
+          ...(sur ? { bonusAttente: increment(sur) } : {}),
+          derniere: new Date().toLocaleDateString("sv-SE"),
+        }),
+          X.set(doc2(collection(db, "clients", String(R.id), "historique")), {
+            date: Date.now(),
+            points: dir,
+            type: "reprise",
+            motif: "carte papier",
+            papier: n,
+            ...(e ? { montant: e } : {}),
+            reste: x.reste,
+            ...(sur ? { attente: sur } : {}),
+            source: "caisse",
+          }),
+          await X.commit(),
+          setRep(null),
+          C(""),
+          IconeTampon("tampon");
+      } catch {
+        C("Reprise non enregistrée : vérifiez la connexion.");
+      }
+      g(!1);
+    },
     w = () => {
       let R = N === "user" ? "environment" : "user";
       v(R);
@@ -52,10 +163,44 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
     let R = setTimeout(P, u === "ok" ? (h?.roue != null ? 5500 : 3500) : 4e3);
     return () => clearTimeout(R);
   }, [u, h]);
-  let M = async (R) => {
+  let M = async (R, montant) => {
       let te = R.tampons || 0,
-        q = Date.now();
+        q = Date.now(),
+        // v2.45 : tampons gagnés = (reste gardé + montant) ÷ tranche ; ce qui dépasse le palier ou la carte
+        // pleine passe en « tampons en attente » (ajoutés après le cadeau, comme les bonus)
+        resteAvant = Number(R.reste) || 0,
+        calc = calculTampons(resteAvant, montant, trancheTampon(a)),
+        cap = a.palier && te < a.palier ? a.palier : a.nb,
+        direct = Math.max(0, Math.min(calc.n, cap - te)),
+        surplus = calc.n - direct;
       g(!0);
+      if (!calc.n) {
+        // pas encore de tampon : on garde seulement le reste en euros
+        try {
+          let X = writeBatch(db);
+          X.update(doc2(db, "clients", String(R.id)), {
+            reste: calc.reste,
+            derniere: new Date().toLocaleDateString("sv-SE"),
+          }),
+            X.set(doc2(collection(db, "clients", String(R.id), "historique")), {
+              date: q,
+              points: 0,
+              type: "achat",
+              montant,
+              reste: calc.reste,
+              source: "caisse",
+            }),
+            await X.commit(),
+            IconeTampon("tampon"),
+            B({ c: R, avant: te, apres: te, n: 0, k: 0, montant, reste: calc.reste, resteAvant, dernierAvant: R.dernierTampon || 0 }),
+            c("ok");
+        } catch (X) {
+          C(X?.code === "permission-denied" ? "Refusé : reconnectez-vous." : "Non enregistré : vérifiez la connexion."),
+            T((ge) => ge + 1);
+        }
+        g(!1);
+        return;
+      }
       try {
         let X = writeBatch(db),
           ge = doc2(db, "clients", String(R.id)),
@@ -94,19 +239,23 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
           }
         }
         let he = Number(R.bonusAttente) || 0,
-          rt = he + ce,
-          Xe = kC(te, rt, a);
+          rt = he + ce + surplus,
+          Xe = surplus ? 0 : kC(te + direct - 1, rt, a);
         rt - Xe !== he && (J.bonusAttente = rt - Xe),
           X.update(ge, {
-            tampons: increment(1 + Xe),
+            tampons: increment(direct + Xe),
+            reste: calc.reste,
             dernierTampon: q,
             derniere: new Date().toLocaleDateString("sv-SE"),
             ...J,
           }),
           X.set(doc2(collection(db, "clients", String(R.id), "historique")), {
             date: q,
-            points: 1,
+            points: direct,
             type: "tampon",
+            montant,
+            reste: calc.reste,
+            ...(surplus ? { attente: surplus } : {}),
             source: "caisse",
             ...(ue == null ? {} : { roue: ue }),
           }),
@@ -119,7 +268,7 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
               ...(ce ? { parrain: R.parrain } : {}),
             }),
           await X.commit();
-        let Lt = te + 1 + Xe;
+        let Lt = te + direct + Xe;
         W && avertirMessage(script, W.id, "parrain"),
           avertirMessage(script, R.id, "tampon"),
           Lt >= a.nb
@@ -132,8 +281,12 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
             c: R,
             avant: te,
             apres: Lt,
-            n: 1 + Xe,
+            n: direct + Xe,
             k: Xe,
+            montant,
+            reste: calc.reste,
+            resteAvant,
+            surplus,
             attenteAvant: he,
             attenteApres: rt - Xe,
             filleul: ce,
@@ -189,7 +342,7 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
         IconeTampon("palier"), B({ c: q, avant: a.palier, apres: a.palier, n: 0 }), c("palier");
         return;
       }
-      M(q);
+      demanderMontant(q);
     },
     K = async () => {
       if (!(!h?.n || m)) {
@@ -198,7 +351,7 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
           let R = writeBatch(db),
             te = Date.now(),
             q = h.c,
-            X = { tampons: increment(-h.n), dernierTampon: h.dernierAvant || 0 };
+            X = { tampons: increment(-h.n), dernierTampon: h.dernierAvant || 0, reste: h.resteAvant || 0 };
           h.attenteApres !== h.attenteAvant && (X.bonusAttente = h.attenteAvant),
             h.tour && ((X.roueAJouer = q1(h.tour)), h.roue && (X.roueG = h.roueNouv ? 0 : increment(-1))),
             q.parrain && !q.parrainFait && (X.parrainFait = !1),
@@ -436,6 +589,190 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
           D(null), I(R.code);
         },
       }),
+    // v2.45 : montant du ticket → tampons calculés en direct, reste gardé
+    u === "montant" &&
+      h &&
+      (() => {
+        let R = le || h.c,
+          v = Number(String(mt).replace(",", ".")),
+          ok = mt !== "" && isFinite(v) && v > 0 && v <= 2e3,
+          x = ok ? calculTampons(R.reste, v, trancheTampon(a)) : null,
+          valider = async () => {
+            if (!ok || m) return;
+            if (v > 100 && !(await CC("Confirmer un ticket de " + eurosCaisse(v) + " ?", { ok: "Oui, " + eurosCaisse(v) })))
+              return;
+            M(R, Math.round(v * 100) / 100);
+          };
+        return React.default.createElement(
+          "div",
+          { className: "cs-main" },
+          React.default.createElement(
+            "div",
+            { className: "ok montant-caisse" },
+            // v2.45 : où en est le client, d'un coup d'œil
+            (() => {
+              let te = R.tampons || 0,
+                tr = trancheTampon(a),
+                rs = Number(R.reste) || 0,
+                euros = (k) => eurosCaisse(Math.max(0, k * tr - rs)),
+                lignes = [];
+              a.palier && te < a.palier &&
+                lignes.push(["🎁", a.recompense1 + " au " + a.palier + "e", "encore " + (a.palier - te) + " tampon" + (a.palier - te > 1 ? "s" : "") + " · " + euros(a.palier - te) + " d'achats"]);
+              a.palier && te === a.palier && lignes.push(["🎁", a.recompense1, "disponible (ou il continue)"]);
+              te < a.nb
+                ? lignes.push(["🎁🎁", a.recompense + " au " + a.nb + "e", "encore " + (a.nb - te) + " tampons · " + euros(a.nb - te) + " d'achats"])
+                : lignes.push(["🎁🎁", a.recompense, "carte complète"]);
+              return React.default.createElement(
+                "div",
+                { className: "mt-suivi" },
+                React.default.createElement("div", { className: "mt-nom" }, R.nom),
+                React.default.createElement(
+                  "div",
+                  { className: "mt-chiffres" },
+                  React.default.createElement(
+                    "div",
+                    null,
+                    React.default.createElement("b", null, te, " / ", a.nb),
+                    React.default.createElement("span", null, "tampons"),
+                  ),
+                  React.default.createElement(
+                    "div",
+                    null,
+                    React.default.createElement("b", null, eurosCaisse(rs)),
+                    React.default.createElement("span", null, "cagnotte · plus que ", eurosCaisse(tr - rs), " pour 1 tampon"),
+                  ),
+                ),
+                React.default.createElement(sv, { n: te, nb: a.nb, palier: a.palier }),
+                lignes.map((l) =>
+                  React.default.createElement(
+                    "div",
+                    { className: "mt-ligne", key: l[1] },
+                    React.default.createElement("span", null, l[0]),
+                    React.default.createElement("b", null, l[1]),
+                    React.default.createElement("i", null, l[2]),
+                  ),
+                ),
+                Number(R.bonusAttente) > 0 &&
+                  React.default.createElement(
+                    "div",
+                    { className: "mt-ligne" },
+                    React.default.createElement("span", null, "⏳"),
+                    React.default.createElement("b", null, R.bonusAttente, " tampon", R.bonusAttente > 1 ? "s" : "", " en attente"),
+                    React.default.createElement("i", null, "ajoutés après le cadeau"),
+                  ),
+                React.default.createElement(HistoriqueCaisse, { id: R.id }),
+                React.default.createElement(
+                  "div",
+                  { className: "mt-pied" },
+                  R.code,
+                  R.derniere ? " · dernier passage le " + new Date(R.derniere + "T12:00").toLocaleDateString("fr-FR") : " · premier passage",
+                ),
+              );
+            })(),
+            React.default.createElement("div", { className: "plus", style: { fontSize: 24, marginTop: 16 } }, "Montant du ticket"),
+            React.default.createElement("input", {
+              className: "inp mt-saisie",
+              inputMode: "decimal",
+              enterKeyHint: "done",
+              autoFocus: !0,
+              placeholder: "0,00",
+              value: mt,
+              maxLength: 8,
+              "aria-label": "Montant du ticket en euros",
+              onChange: (te) => setMt(te.target.value.replace(/[^0-9.,]/g, "").replace(/([.,].{0,2}).*$/, "$1")),
+              onKeyDown: (te) => te.key === "Enter" && valider(),
+            }),
+            React.default.createElement(
+              "div",
+              { className: "mt-calc" },
+              x
+                ? x.n
+                  ? (() => {
+                      // même calcul que l'enregistrement : au-delà du 10e (ou de la carte pleine), le reste attend le cadeau
+                      let te = R.tampons || 0,
+                        cap = a.palier && te < a.palier ? a.palier : a.nb,
+                        dir = Math.max(0, Math.min(x.n, cap - te)),
+                        sur = x.n - dir;
+                      return (
+                        "→ +" + dir + " tampon" + (dir > 1 ? "s" : "") +
+                        (sur ? " (+" + sur + " après le cadeau)" : "") +
+                        (x.reste > 0 ? " · " + eurosCaisse(x.reste) + " gardés pour la prochaine fois" : "")
+                      );
+                    })()
+                  : "→ Pas encore de tampon · " + eurosCaisse(x.reste) + " gardés"
+                : "1 tampon par tranche de " + trancheTampon(a) + " €",
+            ),
+            O && React.default.createElement("div", { className: "err" }, O),
+            React.default.createElement(
+              "div",
+              { className: "actions", style: { marginTop: 18 } },
+              React.default.createElement("button", { className: "btn gh", disabled: m, onClick: P }, "Annuler"),
+              React.default.createElement(
+                "button",
+                { className: "btn", disabled: !ok || m, onClick: valider },
+                m ? "…" : "Valider",
+              ),
+            ),
+            // v2.45 : un client passe de la carte papier à l'appli → Marion reporte ses tampons
+            rep
+              ? React.default.createElement(
+                  "div",
+                  { className: "mt-reprise" },
+                  React.default.createElement("div", { className: "mt-rt" }, "📇 Reprendre sa carte papier"),
+                  React.default.createElement(
+                    "div",
+                    { className: "mt-rc" },
+                    React.default.createElement(
+                      "label",
+                      null,
+                      "Tampons sur la carte papier",
+                      React.default.createElement("input", {
+                        className: "inp",
+                        inputMode: "numeric",
+                        placeholder: "0",
+                        value: rep.t,
+                        maxLength: 2,
+                        onChange: (te) => setRep({ ...rep, t: te.target.value.replace(/[^0-9]/g, "") }),
+                      }),
+                    ),
+                    React.default.createElement(
+                      "label",
+                      null,
+                      "Euros notés en plus (facultatif)",
+                      React.default.createElement("input", {
+                        className: "inp",
+                        inputMode: "decimal",
+                        placeholder: "0,00",
+                        value: rep.e,
+                        maxLength: 6,
+                        onChange: (te) => setRep({ ...rep, e: te.target.value.replace(/[^0-9.,]/g, "") }),
+                      }),
+                    ),
+                  ),
+                  React.default.createElement(
+                    "div",
+                    { className: "actions", style: { marginTop: 10 } },
+                    React.default.createElement("button", { className: "btn gh", disabled: m, onClick: () => setRep(null) }, "Fermer"),
+                    React.default.createElement(
+                      "button",
+                      { className: "btn terra", disabled: m || (!parseInt(rep.t) && !Number(String(rep.e).replace(",", "."))), onClick: () => reprendrePapier(R) },
+                      "Ajouter à sa carte",
+                    ),
+                  ),
+                  React.default.createElement(
+                    "div",
+                    { className: "mt-pied" },
+                    "Les tampons s'ajoutent à ceux de l'appli. Pensez ensuite à récupérer la carte papier.",
+                  ),
+                )
+              : React.default.createElement(
+                  "button",
+                  { className: "lien", style: { marginTop: 14 }, onClick: () => setRep({ t: "", e: "" }) },
+                  "📇 Il a une carte papier ? Reprendre ses tampons",
+                ),
+          ),
+        );
+      })(),
     u === "ok" &&
       h &&
       React.default.createElement(
@@ -445,7 +782,18 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
           "div",
           { className: "ok" },
           React.default.createElement("div", { className: "rond" }, "✓"),
-          React.default.createElement("div", { className: "plus" }, "+", h.n, " tampon", h.n > 1 ? "s" : ""),
+          h.n
+            ? React.default.createElement("div", { className: "plus" }, "+", h.n, " tampon", h.n > 1 ? "s" : "")
+            : React.default.createElement("div", { className: "plus", style: { fontSize: 30 } }, "Pas encore de tampon"),
+          // v2.45 : montant du ticket et reste gardé
+          h.montant != null &&
+            React.default.createElement(
+              "div",
+              { className: "mt-calc" },
+              "Ticket de " + eurosCaisse(h.montant),
+              h.reste > 0 ? " · " + eurosCaisse(h.reste) + " gardés pour la prochaine fois" : "",
+              h.surplus ? " · " + h.surplus + " tampon" + (h.surplus > 1 ? "s" : "") + " mis de côté pour après le cadeau" : "",
+            ),
           React.default.createElement(
             "div",
             { className: "tot" },
@@ -514,7 +862,7 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
             React.default.createElement("button", { className: "btn gh", onClick: P }, "Retour"),
             React.default.createElement(
               "button",
-              { className: "btn", disabled: m, onClick: () => M(le) },
+              { className: "btn", disabled: m, onClick: () => demanderMontant(le) },
               "Tamponner quand même",
             ),
           ),
@@ -644,9 +992,8 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
           ),
           React.default.createElement(
             "button",
-            { className: "btn", style: { marginTop: 8 }, disabled: m, onClick: () => (h.n ? P() : M(h.c)) },
+            { className: "btn", style: { marginTop: 8 }, disabled: m, onClick: () => (h.n ? P() : demanderMontant(h.c)) },
             "➜ Il continue vers le chouette cadeau",
-            h.n ? "" : " (+1 tampon)",
           ),
           h.n > 0 &&
             React.default.createElement(

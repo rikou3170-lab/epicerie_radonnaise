@@ -2,6 +2,58 @@
  *  FIDÉLITÉ — carte à tampons, jauge, récompenses, niveaux, animations.
  * ═══════════════════════════════════════════════════════════════════════ */
 
+// v2.45 : euros gardés pour le prochain tampon (1 tampon par tranche de 10 €), visibles et corrigeables par Marion.
+function ResteClient({ c }) {
+  let [v, setV] = (0, React.useState)(String(Number(c.reste) || 0).replace(".", ",")),
+    [occupe, setOccupe] = (0, React.useState)(!1),
+    x = Number(String(v).replace(",", ".")),
+    ok = v !== "" && isFinite(x) && x >= 0 && x < 1e3 && Math.round(x * 100) / 100 !== (Number(c.reste) || 0),
+    enregistrer = async () => {
+      if (!ok || occupe) return;
+      setOccupe(!0);
+      try {
+        let b = writeBatch(db),
+          r = Math.round(x * 100) / 100;
+        b.update(doc2(db, "clients", String(c.id)), { reste: r }),
+          b.set(doc2(collection(db, "clients", String(c.id), "historique")), {
+            date: Date.now(),
+            points: 0,
+            type: "correction",
+            motif: "reste",
+            reste: r,
+            source: "admin",
+          }),
+          await b.commit(),
+          ft("Reste corrigé : " + eo(r));
+      } catch {
+        ft("Correction impossible : vérifiez la connexion.");
+      }
+      setOccupe(!1);
+    };
+  return React.default.createElement(
+    "div",
+    { style: { marginTop: 12 } },
+    React.default.createElement("label", { className: "lab" }, "💶 Euros gardés pour le prochain tampon"),
+    React.default.createElement(
+      "div",
+      { style: { display: "flex", gap: 8, alignItems: "center" } },
+      React.default.createElement("input", {
+        className: "inp",
+        inputMode: "decimal",
+        value: v,
+        maxLength: 7,
+        style: { flex: 1 },
+        onChange: (e) => setV(e.target.value.replace(/[^0-9.,]/g, "")),
+      }),
+      React.default.createElement(
+        "button",
+        { className: "btn sm", style: { width: "auto" }, disabled: !ok || occupe, onClick: enregistrer },
+        "Corriger",
+      ),
+    ),
+  );
+}
+
 // Onglet Fidélité.
 function Fidelite({ d: t, set }) {
   let [n, r] = (0, React.useState)("clients"),
@@ -240,14 +292,13 @@ function Fidelite({ d: t, set }) {
                     L.parrain ? " · 🤝 parrainé" + (L.parrainFait ? "" : " (bonus au 1er passage)") : "",
                     df(L).niv ? " · " + df(L).niv.ico + " " + df(L).niv.nom : "",
                     L.bonusAttente > 0
-                      ? " · 🎂 " +
+                      ? " · ⏳ " +
                           L.bonusAttente +
                           " tampon" +
                           (L.bonusAttente > 1 ? "s" : "") +
-                          " offert" +
-                          (L.bonusAttente > 1 ? "s" : "") +
                           " en attente"
                       : "",
+                    Number(L.reste) > 0 ? " · 💶 " + eo(L.reste) + " de côté" : "",
                   ),
                   React.default.createElement(
                     "div",
@@ -391,7 +442,7 @@ function Fidelite({ d: t, set }) {
               React.default.createElement(
                 "div",
                 { style: { flex: 1 } },
-                React.default.createElement("label", { className: "lab" }, "Achat minimum (€)"),
+                React.default.createElement("label", { className: "lab" }, "1 tampon tous les (€)"),
                 React.default.createElement("input", {
                   className: "inp",
                   type: "number",
@@ -861,10 +912,11 @@ function Fidelite({ d: t, set }) {
               "− 1 tampon",
             ),
           ),
+          React.default.createElement(ResteClient, { c: L, key: L.id + "-" + (Number(L.reste) || 0) }),
           React.default.createElement(
             "div",
             { className: "de", style: { marginTop: 10 } },
-            "Les tampons s'ajoutent uniquement avec la Caisse (scan ou recherche du nom). Ici, seulement pour corriger une erreur.",
+            "Les tampons s'ajoutent uniquement avec la Caisse (scan ou recherche du nom, puis montant du ticket). Ici, seulement pour corriger une erreur.",
           ),
           React.default.createElement(
             "button",
