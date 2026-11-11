@@ -12,7 +12,8 @@ const estMenuResa = (r) => /^menu\d{8}$/.test(String(r?.item || ""));
 
 // Crée / met à jour / retire les articles « menu » d'après le menu de la semaine (jours à venir seulement).
 // N'écrit que ce qui a changé ; le compteur de réservations n'est jamais touché.
-async function synchroPlatsMenu(menu, existants) {
+// v2.45e : pas de plat réservable un jour de fermeture exceptionnelle.
+async function synchroPlatsMenu(menu, existants, fermetures) {
   let auj = new Date().toLocaleDateString("sv-SE"),
     voulus = new Map();
   if (menu && menu.actif !== !1 && menu.du && menu.au && Array.isArray(menu.jours)) {
@@ -28,6 +29,7 @@ async function synchroPlatsMenu(menu, existants) {
       d.setDate(d.getDate() + (j.j - jd));
       let date = d.toLocaleDateString("sv-SE");
       if (date < auj || date > menu.au) return;
+      if ((Array.isArray(fermetures) ? fermetures : []).some((f) => f?.du && date >= f.du && date <= (f.au || f.du))) return;
       voulus.set("menu" + date.replace(/-/g, ""), {
         type: "menu",
         active: !1, // caché pour les anciennes versions de l'appli client

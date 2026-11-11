@@ -251,6 +251,22 @@ var IcR = {
     React.default.createElement("circle", { cx: "11.5", cy: "14", r: "1.3", fill: "currentColor" }),
     React.default.createElement("path", { d: "M6 9h7" }),
   ),
+  // v2.45e : producteurs (petite ferme)
+  prod: React.default.createElement(
+    "svg",
+    {
+      width: "24",
+      height: "24",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "1.8",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+    },
+    React.default.createElement("path", { d: "M3 21V10l9-6 9 6v11z" }),
+    React.default.createElement("path", { d: "M9 21v-6h6v6M9 15l6 6M15 15l-6 6" }),
+  ),
 };
 
 // Raccourcis vers les parties de l'accueil.
@@ -365,6 +381,8 @@ function Accueil({
       (P.length || z.length) && { id: "plateau", label: "Plateaux", n: P.length + z.length, go: versCarte },
       j.length && { id: "actus", label: "Actus", n: j.length, go: versActus },
       t.fidActive && { id: "carte", label: "Ma carte", go: versFid },
+      // v2.45e : raccourci vers « Nos producteurs », tout en bas de l'accueil
+      (t.producteurs || []).length && { id: "prod", label: "Producteurs", go: () => aller("sec-prod") },
     ].filter(Boolean);
   return React.default.createElement(
     "div",
@@ -444,6 +462,7 @@ function Accueil({
         menu: t.menu,
         onClose: () => D(!1),
         plats: t.jourMenu,
+        fermetures: t.fermetures,
         onReserver: onReserver && ((v) => (D(!1), onReserver(v))),
       }),
     React.default.createElement(Raccourcis, { liens: y }),

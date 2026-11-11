@@ -127,8 +127,8 @@ function Admin() {
     !t ||
       !o.pret ||
       !o.serveur ||
-      synchroPlatsMenu(r.menu, r.jourMenu || []).catch((A) => console.warn("plats du menu", A));
-  }, [!!t, o.pret, o.serveur, JSON.stringify(r.menu || null), JSON.stringify(r.jourMenu || [])]);
+      synchroPlatsMenu(r.menu, r.jourMenu || [], r.fermetures).catch((A) => console.warn("plats du menu", A));
+  }, [!!t, o.pret, o.serveur, JSON.stringify(r.menu || null), JSON.stringify(r.jourMenu || []), JSON.stringify(r.fermetures || [])]);
   let w =
     t && o.pret
       ? (r.conversations || []).filter((A) => A.attente).length +

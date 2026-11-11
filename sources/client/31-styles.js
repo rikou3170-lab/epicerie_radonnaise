@@ -219,6 +219,7 @@ var Ic2 = {
 .mini .nm{font-weight:700;font-size:12.5px;line-height:1.25;margin-bottom:5px}
 .mn-resa{display:inline-block;margin-top:6px;background:var(--terra,#C27B42);color:#fff;border:none;border-radius:20px;padding:6px 14px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
 .mn-ligne.passe .mn-resa{display:none}
+.mn-ferme{display:inline-block;margin-top:6px;background:rgba(0,0,0,.06);color:#8a6d5a;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700}
 .fo-fond{position:fixed;inset:0;z-index:390;display:flex;align-items:center;justify-content:center;pointer-events:none;background:rgba(14,38,32,.28);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);animation:foDissipe .7s ease 2.1s forwards}
 .fo-mot{font-family:var(--script);color:#fff;font-size:52px;line-height:1.1;padding:0 20px;text-align:center;opacity:0;text-shadow:0 2px 12px rgba(0,0,0,.28);animation:foMot 2.5s ease forwards}
 .fo-fond.calme{animation:foDissipe .3s ease 1.8s forwards}

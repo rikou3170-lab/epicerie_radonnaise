@@ -6,7 +6,8 @@
 // le soient chaque jour même si personne n'ouvre l'admin. Même fonction que dans l'admin (33-reservations.js).
 // Crée / met à jour / retire les articles « menu » d'après le menu de la semaine (jours à venir seulement).
 // N'écrit que ce qui a changé ; le compteur de réservations n'est jamais touché.
-async function synchroPlatsMenu(menu, existants) {
+// v2.45e : pas de plat réservable un jour de fermeture exceptionnelle.
+async function synchroPlatsMenu(menu, existants, fermetures) {
   let auj = new Date().toLocaleDateString("sv-SE"),
     voulus = new Map();
   if (menu && menu.actif !== !1 && menu.du && menu.au && Array.isArray(menu.jours)) {
@@ -22,6 +23,7 @@ async function synchroPlatsMenu(menu, existants) {
       d.setDate(d.getDate() + (j.j - jd));
       let date = d.toLocaleDateString("sv-SE");
       if (date < auj || date > menu.au) return;
+      if ((Array.isArray(fermetures) ? fermetures : []).some((f) => f?.du && date >= f.du && date <= (f.au || f.du))) return;
       voulus.set("menu" + date.replace(/-/g, ""), {
         type: "menu",
         active: !1, // caché pour les anciennes versions de l'appli client
@@ -59,7 +61,7 @@ function usePlatsMenu(actif) {
     let a = onSnapshot(
         CONFIG_REF,
         { includeMetadataChanges: !0 },
-        (x) => x.metadata.fromCache || setMenu(x.exists() ? x.data().menu || null : null),
+        (x) => x.metadata.fromCache || setMenu(x.exists() ? { m: x.data().menu || null, f: x.data().fermetures || [] } : { m: null, f: [] }),
         () => {},
       ),
       b = onSnapshot(
@@ -72,7 +74,7 @@ function usePlatsMenu(actif) {
     };
   }, [actif]);
   (0, React.useEffect)(() => {
-    menu === void 0 || plats === null || synchroPlatsMenu(menu, plats).catch((x) => console.warn("plats du menu", x));
+    menu === void 0 || plats === null || synchroPlatsMenu(menu.m, plats, menu.f).catch((x) => console.warn("plats du menu", x));
   }, [JSON.stringify(menu || null), JSON.stringify(plats)]);
 }
 

@@ -141,7 +141,8 @@ function TuileMenu({ menu, onOuvrir, aujourdhui = gc(new Date()) }) {
 
 // Feuille détaillée du menu de la semaine (tous les jours, prix).
 // v2.44 : « plats » = plats réservables (articles « menu » du jour), « onReserver » ouvre la réservation.
-function FeuilleMenu({ menu, onClose, aujourdhui = gc(new Date()), apercu, plats, onReserver }) {
+// v2.45e : « fermetures » = jours de fermeture exceptionnelle (pas de réservation ces jours-là).
+function FeuilleMenu({ menu, onClose, aujourdhui = gc(new Date()), apercu, plats, onReserver, fermetures }) {
   if (
     ((0, ne.useEffect)(() => {
       if (apercu) return;
@@ -183,8 +184,9 @@ function FeuilleMenu({ menu, onClose, aujourdhui = gc(new Date()), apercu, plats
           .filter((s) => s.plat)
           .map((s) => {
             let l = i >= 0 ? s.j < i : aujourdhui > d2(menu, s.j),
+              fe = !l && (Array.isArray(fermetures) ? fermetures : []).some((f) => f?.du && d2(menu, s.j) >= f.du && d2(menu, s.j) <= (f.au || f.du)),
               // plat réservable : jour pas encore passé et article « menu » publié par l'épicerie
-              rv = !apercu && !l && onReserver ? (plats || []).find((x) => x.id === "menu" + d2(menu, s.j).replace(/-/g, "") && (parseInt(x.stock) || 0) > 0) : null;
+              rv = !apercu && !l && !fe && onReserver ? (plats || []).find((x) => x.id === "menu" + d2(menu, s.j).replace(/-/g, "") && (parseInt(x.stock) || 0) > 0) : null;
             return ne.default.createElement(
               "div",
               { key: s.j, className: "mn-ligne" + (s.j === i ? " auj" : "") + (l ? " passe" : "") },
@@ -200,6 +202,7 @@ function FeuilleMenu({ menu, onClose, aujourdhui = gc(new Date()), apercu, plats
                 ne.default.createElement(m2, { plat: s.plat }),
                 s.j === i && ne.default.createElement("span", { className: "mn-auj" }, "Aujourd'hui"),
                 rv && ne.default.createElement("button", { className: "mn-resa", onClick: () => onReserver(rv) }, "Réserver"),
+                fe && ne.default.createElement("span", { className: "mn-ferme" }, "Épicerie fermée"),
               ),
               s.prix != null && ne.default.createElement("div", { className: "mn-px" }, c2(s.prix)),
             );
