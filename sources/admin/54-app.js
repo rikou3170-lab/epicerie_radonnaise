@@ -199,7 +199,7 @@ function Admin() {
           "small",
           null,
           "Épicerie Raddonnaise ",
-          React.default.createElement("span", { className: "vers" }, "v", versionAffichee(VERSION)),
+          React.default.createElement("span", { className: "vers" }, "v", VERSION),
         ),
       ),
       React.default.createElement(

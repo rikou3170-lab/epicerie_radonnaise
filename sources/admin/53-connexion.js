@@ -59,7 +59,7 @@ function Connexion() {
           "div",
           { style: { fontSize: 12.5, color: "var(--ink3)", marginTop: 6 } },
           "Épicerie Raddonnaise — accès réservé · v",
-          versionAffichee(VERSION),
+          VERSION,
         ),
       ),
       React.default.createElement("label", { className: "lab" }, "E-mail"),
