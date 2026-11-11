@@ -308,6 +308,9 @@ function Raccourcis({ liens }) {
       );
 }
 
+// v2.45g : mémoire des nouveautés déjà vues, par raccourci.
+var VUS_RACC = "epicerie-raddonnaise-raccourcis-vus";
+
 // Fait défiler jusqu'à une partie de la page.
 var aller = (t) =>
   document
@@ -374,6 +377,23 @@ function Accueil({
   let [F, D] = (0, React.useState)(!1),
     // v2.45f : boîte à idées — raccourci tant que le client n'a pas répondu à la question en cours
     [, majIdees] = (0, React.useState)(0),
+    // v2.45g : pastilles des raccourcis — seulement les nouveautés pas encore vues (vues = raccourci touché)
+    [vus, setVus] = (0, React.useState)(() => {
+      try {
+        return JSON.parse(localStorage.getItem(VUS_RACC) || "{}") || {};
+      } catch {
+        return {};
+      }
+    }),
+    nouveaux = (cle, l) => l.filter((x) => !(vus[cle] || []).includes(String(x.id))).length,
+    voir = (cle, l, go) => () => {
+      let v = { ...vus, [cle]: l.map((x) => String(x.id)).slice(-60) };
+      setVus(v);
+      try {
+        localStorage.setItem(VUS_RACC, JSON.stringify(v));
+      } catch {}
+      go?.();
+    },
     sd = t.sondage,
     ideeOuverte =
       !!(sd?.active && sd.id && sd.question) &&
@@ -404,11 +424,16 @@ function Accueil({
         return !!v && v.slice(5) <= "12-24" && v.slice(0, 4) === String(new Date().getFullYear());
       })(),
     y = [
-      A.length && { id: "promo", label: "Promos", n: A.length, chaud: !0, go: () => aller("sec-promos") },
-      S.length && { id: "jour", label: "Du jour", n: S.length, go: () => aller("sec-jour") },
-      ideeOuverte && { id: "idees", label: sd.mode === "libre" ? "Idées" : "Sondage", n: 1, chaud: !0, go: () => aller("sec-idees") },
-      (P.length || z.length) && { id: "plateau", label: "Plateaux", n: P.length + z.length, go: versCarte },
-      j.length && { id: "actus", label: "Actus", n: j.length, go: versActus },
+      A.length && { id: "promo", label: "Promos", n: nouveaux("promo", A), chaud: !0, go: voir("promo", A, () => aller("sec-promos")) },
+      S.length && { id: "jour", label: "Du jour", n: nouveaux("jour", S), go: voir("jour", S, () => aller("sec-jour")) },
+      ideeOuverte && {
+        id: "idees",
+        label: sd.mode === "libre" ? "Idées" : "Sondage",
+        n: nouveaux("idees", [sd]),
+        go: voir("idees", [sd], () => aller("sec-idees")),
+      },
+      (P.length || z.length) && { id: "plateau", label: "Plateaux", n: nouveaux("plateau", [...P, ...z]), go: voir("plateau", [...P, ...z], versCarte) },
+      j.length && { id: "actus", label: "Actus", n: nouveaux("actus", j), go: voir("actus", j, versActus) },
       t.fidActive && { id: "carte", label: "Ma carte", go: versFid },
       // v2.45e : raccourci vers « Nos producteurs », tout en bas de l'accueil
       (t.producteurs || []).length && { id: "prod", label: "Producteurs", go: () => aller("sec-prod") },
