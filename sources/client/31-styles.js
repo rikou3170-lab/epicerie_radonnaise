@@ -497,7 +497,7 @@ var Ic2 = {
 .rc .ic b{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--terra);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg)}
 .rc .lb2{font-size:11px;font-weight:800;color:var(--ink2)}
 .rc:active .ic{transform:scale(.94)}
-.ancre{scroll-margin-top:72px}
+.ancre{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 96px)}
 .voirtout{display:block;width:100%;margin:-6px 0 18px;padding:11px;border:1px dashed var(--line);border-radius:var(--r-s);background:none;font-family:var(--body);font-size:12.5px;font-weight:800;color:var(--forest);cursor:pointer}
 .ch-regle{font-weight:700;text-transform:none}
 .ch-liste{display:flex;flex-direction:column;gap:6px;max-height:42vh;overflow-y:auto;padding:2px}

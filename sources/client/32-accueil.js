@@ -251,6 +251,22 @@ var IcR = {
     React.default.createElement("circle", { cx: "11.5", cy: "14", r: "1.3", fill: "currentColor" }),
     React.default.createElement("path", { d: "M6 9h7" }),
   ),
+  // v2.45f : boîte à idées (ampoule)
+  idees: React.default.createElement(
+    "svg",
+    {
+      width: "24",
+      height: "24",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "1.8",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+    },
+    React.default.createElement("path", { d: "M9 18h6M10 21h4" }),
+    React.default.createElement("path", { d: "M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1.1 2V16h5v-.2c.1-.8.5-1.5 1.1-2A6 6 0 0 0 12 3z" }),
+  ),
   // v2.45e : producteurs (petite ferme)
   prod: React.default.createElement(
     "svg",
@@ -356,6 +372,18 @@ function Accueil({
   notifs,
 }) {
   let [F, D] = (0, React.useState)(!1),
+    // v2.45f : boîte à idées — raccourci tant que le client n'a pas répondu à la question en cours
+    [, majIdees] = (0, React.useState)(0),
+    sd = t.sondage,
+    ideeOuverte =
+      !!(sd?.active && sd.id && sd.question) &&
+      (() => {
+        try {
+          return !JSON.parse(localStorage.getItem(K2) || "[]").includes(sd.id);
+        } catch {
+          return !0;
+        }
+      })(),
     M = mesCmds.filter(
       (v) =>
         v.ref &&
@@ -378,6 +406,7 @@ function Accueil({
     y = [
       A.length && { id: "promo", label: "Promos", n: A.length, chaud: !0, go: () => aller("sec-promos") },
       S.length && { id: "jour", label: "Du jour", n: S.length, go: () => aller("sec-jour") },
+      ideeOuverte && { id: "idees", label: sd.mode === "libre" ? "Idées" : "Sondage", n: 1, chaud: !0, go: () => aller("sec-idees") },
       (P.length || z.length) && { id: "plateau", label: "Plateaux", n: P.length + z.length, go: versCarte },
       j.length && { id: "actus", label: "Actus", n: j.length, go: versActus },
       t.fidActive && { id: "carte", label: "Ma carte", go: versFid },
@@ -624,7 +653,7 @@ function Accueil({
       ),
     React.default.createElement(SectionProducteurs, { liste: t.producteurs || [] }),
     React.default.createElement(RecetteSemaine, { liste: t.recettes || [] }),
-    React.default.createElement(Sondage, { d: t, moi }),
+    React.default.createElement(Sondage, { d: t, moi, onRepondu: () => majIdees((x) => x + 1) }),
   );
 }
 
@@ -958,7 +987,7 @@ function SectionProducteurs({ liste }) {
         React.default.createElement(Deco, { a: "left" }),
         React.default.createElement(
           "h3",
-          { className: "h2", id: "sec-prod" },
+          { className: "h2 ancre", id: "sec-prod" },
           React.default.createElement("i", null),
           "Nos producteurs",
         ),

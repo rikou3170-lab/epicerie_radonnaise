@@ -134,7 +134,7 @@ var K2 = "epicerie-raddonnaise-sondages",
   };
 
 // Sondage / boîte à idées.
-function Sondage({ d: t, moi }) {
+function Sondage({ d: t, moi, onRepondu }) {
   let n = t.sondage,
     [r, i] = (0, React.useState)(() => {
       try {
@@ -164,6 +164,7 @@ function Sondage({ d: t, moi }) {
         try {
           localStorage.setItem(K2, JSON.stringify(D));
         } catch {}
+        onRepondu?.();
       } catch (D) {
         if (D?.code === "permission-denied") {
           let M = [...r, n.id];
@@ -171,6 +172,7 @@ function Sondage({ d: t, moi }) {
           try {
             localStorage.setItem(K2, JSON.stringify(M));
           } catch {}
+          onRepondu?.();
         } else h("Pas de connexion : réessayez dans un instant.");
       }
       u(!1);
@@ -180,7 +182,7 @@ function Sondage({ d: t, moi }) {
     null,
     React.default.createElement(
       "h3",
-      { className: "h2" },
+      { className: "h2 ancre", id: "sec-idees" },
       React.default.createElement("i", null),
       n.mode === "libre" ? "La boîte à idées" : "Votre avis compte",
     ),
