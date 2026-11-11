@@ -4,6 +4,9 @@
 
 var Xn = vn(Pn());
 
+// v2.45h : numéro affiché « 2.45 - G » (le numéro technique reste « 2.45g » pour les mises à jour).
+var versionAffichee = (v) => String(v || "").replace(/^(\d+\.\d+)([a-z])$/i, (m, a, b) => a + " - " + b.toUpperCase());
+
 // Lit le numéro de la version en ligne (version.json), sans passer par le cache.
 async function versionEnLigne() {
   try {
@@ -109,10 +112,10 @@ function BandeauMaj({ dispo }) {
             "b",
             { style: { display: "block", fontSize: 13.5 } },
             "Nouvelle version ",
-            dispo,
+            versionAffichee(dispo),
           ),
           "Vous avez la version ",
-          VERSION,
+          versionAffichee(VERSION),
           ".",
         ),
         Xn.default.createElement(

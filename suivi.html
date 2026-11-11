@@ -106,9 +106,11 @@ const dateDe = (v) => { if (!v) return null; if (typeof v === "number") return i
 
 let periode = "lancement", recherche = "";   // aujourdhui | 7j | lancement
 const D = { stats: [], clients: [], commandes: [], appareils: [], plateaux: {}, offres: {}, producteurs: {}, jour: {}, pret: false, nbClients: null, nbClientsPeriode: null };
+// v2.45h : numéro affiché « 2.45 - G »
+const versionAffichee = (v) => String(v || "").replace(/^(\d+\.\d+)([a-z])$/i, (m, a, b) => a + " - " + b.toUpperCase());
 const T = { version: "?", compte: "", lectures: 0, docs: {}, dernier: null, erreurs: [], connexions: [], debut: Date.now() };
 const hm = (t) => t ? new Date(t).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
-fetch("version.json?t=" + Date.now()).then(r => r.json()).then(v => { T.version = v.version || "?"; const e = document.getElementById("vsuivi"); if (e && v.version) e.textContent = "v" + v.version; rendu(); }).catch(() => { });
+fetch("version.json?t=" + Date.now()).then(r => r.json()).then(v => { T.version = v.version || "?"; const e = document.getElementById("vsuivi"); if (e && v.version) e.textContent = "v" + versionAffichee(v.version); rendu(); }).catch(() => { });
 
 function bornes() {
   const a = auj();
@@ -187,7 +189,7 @@ function tech(b, st) {
   const ligne = (n, v) => `<tr><td>${n}</td><td class="r">${v}</td></tr>`;
   return `<div class="tech"><h2>Données techniques</h2><div class="grid">
     <div class="card"><h3>État</h3><div class="sub">Application et connexion à la base</div><table class="tab">
-      ${ligne("Version (applis et suivi)", "v" + esc(T.version))}
+      ${ligne("Version (applis et suivi)", "v" + esc(versionAffichee(T.version)))}
       ${ligne("Base Firebase", DEMO ? "aperçu" : (T.dernier && maintenant - T.dernier < 5 * 6e4 ? '<span class="ok">en direct</span>' : T.dernier ? "dernière donnée " + hm(T.dernier) : '<span class="ko">pas de données</span>'))}
       ${ligne("Compte connecté", esc(T.compte || "—"))}
       ${ligne("Documents lus (cette page)", T.lectures + ` <span style="font-weight:400;color:var(--ink3)">en ${dureeMin} min</span>`)}

@@ -455,7 +455,7 @@ function App() {
           "small",
           null,
           "Raddon-et-Chapendu ",
-          React.default.createElement("span", { className: "vers" }, "v", VERSION),
+          React.default.createElement("span", { className: "vers" }, "v", versionAffichee(VERSION)),
         ),
       ),
       $r !== null &&

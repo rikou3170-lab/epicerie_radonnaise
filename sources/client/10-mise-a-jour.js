@@ -2,6 +2,9 @@
  *  MISE À JOUR DE L'APPLI — compare la version installée avec version.json et propose de recharger.
  * ═══════════════════════════════════════════════════════════════════════ */
 
+// v2.45h : numéro affiché « 2.45 - G » (le numéro technique reste « 2.45g » pour les mises à jour).
+var versionAffichee = (v) => String(v || "").replace(/^(\d+\.\d+)([a-z])$/i, (m, a, b) => a + " - " + b.toUpperCase());
+
 // Lit le numéro de la version en ligne (version.json), sans passer par le cache.
 async function versionEnLigne() {
   try {
@@ -107,10 +110,10 @@ function BandeauMaj({ dispo }) {
             "b",
             { style: { display: "block", fontSize: 13.5 } },
             "Nouvelle version ",
-            dispo,
+            versionAffichee(dispo),
           ),
           "Vous avez la version ",
-          VERSION,
+          versionAffichee(VERSION),
           ".",
         ),
         $t.default.createElement(
@@ -153,16 +156,16 @@ function BoutonMaj({ className = "btn gh", style }) {
           setEtat("Recherche…");
           let o = await versionEnLigne();
           o && o !== VERSION
-            ? (setEtat("Installation de la version " + o + "…"), Wy())
+            ? (setEtat("Installation de la version " + versionAffichee(o) + "…"), Wy())
             : setEtat(
                 o
-                  ? "Vous avez déjà la dernière version (" + VERSION + ")"
+                  ? "Vous avez déjà la dernière version (" + versionAffichee(VERSION) + ")"
                   : "Impossible de vérifier : pas de connexion internet",
               );
         },
       },
       "Rechercher une mise à jour · v",
-      VERSION,
+      versionAffichee(VERSION),
     ),
     etat &&
       $t.default.createElement(
