@@ -1193,11 +1193,11 @@ function QrCarteClient({ c, onClose }) {
     React.default.createElement(
       "div",
       { className: "de", style: { fontSize: 13, color: "var(--ink2)", lineHeight: 1.5, marginBottom: 12 } },
-      "Le client ouvre l'",
-      React.default.createElement("b", null, "appareil photo"),
-      " de son nouveau téléphone et scanne ce code : l'application s'ouvre et récupère sa carte (même code ",
+      "Sur son nouveau téléphone, le client ouvre ",
+      React.default.createElement("b", null, "l'appli de l'épicerie"),
+      " → Infos → « Changer de téléphone » → « Récupérer depuis mon ancien téléphone » → « 📷 Scanner le QR code », et vise ce code. Il retrouve sa carte (même code ",
       c.code,
-      ", mêmes tampons, même historique). Il touche ensuite « Récupérer ».",
+      ", mêmes tampons, même historique) en touchant « Récupérer ».",
     ),
     React.default.createElement(QrPixels, { texte: z7(c) }),
     React.default.createElement(

@@ -222,6 +222,9 @@ var Ic2 = {
 .evin{display:block;font-size:10.5px;line-height:1.3;color:#7a6a5c;font-style:italic;margin-top:4px}
 .pub .txt .evin{color:rgba(255,255,255,.85)}
 .annonce .evin{color:rgba(255,255,255,.85);font-weight:400;margin-top:5px}
+.scan-tr{position:relative;border-radius:14px;overflow:hidden;background:#13302a;aspect-ratio:4/3;margin:4px 0 10px}
+.scan-tr video{width:100%;height:100%;object-fit:cover;display:block}
+.scan-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;color:#fff;font-size:13.5px;line-height:1.4}
 .mn-allerg{font-size:11.5px;color:#8a6d5a;margin-top:3px;line-height:1.3}
 .resa-legal{font-size:11px;opacity:.85;text-align:center;margin-top:6px}
 .mn-ferme{display:inline-block;margin-top:6px;background:rgba(0,0,0,.06);color:#8a6d5a;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700}

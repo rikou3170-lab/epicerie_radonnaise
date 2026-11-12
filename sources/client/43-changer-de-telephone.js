@@ -97,7 +97,7 @@ function FenetreEnvoi({ onClose }) {
               { className: "tr-txt" },
               "Sur le ",
               React.default.createElement("b", null, "nouveau téléphone"),
-              ", ouvrez l'appareil photo et scannez ce code : votre carte, vos commandes et vos messages seront récupérés.",
+              ", ouvrez l'appli de l'épicerie → onglet Infos → « Changer de téléphone » → « Récupérer depuis mon ancien téléphone » → « 📷 Scanner le QR code », et visez ce code. Votre carte, vos commandes et vos messages seront récupérés.",
             ),
             React.default.createElement(
               "div",
@@ -142,11 +142,98 @@ function FenetreEnvoi({ onClose }) {
   );
 }
 
+// v2.46g : lecteur de QR code dans l'appli (la bibliothèque jsQR n'est chargée qu'au moment du scan).
+var jsqrPromesse = null,
+  chargerJsQR = () =>
+    jsqrPromesse ||
+    (jsqrPromesse = new Promise((ok, ko) => {
+      if (window.jsQR) return ok(window.jsQR);
+      let s = document.createElement("script");
+      (s.src = "jsqr.min.js?v=1"),
+        (s.onload = () => (window.jsQR ? ok(window.jsQR) : ko())),
+        (s.onerror = () => ((jsqrPromesse = null), ko())),
+        document.head.appendChild(s);
+    }));
+function ScanTransfert({ onCode }) {
+  let v = (0, React.useRef)(null),
+    [etat, setEtat] = (0, React.useState)("demarrage"),
+    o = (0, React.useRef)(onCode);
+  return (
+    (o.current = onCode),
+    (0, React.useEffect)(() => {
+      let flux,
+        fini = !1,
+        h,
+        c = document.createElement("canvas"),
+        g = c.getContext("2d", { willReadFrequently: !0 });
+      (async () => {
+        let lire;
+        try {
+          lire = await chargerJsQR();
+        } catch {
+          return setEtat("indispo");
+        }
+        if (!navigator.mediaDevices?.getUserMedia) return setEtat("indispo");
+        try {
+          if (
+            ((flux = await navigator.mediaDevices.getUserMedia({
+              video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 } },
+              audio: !1,
+            })),
+            fini)
+          )
+            return flux.getTracks().forEach((t) => t.stop());
+          (v.current.srcObject = flux), await v.current.play().catch(() => {}), setEtat("actif");
+        } catch (e) {
+          return setEtat(e?.name === "NotAllowedError" ? "refus" : "indispo");
+        }
+        let boucle = () => {
+          if (fini) return;
+          let x = v.current;
+          if (x && x.readyState >= 2 && x.videoWidth) {
+            let H = Math.round((x.videoHeight * 480) / x.videoWidth);
+            (c.width = 480), (c.height = H), g.drawImage(x, 0, 0, 480, H);
+            let r = lire(g.getImageData(0, 0, 480, H).data, 480, H, { inversionAttempts: "dontInvert" });
+            if (r?.data && M9(r.data)) {
+              fini = !0;
+              try {
+                navigator.vibrate?.(80);
+              } catch {}
+              return o.current(r.data);
+            }
+          }
+          h = setTimeout(boucle, 150);
+        };
+        boucle();
+      })();
+      return () => {
+        (fini = !0), clearTimeout(h), flux?.getTracks().forEach((t) => t.stop());
+      };
+    }, []),
+    React.default.createElement(
+      "div",
+      { className: "scan-tr" },
+      React.default.createElement("video", { ref: v, playsInline: !0, muted: !0 }),
+      etat !== "actif" &&
+        React.default.createElement(
+          "div",
+          { className: "scan-msg" },
+          etat === "demarrage"
+            ? "Ouverture de l'appareil photo…"
+            : etat === "refus"
+              ? "L'accès à l'appareil photo a été refusé. Autorisez-le dans les réglages, ou collez le lien ci-dessous."
+              : "Appareil photo indisponible. Collez le lien ci-dessous.",
+        ),
+    )
+  );
+}
+
 // Réception de la carte sur le nouveau téléphone.
 function FenetreReception({ code0, onClose }) {
   let [txt, setTxt] = (0, React.useState)(code0 || ""),
     [etat, setEtat] = (0, React.useState)(""),
     [copie, setCopie] = (0, React.useState)(!1),
+    [scan, setScan] = (0, React.useState)(!1),
     s = M9(txt),
     l = async () => {
       if (s) {
@@ -266,7 +353,26 @@ function FenetreReception({ code0, onClose }) {
               { className: "tr-txt" },
               "Sur l'",
               React.default.createElement("b", null, "ancien téléphone"),
-              " : onglet Infos → « Changer de téléphone » → scannez le code avec l'appareil photo de celui-ci. Ou collez ici le lien que vous vous êtes envoyé :",
+              " : onglet Infos → « Changer de téléphone » → « Transférer ». Puis, ici, scannez le QR code qui s'affiche :",
+            ),
+            // v2.46g : scan du QR directement dans l'appli
+            scan
+              ? React.default.createElement(ScanTransfert, {
+                  onCode: (x) => {
+                    setTxt(x), setScan(!1);
+                  },
+                })
+              : !s &&
+                React.default.createElement(
+                  "button",
+                  { className: "btn", style: { margin: "4px 0 10px" }, onClick: () => setScan(!0) },
+                  "📷 Scanner le QR code",
+                ),
+            s && React.default.createElement("p", { className: "tr-txt", style: { fontWeight: 800 } }, "✓ Code lu : touchez « Récupérer »."),
+            React.default.createElement(
+              "p",
+              { className: "tr-txt", style: { fontSize: 12.5 } },
+              "Ou collez ici le lien que vous vous êtes envoyé :",
             ),
             React.default.createElement("textarea", {
               className: "inp",
