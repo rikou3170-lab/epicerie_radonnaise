@@ -146,6 +146,7 @@ function FenetreEnvoi({ onClose }) {
 function FenetreReception({ code0, onClose }) {
   let [txt, setTxt] = (0, React.useState)(code0 || ""),
     [etat, setEtat] = (0, React.useState)(""),
+    [copie, setCopie] = (0, React.useState)(!1),
     s = M9(txt),
     l = async () => {
       if (s) {
@@ -162,6 +163,64 @@ function FenetreReception({ code0, onClose }) {
         }
       }
     };
+  // v2.46f : sur iPhone/iPad, le QR scanné s'ouvre dans Safari, qui ne partage pas ses données avec
+  // l'appli installée. On ne récupère donc pas la carte ici : on copie le lien pour le coller dans l'appli.
+  if (code0 && s && G9()) {
+    let lien = location.href,
+      copier = async () => {
+        try {
+          await navigator.clipboard.writeText(lien), setCopie(!0);
+        } catch {
+          setCopie("manuel");
+        }
+      };
+    return React.default.createElement(
+      "div",
+      { className: "sheet-fond" },
+      React.default.createElement(
+        "div",
+        { className: "sheet", onClick: (u) => u.stopPropagation() },
+        React.default.createElement("h3", { className: "alerte-t" }, "Ouvrez l'appli de l'épicerie"),
+        React.default.createElement(
+          "p",
+          { className: "tr-txt" },
+          "Ce lien s'est ouvert dans Safari. Pour retrouver votre carte ",
+          React.default.createElement("b", null, "dans l'appli"),
+          " :",
+        ),
+        React.default.createElement(
+          "ol",
+          { className: "tr-txt", style: { paddingLeft: 22, margin: "6px 0 12px", lineHeight: 1.5, textAlign: "left" } },
+          React.default.createElement("li", null, "Touchez « Copier le lien » ci-dessous."),
+          React.default.createElement("li", null, "Ouvrez l'appli de l'épicerie depuis votre écran d'accueil."),
+          React.default.createElement(
+            "li",
+            null,
+            "Onglet Infos → « Changer de téléphone » → « Récupérer depuis mon ancien téléphone » → collez le lien → « Récupérer ».",
+          ),
+        ),
+        React.default.createElement(
+          "button",
+          { className: "btn", onClick: copier },
+          copie === !0 ? "✓ Lien copié" : "Copier le lien",
+        ),
+        copie === "manuel" &&
+          React.default.createElement("textarea", {
+            className: "inp",
+            rows: 3,
+            readOnly: !0,
+            value: lien,
+            style: { marginTop: 8 },
+            onFocus: (u) => u.target.select(),
+          }),
+        React.default.createElement(
+          "p",
+          { className: "tr-txt", style: { fontSize: 12.5, marginTop: 10 } },
+          "Pas encore l'appli ? Installez-la d'abord : bouton Partager de Safari → « Sur l'écran d'accueil », puis faites les étapes 2 et 3.",
+        ),
+      ),
+    );
+  }
   return React.default.createElement(
     "div",
     { className: "sheet-fond", onClick: onClose },
