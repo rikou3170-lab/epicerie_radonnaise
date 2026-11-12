@@ -196,6 +196,94 @@ function SuiviComptes({ d }) {
   const lies = new Set();
   (appareils || []).forEach((a) => (a.refs || []).forEach((r) => lies.add(String(r))));
   const actifs7 = (appareils || []).filter((a) => a.maj && Date.now() - a.maj < 7 * 864e5).length;
+  // v2.46d : fusion de deux cartes en double. On garde la carte reliée au téléphone (📱),
+  // sinon celle qui a le plus de tampons, sinon la plus récente ; l'autre lui donne ses tampons,
+  // sa cagnotte, ses cadeaux et son historique, puis elle est supprimée.
+  const [fusionEnCours, setFusionEnCours] = (0, React.useState)(null);
+  const aGarder = (g) =>
+    [...g].sort(
+      (a, b) =>
+        lies.has(String(b.id)) - lies.has(String(a.id)) ||
+        (Number(b.tampons) || 0) - (Number(a.tampons) || 0) ||
+        dateDe(b).localeCompare(dateDe(a)),
+    )[0];
+  const fusionner = async (g, k) => {
+    const K = aGarder(g),
+      autres = g.filter((c) => c.id !== K.id),
+      deuxTel = autres.some((c) => lies.has(String(c.id))) && lies.has(String(K.id));
+    if (
+      !(await De(
+        "Garder la carte " + K.code + " (" + (K.nom || "—") + ") et y regrouper " +
+          autres.map((c) => c.code + " (" + (Number(c.tampons) || 0) + " tampon(s))").join(", ") +
+          " ? L'autre carte sera supprimée." +
+          (deuxTel
+            ? " Attention : l'autre carte est aussi utilisée sur un téléphone. Le client devra y récupérer sa carte avec le QR code (Fidélité → sa fiche → Réinstaller)."
+            : !lies.has(String(K.id))
+              ? " Aucune de ces cartes n'est reliée à un téléphone avec alertes : en cas de doute, demandez au client de vous montrer la carte qu'il utilise."
+              : ""),
+      ))
+    )
+      return;
+    setFusionEnCours(k);
+    try {
+      const cfg = { ...it, ...(d.fidelite?.tampons || {}) },
+        nb = Number(cfg.nb) || it.nb;
+      let tamponsK = Number(K.tampons) || 0,
+        reste = Number(K.reste) || 0,
+        b = writeBatch(db),
+        maj = { derniere: new Date().toLocaleDateString("sv-SE") },
+        ajout = 0,
+        attente = 0,
+        cadeaux = 0,
+        points = 0;
+      for (const S of autres) {
+        // tampons et euros gardés de l'autre carte (1 tampon par tranche, comme à la caisse)
+        const tranche = cfg.seuil > 0 ? cfg.seuil : 10,
+          cents = Math.round((reste + (Number(S.reste) || 0)) * 100),
+          enPlus = Math.floor(cents / Math.round(tranche * 100));
+        reste = (cents - enPlus * Math.round(tranche * 100)) / 100;
+        const tot = (Number(S.tampons) || 0) + enPlus,
+          dir = Math.min(tot, Math.max(0, nb - tamponsK - ajout));
+        ajout += dir;
+        attente += tot - dir + (Number(S.bonusAttente) || 0);
+        cadeaux += Number(S.cadeaux) || 0;
+        points += Number(S.points) || 0;
+        // informations manquantes sur la carte gardée
+        ["email", "tel", "anniv", "prenom", "nomFamille", "parrain"].forEach(
+          (f) => !K[f] && S[f] && !(f in maj) && (maj[f] = S[f]),
+        );
+        // historique de l'autre carte recopié, puis supprimé avec elle
+        const hist = await getDocs(collection(db, "clients", String(S.id), "historique"));
+        hist.forEach((x) => {
+          b.set(doc2(collection(db, "clients", String(K.id), "historique")), { ...x.data(), fusionDe: S.code });
+          b.delete(x.ref);
+        });
+        b.set(doc2(collection(db, "clients", String(K.id), "historique")), {
+          date: Date.now(),
+          points: dir,
+          type: "reprise",
+          motif: "fusion de la carte " + S.code,
+          reste,
+          ...(tot - dir ? { attente: tot - dir } : {}),
+          source: "admin",
+        });
+        b.delete(doc2(db, "clients", String(S.id)));
+      }
+      b.update(doc2(db, "clients", String(K.id)), {
+        ...maj,
+        reste,
+        ...(ajout ? { tampons: increment(ajout) } : {}),
+        ...(attente ? { bonusAttente: increment(attente) } : {}),
+        ...(cadeaux ? { cadeaux: increment(cadeaux) } : {}),
+        ...(points ? { points: increment(points) } : {}),
+      });
+      await b.commit();
+      ft("Cartes regroupées sur " + K.code + " ✓");
+    } catch {
+      ft("Fusion impossible : vérifiez la connexion et réessayez.");
+    }
+    setFusionEnCours(null);
+  };
   // doublons probables : même téléphone ou même e-mail
   const groupes = (() => {
     const parent = clients.map((_, i) => i),
@@ -284,7 +372,7 @@ function SuiviComptes({ d }) {
           h(
             "div",
             { className: "de", style: { marginBottom: 6 } },
-            "Même téléphone ou même e-mail. Gardez la carte que le client utilise (demandez-lui son QR code) et supprimez l'autre dans « Fidélité ». 📱 = carte reliée à son téléphone.",
+            "Même téléphone ou même e-mail. « Fusionner » garde la carte reliée au téléphone du client (📱) et y ajoute les tampons, la cagnotte et l'historique de l'autre, puis supprime l'autre.",
           ),
           groupes.map((g, k) =>
             h(
@@ -298,6 +386,17 @@ function SuiviComptes({ d }) {
                   lies.has(String(c.id)) ? " 📱" : "",
                   h("span", { style: { color: "var(--ink3)" } }, " · ", c.code, " · créée ", court(dateDe(c)).toLowerCase(), " · ", c.tampons || 0, " tampon(s)"),
                 ),
+              ),
+              // v2.46d : regrouper les deux cartes en une seule
+              h(
+                "button",
+                {
+                  className: "btn gh",
+                  style: { marginTop: 6, padding: "7px 12px", fontSize: 13, width: "auto" },
+                  disabled: fusionEnCours !== null,
+                  onClick: () => fusionner(g, k),
+                },
+                fusionEnCours === k ? "Fusion…" : "Fusionner (garder " + aGarder(g).code + ")",
               ),
             ),
           ),
