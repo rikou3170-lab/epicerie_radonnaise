@@ -110,9 +110,9 @@ function PageLegale({ type, d, onClose }) {
             React.default.createElement(
               "p",
               null,
-              "Application : GitHub Pages — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.",
+              "Application : GitHub Pages — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis — Tél. +1 877 448 4820.",
               React.default.createElement("br", null),
-              "Données : Firebase — Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlande.",
+              "Données : Firebase — Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlande — Tél. +353 1 543 1000.",
             ),
             React.default.createElement(s, null, "Réclamations et médiation"),
             React.default.createElement(
@@ -370,7 +370,7 @@ function PageLegale({ type, d, onClose }) {
               "L'administration est protégée par mot de passe. Votre fiche n'est consultable qu'avec l'identifiant secret enregistré sur votre téléphone : personne ne peut parcourir la liste des clients depuis l'application.",
             ),
           ),
-      React.default.createElement("p", { className: "maj-legal" }, "Dernière mise à jour : octobre 2026"),
+      React.default.createElement("p", { className: "maj-legal" }, "Dernière mise à jour : novembre 2026"),
     ),
   );
 }
