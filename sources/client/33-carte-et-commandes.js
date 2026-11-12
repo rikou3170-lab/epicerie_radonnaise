@@ -375,6 +375,8 @@ function Carte({ d: t, panier, choisir, mesCmds, recommander, oublier }) {
                     { className: "b" },
                     React.default.createElement("h3", null, m.titre),
                     m.desc && React.default.createElement("p", null, m.desc),
+                    // v2.46a : loi Évin
+                    besoinEvin(m.titre, m.desc) && React.default.createElement("div", { className: "evin" }, MENTION_ALCOOL),
                     React.default.createElement(
                       "div",
                       { className: "foot" },

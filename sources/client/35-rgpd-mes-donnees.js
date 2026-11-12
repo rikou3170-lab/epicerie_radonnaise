@@ -13,6 +13,8 @@ var MENTION_ALCOOL = "L'abus d'alcool est dangereux pour la santé, à consommer
     t = t.replace(/vinaigres? (de |d')?[a-zà-ÿ]+/g, "").replace(/(au|aux|à la|a la) (vins?|rhum|kirsch|cidre|bi[eè]re|porto|cognac|calvados|champagne|whisky|liqueur)/g, "");
     return /(^|[^a-zà-ÿ])(vins?|bi[eè]res?|cidres?|poir[ée]|kirsch|eaux?[- ]de[- ]vie|liqueurs?|cr[ée]mant|champagnes?|whiskys?|whiskies|rhums?|vodka|gin|pastis|spiritueux|beaujolais|ratafia|calvados|cognac|armagnac|porto|alcools?|absinthe|digestifs?)([^a-zà-ÿ]|$)/.test(t);
   },
+  // Loi Évin : faut-il ajouter le message sanitaire ? (pas si Marion l'a déjà écrit)
+  besoinEvin = (...txt) => estAlcool(...txt) && !/dangereux pour la sant/i.test(txt.filter(Boolean).join(" ")),
   // Texte court sur les allergènes, avec le téléphone de l'épicerie.
   // annul : réservation (plats du jour, produits du jour) — annulation sans frais au retrait en cas d'allergie.
   mentionAllergenes = (d, annul) =>

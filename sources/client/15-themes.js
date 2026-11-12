@@ -1383,6 +1383,8 @@ function CarteTheme({ theme }) {
           { className: "ct-txt" },
           I.default.createElement("div", { className: "ct-titre", style: { color: theme.top } }, theme.titre),
           I.default.createElement("div", { className: "ct-msg" }, theme.message),
+          // v2.46a : loi Évin (thème Beaujolais, ou message personnalisé par Marion)
+          besoinEvin(theme.titre, theme.message) && I.default.createElement("div", { className: "evin" }, MENTION_ALCOOL),
           theme.magie &&
             theme.id === "noel" &&
             FI() &&

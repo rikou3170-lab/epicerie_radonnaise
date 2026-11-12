@@ -57,7 +57,7 @@ function Bannieres({ pubs, versCarte, tel }) {
               d.titre && React.default.createElement("div", { className: "t" }, d.titre),
               d.texte && React.default.createElement("div", { className: "s" }, d.texte),
               // v2.46 : loi Évin
-              estAlcool(d.titre, d.texte) && React.default.createElement("div", { className: "evin" }, MENTION_ALCOOL),
+              besoinEvin(d.titre, d.texte) && React.default.createElement("div", { className: "evin" }, MENTION_ALCOOL),
               d.action === "carte" &&
                 React.default.createElement("span", { className: "go" }, "Voir la carte →"),
               d.action === "appeler" &&
@@ -97,7 +97,7 @@ function ListeJour({ items, maj, onReserver }) {
           React.default.createElement("div", { className: "nm" }, r.titre),
           r.note && React.default.createElement("div", { className: "no" }, r.note),
           // v2.46 : loi Évin
-          estAlcool(r.titre, r.note) && React.default.createElement("div", { className: "evin" }, MENTION_ALCOOL),
+          besoinEvin(r.titre, r.note) && React.default.createElement("div", { className: "evin" }, MENTION_ALCOOL),
           r.fin &&
             React.default.createElement(
               "div",
@@ -169,6 +169,8 @@ function CarteActu({ a }) {
           a.date,
         ),
       React.default.createElement("p", null, a.texte),
+      // v2.46a : loi Évin
+      besoinEvin(a.titre, a.texte) && React.default.createElement("div", { className: "evin" }, MENTION_ALCOOL),
     ),
   );
 }
@@ -512,6 +514,8 @@ function Accueil({
         "div",
         { className: "annonce " + (t.annonce.couleur || "apple") },
         t.annonce.text,
+        // v2.46a : loi Évin
+        besoinEvin(t.annonce.text) && React.default.createElement("span", { className: "evin" }, MENTION_ALCOOL),
       ),
     React.default.createElement(BandeauNotifications, { n: notifs, inst }),
     React.default.createElement(TuileMenu, { menu: t.menu, onOuvrir: () => D(!0) }),
@@ -995,6 +999,8 @@ function PopupMessage({ d }) {
         : React.default.createElement("div", { className: "pop-em" }, e.emoji),
       e.titre && React.default.createElement("div", { className: "pop-t" }, e.titre),
       e.texte && React.default.createElement("div", { className: "pop-x" }, e.texte),
+      // v2.46a : loi Évin
+      besoinEvin(e.titre, e.texte) && React.default.createElement("div", { className: "evin" }, MENTION_ALCOOL),
       React.default.createElement(
         "button",
         { className: "btn", style: { marginTop: 14 }, onClick: o },
@@ -1051,7 +1057,7 @@ function SectionProducteurs({ liste }) {
               r.lieu &&
                 React.default.createElement("span", { className: "prod-l" }, Ic2.pin(12, "#93A099"), r.lieu),
               // v2.46 : loi Évin
-              estAlcool(r.metier, r.produits) && React.default.createElement("span", { className: "evin" }, MENTION_ALCOOL),
+              besoinEvin(r.metier, r.produits) && React.default.createElement("span", { className: "evin" }, MENTION_ALCOOL),
             ),
           ),
         ),
@@ -1112,7 +1118,7 @@ function SectionProducteurs({ liste }) {
                   e.produits,
                 ),
               // v2.46 : loi Évin
-              estAlcool(e.metier, e.produits, e.texte) &&
+              besoinEvin(e.metier, e.produits, e.texte) &&
                 React.default.createElement("div", { className: "evin", style: { marginTop: 10 } }, MENTION_ALCOOL),
               /^https?:\/\//.test(e.lien || "") &&
                 React.default.createElement(

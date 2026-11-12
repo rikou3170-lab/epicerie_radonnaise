@@ -39,7 +39,7 @@ var MENTION_ALCOOL = "L'abus d'alcool est dangereux pour la santé, à consommer
   },
   // Texte final (160 caractères au plus) : la mention sanitaire est ajoutée si le message parle d'alcool.
   texteAvecEvin = (titre, texte) =>
-    estAlcool(titre, texte)
+    estAlcool(titre, texte) && !/dangereux pour la sant/i.test(titre + " " + texte)
       ? texte.slice(0, 160 - MENTION_ALCOOL.length - 1).trim() + " " + MENTION_ALCOOL
       : texte;
 
