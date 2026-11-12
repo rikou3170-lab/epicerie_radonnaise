@@ -146,9 +146,7 @@ function texteGaspi(t, e) {
           : "🏷\uFE0F Promo : ") + t.titre,
     i =
       t.prix !== "" && t.prix != null
-        ? n(t.prix) +
-          (t.unite ? " / " + t.unite : "") +
-          (t.ancienPrix ? " au lieu de " + n(t.ancienPrix) : "")
+        ? n(t.prix) + (t.unite ? " / " + t.unite : "")
         : "",
     s = (parseInt(t.stock) || 0) > 0 ? "Réservation possible dans l'appli !" : "À découvrir à l'épicerie.";
   return { titre: r, texte: [i, t.note, s].filter(Boolean).join(" — ") };

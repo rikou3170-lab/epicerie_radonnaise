@@ -308,7 +308,7 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
                   "span",
                   null,
                   A > 0 ? ze(A) + (t.unite ? " / " + t.unite : "") : "",
-                  t.ancienPrix && Number(t.ancienPrix) > A ? " au lieu de " + ze(t.ancienPrix) : "",
+                  "",
                 ),
               ),
             ),

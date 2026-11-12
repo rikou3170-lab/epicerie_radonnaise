@@ -40,7 +40,6 @@ function Jour({ d: t, set }) {
     [i, s] = (0, React.useState)(""),
     [o, a] = (0, React.useState)(""),
     [u, d] = (0, React.useState)("frais"),
-    [h, p] = (0, React.useState)(""),
     [m, w] = (0, React.useState)({ debut: "", fin: "" }),
     [E, A] = (0, React.useState)(!1),
     [S, _] = (0, React.useState)(null),
@@ -63,7 +62,7 @@ function Jour({ d: t, set }) {
             note: "",
             photo: "",
             active: !0,
-            ancienPrix: x(u) ? h : "",
+            ancienPrix: "",
             debut: m.debut,
             fin: m.fin,
             ...I,
@@ -74,13 +73,12 @@ function Jour({ d: t, set }) {
         r(""),
         s(""),
         a(""),
-        p(""),
         w({ debut: "", fin: "" }),
         A(!1),
         T({ stock: 0, retrait: "" }));
     },
     P = () => {
-      S.titre?.trim() && (C((k) => k.map(($) => ($.id === S.id ? iN(S) : $))), _(null));
+      S.titre?.trim() && (C((k) => k.map(($) => ($.id === S.id ? iN({ ...S, ancienPrix: "" }) : $))), _(null));
     };
   return React.default.createElement(
     "div",
@@ -152,21 +150,7 @@ function Jour({ d: t, set }) {
           ),
         ),
       ),
-      x(u) &&
-        React.default.createElement(
-          "div",
-          { style: { marginTop: 9 } },
-          React.default.createElement("label", { className: "lab" }, "Prix avant (barré)"),
-          React.default.createElement("input", {
-            className: "inp",
-            type: "number",
-            inputMode: "decimal",
-            step: "0.01",
-            value: h,
-            onChange: (k) => p(k.target.value),
-            placeholder: "Facultatif",
-          }),
-        ),
+      // v2.46i : plus de prix barré (l'épicerie n'en pratique pas)
       x(u) && React.default.createElement(ChampsResa, { v: { ...I, unite: o }, onChange: ({ unite: _u, ...k }) => T(k) }),
       u === "panier" &&
         !n &&
@@ -238,20 +222,6 @@ function Jour({ d: t, set }) {
                 k.prix !== "" && k.prix != null
                   ? " · " + Number(k.prix).toFixed(2) + " €" + (k.unite ? " / " + k.unite : "")
                   : "",
-                !!k.ancienPrix &&
-                  React.default.createElement(
-                    "span",
-                    {
-                      style: {
-                        textDecoration: "line-through",
-                        color: "var(--ink3)",
-                        fontWeight: 600,
-                        marginLeft: 6,
-                      },
-                    },
-                    Number(k.ancienPrix).toFixed(2),
-                    " €",
-                  ),
               ),
               k.note && React.default.createElement("div", { className: "de" }, k.note),
               (parseInt(k.stock) || 0) > 0 &&
@@ -385,31 +355,6 @@ function Jour({ d: t, set }) {
             ),
         ),
         React.default.createElement(ChoixVente, { unite: S.unite, onChange: (u) => _({ ...S, unite: u }) }),
-        React.default.createElement(
-          "div",
-          { style: { display: "flex", gap: 10 } },
-          React.default.createElement(
-            "div",
-            { style: { flex: 1 } },
-            React.default.createElement("label", { className: "lab" }, "Prix avant (barré)"),
-            React.default.createElement("input", {
-              className: "inp",
-              type: "number",
-              inputMode: "decimal",
-              step: "0.01",
-              value: S.ancienPrix || "",
-              onChange: (k) => _({ ...S, ancienPrix: k.target.value }),
-              placeholder: "Facultatif",
-            }),
-          ),
-        ),
-        // v2.46 : règle du prix de référence (code de la consommation, art. L112-1-1)
-        !!S.ancienPrix &&
-          React.default.createElement(
-            "div",
-            { className: "de", style: { margin: "2px 2px 8px" } },
-            "Rappel légal : le prix barré doit être le prix le plus bas pratiqué pendant les 30 derniers jours (sauf produits frais qui vont vite se périmer : dates courtes, anti-gaspi).",
-          ),
         React.default.createElement(Periode, { v: S, onChange: _ }),
         x(S.type) && React.default.createElement(ChampsResa, { v: S, onChange: _ }),
         React.default.createElement("label", { className: "lab" }, "Catégorie"),

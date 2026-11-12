@@ -134,14 +134,7 @@ function ListeJour({ items, maj, onReserver }) {
           React.default.createElement(
             "div",
             { className: "px" },
-            !!r.ancienPrix &&
-              Number(r.ancienPrix) > Number(r.prix) &&
-              React.default.createElement(
-                "span",
-                { className: "old" },
-                Number(r.ancienPrix).toFixed(2),
-                " €",
-              ),
+            // v2.46i : prix barrés retirés (l'épicerie n'en pratique pas)
             Number(r.prix).toFixed(2),
             " €",
             r.unite && React.default.createElement("span", { className: "un" }, "/ ", r.unite),
