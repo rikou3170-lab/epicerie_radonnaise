@@ -317,7 +317,7 @@ function PageLegale({ type, d, onClose }) {
               React.default.createElement("b", null, r.conservation || 3, " ans"),
               " est supprimée avec son historique. Vous pouvez aussi demander sa suppression à tout moment. Les commandes sont conservées ",
               React.default.createElement("b", null, "1 an"),
-              " après la date de retrait ou de livraison, puis supprimées.",
+              " après la date de retrait ou de livraison, puis supprimées ; les réservations aussi, 1 an après leur date.",
             ),
             React.default.createElement(s, null, "Sur votre téléphone"),
             React.default.createElement(

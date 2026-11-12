@@ -246,7 +246,9 @@ function ListeCommandes({ d: t, set }) {
       let E = new Date();
       return E.setFullYear(E.getFullYear() - 1), E.toLocaleDateString("sv-SE");
     })(),
-    w = t.commandes.filter((E) => !enCoursCmd(E) && (er(E) || "") < m);
+    w = t.commandes.filter((E) => !enCoursCmd(E) && (er(E) || "") < m),
+    // v2.46b : réservations de plus d'un an (RGPD), supprimées avec le même bouton
+    vieillesResas = (t.resas || []).filter((E) => (Number(E.cree) || 0) < Date.now() - 365 * 864e5);
   return React.default.createElement(
     React.default.Fragment,
     null,
@@ -510,25 +512,37 @@ Elle disparaîtra aussi de l'appli du client.`,
         },
       }),
     n === "terminees" &&
-      !!w.length &&
+      !!(w.length + vieillesResas.length) &&
       React.default.createElement(
         "button",
         {
           className: "btn gh",
           style: { marginTop: 10, color: "var(--red)" },
-          onClick: async () =>
-            (await De("Supprimer les " + w.length + " commande(s) terminée(s) depuis plus d'un an ?")) &&
-            set("commandes", (E) => E.filter((A) => !w.some((S) => S.id === A.id))),
+          onClick: async () => {
+            if (
+              !(await De(
+                "Supprimer les " +
+                  w.length +
+                  " commande(s) et " +
+                  vieillesResas.length +
+                  " réservation(s) de plus d'un an ?",
+              ))
+            )
+              return;
+            w.length && (await set("commandes", (E) => E.filter((A) => !w.some((S) => S.id === A.id))));
+            vieillesResas.length &&
+              (await set("resas", (E) => E.filter((A) => !vieillesResas.some((S) => S.id === A.id))));
+          },
         },
-        "Supprimer les commandes de plus d'un an (",
-        w.length,
+        "Supprimer les commandes et réservations de plus d'un an (",
+        w.length + vieillesResas.length,
         ")",
       ),
     n === "terminees" &&
       React.default.createElement(
         "div",
         { className: "de", style: { marginTop: 8 } },
-        "Données personnelles (RGPD) : les commandes sont gardées 1 an après leur date, puis à supprimer avec ce bouton.",
+        "Données personnelles (RGPD) : les commandes et les réservations sont gardées 1 an, puis à supprimer avec ce bouton.",
       ),
   );
 }
