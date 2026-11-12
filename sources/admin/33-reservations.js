@@ -41,6 +41,7 @@ async function synchroPlatsMenu(menu, existants, fermetures) {
           .replace(/ 1 /, " 1er ")
           .slice(0, 60),
         date,
+        allerg: String(j.allerg || "").slice(0, 120), // v2.46 : allergènes du plat
       });
     });
   }

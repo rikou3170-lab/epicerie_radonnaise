@@ -184,7 +184,7 @@ var Z_ = (t) => {
       id: "beaujolais",
       nom: "Beaujolais nouveau",
       titre: "Le Beaujolais nouveau est arrivé !",
-      message: "Avec un plateau charcuterie, c'est encore meilleur. À consommer avec modération.",
+      message: "Avec un plateau charcuterie, c'est encore meilleur. L'abus d'alcool est dangereux pour la santé, à consommer avec modération.",
       top: "#6B1F3A",
       accent: "#9C3D6A",
       soft: "#F6E8EE",

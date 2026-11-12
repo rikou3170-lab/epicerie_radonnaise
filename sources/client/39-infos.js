@@ -176,6 +176,7 @@ function Infos({ d, inst, ouvrirLegal, pr: r = {}, setPrenom, notifs }) {
         "Confidentialité & données personnelles",
       ),
       React.default.createElement("button", { onClick: () => ouvrirLegal("mentions") }, "Mentions légales"),
+      React.default.createElement("button", { onClick: () => ouvrirLegal("conditions") }, "Conditions de commande"),
     ),
     React.default.createElement(BoutonMaj, { style: { marginTop: 18 } }),
     d.store.facebook &&

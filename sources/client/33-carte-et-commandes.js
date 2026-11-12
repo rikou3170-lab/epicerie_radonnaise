@@ -1133,7 +1133,16 @@ function Commande({ d: t, moi, lignes, modifier, vider, onClose, ouvrirLegal, on
             mode === "livraison" ? "à la livraison" : "au retrait à l'épicerie",
             ", aucun paiement en ligne. Produits frais préparés sur commande : pas de droit de rétractation. Pour annuler ou modifier",
             t.store.phone ? ", appelez le " + t.store.phone : ", contactez l'épicerie",
-            " au moins 48 h avant.",
+            " au moins 48 h avant. ",
+            // v2.46 : allergènes, alcool et conditions de commande
+            mentionAllergenes(t),
+            lignes.some((l) => estAlcool(l.nom, ...(l.choix || []))) && " " + MENTION_MINEURS + " " + MENTION_ALCOOL,
+            " ",
+            React.default.createElement(
+              "button",
+              { type: "button", className: "lien", onClick: () => ouvrirLegal("conditions") },
+              "Conditions de commande",
+            ),
           ),
         ),
       );

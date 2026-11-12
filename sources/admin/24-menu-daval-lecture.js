@@ -137,6 +137,7 @@ function EditeurMenuDaval({ d: t, set }) {
             _.prix === "" || _.prix == null || isNaN(Number(String(_.prix).replace(",", ".")))
               ? null
               : Math.round(Number(String(_.prix).replace(",", ".")) * 100) / 100,
+          allerg: String(_.allerg || "").trim().slice(0, 120),
         }))
         .filter((_) => _.plat);
       return {
@@ -369,6 +370,13 @@ function EditeurMenuDaval({ d: t, set }) {
               }),
               ReactC.default.createElement("span", null, "€"),
             ),
+            // v2.46 : allergènes du plat (information obligatoire avant la réservation)
+            ReactC.default.createElement("input", {
+              className: "inp mna-allerg",
+              value: S.allerg || "",
+              placeholder: "Allergènes (ex. gluten, lait, œuf)",
+              onChange: (_) => m(S.j, { allerg: _.target.value }),
+            }),
           ),
         ),
         !r.jours.some((S) => S.j === 6) &&
@@ -433,6 +441,7 @@ var CSS_MENU = `
 .mna-barre i{display:block;height:100%;background:var(--apple);transition:width .3s}
 .mna-photo{display:block;width:100%;max-height:220px;object-fit:contain;border-radius:10px;border:1px solid var(--line);margin:10px 0 4px;background:#fff}
 .mna-jour{display:grid;grid-template-columns:1fr 84px;gap:6px 8px;margin-top:12px}
+.mna-allerg{grid-column:1/-1;font-size:13px!important;padding:8px 10px!important}
 .mna-jt{grid-column:1/-1;font-weight:800;font-size:12.5px;color:var(--forest);text-transform:uppercase;letter-spacing:.05em}
 .mna-av{margin-left:8px;font-size:10px;color:#B86A00;background:#FFF1D6;padding:2px 7px;border-radius:8px;text-transform:none;letter-spacing:0}
 .mna-px{display:flex;align-items:center;gap:4px}

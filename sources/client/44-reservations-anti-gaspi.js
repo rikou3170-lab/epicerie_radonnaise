@@ -450,6 +450,14 @@ function Reserver({ i: t, d: e, prenom, moi, onClose, onFait, inst }) {
                       ? "Paiement sur place. L'épicerie vous confirme la réservation par message dans l'appli."
                       : "Paiement sur place. Pas venu à temps ? L'article est remis en vente.",
                   ),
+                  // v2.46 : allergènes (plat du jour) et mentions alcool
+                  React.default.createElement(
+                    "p",
+                    { className: "cal-info resa-legal" },
+                    menu && t.allerg ? "Allergènes : " + t.allerg + ". " : "",
+                    mentionAllergenes(e, !0),
+                    estAlcool(t.titre, t.desc, t.note) ? " " + MENTION_MINEURS + " " + MENTION_ALCOOL : "",
+                  ),
                 )
               : React.default.createElement(
                   "p",

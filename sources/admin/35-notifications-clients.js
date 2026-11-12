@@ -28,6 +28,21 @@ function gN(t) {
   );
 }
 
+// v2.46 : loi Évin — toute publicité pour un alcool porte le message sanitaire.
+var MENTION_ALCOOL = "L'abus d'alcool est dangereux pour la santé, à consommer avec modération.",
+  estAlcool = (...txt) => {
+    let t = txt.filter(Boolean).join(" ").toLowerCase();
+    if (/sans alcool|0[,.]0 ?%/.test(t)) return !1;
+    // ingrédient de cuisine (« baba au rhum », « coq au vin », « vinaigre de cidre ») : ce n'est pas une boisson
+    t = t.replace(/vinaigres? (de |d')?[a-zà-ÿ]+/g, "").replace(/(au|aux|à la|a la) (vins?|rhum|kirsch|cidre|bi[eè]re|porto|cognac|calvados|champagne|whisky|liqueur)/g, "");
+    return /(^|[^a-zà-ÿ])(vins?|bi[eè]res?|cidres?|poir[ée]|kirsch|eaux?[- ]de[- ]vie|liqueurs?|cr[ée]mant|champagnes?|whiskys?|whiskies|rhums?|vodka|gin|pastis|spiritueux|beaujolais|ratafia|calvados|cognac|armagnac|porto|alcools?|absinthe|digestifs?)([^a-zà-ÿ]|$)/.test(t);
+  },
+  // Texte final (160 caractères au plus) : la mention sanitaire est ajoutée si le message parle d'alcool.
+  texteAvecEvin = (titre, texte) =>
+    estAlcool(titre, texte)
+      ? texte.slice(0, 160 - MENTION_ALCOOL.length - 1).trim() + " " + MENTION_ALCOOL
+      : texte;
+
 // Rédiger et envoyer une notification à tous les téléphones abonnés.
 function EnvoiNotification({ d: t, abonnes, titre0 = "", texte0 = "", onFini, onAnnuler }) {
   let [o, a] = (0, React.useState)(titre0.slice(0, 50)),
@@ -35,7 +50,7 @@ function EnvoiNotification({ d: t, abonnes, titre0 = "", texte0 = "", onFini, on
     [h, p] = (0, React.useState)(!1),
     m = async () => {
       let w = o.trim(),
-        E = u.trim();
+        E = texteAvecEvin(w, u.trim());
       if (
         !(!w || !E || h) &&
         (await De(
@@ -84,8 +99,15 @@ function EnvoiNotification({ d: t, abonnes, titre0 = "", texte0 = "", onFini, on
     React.default.createElement(
       "div",
       { className: "de", style: { margin: "4px 2px 8px" } },
-      160 - u.length,
-      " caractères restants. Envoyé seulement aux ",
+      estAlcool(o, u) ? 160 - MENTION_ALCOOL.length - 1 - u.length : 160 - u.length,
+      " caractères restants. ",
+      estAlcool(o, u) &&
+        React.default.createElement(
+          "b",
+          { style: { color: "#B4532A" } },
+          "Alcool : la mention « L'abus d'alcool est dangereux pour la santé… » sera ajoutée automatiquement (obligatoire). ",
+        ),
+      "Envoyé seulement aux ",
       abonnes,
       " client(s) qui ont accepté les bons plans.",
       " ",

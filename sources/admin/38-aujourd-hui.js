@@ -403,6 +403,13 @@ function Jour({ d: t, set }) {
             }),
           ),
         ),
+        // v2.46 : règle du prix de référence (code de la consommation, art. L112-1-1)
+        !!S.ancienPrix &&
+          React.default.createElement(
+            "div",
+            { className: "de", style: { margin: "2px 2px 8px" } },
+            "Rappel légal : le prix barré doit être le prix le plus bas pratiqué pendant les 30 derniers jours (sauf produits frais qui vont vite se périmer : dates courtes, anti-gaspi).",
+          ),
         React.default.createElement(Periode, { v: S, onChange: _ }),
         x(S.type) && React.default.createElement(ChampsResa, { v: S, onChange: _ }),
         React.default.createElement("label", { className: "lab" }, "Catégorie"),

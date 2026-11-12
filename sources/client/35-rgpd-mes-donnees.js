@@ -2,7 +2,26 @@
  *  RGPD : MENTIONS LÉGALES, CONFIDENTIALITÉ, MES DONNÉES — pages légales, participation à la roue, « Mes données ».
  * ═══════════════════════════════════════════════════════════════════════ */
 
-// Pages légales : mentions légales et politique de confidentialité.
+// v2.46 : obligations légales communes (loi Évin, allergènes, mineurs).
+var MENTION_ALCOOL = "L'abus d'alcool est dangereux pour la santé, à consommer avec modération.",
+  MENTION_MINEURS = "La vente d'alcool aux mineurs est interdite : une pièce d'identité peut être demandée au retrait.",
+  // Reconnaît un produit alcoolisé d'après son nom ou sa description (« sans alcool » exclu).
+  estAlcool = (...txt) => {
+    let t = txt.filter(Boolean).join(" ").toLowerCase();
+    if (/sans alcool|0[,.]0 ?%/.test(t)) return !1;
+    // ingrédient de cuisine (« baba au rhum », « coq au vin », « vinaigre de cidre ») : ce n'est pas une boisson
+    t = t.replace(/vinaigres? (de |d')?[a-zà-ÿ]+/g, "").replace(/(au|aux|à la|a la) (vins?|rhum|kirsch|cidre|bi[eè]re|porto|cognac|calvados|champagne|whisky|liqueur)/g, "");
+    return /(^|[^a-zà-ÿ])(vins?|bi[eè]res?|cidres?|poir[ée]|kirsch|eaux?[- ]de[- ]vie|liqueurs?|cr[ée]mant|champagnes?|whiskys?|whiskies|rhums?|vodka|gin|pastis|spiritueux|beaujolais|ratafia|calvados|cognac|armagnac|porto|alcools?|absinthe|digestifs?)([^a-zà-ÿ]|$)/.test(t);
+  },
+  // Texte court sur les allergènes, avec le téléphone de l'épicerie.
+  // annul : réservation (plats du jour, produits du jour) — annulation sans frais au retrait en cas d'allergie.
+  mentionAllergenes = (d, annul) =>
+    "Allergènes : indiqués sur l'étiquette de chaque barquette ou produit. Vous pouvez les demander à l'épicerie" +
+    (d?.store?.phone ? " au " + d.store.phone : "") +
+    " avant de " +
+    (annul ? "réserver. En cas d'allergie, vous pouvez annuler sans frais au moment du retrait." : "commander.");
+
+// Pages légales : mentions légales, politique de confidentialité, conditions de commande.
 function PageLegale({ type, d, onClose }) {
   let r = Object.fromEntries(
       Object.entries({ ...EMPTY2.legal, ...(d.legal || {}) }).map(([l, u]) => [
@@ -93,6 +112,24 @@ function PageLegale({ type, d, onClose }) {
               React.default.createElement("br", null),
               "Données : Firebase — Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlande.",
             ),
+            React.default.createElement(s, null, "Réclamations et médiation"),
+            React.default.createElement(
+              "p",
+              null,
+              "Pour toute réclamation, contactez d'abord l'épicerie",
+              i.phone ? " au " + i.phone : "",
+              i.email ? " ou par e-mail (" + i.email + ")" : "",
+              ".",
+              r.mediateur &&
+                React.default.createElement(
+                  React.default.Fragment,
+                  null,
+                  " En cas de désaccord persistant, vous pouvez recourir gratuitement au médiateur de la consommation : ",
+                  React.default.createElement("b", null, r.mediateur),
+                  r.mediateurSite ? " (" + r.mediateurSite + ")" : "",
+                  ".",
+                ),
+            ),
             React.default.createElement(s, null, "Propriété"),
             React.default.createElement(
               "p",
@@ -102,6 +139,85 @@ function PageLegale({ type, d, onClose }) {
               ". Toute reproduction sans autorisation est interdite.",
             ),
           )
+        : type === "conditions"
+          ? React.default.createElement(
+              React.default.Fragment,
+              null,
+              React.default.createElement("h2", null, "Conditions de commande et de réservation"),
+              React.default.createElement(
+                "p",
+                { className: "chapo" },
+                "Ces conditions s'appliquent aux commandes et réservations passées dans l'application ",
+                i.name,
+                ".",
+              ),
+              React.default.createElement(s, null, "Le vendeur"),
+              React.default.createElement(
+                "p",
+                null,
+                r.raison,
+                r.forme ? ", " + r.forme : "",
+                " — ",
+                i.address,
+                r.siren ? " — SIREN " + r.siren : "",
+                i.phone ? " — Tél. " + i.phone : "",
+                ".",
+              ),
+              React.default.createElement(s, null, "Prix"),
+              React.default.createElement(
+                "p",
+                null,
+                "Les prix sont indiqués en euros, toutes taxes comprises. Pour les produits vendus au poids, le prix affiché est une estimation : le montant exact est calculé à la pesée, au retrait. Le prix d'un produit en promotion est garanti dans la limite des quantités disponibles.",
+              ),
+              React.default.createElement(s, null, "Commande et réservation"),
+              React.default.createElement(
+                "p",
+                null,
+                "Une commande ou une réservation vous engage à venir chercher les produits au jour et à l'heure prévus. Les plats du jour sont confirmés par l'épicerie par message dans l'application. Un produit réservé qui n'est pas retiré à temps peut être remis en vente.",
+              ),
+              React.default.createElement(s, null, "Paiement"),
+              React.default.createElement(
+                "p",
+                null,
+                "Aucun paiement en ligne : vous payez au retrait à l'épicerie (ou à la livraison, quand elle est proposée).",
+              ),
+              React.default.createElement(s, null, "Annulation et rétractation"),
+              React.default.createElement(
+                "p",
+                null,
+                "Pour annuler ou modifier une commande, prévenez l'épicerie",
+                i.phone ? " au " + i.phone : "",
+                " au moins 48 h avant le retrait (le plus tôt possible pour une réservation). Les produits alimentaires frais ou préparés sur commande ne bénéficient pas du droit de rétractation (article L221-28 du code de la consommation).",
+              ),
+              React.default.createElement(s, null, "Allergènes"),
+              React.default.createElement(
+                "p",
+                null,
+                "Les allergènes sont indiqués sur l'étiquette de chaque barquette ou produit, et sur le menu quand l'épicerie les a renseignés. Vous pouvez les demander à l'épicerie",
+                i.phone ? " au " + i.phone : "",
+                " avant de commander ou de réserver. En cas d'allergie, une réservation peut être annulée sans frais au moment du retrait. Pour les plateaux, signalez vos allergies lors de la commande.",
+              ),
+              React.default.createElement(s, null, "Alcool"),
+              React.default.createElement("p", null, MENTION_MINEURS, " ", MENTION_ALCOOL),
+              React.default.createElement(s, null, "Réclamations et médiation"),
+              React.default.createElement(
+                "p",
+                null,
+                "Pour toute réclamation, contactez l'épicerie",
+                i.phone ? " au " + i.phone : "",
+                i.email ? " ou par e-mail (" + i.email + ")" : "",
+                ".",
+                r.mediateur &&
+                  React.default.createElement(
+                    React.default.Fragment,
+                    null,
+                    " Si le désaccord persiste, vous pouvez recourir gratuitement au médiateur de la consommation : ",
+                    React.default.createElement("b", null, r.mediateur),
+                    r.mediateurSite ? " (" + r.mediateurSite + ")" : "",
+                    ".",
+                  ),
+              ),
+            )
         : React.default.createElement(
             React.default.Fragment,
             null,

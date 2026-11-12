@@ -35,6 +35,8 @@ var LOGO =
       emailDonnees: "epicerie.raddonnaise@outlook.fr",
       hebergementDonnees: "Union européenne",
       conservation: 3,
+      mediateur: "",
+      mediateurSite: "",
     },
     services: [],
     annonce: { active: !1, text: "", couleur: "apple" },

@@ -142,7 +142,7 @@ function TuileMenu({ menu, onOuvrir, aujourdhui = gc(new Date()) }) {
 // Feuille détaillée du menu de la semaine (tous les jours, prix).
 // v2.44 : « plats » = plats réservables (articles « menu » du jour), « onReserver » ouvre la réservation.
 // v2.45e : « fermetures » = jours de fermeture exceptionnelle (pas de réservation ces jours-là).
-function FeuilleMenu({ menu, onClose, aujourdhui = gc(new Date()), apercu, plats, onReserver, fermetures }) {
+function FeuilleMenu({ menu, onClose, aujourdhui = gc(new Date()), apercu, plats, onReserver, fermetures, tel }) {
   if (
     ((0, ne.useEffect)(() => {
       if (apercu) return;
@@ -200,6 +200,8 @@ function FeuilleMenu({ menu, onClose, aujourdhui = gc(new Date()), apercu, plats
                 "div",
                 { className: "mn-desc" },
                 ne.default.createElement(m2, { plat: s.plat }),
+                // v2.46 : allergènes du plat (renseignés par l'épicerie)
+                !!s.allerg && ne.default.createElement("div", { className: "mn-allerg" }, "Allergènes : ", s.allerg),
                 s.j === i && ne.default.createElement("span", { className: "mn-auj" }, "Aujourd'hui"),
                 rv && ne.default.createElement("button", { className: "mn-resa", onClick: () => onReserver(rv) }, "Réserver"),
                 fe && ne.default.createElement("span", { className: "mn-ferme" }, "Épicerie fermée"),
@@ -213,6 +215,10 @@ function FeuilleMenu({ menu, onClose, aujourdhui = gc(new Date()), apercu, plats
         "div",
         { className: "mn-pied" },
         "Plats à retrouver à l'épicerie, dans la limite des quantités disponibles",
+        ne.default.createElement("br", null),
+        "Allergènes : indiqués sur l'étiquette de chaque barquette. Vous pouvez les demander à l'épicerie",
+        tel ? " au " + tel : "",
+        " avant de réserver. En cas d'allergie, vous pouvez annuler sans frais au moment du retrait.",
       ),
       !apercu && ne.default.createElement("button", { className: "mn-fermer", onClick: onClose }, "Fermer"),
     );

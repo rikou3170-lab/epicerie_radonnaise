@@ -163,6 +163,15 @@ function InfosLegales({ d, set }) {
       i("responsable", "Responsable / directrice de publication", "Marion Parnaso"),
       i("emailDonnees", "E-mail pour les demandes RGPD", d.store.email),
       i("hebergementDonnees", "Lieu d'hébergement des données", "Union européenne"),
+      // v2.46 : médiateur de la consommation (obligatoire pour tout commerce qui vend aux particuliers)
+      i("mediateur", "Médiateur de la consommation", "ex. CM2C, Medicys…"),
+      i("mediateurSite", "Site ou adresse du médiateur", "ex. www.cm2c.net"),
+      !String(d.legal?.mediateur || "").trim() &&
+        React.default.createElement(
+          "div",
+          { className: "de", style: { marginTop: 6, color: "#B4532A", fontWeight: 700 } },
+          "⚠️ Obligatoire : tout commerce qui vend à des particuliers doit adhérer à un médiateur de la consommation et l'indiquer à ses clients. Une fois l'adhésion faite, notez ici son nom et son site : ils s'afficheront dans les mentions légales et les conditions de commande.",
+        ),
       React.default.createElement(
         "div",
         { className: "de", style: { marginTop: 6 } },

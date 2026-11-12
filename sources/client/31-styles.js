@@ -219,6 +219,10 @@ var Ic2 = {
 .mini .nm{font-weight:700;font-size:12.5px;line-height:1.25;margin-bottom:5px}
 .mn-resa{display:inline-block;margin-top:6px;background:var(--terra,#C27B42);color:#fff;border:none;border-radius:20px;padding:6px 14px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
 .mn-ligne.passe .mn-resa{display:none}
+.evin{display:block;font-size:10.5px;line-height:1.3;color:#7a6a5c;font-style:italic;margin-top:4px}
+.pub .txt .evin{color:rgba(255,255,255,.85)}
+.mn-allerg{font-size:11.5px;color:#8a6d5a;margin-top:3px;line-height:1.3}
+.resa-legal{font-size:11px;opacity:.85;text-align:center;margin-top:6px}
 .mn-ferme{display:inline-block;margin-top:6px;background:rgba(0,0,0,.06);color:#8a6d5a;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700}
 .fo-fond{position:fixed;inset:0;z-index:390;display:flex;align-items:center;justify-content:center;pointer-events:none;background:rgba(14,38,32,.28);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);animation:foDissipe .7s ease 2.1s forwards}
 .fo-mot{font-family:var(--script);color:#fff;font-size:52px;line-height:1.1;padding:0 20px;text-align:center;opacity:0;text-shadow:0 2px 12px rgba(0,0,0,.28);animation:foMot 2.5s ease forwards}
