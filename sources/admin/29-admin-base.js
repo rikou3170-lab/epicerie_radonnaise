@@ -360,7 +360,11 @@ function useShop(t) {
           onSnapshot(
             collection(db, T),
             (M) => {
-              i((V) => ({ ...V, [T]: M.docs.map((O) => ({ ...O.data(), id: O.id })) }));
+              i((V) => ({
+                ...V,
+                // v2.46e : les renvois de cartes fusionnées ne sont pas des clients
+                [T]: M.docs.map((O) => ({ ...O.data(), id: O.id })).filter((O) => T !== "clients" || !O.fusionneVers),
+              }));
             },
             [
               "pubs",

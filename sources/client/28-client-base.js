@@ -191,6 +191,13 @@ function useMoi() {
           (i) => {
             if (i.exists()) {
               let o = i.data();
+              // v2.46e : carte regroupée par l'épicerie → on passe sur la carte gardée
+              if (o.fusionneVers) {
+                r({ ...moi, ref: String(o.fusionneVers) });
+                // les notifications suivent la carte gardée
+                setTimeout(() => _c(), 0);
+                return;
+              }
               r({
                 ref: i.id,
                 code: o.code,

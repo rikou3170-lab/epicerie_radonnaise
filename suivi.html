@@ -286,7 +286,7 @@ if (DEMO) {
     const err = (nom) => (e) => { T.erreurs.push(new Date().toLocaleTimeString("fr-FR") + " " + nom + " : " + (e?.code || e?.message || e)); rendu(); };
     arrets.push(onSnapshot(query(collection(db, "stats"), where("jour", ">=", debut)), s => { lu("stats", s); D.stats = s.docs.map(d => d.data()).filter(x => x.jour && x.cle); ok(); }, refus));
     if (!PC) { compter(); const t = setInterval(compter, 60000); arrets.push(() => clearInterval(t)); recu++; }   // téléphone : seulement des nombres, aucune fiche client téléchargée
-    else arrets.push(onSnapshot(collection(db, "clients"), s => { lu("clients", s); D.clients = s.docs.map(d => { const x = d.data(); return { id: d.id, nom: x.nom, code: x.code, tel: x.tel, email: x.email, anniv: x.anniv, depuis: x.depuis, points: x.points || 0, tampons: x.tampons || 0, dernierTampon: x.dernierTampon || 0 }; }); ok(); }, refus));
+    else arrets.push(onSnapshot(collection(db, "clients"), s => { lu("clients", s); D.clients = s.docs.filter(d => !d.data().fusionneVers).map(d => { const x = d.data(); return { id: d.id, nom: x.nom, code: x.code, tel: x.tel, email: x.email, anniv: x.anniv, depuis: x.depuis, points: x.points || 0, tampons: x.tampons || 0, dernierTampon: x.dernierTampon || 0 }; }); ok(); }, refus));
     arrets.push(onSnapshot(collection(db, "commandes"), s => { lu("commandes", s); D.commandes = s.docs.map(d => ({ cree: d.data().cree })); ok(); }, refus));
     arrets.push(onSnapshot(collection(db, "appareils"), s => { lu("appareils", s); D.appareils = s.docs.map(d => { const x = d.data(); return { promo: !!x.promo, maj: x.maj, refs: Array.isArray(x.refs) ? x.refs.map(String) : [] }; }); ok(); }, (e) => { err("appareils")(e); D.appareils = []; ok(); }));
     arrets.push(onSnapshot(collection(db, "plateaux"), s => { lu("plateaux", s); D.plateaux = Object.fromEntries(s.docs.map(d => [d.id.toLowerCase(), d.data().nom || d.data().titre || "Plateau"])); ok(); }, () => ok()));
@@ -298,8 +298,9 @@ if (DEMO) {
   });
   async function compter() {
     try { const c = collection(db, "clients"), [du, au] = bornes();
-      const [t, p] = await Promise.all([getCountFromServer(c), getCountFromServer(query(c, where("depuis", ">=", du), where("depuis", "<=", au)))]);
-      D.nbClients = t.data().count; D.nbClientsPeriode = p.data().count; T.lectures += 2; rendu();
+      // v2.46e : les renvois de cartes fusionnées (champ fusionLe) ne comptent pas comme des clients
+      const [t, p, f] = await Promise.all([getCountFromServer(c), getCountFromServer(query(c, where("depuis", ">=", du), where("depuis", "<=", au))), getCountFromServer(query(c, where("fusionLe", ">", 0)))]);
+      D.nbClients = t.data().count - f.data().count; D.nbClientsPeriode = p.data().count; T.lectures += 3; rendu();
     } catch (e) { T.erreurs.push(new Date().toLocaleTimeString("fr-FR") + " comptage clients : " + (e?.code || e?.message || e)); rendu(); }
   }
   window.__compter = compter;

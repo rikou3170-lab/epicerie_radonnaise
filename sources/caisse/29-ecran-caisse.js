@@ -62,7 +62,7 @@ function HistoriqueCaisse({ id }) {
 }
 
 // Écran de caisse : client trouvé par scan ou recherche, tampons, cadeaux, roue de Noël.
-function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
+function EcranCaisse({ user, clients, charge, fid, maj, script, roue, renvois = {} }) {
   let a = MENTION_EXCLUSIONS(fid),
     [u, c] = (0, React.useState)("scan"),
     [d, f] = (0, React.useState)(1),
@@ -218,7 +218,11 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
           ce = 0;
         if (fid.parrainage !== !1 && R.parrain && !R.parrainFait) {
           let Je = clients.find(
-            (lt) => (lt.code || "").toUpperCase() === String(R.parrain).toUpperCase() && lt.id !== R.id,
+            (lt) =>
+              ((lt.code || "").toUpperCase() === String(R.parrain).toUpperCase() ||
+                // v2.46e : parrain dont la carte a été fusionnée
+                lt.id === renvois[String(R.parrain).toUpperCase()]) &&
+              lt.id !== R.id,
           );
           if (((J.parrainFait = !0), Je)) {
             ce = 1;
@@ -313,6 +317,8 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue }) {
         return;
       }
       let te = clients.filter((X) => (X.code || "").toUpperCase() === R.toUpperCase().trim());
+      // v2.46e : ancien code d'une carte fusionnée → carte gardée
+      !te.length && renvois[R.toUpperCase().trim()] && (te = clients.filter((X) => X.id === renvois[R.toUpperCase().trim()]));
       if (!te.length) {
         IconeTampon("refus"), C("Aucune carte avec le code " + R.toUpperCase() + "."), T((X) => X + 1);
         return;

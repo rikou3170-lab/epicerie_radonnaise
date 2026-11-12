@@ -209,16 +209,13 @@ function SuiviComptes({ d }) {
     )[0];
   const fusionner = async (g, k) => {
     const K = aGarder(g),
-      autres = g.filter((c) => c.id !== K.id),
-      deuxTel = autres.some((c) => lies.has(String(c.id))) && lies.has(String(K.id));
+      autres = g.filter((c) => c.id !== K.id);
     if (
       !(await De(
         "Garder la carte " + K.code + " (" + (K.nom || "—") + ") et y regrouper " +
           autres.map((c) => c.code + " (" + (Number(c.tampons) || 0) + " tampon(s))").join(", ") +
-          " ? L'autre carte sera supprimée." +
-          (deuxTel
-            ? " Attention : l'autre carte est aussi utilisée sur un téléphone. Le client devra y récupérer sa carte avec le QR code (Fidélité → sa fiche → Réinstaller)."
-            : !lies.has(String(K.id))
+          " ? L'autre carte sera supprimée (le téléphone qui l'utilisait passera tout seul sur la carte gardée)." +
+          (!lies.has(String(K.id))
               ? " Aucune de ces cartes n'est reliée à un téléphone avec alertes : en cas de doute, demandez au client de vous montrer la carte qu'il utilise."
               : ""),
       ))
@@ -267,7 +264,9 @@ function SuiviComptes({ d }) {
           ...(tot - dir ? { attente: tot - dir } : {}),
           source: "admin",
         });
-        b.delete(doc2(db, "clients", String(S.id)));
+        // v2.46e : la carte fusionnée devient un simple renvoi (aucune donnée personnelle) :
+        // le téléphone qui l'utilisait bascule tout seul sur la carte gardée.
+        b.set(doc2(db, "clients", String(S.id)), { fusionneVers: String(K.id), fusionLe: Date.now(), code: S.code });
       }
       b.update(doc2(db, "clients", String(K.id)), {
         ...maj,
@@ -393,7 +392,8 @@ function SuiviComptes({ d }) {
                 {
                   className: "btn gh",
                   style: { marginTop: 6, padding: "7px 12px", fontSize: 13, width: "auto" },
-                  disabled: fusionEnCours !== null,
+                  // v2.46e : attendre la liste des téléphones (📱) pour choisir la bonne carte à garder
+                  disabled: fusionEnCours !== null || appareils === null,
                   onClick: () => fusionner(g, k),
                 },
                 fusionEnCours === k ? "Fusion…" : "Fusionner (garder " + aGarder(g).code + ")",

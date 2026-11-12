@@ -82,6 +82,8 @@ function usePlatsMenu(actif) {
 // La caisse : connexion, écran de caisse, journal.
 function Caisse({ user }) {
   let [e, n] = (0, React.useState)([]),
+    // v2.46e : cartes fusionnées (ancien code → identifiant de la carte gardée)
+    [renvois, setRenvois] = (0, React.useState)({}),
     [r, i] = (0, React.useState)(!1),
     [o, s] = (0, React.useState)(null),
     [a, u] = (0, React.useState)({
@@ -105,7 +107,10 @@ function Caisse({ user }) {
     let W = onSnapshot(
         collection(db, "clients"),
         (he) => {
-          n(he.docs.map((rt) => ({ ...rt.data(), id: rt.id }))), i(!0);
+          // v2.46e : les renvois de cartes fusionnées ne sont pas des clients
+          let tous = he.docs.map((rt) => ({ ...rt.data(), id: rt.id }));
+          setRenvois(Object.fromEntries(tous.filter((rt) => rt.fusionneVers && rt.code).map((rt) => [rt.code.toUpperCase(), rt.fusionneVers])));
+          n(tous.filter((rt) => !rt.fusionneVers)), i(!0);
         },
         (he) => O("Lecture des clients impossible (" + (he?.code || "erreur") + ")."),
       ),
@@ -224,6 +229,7 @@ function Caisse({ user }) {
     ? React.default.createElement(EcranCaisse, {
         user,
         clients: e,
+        renvois,
         charge: r,
         fid: a,
         maj: P,
