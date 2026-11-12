@@ -288,6 +288,12 @@ function PageLegale({ type, d, onClose }) {
               null,
               "Aucune donnée bancaire, aucune géolocalisation, aucune publicité. Consulter l'application sans carte ne collecte aucune donnée personnelle.",
             ),
+            // v2.46h : appareil photo (scan du QR code de transfert)
+            React.default.createElement(
+              "p",
+              null,
+              "Appareil photo : il sert uniquement à lire le QR code quand vous changez de téléphone. L'image est analysée sur votre téléphone : aucune image n'est enregistrée ni envoyée.",
+            ),
             React.default.createElement(s, null, "Pourquoi ?"),
             React.default.createElement(
               "p",
