@@ -247,7 +247,7 @@ function AlerteCommande({ c, store, onClose }) {
 }
 
 // Onglet La carte : plateaux et paniers à commander, autres offres, mes commandes.
-function Carte({ d: t, panier, choisir, mesCmds, recommander, oublier }) {
+function Carte({ d: t, panier, choisir, mesCmds, recommander, oublier, demanderDevis }) {
   let s = t.offres.filter(vn),
     l = t.plateaux.filter(vn),
     u = [...new Set(s.map((f) => f.type).filter(Boolean))],
@@ -387,6 +387,25 @@ function Carte({ d: t, panier, choisir, mesCmds, recommander, oublier }) {
                       ),
                       m.portions && React.default.createElement("span", { className: "serves" }, m.portions),
                     ),
+                    // v2.46j : offre sur devis → bouton de demande (messagerie, ou téléphone si elle est coupée)
+                    !m.prix &&
+                      (demanderDevis
+                        ? React.default.createElement(
+                            "button",
+                            { className: "btn", style: { marginTop: 12 }, onClick: () => demanderDevis(m.titre) },
+                            "Demander un devis",
+                          )
+                        : t.store.phone &&
+                          React.default.createElement(
+                            "a",
+                            { href: "tel:" + t.store.phone.replace(/\s/g, ""), style: { textDecoration: "none" } },
+                            React.default.createElement(
+                              "button",
+                              { className: "btn", style: { marginTop: 12 } },
+                              "Demander un devis — ",
+                              t.store.phone,
+                            ),
+                          )),
                   ),
                 ),
               ),

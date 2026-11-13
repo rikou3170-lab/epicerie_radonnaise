@@ -122,6 +122,8 @@ function App() {
     Wi = useMesResas(Nf),
     [Gi, as] = (0, React.useState)(null),
     [Ga, ls] = (0, React.useState)(!1),
+    // v2.46j : message pré-rempli (demande de devis depuis la carte)
+    [brouillon, setBrouillon] = (0, React.useState)(""),
     [kc, Ic] = (0, React.useState)(0),
     [Hi, Tc, Cc] = useMesCommandes(st),
     Zn = Hi.find(cT),
@@ -293,7 +295,8 @@ function App() {
               } catch {}
               if (K.id === "chat") return Ga || (ls(!0), tn("chat"));
               // v2.44c : depuis la messagerie, un autre onglet la referme
-              ls(!1), E(K.id), Ic((ge) => ge + 1);
+              // v2.46j : la demande de devis non envoyée ne doit pas revenir plus tard
+              ls(!1), setBrouillon(""), E(K.id), Ic((ge) => ge + 1);
               window.scrollTo(0, 0);
             },
           },
@@ -331,7 +334,8 @@ function App() {
         notifs: os,
         inst: se,
         ouvrirLegal: Ae,
-        onClose: () => ls(!1),
+        texteInitial: brouillon,
+        onClose: () => (ls(!1), setBrouillon("")),
       }),
       barre("chat"),
       Q &&
@@ -502,6 +506,17 @@ function App() {
     m === "carte" &&
       React.default.createElement(Carte, {
         d: t,
+        // v2.46j : demande de devis → la messagerie s'ouvre avec la demande déjà écrite
+        demanderDevis:
+          t.chat?.active !== !1
+            ? (titre) => {
+                setBrouillon(
+                  "Bonjour, je souhaiterais un devis pour : " + titre + ".\nPour le : \nBudget : \nMes envies : ",
+                ),
+                  ls(!0),
+                  tn("chat");
+              }
+            : null,
         panier: ot,
         choisir: Ha,
         mesCmds: Hi,

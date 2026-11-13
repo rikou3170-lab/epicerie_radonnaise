@@ -267,11 +267,11 @@ function BulleChat({ nonLus, haut, onClick }) {
 }
 
 // Conversation avec l'épicerie.
-function Messagerie({ d: t, moi, chat, onClose, ouvrirLegal, notifs, inst }) {
+function Messagerie({ d: t, moi, chat, onClose, ouvrirLegal, notifs, inst, texteInitial }) {
   let { moiChat: l, msgs: u, marquerVu: d, enregistrer: h } = chat,
     [nom, setNom] = (0, React.useState)(Sf().prenom || moi?.nom || ""),
     [tel, setTel] = (0, React.useState)(""),
-    [texte, setTexte] = (0, React.useState)(""),
+    [texte, setTexte] = (0, React.useState)(texteInitial || ""),
     [envoi, setEnvoi] = (0, React.useState)(!1),
     [err, setErr] = (0, React.useState)(""),
     z = (0, React.useRef)(null);
@@ -425,7 +425,8 @@ function Messagerie({ d: t, moi, chat, onClose, ouvrirLegal, notifs, inst }) {
         { className: "chat-ligne" },
         React.default.createElement("textarea", {
           className: "inp",
-          rows: 1,
+          // v2.46j : plus haut quand le message est pré-rempli sur plusieurs lignes (demande de devis)
+          rows: texte.includes("\n") ? 5 : 1,
           value: texte,
           maxLength: 1e3,
           placeholder: "Votre message…",
