@@ -232,7 +232,7 @@ var Ic2 = {
 .fo-mot{font-family:var(--script);color:#fff;font-size:52px;line-height:1.1;padding:0 20px;text-align:center;opacity:0;text-shadow:0 2px 12px rgba(0,0,0,.28);animation:foMot 2.5s ease forwards}
 .fo-fond.calme{animation:foDissipe .3s ease 1.8s forwards}
 .fo-fond.calme .fo-mot{opacity:1;animation:none}
-@keyframes foDissipe{to{opacity:0;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}}
+@keyframes foDissipe{to{opacity:0}}
 @keyframes foMot{0%{opacity:0;transform:translateY(8px)}30%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
 .tab .tab-nb{position:absolute;top:-3px;right:6px;min-width:18px;height:18px;padding:0 5px;box-sizing:border-box;border-radius:9px;background:#B2263A;color:#fff;border:2px solid #fff;font-size:10px;font-weight:900;line-height:14px;text-align:center;animation:tabNb .5s cubic-bezier(.3,1.7,.5,1)}
 .tab.a-lire .pastille svg{animation:tabCoucou 2.4s ease-in-out infinite;transform-origin:50% 80%}

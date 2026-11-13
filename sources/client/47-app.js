@@ -101,10 +101,12 @@ function App() {
         ge = () => {
           document.visibilityState === "hidden"
             ? (K = Date.now())
-            : K && Date.now() - K > 3e4 && location.reload();
+            : K && Date.now() - K > 3e4
+              ? location.reload()
+              : repeindre();
         },
         Je = (ft) => {
-          ft.persisted && location.reload();
+          ft.persisted ? location.reload() : repeindre();
         };
       return (
         document.addEventListener("visibilitychange", ge),
@@ -222,7 +224,7 @@ function App() {
                 S(!0), z(!!y);
               },
               onEnd: () => {
-                C(!1);
+                C(!1), repeindre();
               },
             }
           : null,

@@ -151,9 +151,23 @@ function Salutation({ prenom, onFin, amb }) {
 
 // v2.44 : à l'ouverture, « Bonsoir Eric » discret sur l'accueil flouté (fil doré retiré en v2.44c),
 // puis l'accueil apparaît en fondu (environ 3 secondes). Remplace l'étiquette « Salutation ».
+// v2.46k : sur iPhone/iPad, la page restait parfois vide (seule la barre du bas visible) jusqu'à un
+// toucher, après le fondu flouté ou un rechargement. On oblige l'écran à se redessiner.
+function repeindre() {
+  let f = () => {
+    try {
+      let b = document.body;
+      (b.style.opacity = "0.999"),
+        requestAnimationFrame(() => {
+          (b.style.opacity = ""), window.scrollBy(0, 1), window.scrollBy(0, -1);
+        });
+    } catch {}
+  };
+  requestAnimationFrame(f), setTimeout(f, 350), setTimeout(f, 1200);
+}
 function FonduOuverture({ prenom, onFin }) {
   (0, React.useEffect)(() => {
-    let h = setTimeout(onFin, mouvementReduit() ? 2200 : 2900);
+    let h = setTimeout(() => (onFin(), repeindre()), mouvementReduit() ? 2200 : 2900);
     return () => clearTimeout(h);
   }, []);
   let l = new Date().getHours();
