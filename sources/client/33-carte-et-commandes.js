@@ -247,6 +247,85 @@ function AlerteCommande({ c, store, onClose }) {
 }
 
 // Onglet La carte : plateaux et paniers à commander, autres offres, mes commandes.
+// v2.46l : petit formulaire de demande de devis (date, budget, envies) → message envoyé à l'épicerie.
+function FormDevis({ titre, onEnvoyer, onClose, nomConnu, telConnu }) {
+  let auj = new Date().toLocaleDateString("sv-SE"),
+    // v2.46l : nom et prénom de la carte de fidélité (plusieurs clients peuvent avoir le même prénom)
+    [nom, setNom] = (0, React.useState)(nomConnu || Sf().prenom || ""),
+    [tel, setTel] = (0, React.useState)(telConnu || ""),
+    [date, setDate] = (0, React.useState)(""),
+    [budget, setBudget] = (0, React.useState)(""),
+    [envies, setEnvies] = (0, React.useState)(""),
+    [err, setErr] = (0, React.useState)(""),
+    envoyer = () => {
+      if (nom.trim().split(/\s+/).length < 2) return setErr("Indiquez votre nom et votre prénom.");
+      if (!date) return setErr("Indiquez pour quand vous le souhaitez.");
+      let jour = new Date(date + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }),
+        b = budget.trim().replace(/\s*(€|euros?|eur)\.?$/i, ""),
+        msg =
+          "Demande de devis : " + titre +
+          "\nDe : " + nom.trim() + (tel.trim() ? " (" + tel.trim() + ")" : "") +
+          "\nPour le : " + jour +
+          (b ? "\nBudget : " + b + " €" : "") +
+          (envies.trim() ? "\nMes envies : " + envies.trim() : "");
+      onEnvoyer(msg.slice(0, 1e3), nom.trim().slice(0, 40), tel.trim().slice(0, 20));
+    };
+  return React.default.createElement(
+    "div",
+    { className: "sheet-fond", onClick: onClose },
+    React.default.createElement(
+      "div",
+      { className: "sheet", onClick: (u) => u.stopPropagation() },
+      React.default.createElement("h3", { className: "alerte-t" }, "Demande de devis"),
+      React.default.createElement("p", { className: "tr-txt", style: { marginTop: 0 } }, titre),
+      React.default.createElement("label", { className: "lab" }, "Votre nom et prénom"),
+      React.default.createElement("input", {
+        className: "inp",
+        value: nom,
+        maxLength: 40,
+        placeholder: "ex. Dupont Marie",
+        onChange: (u) => (setNom(u.target.value), setErr("")),
+      }),
+      React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Téléphone (facultatif)"),
+      React.default.createElement("input", {
+        className: "inp",
+        type: "tel",
+        inputMode: "tel",
+        maxLength: 20,
+        value: tel,
+        onChange: (u) => setTel(u.target.value),
+      }),
+      React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Pour quand ?"),
+      React.default.createElement("input", { className: "inp", type: "date", min: auj, value: date, onChange: (u) => (setDate(u.target.value), setErr("")) }),
+      React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Budget (facultatif)"),
+      React.default.createElement("input", {
+        className: "inp",
+        inputMode: "decimal",
+        placeholder: "ex. 40 €",
+        maxLength: 20,
+        value: budget,
+        onChange: (u) => setBudget(u.target.value),
+      }),
+      React.default.createElement("label", { className: "lab", style: { marginTop: 10 } }, "Vos envies (facultatif)"),
+      React.default.createElement("textarea", {
+        className: "inp",
+        rows: 3,
+        maxLength: 600,
+        placeholder: "ex. pour un anniversaire, plutôt sucré, sans alcool, une allergie…",
+        value: envies,
+        onChange: (u) => setEnvies(u.target.value),
+      }),
+      err && React.default.createElement("div", { className: "manque", style: { marginTop: 8 } }, err),
+      React.default.createElement("button", { className: "btn", style: { marginTop: 14 }, onClick: envoyer }, "Envoyer ma demande"),
+      React.default.createElement(
+        "p",
+        { className: "tr-txt", style: { fontSize: 12, marginTop: 8 } },
+        "L'épicerie vous répond dans l'onglet Messages.",
+      ),
+    ),
+  );
+}
+
 function Carte({ d: t, panier, choisir, mesCmds, recommander, oublier, demanderDevis }) {
   let s = t.offres.filter(vn),
     l = t.plateaux.filter(vn),

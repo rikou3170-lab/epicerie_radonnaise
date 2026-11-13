@@ -281,10 +281,10 @@ function BulleChat({ nonLus, haut, onClick }) {
 }
 
 // Conversation avec l'épicerie.
-function Messagerie({ d: t, moi, chat, onClose, ouvrirLegal, notifs, inst, texteInitial }) {
+function Messagerie({ d: t, moi, chat, onClose, ouvrirLegal, notifs, inst, texteInitial, autoEnvoi, onAutoEnvoye }) {
   let { moiChat: l, msgs: u, marquerVu: d, enregistrer: h } = chat,
-    [nom, setNom] = (0, React.useState)(Sf().prenom || moi?.nom || ""),
-    [tel, setTel] = (0, React.useState)(""),
+    [nom, setNom] = (0, React.useState)(autoEnvoi?.nom || Sf().prenom || moi?.nom || ""),
+    [tel, setTel] = (0, React.useState)(autoEnvoi?.tel || ""),
     [texte, setTexte] = (0, React.useState)(texteInitial || ""),
     [envoi, setEnvoi] = (0, React.useState)(!1),
     [err, setErr] = (0, React.useState)(""),
@@ -339,6 +339,10 @@ function Messagerie({ d: t, moi, chat, onClose, ouvrirLegal, notifs, inst, texte
       }
     },
     b = "";
+  // v2.46l : demande de devis envoyée directement depuis le formulaire
+  (0, React.useEffect)(() => {
+    autoEnvoi && texte.trim() && (onAutoEnvoye?.(), j());
+  }, []);
   return React.default.createElement(
     "div",
     { className: "legal chat-page" },

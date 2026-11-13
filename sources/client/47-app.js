@@ -126,6 +126,9 @@ function App() {
     [Ga, ls] = (0, React.useState)(!1),
     // v2.46j : message pré-rempli (demande de devis depuis la carte)
     [brouillon, setBrouillon] = (0, React.useState)(""),
+    // v2.46l : formulaire de devis ouvert (titre de l'offre) et envoi automatique du message
+    [devisPour, setDevisPour] = (0, React.useState)(null),
+    [autoEnvoi, setAutoEnvoi] = (0, React.useState)(null),
     [kc, Ic] = (0, React.useState)(0),
     [Hi, Tc, Cc] = useMesCommandes(st),
     Zn = Hi.find(cT),
@@ -298,7 +301,7 @@ function App() {
               if (K.id === "chat") return Ga || (ls(!0), tn("chat"));
               // v2.44c : depuis la messagerie, un autre onglet la referme
               // v2.46j : la demande de devis non envoyée ne doit pas revenir plus tard
-              ls(!1), setBrouillon(""), E(K.id), Ic((ge) => ge + 1);
+              ls(!1), setBrouillon(""), setAutoEnvoi(null), E(K.id), Ic((ge) => ge + 1);
               window.scrollTo(0, 0);
             },
           },
@@ -337,7 +340,9 @@ function App() {
         inst: se,
         ouvrirLegal: Ae,
         texteInitial: brouillon,
-        onClose: () => (ls(!1), setBrouillon("")),
+        autoEnvoi,
+        onAutoEnvoye: () => (setAutoEnvoi(null), setBrouillon("")),
+        onClose: () => (ls(!1), setBrouillon(""), setAutoEnvoi(null)),
       }),
       barre("chat"),
       Q &&
@@ -509,16 +514,7 @@ function App() {
       React.default.createElement(Carte, {
         d: t,
         // v2.46j : demande de devis → la messagerie s'ouvre avec la demande déjà écrite
-        demanderDevis:
-          t.chat?.active !== !1
-            ? (titre) => {
-                setBrouillon(
-                  "Bonjour, je souhaiterais un devis pour : " + titre + ".\nPour le : \nBudget : \nMes envies : ",
-                ),
-                  ls(!0),
-                  tn("chat");
-              }
-            : null,
+        demanderDevis: t.chat?.active !== !1 ? (titre) => setDevisPour(titre) : null,
         panier: ot,
         choisir: Ha,
         mesCmds: Hi,
@@ -548,6 +544,16 @@ function App() {
         onFait: () => ss((K) => K + 1),
       }),
     X && React.default.createElement(FenetreReception, { code0: X, onClose: () => le(null) }),
+    devisPour &&
+      React.default.createElement(FormDevis, {
+        titre: devisPour,
+        nomConnu: e?.nom || "",
+        telConnu: e?.tel || "",
+        onClose: () => setDevisPour(null),
+        onEnvoyer: (msg, nom, tel) => {
+          setDevisPour(null), setBrouillon(msg), setAutoEnvoi({ nom, tel }), ls(!0), tn("chat");
+        },
+      }),
     !X && !M && !y && !j.demande && !Zn && React.default.createElement(DemandePrenom, { onFin: b }),
     v && !X && React.default.createElement(FonduOuverture, { prenom: y, onFin: () => z(!1) }),
     Zn &&
