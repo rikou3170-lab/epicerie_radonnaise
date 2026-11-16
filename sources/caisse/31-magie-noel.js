@@ -27,8 +27,7 @@ function MagieCaisse() {
       style: i ? { "--top": i.top } : void 0,
     },
     React.default.createElement("style", null, ZC + CSS_CAISSE),
-    i?.anim && React.default.createElement(Particules, { theme: { ...i, nb: Math.min(i.nb || 16, 10) } }),
-    i?.magie && i.anim && React.default.createElement(Neige, { nb: 20 }),
+    // v3.0a : pas d'éléments qui tombent sur la caisse (ils gênent pour travailler) ; le thème garde ses couleurs et décors.
     React.default.createElement(
       "div",
       { className: "tourner", role: "alert" },
