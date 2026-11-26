@@ -446,29 +446,38 @@ var jourIso = (t) => new Date(t).toLocaleDateString("sv-SE"),
   };
 
 // Rassemble les lignes de la période [du ; au] (dates au format AAAA-MM-JJ).
-async function lignesExportCompta(d, du, au, tva, depuis = "") {
+async function lignesExportCompta(d, du, au, tva, depuis = "", progres = null) {
   let t0 = new Date(du + "T00:00:00").getTime(),
     t1 = new Date(au + "T23:59:59.999").getTime(),
     ht = (ttc) => (ttc === "" ? "" : Math.round((ttc / (1 + tva / 100)) * 100) / 100),
     lignes = [],
     ajoute = (date, type, libelle, qte, ttc, statut, ref) =>
       lignes.push({ date, type, libelle, qte, ttc, tva: ttc === "" ? "" : tva, ht: ht(ttc), statut, ref });
-  // 1. Passages en caisse (historique de chaque carte, dans la fenêtre de dates)
-  for (const c of d.clients || []) {
-    let s = await getDocs(
-      query(collection(db, "clients", String(c.id), "historique"), where("date", ">=", t0), where("date", "<=", t1)),
+  // 1. Passages en caisse (historique de chaque carte, dans la fenêtre de dates).
+  //    Cartes lues 20 par 20 en parallèle ; les cartes fusionnées (renvois) n'ont plus d'historique.
+  let cartes = (d.clients || []).filter((c) => c && c.id != null && !c.fusionneVers),
+    lit = (c) =>
+      getDocs(query(collection(db, "clients", String(c.id), "historique"), where("date", ">=", t0), where("date", "<=", t1)));
+  for (let i = 0; i < cartes.length; i += 20) {
+    if (progres && progres(i, cartes.length) === !1) throw new Error("arret");
+    let paquets = await Promise.race([
+      Promise.all(cartes.slice(i, i + 20).map(lit)),
+      new Promise((_, ko) => setTimeout(() => ko(new Error("lent")), 45e3)),
+    ]);
+    if (progres && progres(Math.min(i + 20, cartes.length), cartes.length) === !1) throw new Error("arret");
+    paquets.forEach((s) =>
+      s.forEach((x) => {
+        let h = x.data(),
+          j = jourIso(h.date),
+          m = h.montant != null && h.montant !== "" ? Number(h.montant) : "";
+        if ((h.type === "tampon" || h.type === "achat") && m !== "" && !isNaN(m))
+          ajoute(j, "passage_caisse", "Passage en caisse (client fidélité)", 1, m, "encaisse", "PASS-" + x.id);
+        else if (h.type === "annulation" && h.motif !== "parrainage")
+          ajoute(j, "annulation_passage", "Annulation d'un passage en caisse", 1, m === "" ? "" : m, "annule", "ANN-" + x.id);
+        else if (h.type === "recompense" || h.type === "recompense1")
+          ajoute(j, "cadeau_fidelite", h.type === "recompense1" ? "Cadeau fidélité (1er palier)" : "Cadeau fidélité", 1, "", "offert", "CAD-" + x.id);
+      }),
     );
-    s.forEach((x) => {
-      let h = x.data(),
-        j = jourIso(h.date),
-        m = h.montant != null && h.montant !== "" ? Number(h.montant) : "";
-      if ((h.type === "tampon" || h.type === "achat") && m !== "" && !isNaN(m))
-        ajoute(j, "passage_caisse", "Passage en caisse (client fidélité)", 1, m, "encaisse", "PASS-" + x.id);
-      else if (h.type === "annulation" && h.motif !== "parrainage")
-        ajoute(j, "annulation_passage", "Annulation d'un passage en caisse", 1, m === "" ? "" : m, "annule", "ANN-" + x.id);
-      else if (h.type === "recompense" || h.type === "recompense1")
-        ajoute(j, "cadeau_fidelite", h.type === "recompense1" ? "Cadeau fidélité (1er palier)" : "Cadeau fidélité", 1, "", "offert", "CAD-" + x.id);
-    });
   }
   // 2. Commandes remises au client, pas encore exportées
   let cmds = (d.commandes || []).filter((c) => c.statut === "remise" && !c.exportCompta && (er(c) || "") >= depuis && (er(c) || "") <= au),
@@ -528,20 +537,34 @@ function ExportCompta({ d, set }) {
     [tva, setTva] = (0, React.useState)(ex.tva ?? 5.5),
     [prep, setPrep] = (0, React.useState)(null),
     [occupe, setOccupe] = (0, React.useState)(""),
+    [avance, setAvance] = (0, React.useState)(""),
+    jeton = (0, React.useRef)(0),
     possible = !!du && du <= hier,
     periodeOk = possible && au >= du && au <= hier,
     preparer = async () => {
       if (!periodeOk) return;
-      setOccupe("prep");
+      let moi = ++jeton.current;
+      setOccupe("prep"), setAvance("");
       try {
         let t = Math.max(0, Math.min(30, Number(String(tva).replace(",", ".")) || 0)),
-          r = await lignesExportCompta(d, du, au, t, ex.depuis || du),
+          r = await lignesExportCompta(d, du, au, t, ex.depuis || du, (n, tot) =>
+            jeton.current !== moi ? !1 : (setAvance({ n, tot }), !0),
+          ),
           nom = "epicerie-export-" + du + "_au_" + au + ".csv";
+        if (jeton.current !== moi) return;
         setPrep({ ...r, du, au, tva: t, nom, texte: texteCsvCompta(r.lignes), telecharge: !1 });
-      } catch {
-        ft("Préparation impossible : vérifiez la connexion et réessayez.");
+      } catch (e) {
+        if (jeton.current !== moi) return;
+        ft(
+          e && e.message === "lent"
+            ? "Firebase ne répond pas assez vite. Rien n'a été marqué : réessayez un peu plus tard."
+            : "Préparation impossible : vérifiez la connexion et réessayez. Rien n'a été marqué.",
+        );
       }
       setOccupe("");
+    },
+    arreter = () => {
+      jeton.current++, setOccupe(""), setAvance(""), ft("Préparation arrêtée. Rien n'a été marqué, vous pouvez relancer.");
     },
     telecharger = async () => {
       let f = new File([prep.texte], prep.nom, { type: "text/csv" });
@@ -630,6 +653,36 @@ function ExportCompta({ d, set }) {
                 { className: "btn", style: { marginTop: 12 }, disabled: !periodeOk || !!occupe, onClick: preparer },
                 occupe === "prep" ? "Préparation…" : "Préparer le fichier (" + dateFr(du) + " → " + dateFr(au) + ")",
               ),
+              occupe === "prep" &&
+                h(
+                  "div",
+                  { style: { marginTop: 10 } },
+                  h(
+                    "div",
+                    { style: { height: 10, borderRadius: 6, background: "rgba(28,67,59,.12)", overflow: "hidden" } },
+                    h("div", {
+                      style: {
+                        height: "100%",
+                        borderRadius: 6,
+                        background: "var(--apple)",
+                        transition: "width .3s",
+                        width: (avance && avance.tot ? Math.round((avance.n / avance.tot) * 100) : 3) + "%",
+                      },
+                    }),
+                  ),
+                  h(
+                    "div",
+                    { className: "de", style: { marginTop: 6, textAlign: "center" } },
+                    avance && avance.tot
+                      ? "Cartes de fidélité lues : " + avance.n + " sur " + avance.tot + " (" + Math.round((avance.n / avance.tot) * 100) + " %)"
+                      : "Lecture des cartes de fidélité…",
+                  ),
+                  h(
+                    "button",
+                    { className: "btn gh sm", style: { marginTop: 8 }, onClick: arreter },
+                    "Arrêter (rien n'est marqué)",
+                  ),
+                ),
             )
           : du &&
             h("div", { className: "de", style: { marginTop: 8 } }, "Rien à exporter pour l'instant : la période suivante commence ", dateFr(du), "."),
