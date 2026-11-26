@@ -234,7 +234,7 @@ function Admin() {
             u(A), window.scrollTo(0, 0);
           },
         }),
-      a === "stats" && React.default.createElement(EcranStatistiques, { d: r }),
+      a === "stats" && React.default.createElement(EcranStatistiques, { d: r, set: i }),
       a === "com" && React.default.createElement(Communication, { d: r, set: i }),
       a === "jour" && React.default.createElement(Jour, { d: r, set: i }),
       a === "commandes" && React.default.createElement(Commandes, { d: r, set: i }),

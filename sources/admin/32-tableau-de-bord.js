@@ -172,7 +172,7 @@ function TableauDeBord({ d, set, aller }) {
 }
 
 // Écran Statistiques.
-function EcranStatistiques({ d }) {
+function EcranStatistiques({ d, set }) {
   return React.default.createElement(
     "div",
     { className: "wrap" },
@@ -185,6 +185,8 @@ function EcranStatistiques({ d }) {
     React.default.createElement(Statistiques, { d }),
     React.default.createElement(SuiviComptes, { d }),
     React.default.createElement(Frequentation, { d }),
+    // v3.1 : export comptable pour l'application de gestion
+    set && React.default.createElement(ExportCompta, { d, set }),
   );
 }
 

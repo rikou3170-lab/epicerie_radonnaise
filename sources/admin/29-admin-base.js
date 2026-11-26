@@ -184,6 +184,8 @@ var Wr = () => Date.now() + Math.floor(Math.random() * 999),
     "roue",
     "sondage",
     "menu",
+    // v3.1 : suivi de l'export comptable (date de fin du dernier export, TVA, journal)
+    "exportCompta",
   ],
   COLS = [
     "offres",

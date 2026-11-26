@@ -367,6 +367,8 @@ function EcranCaisse({ user, clients, charge, fid, maj, script, roue, renvois = 
               date: te,
               points: -h.n,
               type: "annulation",
+              // v3.1 : montant annulé (export comptable : ligne négative)
+              ...(h.montant ? { montant: -Number(h.montant) } : {}),
               source: "caisse",
             }),
             h.parr &&
